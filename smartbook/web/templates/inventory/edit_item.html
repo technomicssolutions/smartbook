@@ -1,0 +1,40 @@
+{% extends 'base.html' %}
+{% block title %}Items
+{% endblock title %}
+{% block body_id %}items{% endblock %}
+
+{% block content %}
+	<div class="main-title">
+		<div class="alert alert-info" align="Center">EDIT INFORMATION</div>
+	</div>
+	<div class="main-content">
+		<form name="EditItem" action=" " method="POST">
+			<p> <label> Item Code</label> : <input type="text" name="code" ></p>
+			<p> <label> Item Name</label> : <input type="text" name="name" ></p>
+			<p> <label> Description</label> : <textarea rows="4" cols="50" name="description"></textarea></p>
+			<p> <label> Brand Name</label> : 
+						<select>
+	  						<option value=""></option>
+							<option value=""></option>
+							<option value=""></option>
+						</select></p>
+			<p> <label> Bar Code</label> : <input type="text" name="barcode"></p>
+			<p> <label> UOM</label> : <select>
+	  						<option value=""></option>
+							<option value=""></option>
+							<option value=""></option>
+						</select></p>
+			<p> <label>Vendor</label> : 
+						<select>
+	  						<option value=""></option>
+							 <option value=""></option>
+							 <option value=""></option>
+						</select></p>
+			<p> <label>Selling Price</label> : <input type="text" name="sellingprice"></p>
+			<p> <label>Tax(%)</label> : <input type="text" name="tax"></p>
+			<p> <input type="submit" value="Upadate" name="Update">
+				<input type="submit" value="Cancel" name="Cancel"></p>	
+		</form>
+	</div>	
+			
+{% endblock content %}

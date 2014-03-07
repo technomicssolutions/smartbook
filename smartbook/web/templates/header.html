@@ -1,0 +1,52 @@
+<header class="">
+	<div class="logo">
+		<img src="/static/images/Logo.png" >
+	</div>
+
+	<span class="user_name"> 
+		{% if user.is_authenticated %}
+			{% if user.first_name %}
+				{{user.first_name}} {{user.last_name}} 
+			{% else %} 
+				You are 
+			{% endif %} Logged in as {{user.username}} 
+		{% endif %}
+	</span>
+	<div class="menu_div">
+		{% if user.is_authenticated %}
+			<ul>
+				<li class="menu"> <img src="/static/images/user.png" width="24px" >
+					<ul>
+						<li> <a href=""> Vendors </a> </li>
+						<li> <a href="{% url 'vendor' %}"> New Vendor </a> </li>
+						<li> <a href=""> Staff </a> </li>
+						<li> <a href=""> New Staff </a> </li>
+						<li> <a href=""> Customer </a> </li>
+						<li> <a href=""> New Customer </a> </li>
+						<li> <a href="{% url 'logout' %}"> Logout </a> </li>
+						<li> <a href=""> Reset password </a> </li>
+					</ul>
+				</li>
+				<li class="menu"> <a href=""> Inventory </a> 
+					<ul> 
+						<li> <a href=""> Items </a> </li>
+						<li> <a href=""> New Item </a> </li>
+						<li> <a href=""> Stock </a> </li>
+						<li> <a href=""> New stock </a> </li>
+					</ul>
+				</li>
+				<li class="menu"> <a href=""> Purchase </a> </a> 
+					<ul> 
+						<li> <a href=""> Purchases </a> </li>
+						<li> <a href=""> New Entry </a> </li>
+						<li> <a href=""> Vendor Accounts </a> </li>
+					</ul>
+				</li>
+				<li class="menu"> <a href=""> Sales </a> </li>
+				<li class="menu"> <a href=""> Expenses </a> </li>
+				<li class="menu last"> <a href=""> Reports </a> </li>
+				
+			</ul>
+		{% endif %}
+	</div>
+</header>

@@ -4,7 +4,7 @@
 
 // Demonstrate how to register services
 // In this case it is a simple value service.
-var sportivore_serv = angular.module('fbm.services', ['ngResource']);
+var sportivore_serv = angular.module('smartbook.services', ['ngResource']);
 
 sportivore_serv.value('version', '0.1');
 
