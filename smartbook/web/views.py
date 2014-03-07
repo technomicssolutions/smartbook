@@ -24,13 +24,12 @@ class Login(View):
         user = authenticate(username=request.POST['username'], password=request.POST['password'])
         if user and user.is_active:
             login(request, user)
-            context = {}
-            
         else:
             context = {
                 'message' : 'Username or password is incorrect'
             }
-        return render(request, 'home.html',context)
+            return render(request, 'home.html',context)
+        return HttpResponseRedirect(reverse('home'))
 
 class Logout(View):
 
