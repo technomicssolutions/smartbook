@@ -1,61 +1,38 @@
 {% extends 'base.html'}
 {% block title %}Items
 {% endblock title %}
-{% block body_id %}items{%endblock %}
+{% block body_id %}items{% endblock %}
 
 {% block content %}
-	<div>
-		<table>
-			<tr>
-				<td> Item Code:</td><td> <input type="text" name="code1"></td>
-			</tr>
-			<tr>
-				<td> Item Name:</td><td> <input type="text" name="name"></td>
-			</tr>
-			<tr>
-				<td> Description:</td><td> <textarea rows="4" cols="50">
-				</textarea> </td>
-			</tr>
-			<tr>
-				<td> Brand Name:</td>
-				<td> 
-					<select>
-  						<option value=""></option>
-						 <option value=""></option>
-						 <option value=""></option>
-					</select>
-			</tr>
-			<tr>
-				<td> UOM:</td>
-				<td> 
-					<select>
-  						<option value=""></option>
-						 <option value=""></option>
-						 <option value=""></option>
-					</select>
-				</td>
-			</tr>
-			<tr>
-				<td> Vendor:</td>
-				<td> 
-					<select>
-  						<option value=""></option>
-						 <option value=""></option>
-						 <option value=""></option>
-					</select>
-				</td>
-			</tr>
-			<tr>
-				<td> Tax(%):</td><td> <input type="text" name="tax"></td>
-			</tr>
-			<tr>
-			</tr>
-			<tr>
-				<td> </td>
-				<td> <input type="submit" name="Submit"></td>
-				<td> <input type="submit" name="Cancel"></td>
-			</tr>
-		</table>
+	<div class="main-title">
+		<div class="alert alert-info" align="Center">ADD NEW ITEMS</div>
 	</div>
-{% endblock content %}			
+	
+	<div class="main-content">
+		<form name="Item" action=" " method="POST">
+		<p> <label> Item Code</label> : <input type="text" name="code" ></p>
+		<p> <label> Item Name</label> : <input type="text" name="name" ></p>
+		<p> <label> Description</label> : <textarea rows="4" cols="50" name="description"></textarea></p>
+		<p> <label> Brand Name</label> : 
+					<select>
+  						<option value=""></option>
+						<option value=""></option>
+						<option value=""></option>
+					</select></p>
+		<p> <label> UOM</label> : <select>
+  						<option value=""></option>
+						<option value=""></option>
+						<option value=""></option>
+					</select></p>
+		<p> <label>Vendor</label> : 
+					<select>
+  						<option value=""></option>
+						 <option value=""></option>
+						 <option value=""></option>
+					</select></p>
+		<p> <label>Tax(%)</label> : <input type="text" name="tax"></p>
+		<p> <input type="submit" value="Submit" name="Submit">
+			<input type="submit" value="Cancel" name="Cancel"></p>	
+	</div>			
 			
+{% endblock content %}
