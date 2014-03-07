@@ -1,0 +1,91 @@
+.container {
+	width: 100% !important;
+	margin: auto;	
+	height: 100%;
+}
+
+.menu {
+	float: right;
+	height: 50%;
+	margin-top: 2%
+}
+
+.menu ul li {
+	float: left;
+	display: block;
+	padding: 2px 10px 2px 5px;
+	border-right: 1px solid #FFFFFF;
+}
+.menu ul li a{
+	color: #FFFFFF;
+}
+.menu ul li a:hover {
+	color: #235580;
+	text-decoration: none;
+}
+.last {
+	border: none !important;
+}
+a {
+	text-decoration: none;
+}
+.logo {
+	margin: 10px;
+	width: 250px;
+	height: 60px;
+	float: left;	
+}
+header {
+	background-color: #ADD8E6;
+	width: 100%;
+	min-height: 20px !important;
+	margin: 0px !important;
+	color: #FFFFFF;
+	font-size: 15px;
+	font-weight: bold;
+	display: block;
+	padding: 1px 0px 1px 0px;
+	float: left;
+}
+
+.div_header {
+	background-color: #ADD8E6;
+    color: #FFFFFF;
+    font-size: 16px;
+    font-weight: bold;
+    padding: 10px 0 10px 17px;
+    width: 95%;
+}
+.login {
+	border: 1px solid #ADD8E6;
+    margin: auto;
+    width: 26%;
+    margin-top: 5%;
+    border-radius: 3px;
+}
+.form_container {
+	margin: 5%;
+	width: 100%;
+}
+.content {
+	float: left;
+	width: 100%;
+	min-height: 540px;
+}
+
+.welcome {
+	color: #006E80;
+	margin: auto;
+	width: 40%;
+	margin-top: 10%;
+}
+
+footer {
+	background-color: #CCCCCC;
+	color: #FFFFFF;
+	float: left;
+	width: 100%;
+	min-height: 50px;
+	text-align: center;
+	padding-top: 5px;
+}

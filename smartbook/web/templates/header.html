@@ -1,0 +1,16 @@
+<header class="">
+	<div class="logo">
+		<img src="/static/images/Logo.png" >
+	</div>
+	<div class="menu">
+		{% if user.is_authenticated %}
+			<ul>
+				<li> <a href=""> Inventory </a> </li>
+				<li> <a href=""> Purchase </a> </li>
+				<li> <a href=""> Sales </a> </li>
+				<li> <a href=""> Expenses </a> </li>
+				<li class="last"> <a href=""> Reports </a> </li>
+			</ul>
+		{% endif %}
+	</div>
+</header>
