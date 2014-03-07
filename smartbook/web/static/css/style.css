@@ -20,7 +20,7 @@
 .menu_div ul li ul li {
 	float: none;
 	display: block;
-	padding: 5px 5px 2px 5px;
+	padding: 3px 5px 0px 5px;
 	border: none;	
 	height: 30px;
 }
@@ -44,6 +44,7 @@
 }
 .menu_div ul li ul li a{
 	color: #FFFFFF;
+	font-weight: normal;
 }
 .menu_div ul li ul li a:hover {
 	color: #235580;
