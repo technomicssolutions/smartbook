@@ -1,0 +1,61 @@
+{% extends 'base.html'}
+{% block title %}Items
+{% endblock title %}
+{% block body_id %}items{%endblock %}
+
+{% block content %}
+	<div>
+		<table>
+			<tr>
+				<td> Item Code:</td><td> <input type="text" name="code1"></td>
+			</tr>
+			<tr>
+				<td> Item Name:</td><td> <input type="text" name="name"></td>
+			</tr>
+			<tr>
+				<td> Description:</td><td> <textarea rows="4" cols="50">
+				</textarea> </td>
+			</tr>
+			<tr>
+				<td> Brand Name:</td>
+				<td> 
+					<select>
+  						<option value=""></option>
+						 <option value=""></option>
+						 <option value=""></option>
+					</select>
+			</tr>
+			<tr>
+				<td> UOM:</td>
+				<td> 
+					<select>
+  						<option value=""></option>
+						 <option value=""></option>
+						 <option value=""></option>
+					</select>
+				</td>
+			</tr>
+			<tr>
+				<td> Vendor:</td>
+				<td> 
+					<select>
+  						<option value=""></option>
+						 <option value=""></option>
+						 <option value=""></option>
+					</select>
+				</td>
+			</tr>
+			<tr>
+				<td> Tax(%):</td><td> <input type="text" name="tax"></td>
+			</tr>
+			<tr>
+			</tr>
+			<tr>
+				<td> </td>
+				<td> <input type="submit" name="Submit"></td>
+				<td> <input type="submit" name="Cancel"></td>
+			</tr>
+		</table>
+	</div>
+{% endblock content %}			
+			

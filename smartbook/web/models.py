@@ -10,17 +10,7 @@ USER_TYPE = (
 
 class UserProfile(models.Model):
 	user = models.ForeignKey(User)
-	user_type = models.CharField('User Type', max_length=10)
-	vendor_id = models.IntegerField('Vendor Id')
-	contact_person = models.CharField('Contact Person', max_length=15)
-	address = models.CharField('Address', max_length=30)
-	contact_no = models.IntegerField('Contact No')
-	email = models.CharField('Email', max_length=25)
-
-class Customer(models.Model):
-	user = models.ForeignKey(User)
-	customer_id = models.IntegerField('Customer Id')
-	cutomer_name = models.CharField('Customer Name', max_length=10)
+	user_type = models.CharField('User Type', max_length=10, choices=USER_TYPE)
 	house_name = models.CharField('House name', max_length=15)
 	street = models.CharField('Street', max_length=10)
 	city = models.CharField('City', max_length=10)
@@ -30,18 +20,28 @@ class Customer(models.Model):
 	land_line = models.IntegerField('Land Line', blank=True)
 	email_id = models.CharField('Email Id', max_length=25)
 
-class Staff(models.Model):
-	user = models.ForeignKey(User)
-	salesman_id = models.IntegerField('Salesman Id')
-	salesman_name = models.CharField('Salesman Name', max_length=10)
-	address = models.CharField('Address', max_length=30)
-	mobile = models.IntegerField('Mobile')
-	land_line = models.IntegerField('Land Line', blank=True)
+	def __unicode__(self):
+		return self.user.Username
+
+class Vendor(models.Model):
+	userprofile = models.ForeignKey(User)
+	contact_person = models.CharField('Contact Person', max_length=10)	
+
+	def __unicode__(self):
+		return "vendor" + self.user.userprofile.user.firstname
+
 	
-class Designation(models.Model):
-	user = models.ForeignKey(User)
+class Customer(models.Model):
+	userprofile = models.ForeignKey(User)
+
+	def __unicode__(self):
+		return "customer" + self.user.userprofile.user.firstname
+
+		
+class Staff(models.Model):
+	userprofile = models.ForeignKey(User)
 	designation = models.CharField('Designation', max_length=10)
 
-
-
-# Create your models here.
+	def __unicode__(self):
+		return "staff" + self.user.userprofile.user.firstname
+			
