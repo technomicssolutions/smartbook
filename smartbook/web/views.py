@@ -16,3 +16,25 @@ class Home(View):
         #context = {'userprofile':userprofile,}
         context = {}
         return render(request, 'home.html',context)
+
+class Login(View):
+
+    def post(self, request, *args, **kwargs):
+
+        user = authenticate(username=request.POST['username'], password=request.POST['password'])
+        if user and user.is_active:
+            login(request, user)
+            context = {}
+            
+        else:
+            context = {
+                'message' : 'Username or password is incorrect'
+            }
+        return render(request, 'home.html',context)
+
+class Logout(View):
+
+    def get(self, request, *args, **kwargs):
+
+        logout(request)
+        return HttpResponseRedirect(reverse('home'))

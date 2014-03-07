@@ -11,9 +11,11 @@
 				Login
 			</div>
 			<div class="form_container">
-				<form name="login" method="post">
+				<form name="login" method="post" action="{% url 'login' %}">
+					{% csrf_token %}
 					<p> Username : <input type="text" name="username" /></p>
 					<p> Password : <input type="text" name="password" /></p>
+					<p> {{message}} </p>
 					<p> <input type="submit" name="submit" value="Login" />
 				</form>
 			</div>
