@@ -24,7 +24,7 @@ class Purchase(models.Model):
 
 
 class Expense_type(models.Model):
-	category = models.CharField("Type",max_digits=14) 
+	category = models.CharField("Type",max_length=50) 
 
 	def __unicode__(self):
 		return self.category
