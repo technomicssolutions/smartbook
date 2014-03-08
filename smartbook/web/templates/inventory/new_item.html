@@ -3,21 +3,20 @@
 {% block body_id %}add_item{% endblock %}
 {% block content %}
 
-
-
 <div id="main-title">
 	<div class="alert alert-info" align="Center"><h4>Add Item</h4></div>
 </div>
 
 
-<div align="Center" ">
+<div align="Center">
 	<form class="" name="add_item" method="post" action="{% url 'add_item' %}">
 		{% csrf_token %}
 		{{ message }}
 		<p> <label > Item Code</label>  <input type="text"  name="code" ></p>
 		<p> <label> Item Name</label>  <input type="text" name="name" ></p>
 		<p> <label> Description</label>  <textarea rows="4" cols="50" name="description"></textarea></p>
-		<p> <label> UOM</label>  <select>
+		<p> <label> UOM</label>  
+					<select>
   						<option value=""></option>
 						<option value=""></option>
 						<option value=""></option>

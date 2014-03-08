@@ -44,9 +44,9 @@
 						<li> <a href=""> Vendor Accounts </a> </li>
 					</ul>
 				</li>
-				<li class="menu"> <a href=""> Sales </a> </li>
-				<li class="menu"> <a href=""> Expenses </a> </li>
-				<li class="menu last"> <a href=""> Reports </a> </li>
+				<li class="menu"> <a href="{% url 'sales' %}"> Sales </a> </li>
+				<li class="menu"> <a href="{% url 'expenses' %}"> Expenses </a> </li>
+				<li class="menu last"> <a href="{% url 'reports' %}"> Reports </a> </li>
 				
 			</ul>
 		{% endif %}

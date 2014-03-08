@@ -3,17 +3,15 @@
 {% block content %}
 
 <div id="main-title">
-	<div class="alert alert-info" align="Center">New Vendor</div>
+	<div class="alert alert-info" align="Center">New Customer</div>
 </div>
-<div>
 
-	<form name="vendoradd" method="post" action="{% url 'addvendor' %}">
+<div>
+	<form name="customeradd" method="post" action="{% url 'customer' %}">
 		{% csrf_token %}
 		{{ message }}
-		<label>Vendor Name</label>
+		<label>Customer Name</label>
 		<input name="name" type="text">
-		<label>Contact Person</label>
-		<input name="contact" type="text">
 		<label>House Name</label>
 		<input name="house" type="text">
 		<label>Street</label>
@@ -26,7 +24,7 @@
 		<input name="pin" type="text">
 		<label>Mobile</label>
 		<input name="mobile" type="text">
-		<label>Land line</label>
+		<label>Land Line</label>
 		<input name="phone" type="text">
 		<label>Email Id</label>
 		<input name="email" type="text">
