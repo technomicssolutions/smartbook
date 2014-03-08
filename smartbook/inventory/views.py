@@ -12,9 +12,13 @@ from django.contrib.auth.models import User
 
 from inventory.models import Item
 from inventory.models import UnitOfMeasure
+
 class ItemAdd(View):
 	def get(self, request, *args, **kwargs):
-		return render(request, 'inventory/new_item.html',{})# Create your views here.
+		uom = UnitOfMeasure.objects.all()
+		return render(request, 'inventory/new_item.html',{
+			'uoms': uom
+		})# Create your views here.
 
 	def post(self, request, *args, **kwargs):
               
@@ -22,21 +26,19 @@ class ItemAdd(View):
 		uom_add = UnitOfMeasure()
 		
 		context={}
-		try:
+		#try:
             
-			item_add.code =request.POST['code']
-			item_add.name =request.POST['name']
-			item_add.description =request.POST['description']
-			uom=UnitOfMeasure.objects.get(uom=request.POST['add_uom'])
-			uom_add.uom = uom
-			uom_add.save()
-			item_add.barcode =request.POST['barcode']
-			item_add.tax =request.POST['tax']
-			item_add.save()
+		item_add.code =request.POST['code']
+		item_add.name =request.POST['name']
+		item_add.description =request.POST['description']
+		uom=UnitOfMeasure.objects.get(uom=request.POST['uom'])
+		item_add.barcode =request.POST['barcode']
+		item_add.tax =request.POST['tax']
+		item_add.save()
 
-			context = {
-				'message' : 'Item Added Successfully.',
-                }
-		except:
-			print "Unexpected error:", sys.exc_info()[0]
+		context = {
+			'message' : 'Item Added Successfully.',
+            }
+		# except:
+		# 	print "Unexpected error:", sys.exc_info()[0]
 		return render(request, 'inventory/new_item.html',context)
