@@ -16,8 +16,8 @@ class UserProfile(models.Model):
 	city = models.CharField('City', null=True, blank=True, max_length=10)
 	district = models.CharField('District', null=True, blank=True, max_length=10)
 	pin = models.CharField('Pin', max_length=10, null=True, blank=True,)
-	mobile = models.IntegerField('Mobile')
-	land_line = models.IntegerField('Land Line', blank=True)
+	mobile = models.CharField('Mobile', max_length=10, null=True, blank=True)
+	land_line = models.CharField('Land Line',max_length=10, blank=True)
 	email_id = models.CharField('Email Id', max_length=25)
 
 	def __unicode__(self):
