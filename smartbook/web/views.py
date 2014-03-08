@@ -59,8 +59,8 @@ class VendorAdd(View):
         #try:
         user = User.objects.create(username=request.POST['name'], email = request.POST['email'])
         user.save()
-        print "2222",request.POST['house']
         userprofile.user_type="vendor"
+        userprofile.user = user
         userprofile.house_name =request.POST['house']
         userprofile.street = request.POST['street']
         userprofile.city = request.POST['city']
@@ -71,6 +71,7 @@ class VendorAdd(View):
         userprofile.email_id = request.POST['email']
         userprofile.save()
         vendor.contact_person= request.POST['contact']
+        vendor.userprofile = userprofile
         vendor.save()
         context = {
                 'message' : 'Vendor added correctly',

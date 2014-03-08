@@ -21,27 +21,27 @@ class UserProfile(models.Model):
 	email_id = models.CharField('Email Id', max_length=25)
 
 	def __unicode__(self):
-		return self.user.Username
+		return self.user.username
 
 class Vendor(models.Model):
-	userprofile = models.ForeignKey(User)
+	user = models.ForeignKey(User)
 	contact_person = models.CharField('Contact Person', max_length=10)	
 
 	def __unicode__(self):
-		return "vendor" + self.user.userprofile.user.firstname
+		return "vendor - ", self.user.userprofile.user.first_name
 
 	
 class Customer(models.Model):
-	userprofile = models.ForeignKey(User)
+	user = models.ForeignKey(User)
 
 	def __unicode__(self):
-		return "customer" + self.user.userprofile.user.firstname
+		return "customer - ", self.user.userprofile.user.first_name
 
 		
 class Staff(models.Model):
-	userprofile = models.ForeignKey(User)
+	user = models.ForeignKey(User)
 	designation = models.CharField('Designation', max_length=10)
 
 	def __unicode__(self):
-		return "staff" + self.user.userprofile.user.firstname
+		return "staff - ", self.user.userprofile.user.first_name
 			
