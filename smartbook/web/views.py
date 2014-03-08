@@ -56,7 +56,7 @@ class VendorAdd(View):
             user.username=request.POST['name']
             user.save()
             print "2222",request.POST['house']
-            userprofile.user_type="ygugiu"
+            userprofile.user_type="vendor"
             userprofile.house_name =request.POST['house']
             userprofile.street = request.POST['street']
             userprofile.city = request.POST['city']
