@@ -52,7 +52,6 @@ class VendorAdd(View):
         return render(request, 'add_vendor.html',{})
 
     def post(self, request, *args, **kwargs):
-        user = User()
         userprofile = UserProfile()
         vendor = Vendor()
         context={}
@@ -71,7 +70,7 @@ class VendorAdd(View):
         userprofile.email_id = request.POST['email']
         userprofile.save()
         vendor.contact_person= request.POST['contact']
-        vendor.userprofile = userprofile
+        vendor.user = user
         vendor.save()
         context = {
                 'message' : 'Vendor added correctly',

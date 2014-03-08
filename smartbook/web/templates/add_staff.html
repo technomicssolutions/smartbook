@@ -7,7 +7,7 @@
 </div>
 
 <div>
-	<form name="staffadd" method="post" action="{% url 'staff' %}">
+	<form name="staffadd" method="post" action="{% url 'addstaff' %}">
 		{% csrf_token %}
 		{{ message }}
 		<label>Name</label>
