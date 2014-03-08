@@ -43,6 +43,10 @@ class Logout(View):
         logout(request)
         return HttpResponseRedirect(reverse('home'))
 
+class VendorList(View):
+    def get(self, request, *args, **kwargs):
+        return render(request, 'list_vendor.html',{})
+
 class VendorAdd(View):
     def get(self, request, *args, **kwargs):
         return render(request, 'add_vendor.html',{})
@@ -56,7 +60,7 @@ class VendorAdd(View):
             user.username=request.POST['name']
             user.save()
             print "2222",request.POST['house']
-            userprofile.user_type="ygugiu"
+            userprofile.user_type="vendor"
             userprofile.house_name =request.POST['house']
             userprofile.street = request.POST['street']
             userprofile.city = request.POST['city']
@@ -74,6 +78,24 @@ class VendorAdd(View):
         except:
             print "Unexpected error:", sys.exc_info()[0]
         return render(request, 'add_vendor.html',context)
+
+class StaffList(View):
+    def get(self, request, *args, **kwargs):
+        return render(request, 'list_vendor.html',{})
+
+class StaffAdd(View):
+    def get(self, request, *args, **kwargs):
+        return render(request, 'list_vendor.html',{})
+
+class CustomerList(View):
+    def get(self, request, *args, **kwargs):
+        return render(request, 'list_vendor.html',{})
+
+class CustomerAdd(View):
+    def get(self, request, *args, **kwargs):
+        return render(request, 'list_vendor.html',{})
+
+
 
 
 
