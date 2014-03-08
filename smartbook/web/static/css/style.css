@@ -167,10 +167,12 @@ height:auto;
 }
 .form_container label{
 	float: left;
+	display: block !important;
 }
 
 .form_container input{
 	float: right;
+	display: block;
 }
 
 
