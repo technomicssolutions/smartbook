@@ -1,12 +1,13 @@
 {% extends 'base.html' %}
-
+{% block title %} New Staff {% endblock title %}
+{% block body_id %} new_staff {% endblock body_id %}
 {% block content %}
 
 <div id="main-title">
 	<div class="alert alert-info" align="Center">New Staff</div>
 </div>
 
-<div>
+<div class="form_container">
 	<form name="staffadd" method="post" action="{% url 'addstaff' %}">
 		{% csrf_token %}
 		{{ message }}
