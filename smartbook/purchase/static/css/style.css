@@ -135,27 +135,9 @@ footer {
 	padding:8px 0 8px 0;
     font-weight: bold;
 }
-.div_content
-{
-margin-left:500px;
-margin-top:50px;
-width:300px;
-height:auto;
-//background-color:#80b280;   
-//border:1px solid red;
-}
 
 .item label
 {
 	padding:8px 0 8px 0;
-
-
 }
-
-.field{position:relative;}
-.field .popup{padding:10px;display:block;position:absolute;top:0;left:0;height:30px;width:200px;background:#ffffff;}
-
-
-
-
 

@@ -23,16 +23,16 @@ class Purchase(models.Model):
 		return self.invoice_number
 
 
-class Expense_type(models.Model):
+class ExpenseType(models.Model):
 	category = models.CharField("Type",max_length=50) 
 
 	def __unicode__(self):
 		return self.category
 
 
-class Purchase_expense(models.Model):
+class PurchaseExpense(models.Model):
 	purchase = models.ForeignKey(Purchase)
-	category = models.ForeignKey(Expense_type)
+	category = models.ForeignKey(ExpenseType)
 	total = models.DecimalField('Total Amout',max_digits=14, decimal_places=2, default=0)
 	paid = models.DecimalField('Paid Amout',max_digits=14, decimal_places=2, default=0)
 
@@ -40,7 +40,7 @@ class Purchase_expense(models.Model):
 		return self.purchase
 
 
-class Purchase_return(models.Model):
+class PurchaseReturn(models.Model):
 	purchase = models.ForeignKey(Purchase)
 	date = models.DateField('Date')
 	time = models.TimeField('Time')

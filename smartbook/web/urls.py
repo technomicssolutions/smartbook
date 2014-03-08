@@ -12,4 +12,5 @@ urlpatterns = patterns('',
 	url(r'^add-staff/$', StaffAdd.as_view(),name='staffadd'),
 	url(r'^customer-list/$', CustomerList.as_view(),name='customer'),
 	url(r'^add-customer/$', CustomerAdd.as_view(),name='customeradd'),
+	
 )

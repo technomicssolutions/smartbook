@@ -3,7 +3,7 @@
 		<img src="/static/images/Logo.png" >
 	</div>
 
-	<span class="user_name"> 
+<!-->	<span class="user_name"> 
 		{% if user.is_authenticated %}
 			{% if user.first_name %}
 				{{user.first_name}} {{user.last_name}} 
@@ -12,6 +12,8 @@
 			{% endif %} Logged in as {{user.username}} 
 		{% endif %}
 	</span>
+
+	<!---->
 	<div class="menu_div">
 		{% if user.is_authenticated %}
 			<ul>
@@ -29,7 +31,7 @@
 				</li>
 				<li class="menu"> <a href=""> Inventory </a> 
 					<ul> 
-						<li> <a href=""> Items </a> </li>
+						<li> <a href="{% url 'add_item' %}"> Add item </a> </li>
 						<li> <a href=""> New Item </a> </li>
 						<li> <a href=""> Stock </a> </li>
 						<li> <a href=""> New stock </a> </li>
@@ -37,7 +39,7 @@
 				</li>
 				<li class="menu"> <a href=""> Purchase </a> </a> 
 					<ul> 
-						<li> <a href=""> Purchases </a> </li>
+						<li> <a href="{% url 'purchase' %}"> Purchase </a> </li>
 						<li> <a href=""> New Entry </a> </li>
 						<li> <a href=""> Vendor Accounts </a> </li>
 					</ul>
