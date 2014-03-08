@@ -56,27 +56,27 @@ class VendorAdd(View):
         userprofile = UserProfile()
         vendor = Vendor()
         context={}
-        try:
-            user.username=request.POST['name']
-            user.save()
-            print "2222",request.POST['house']
-            userprofile.user_type="vendor"
-            userprofile.house_name =request.POST['house']
-            userprofile.street = request.POST['street']
-            userprofile.city = request.POST['city']
-            userprofile.district = request.POST['district']
-            userprofile.pin = request.POST['pin']
-            userprofile.mobile = request.POST['mobile']
-            userprofile.land_line = request.POST['phone']
-            userprofile.email_id = request.POST['email']
-            userprofile.save()
-            vendor.contact_person= request.POST['contact']
-            vendor.save()
-            context = {
-                    'message' : 'Vendor added correctly',
-                }
-        except:
-            print "Unexpected error:", sys.exc_info()[0]
+        #try:
+        user = User.objects.create(username=request.POST['name'], email = request.POST['email'])
+        user.save()
+        print "2222",request.POST['house']
+        userprofile.user_type="vendor"
+        userprofile.house_name =request.POST['house']
+        userprofile.street = request.POST['street']
+        userprofile.city = request.POST['city']
+        userprofile.district = request.POST['district']
+        userprofile.pin = request.POST['pin']
+        userprofile.mobile = request.POST['mobile']
+        userprofile.land_line = request.POST['phone']
+        userprofile.email_id = request.POST['email']
+        userprofile.save()
+        vendor.contact_person= request.POST['contact']
+        vendor.save()
+        context = {
+                'message' : 'Vendor added correctly',
+            }
+        # except:
+        #     print "Unexpected error:", sys.exc_info()[0]
         return render(request, 'add_vendor.html',context)
 
 class StaffList(View):

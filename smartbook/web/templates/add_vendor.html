@@ -7,7 +7,7 @@
 </div>
 <div>
 
-	<form name="vendoradd" method="post" action="{% url 'vendor' %}">
+	<form name="vendoradd" method="post" action="{% url 'addvendor' %}">
 		{% csrf_token %}
 		{{ message }}
 		<label>Vendor Name</label>

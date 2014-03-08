@@ -3,7 +3,7 @@
 		<img src="/static/images/Logo.png" >
 	</div>
 
-<!-->	<span class="user_name"> 
+	<span class="user_name"> 
 		{% if user.is_authenticated %}
 			{% if user.first_name %}
 				{{user.first_name}} {{user.last_name}} 
@@ -13,14 +13,14 @@
 		{% endif %}
 	</span>
 
-	<!---->
+	
 	<div class="menu_div">
 		{% if user.is_authenticated %}
 			<ul>
 				<li class="menu"> <img src="/static/images/user.png" width="24px" >
 					<ul>
-						<li> <a href="{% url 'vendor' %}"> Vendors </a> </li>
-						<li> <a href="{% url 'vendoradd' %}"> New Vendor </a> </li>
+						<li> <a href="{% url 'vendors' %}"> Vendors </a> </li>
+						<li> <a href="{% url 'addvendor' %}"> New Vendor </a> </li>
 						<li> <a href="{% url 'staff' %}"> Staff </a> </li>
 						<li> <a href="{% url 'staffadd' %}"> New Staff </a> </li>
 						<li> <a href="{% url 'customer' %}"> Customer </a> </li>
