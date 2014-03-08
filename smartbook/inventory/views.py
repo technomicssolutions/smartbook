@@ -11,7 +11,7 @@ from django.core.urlresolvers import reverse
 from django.contrib.auth.models import User
 
 from inventory.models import Item
-
+from inventory.models import UnitOfMeasure
 class ItemAdd(View):
 	def get(self, request, *args, **kwargs):
 		return render(request, 'inventory/new_item.html',{})# Create your views here.
@@ -35,7 +35,7 @@ class ItemAdd(View):
 			item_add.save()
 
 			context = {
-				'message' : 'Item Addes Successfully.',
+				'message' : 'Item Added Successfully.',
                 }
 		except:
 			print "Unexpected error:", sys.exc_info()[0]
