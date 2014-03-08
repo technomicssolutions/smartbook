@@ -26,7 +26,7 @@ class ItemAdd(View):
 		uom_add = UnitOfMeasure()
 		
 		context={}
-		#try:
+		
             
 		item_add.code =request.POST['code']
 		item_add.name =request.POST['name']
@@ -36,9 +36,8 @@ class ItemAdd(View):
 		item_add.tax =request.POST['tax']
 		item_add.save()
 
-		context = {
-			'message' : 'Item Added Successfully.',
-            }
-		# except:
-		# 	print "Unexpected error:", sys.exc_info()[0]
-		return render(request, 'inventory/new_item.html',context)
+	
+		uom = UnitOfMeasure.objects.all()
+		return render(request, 'inventory/new_item.html',{
+			'uoms': uom
+		})
