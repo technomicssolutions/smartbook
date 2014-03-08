@@ -52,7 +52,6 @@ class VendorAdd(View):
         return render(request, 'add_vendor.html',{})
 
     def post(self, request, *args, **kwargs):
-        user = User()
         userprofile = UserProfile()
         vendor = Vendor()
         context={}
@@ -71,7 +70,7 @@ class VendorAdd(View):
         userprofile.email_id = request.POST['email']
         userprofile.save()
         vendor.contact_person= request.POST['contact']
-        vendor.userprofile = userprofile
+        vendor.user = user
         vendor.save()
         context = {
                 'message' : 'Vendor added correctly',
@@ -93,27 +92,27 @@ class StaffAdd(View):
         userprofile = UserProfile()
         staff = Staff()
         context = {}
-        try:
-            user.username=request.POST['name']
-            user.save()
-            print "2222", request.POST['house']
-            userprofile.user_type="staff"
-            userprofile.house_name = request.POST['house']
-            userprofile.street = request.POST['street']
-            userprofile.city = request.POST['city']
-            userprofile.district = request.POST['district']
-            userprofile.pin = request.POST['pin']
-            userprofile.mobile = request.POST['mobile']
-            userprofile.land_line = request.POST['phone']
-            userprofile.email_id = request.POST['email']
-            userprofile.save()
-            staff.designation = request.POST['designation']
-            staff.save()
-            context = {
-                    'message' : 'Staff Added Successfully',
-                }
-        except:
-            print "Unexpected error:", sys.exc_info()[0]
+        #try:
+        user.username=request.POST['name']
+        user.save()
+        print "2222", request.POST['house']
+        userprofile.user_type="staff"
+        userprofile.house_name = request.POST['house']
+        userprofile.street = request.POST['street']
+        userprofile.city = request.POST['city']
+        userprofile.district = request.POST['district']
+        userprofile.pin = request.POST['pin']
+        userprofile.mobile = request.POST['mobile']
+        userprofile.land_line = request.POST['phone']
+        userprofile.email_id = request.POST['email']
+        userprofile.save()
+        staff.designation = request.POST['designation']
+        staff.save()
+        context = {
+                'message' : 'Staff Added Successfully',
+            }
+        # except:
+        #     print "Unexpected error:", sys.exc_info()[0]
         return render(request, 'add_staff.html',context)
 
 

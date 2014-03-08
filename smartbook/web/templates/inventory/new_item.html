@@ -16,32 +16,16 @@
 		<p> <label> Item Name</label>  <input type="text" name="name" ></p>
 		<p> <label> Description</label>  <textarea rows="4" cols="50" name="description"></textarea></p>
 		<p> <label> UOM</label>  
-					<select>
-  						<option value=""></option>
-						<option value=""></option>
-						<option value=""></option>
+					<select name="uom">
+						{% for uom in uoms %}
+  							<option value="{{uom.uom}}">{{uom.uom}}</option>
+						{% endfor %}
 					</select></p>
-
-
-		<div class="content" ng-controller="smartbook">
-       	<div class="field">
-        <button ng-click="showPopup = true" >Add UOM</button>
-        <popup when="showPopup" class="popup">
-        	
-            <p> <label > UOM</label>  <input type="text"  name="add_uom" ></p>
-            
-        </popup>
-    	</div>
-		</div>
 
 		<p> <label>Barcode</label>  <input type="text" name="barcode"></p>
 		<p> <label>Tax(%)</label>  <input type="text" name="tax"></p>
 		<p> <input type="submit" value="Submit" name="Submit">
 			<input type="submit" value="Cancel" name="Cancel"></p>	
-
-
-	
-
 			{{ message }}
 	</form>
 </div>
