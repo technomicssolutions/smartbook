@@ -3,7 +3,7 @@ from django.contrib.auth.models import User
 
 # Create your models here.
 
-class Unit_of_measure(models.Model):
+class UnitOfMeasure(models.Model):
 	uom = models.CharField('Unit Of Measure', max_length=50)
 	def __unicode__(self):
 		return self.uom
@@ -22,7 +22,7 @@ class Item(models.Model):
 	code = models.IntegerField('Item Code')
 	name = models.CharField('Name', max_length=50)
 	description = models.TextField('Description', max_length=50,null=True, blank=True)
-	uom = models.ForeignKey(Unit_of_measure)
+	uom = models.ForeignKey(UnitOfMeasure)
 	barcode = models.CharField('Barcode', max_length=50,null=True, blank=True)
 	tax = models.DecimalField('Tax',max_digits=14, decimal_places=2, default=0)
 	def __unicode__(self):

@@ -1,38 +1,70 @@
-{% extends 'base.html'}
-{% block title %}Items
-{% endblock title %}
-{% block body_id %}items{% endblock %}
-
+{% extends 'base.html' %}
+{% block title %}Add Item{% endblock title %}
+{% block body_id %}add_item{% endblock %}
 {% block content %}
-	<div class="main-title">
-		<div class="alert alert-info" align="Center">ADD NEW ITEMS</div>
-	</div>
-	
-	<div class="main-content">
-		<form name="Item" action=" " method="POST">
-		<p> <label> Item Code</label> : <input type="text" name="code" ></p>
-		<p> <label> Item Name</label> : <input type="text" name="name" ></p>
-		<p> <label> Description</label> : <textarea rows="4" cols="50" name="description"></textarea></p>
-		<p> <label> Brand Name</label> : 
-					<select>
+
+
+
+<div id="main-title">
+	<div class="alert alert-info" align="Center"><h4>Add Item</h4></div>
+</div>
+
+
+<div align="Center" ">
+	<form class="" name="add_item" method="post" action="{% url 'add_item' %}">
+		{% csrf_token %}
+		{{ message }}
+		<p> <label > Item Code</label>  <input type="text"  name="code" ></p>
+		<p> <label> Item Name</label>  <input type="text" name="name" ></p>
+		<p> <label> Description</label>  <textarea rows="4" cols="50" name="description"></textarea></p>
+		<p> <label> UOM</label>  <select>
   						<option value=""></option>
 						<option value=""></option>
 						<option value=""></option>
 					</select></p>
-		<p> <label> UOM</label> : <select>
-  						<option value=""></option>
-						<option value=""></option>
-						<option value=""></option>
-					</select></p>
-		<p> <label>Vendor</label> : 
-					<select>
-  						<option value=""></option>
-						 <option value=""></option>
-						 <option value=""></option>
-					</select></p>
-		<p> <label>Tax(%)</label> : <input type="text" name="tax"></p>
+
+
+		<div class="content" ng-controller="smartbook">
+       	<div class="field">
+        <button ng-click="showPopup = true" >Add UOM</button>
+        <popup when="showPopup" class="popup">
+        	
+            <p> <label > UOM</label>  <input type="text"  name="add_uom" ></p>
+            
+        </popup>
+    	</div>
+		</div>
+
+		<p> <label>Barcode</label>  <input type="text" name="barcode"></p>
+		<p> <label>Tax(%)</label>  <input type="text" name="tax"></p>
 		<p> <input type="submit" value="Submit" name="Submit">
 			<input type="submit" value="Cancel" name="Cancel"></p>	
-	</div>			
-			
+
+
+	
+
+			{{ message }}
+	</form>
+</div>
+
+
 {% endblock content %}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
