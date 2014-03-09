@@ -10,6 +10,7 @@ from django.http import Http404, HttpResponse, HttpResponseRedirect
 from django.contrib.auth import authenticate, login, logout
 from django.core.urlresolvers import reverse
 from django.contrib.auth.models import User
+from .models import ExpenseHead, Expense
 
 class Expenses(View):
 	def get(self, request, *args, **kwargs):
@@ -21,5 +22,19 @@ class AddExpenseHead(View):
 
 		return render(request, 'expenses/add_expense_head.html', {})
 
+	def post(self, request, *args, **kwargs):
+
+		print request.POST
+		try:
+			expense_head = ExpenseHead.objects.create(expense_head = post_dict['head_name'])
+			print expense_head
+			context = {
+				'message' : 'Added successfully',
+			}
+		except:
+			context = {
+				'message' : 'Head name is already existing',
+			}
+		return render(request, 'expenses/add_expense_head.html', context)
 
 

@@ -5,8 +5,8 @@
 {% block title %}New Expense Head{% endblock title %}
 
 {% block content %}
-	<div class="form_container">
-		<form name="add_expense_head">
+	<div class="expense_form_container">
+		<form name="add_expense_head" method="post" action="{% url 'new_expense_head' %}">
 			<div class="formrow">
 				<div class="formtext">
 					<label for="head_name">Head Name</label>
