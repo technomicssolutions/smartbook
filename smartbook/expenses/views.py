@@ -25,15 +25,27 @@ class AddExpenseHead(View):
 	def post(self, request, *args, **kwargs):
 
 		print request.POST
+		post_dict = request.POST
+
 		try:
-			expense_head = ExpenseHead.objects.create(expense_head = post_dict['head_name'])
-			print expense_head
+			if len(post_dict['head_name']) > 0 and not post_dict['head_name'].isspace():
+				expense_head, created = ExpenseHead.objects.get_or_create(expense_head = post_dict['head_name'])
+				if created:
+					context = {
+						'message' : 'Added successfully',
+					}
+				else:
+					context = {
+						'message' : 'This Head name is Already Existing',
+					}
+			else:
+				context = {
+					'message' : 'Head name Cannot be null',
+				}
+		except Exception as ex:
+			print str(ex)
 			context = {
-				'message' : 'Added successfully',
-			}
-		except:
-			context = {
-				'message' : 'Head name is already existing',
+				'message' : post_dict['head_name']+' is already existing',
 			}
 		return render(request, 'expenses/add_expense_head.html', context)
 

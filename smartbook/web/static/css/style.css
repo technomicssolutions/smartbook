@@ -211,8 +211,19 @@ height:auto;
 .forminput {
 	float: left;
 }
-
-
+.add_expense_head {
+	height: 100%;
+	margin: auto;
+    margin-top: 30px;
+    width: 38%;
+}
+.required_field {
+	color: #FF0000;
+}
+.buttons {
+	margin: auto;
+    width: 50%;
+}
 
 
 
