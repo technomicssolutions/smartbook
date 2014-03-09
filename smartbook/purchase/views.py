@@ -24,4 +24,10 @@ class PurchaseEntry(View):
         	'brands' : brand,
         	'vendors' : vendor,
         	})
-        
+class PurchaseEdit(View):
+    def get(self, request, *args, **kwargs):
+    	
+        return render(request, 'purchase/edit_purchase_entry.html',{
+        	
+        	})
+
