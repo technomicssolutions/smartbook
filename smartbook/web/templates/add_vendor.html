@@ -8,7 +8,7 @@
 </div>
 <div class="form_container">
 
-	<form name="vendoradd" method="post" action="{% url 'addvendor' %}">
+	<form name="vendoradd" method="post" action="{% url 'register_user' user_type='vendor' %}">
 		{% csrf_token %}
 		{{ message }}
 		<div class="control"> 

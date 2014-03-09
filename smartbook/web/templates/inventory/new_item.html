@@ -22,9 +22,10 @@
 						{% endfor %}
 					</select></p>
 		<p> <label> Brand</label>  
+			
 					<select name="brand">
-						{% for brand in barnds %}
-  							<option value="{{brand.brand}}">{{brand.brand}}</option>
+						{% for brand in brands%}
+							<option value="{{brand.brand}}">{{brand.brand}}</option>
 						{% endfor %}
 					</select></p>
 		<p> <label>Barcode</label>  <input type="text" name="barcode"></p>
