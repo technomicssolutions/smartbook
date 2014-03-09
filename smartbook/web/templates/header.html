@@ -19,12 +19,12 @@
 			<ul>
 				<li class="menu"> <img src="/static/images/user.png" width="24px" >
 					<ul>
-						<li> <a href="{% url 'vendors' %}"> Vendors </a> </li>
-						<li> <a href="{% url 'addvendor' %}"> New Vendor </a> </li>
-						<li> <a href="{% url 'staffs' %}"> Staff </a> </li>
-						<li> <a href="{% url 'addstaff' %}"> New Staff </a> </li>
-						<li> <a href="{% url 'customer' %}"> Customer </a> </li>
-						<li> <a href="{% url 'customeradd' %}"> New Customer </a> </li>
+						<li> <a href="{% url 'users' user_type='vendor' %}"> Vendors </a> </li>
+						<li> <a href="{% url 'register_user' user_type='vendor' %}"> New Vendor </a> </li>
+						<li> <a href="{% url 'users' user_type='staff' %}"> Staff </a> </li>
+						<li> <a href="{% url 'register_user' user_type='staff' %}"> New Staff </a> </li>
+						<li> <a href="{% url 'users' user_type='customer'  %}"> Customers </a> </li>
+						<li> <a href="{% url 'register_user' user_type='customer' %}"> New Customer </a> </li>
 						<li> <a href="{% url 'logout' %}"> Logout </a> </li>
 						<li> <a href=""> Reset password </a> </li>
 					</ul>
@@ -44,7 +44,12 @@
 					</ul>
 				</li>
 				<li class="menu"> <a href="{% url 'sales' %}"> Sales </a> </li>
-				<li class="menu"> <a href="{% url 'expenses' %}"> Expenses </a> </li>
+				<li class="menu"> <a href="{% url 'expenses' %}"> Expenses </a> 
+					<ul>
+						<li><a href="">Expenses</a></li>
+						<li><a href="">New Expense Head</a></li>
+					</ul>
+				</li>
 				<li class="menu last"> <a href="{% url 'reports' %}"> Reports </a> </li>
 				
 			</ul>
