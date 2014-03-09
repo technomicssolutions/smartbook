@@ -23,7 +23,7 @@
 							<label for="voucher_no">Voucher No :</label>
 						</div>
 						<div class="forminput">
-							<input type="text" name="voucher_no">
+							<input type="text" name="voucher_no" ng-model="voucher_no">
 						</div>
 					</div>
 					<div class="formrow">
@@ -31,7 +31,7 @@
 							<label for="date">Date :</label>
 						</div>
 						<div class="forminput">
-							<input type="text" name="date" id="expense_date">
+							<input type="text" name="date" id="date" ng-model="date">
 						</div>
 					</div>
 					<div class="formrow">
@@ -39,8 +39,9 @@
 							<label for="expense_head">Select Head :</label>
 						</div>
 						<div class="forminput">
-							<select name="expense_head">
+							<select name="expense_head" ng-model="expense_head">
 								<option value="select">Select</option>
+								<option ng-repeat="head in expense_heads" value="[[head.head_name]]">[[head.head_name]]</option>
 							</select>
 						</div>
 					</div>
@@ -49,7 +50,7 @@
 							<label for="amount">Amount</label>
 						</div>
 						<div class="forminput">
-							<input type="text" name="amount">
+							<input type="text" name="amount" ng-model="amount">
 						</div>
 					</div>
 					<div class="formrow">
@@ -57,12 +58,9 @@
 							<label for="narration">Narration :</label>
 						</div>
 						<div class="forminput">
-							<textarea name="narration"></textarea>
+							<textarea name="narration" ng-model="narration"></textarea>
 						</div>
 					</div>
-					
-					
-					
 				</div>
 				<div class="section_2">
 					<div class="formrow">
@@ -70,7 +68,7 @@
 							<label for="checkno">Check No :</label>
 						</div>
 						<div class="forminput">
-							<input type="text" name="checkno">
+							<input type="text" name="checkno" ng-model="checkno">
 						</div>
 					</div>
 					<div class="formrow">
@@ -78,7 +76,7 @@
 							<label for="check_date">Check Date :</label>
 						</div>
 						<div class="forminput">
-							<input type="text" name="check_date" id="check_date">
+							<input type="text" name="check_date" id="check_date" ng-model="check_date">
 						</div>
 					</div>
 					<div class="formrow">
@@ -86,7 +84,7 @@
 							<label for="bank_name">Bank Name</label>
 						</div>
 						<div class="forminput">
-							<input type="text" name="bank_name">
+							<input type="text" name="bank_name" ng-model="bank_name">
 						</div>
 					</div>
 					<div class="formrow">
@@ -94,12 +92,12 @@
 							<label for="branch">Branch</label>
 						</div>
 						<div class="forminput">
-							<input type="text" name="branch">
+							<input type="text" name="branch" ng-model="branch">
 						</div>
 					</div>
 				</div>	
 				<div class="section_3">
-
+					<button class="btn" ng-repeat="head in expense_heads"><a href="" ng-click="selected_head('[[head.head_name]]')">[[head.head_name]]</a></button class="btn">
 				</div>
 			</div>
 			<div></div>

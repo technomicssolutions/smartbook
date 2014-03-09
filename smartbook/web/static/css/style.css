@@ -182,6 +182,17 @@ height:auto;
 	display: block;
 }
 
+form {
+	display: block;
+	float: left;
+	min-height: 100%
+}
+
+.error_message {
+	text-align: center;
+	color: red;
+}
+
 .expense_form_container {
 	margin: auto;
     max-width: 1024px;
@@ -193,13 +204,18 @@ height:auto;
 .section_1 {
 	float: left;
 	margin-right: 25px;
+	width: 315px;
 }
 .section_2 {
 	float: left;
 	margin-right: 25px;
+	width: 315px;
 }
 .section_3 {
 	float: left;
+	width: 245px;
+	height: 223px;
+	overflow: auto;
 }
 .formrow {
 	min-height: 40px;
@@ -217,6 +233,7 @@ height:auto;
 	margin: auto;
     margin-top: 30px;
     width: 38%;
+    float: none;
 }
 .required_field {
 	color: #FF0000;
@@ -230,15 +247,26 @@ height:auto;
 	color: #FF0000;
 }
 
-form {
-	display: block;
-	float: left;
-	min-height: 100%
+.btn {
+	background-color: #49AFCD;
+    background-image: linear-gradient(to bottom, #5BC0DE, #2F96B4);
+    background-repeat: repeat-x;
+    border-color: rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.25);
+    color: #FFFFFF;
+    text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.25);
+    float: left;
+    width: 230px;
+    height: 30px;
+    margin-bottom: 3px;
+    text-align: left;
 }
-
-.error_message {
-	text-align: center;
-	color: red;
+.btn a {
+	color: #FFFFFF;
 }
-
-
+.btn:hover {
+	background-color: #2F96B4;
+	color: #FFFFFF;
+}
+.btn:hover a {
+	color: #FFFFFF;
+}

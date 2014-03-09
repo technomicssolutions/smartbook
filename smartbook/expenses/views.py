@@ -1,5 +1,6 @@
 # Create your views here.
 import sys
+import simplejson
 
 from django.db import IntegrityError
 
@@ -13,6 +14,7 @@ from django.contrib.auth.models import User
 from .models import ExpenseHead, Expense
 
 class Expenses(View):
+
 	def get(self, request, *args, **kwargs):
 		return render(request, 'expenses/expense.html', {})
 
@@ -24,7 +26,6 @@ class AddExpenseHead(View):
 
 	def post(self, request, *args, **kwargs):
 
-		print request.POST
 		post_dict = request.POST
 
 		try:
@@ -43,10 +44,28 @@ class AddExpenseHead(View):
 					'message' : 'Head name Cannot be null',
 				}
 		except Exception as ex:
-			print str(ex)
 			context = {
 				'message' : post_dict['head_name']+' is already existing',
 			}
 		return render(request, 'expenses/add_expense_head.html', context)
+
+class ExpenseHeadList(View):
+
+	def get(self, request, *args, **kwargs):
+
+		ctx_expense_head = []
+		status_code = 200
+		expense_heads = ExpenseHead.objects.all()
+		if len(expense_heads) > 0:
+			for head in expense_heads:
+				ctx_expense_head.append({
+					'head_name': head.expense_head	
+				})
+		res = {
+			'result': 'ok',
+			'expense_heads':ctx_expense_head
+		}
+		response = simplejson.dumps(res)
+		return HttpResponse(response, status=status_code, mimetype="application/json")
 
 
