@@ -180,6 +180,38 @@ height:auto;
 	display: block;
 }
 
+.expense_form_container {
+	border: 1px solid;
+    margin: auto;
+    max-width: 1024px;
+    min-height: 500px;
+}
+.form_contents {
+	margin: 10px 5px;
+}
+.section_1 {
+	float: left;
+	margin-right: 25px;
+}
+.section_2 {
+	float: left;
+	margin-right: 25px;
+}
+.section_3 {
+	float: left;
+}
+.formrow {
+	min-height: 40px;
+    width: 100%;
+}
+.formtext {
+	float: left;
+    width: 95px;
+}
+.forminput {
+	float: left;
+}
+
 
 
 

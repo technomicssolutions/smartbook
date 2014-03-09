@@ -19,12 +19,7 @@
 			<ul>
 				<li class="menu"> <img src="/static/images/user.png" width="24px" >
 					<ul>
-						<li> <a href="{% url 'vendors' %}"> Vendors </a> </li>
-						<li> <a href="{% url 'register_user' user_type=vendor %}"> New Vendor </a> </li>
-						<li> <a href="{% url 'staffs' %}"> Staff </a> </li>
-						<li> <a href="{% url 'register_user' user_type=staff %}"> New Staff </a> </li>
-						<li> <a href="{% url 'register_user' user_type=customer %}"> Customer </a> </li>
-						<li> <a href="{% url 'customeradd' %}"> New Customer </a> </li>
+						
 						<li> <a href="{% url 'logout' %}"> Logout </a> </li>
 						<li> <a href=""> Reset password </a> </li>
 					</ul>
@@ -44,10 +39,10 @@
 					</ul>
 				</li>
 				<li class="menu"> <a href="{% url 'sales' %}"> Sales </a> </li>
-				<li class="menu"> <a href="{% url 'expenses' %}"> Expenses </a> 
+				<li class="menu"> <a href="{% url 'new_expense' %}"> Expenses </a> 
 					<ul>
-						<li><a href="">Expenses</a></li>
-						<li><a href="">New Expense Head</a></li>
+						<li><a href="{% url 'new_expense' %}">Expenses</a></li>
+						<li><a href="{% url 'new_expense_head' %}">New Expense Head</a></li>
 					</ul>
 				</li>
 				<li class="menu last"> <a href="{% url 'reports' %}"> Reports </a> </li>

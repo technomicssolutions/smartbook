@@ -15,5 +15,11 @@ class Expenses(View):
 	def get(self, request, *args, **kwargs):
 		return render(request, 'expenses/expense.html', {})
 
+class AddExpenseHead(View):
+
+	def get(self, request, *args, **kwargs):
+
+		return render(request, 'expenses/add_expense_head.html', {})
+
 
 
