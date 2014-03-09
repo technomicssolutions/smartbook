@@ -9,7 +9,7 @@
 </div>
 
 <div>
-	<form name="customeradd" method="post" action="{% url 'customer' %}">
+	<form name="customeradd" method="post" action="{% url 'reigister_user' user_type='customer' %}">
 		{% csrf_token %}
 		{{ message }}
 		<label>Customer Name</label>
