@@ -8,6 +8,14 @@ USER_TYPE = (
 	('staff','Staff')
 )
 
+class Designation(models.Model):
+
+	title = models.CharField('Designation title', max_length=50)
+	description = models.CharField('Description', max_length=100, null=True, blank=True)
+
+	def __unicode__(self):
+		return self.title
+
 class UserProfile(models.Model):
 	user = models.ForeignKey(User)
 	user_type = models.CharField('User Type', max_length=10, choices=USER_TYPE)
@@ -40,7 +48,7 @@ class Customer(models.Model):
 		
 class Staff(models.Model):
 	user = models.ForeignKey(User)
-	designation = models.CharField('Designation', max_length=10)
+	designation = models.ForeignKey(Designation, null=True, blank=True)
 
 	def __unicode__(self):
 		return "staff - ", self.user.userprofile.user.first_name
