@@ -19,8 +19,8 @@ class ItemAdd(View):
 		uom = UnitOfMeasure.objects.all()
 		brand = Brand.objects.all()
 		return render(request, 'inventory/new_item.html',{
-			'uoms': uom
-			'brands':brand
+			'uoms': uom,
+			'brands': brand ,
 		})# Create your views here.
 
 	def post(self, request, *args, **kwargs):
@@ -44,6 +44,6 @@ class ItemAdd(View):
 		brand = Brand.objects.all()
 		uom = UnitOfMeasure.objects.all()
 		return render(request, 'inventory/new_item.html',{
-			'uoms': uom
-			'brands':brand
+			'uoms': uom,
+			'brands': brand,
 		})
