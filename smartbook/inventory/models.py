@@ -10,8 +10,8 @@ class UnitOfMeasure(models.Model):
         
 
 class Brand(models.Model):
-	name = models.CharField('Brand', max_length=50)
-	description= models.CharField('Brand', max_length=50)
+	brand = models.CharField('Brand', max_length=50)
+	
 	
 	def __unicode__(self):
 		return self.name
