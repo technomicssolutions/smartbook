@@ -36,14 +36,41 @@ class ItemAdd(View):
 		item_add.description =request.POST['description']
 		uom =UnitOfMeasure.objects.get(uom=request.POST['uom'])
 		brand =Brand.objects.get(brand=request.POST['brand'])
-
 		item_add.barcode =request.POST['barcode']
 		item_add.tax =request.POST['tax']
+		item_add.brand=brand
+		item_add.uom=uom
 		item_add.save()
-
 		brand = Brand.objects.all()
 		uom = UnitOfMeasure.objects.all()
 		return render(request, 'inventory/new_item.html',{
 			'uoms': uom,
 			'brands': brand,
 		})
+
+
+class ItemList(View):
+	def get(self, request, *args, **kwargs):
+		items = Item.objects.all()
+
+		ctx = {
+			'items':items,
+		}
+		return render(request, 'inventory/item_list.html',ctx)
+
+
+class ItemEdit(View):
+	def get(self, request, *args, **kwargs):
+		print "item ",kwargs['item_id']
+		items = Item.objects.get(id = kwargs['item_id'])
+		print "items",items.name
+		brand = Brand.objects.all()
+		uom = UnitOfMeasure.objects.all()
+		ctx ={
+			'items':items,
+			'uoms': uom,
+			'brands': brand,
+		}
+		return render(request, 'inventory/edit_item.html',ctx)
+
+

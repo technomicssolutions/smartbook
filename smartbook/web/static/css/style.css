@@ -98,6 +98,7 @@ header {
 	float: left;
 	width: 100%;
 	min-height: 540px;
+	padding-bottom: 30px;
 }
 
 .welcome {
@@ -158,6 +159,7 @@ height:auto;
 .form_container {
 	margin: auto;
 	width: 30%;
+	min-height: 100%
 }
 .form_container .control {
 	width: 100%;
@@ -228,5 +230,15 @@ height:auto;
 	color: #FF0000;
 }
 
+form {
+	display: block;
+	float: left;
+	min-height: 100%
+}
+
+.error_message {
+	text-align: center;
+	color: red;
+}
 
 

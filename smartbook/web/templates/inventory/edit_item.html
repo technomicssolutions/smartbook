@@ -10,22 +10,37 @@
 	<div class="main-content">
 		<div class="div_content">
 		<form name="EditItem" action=" " method="POST">
-			<p> <label> Item Code</label> : <input style="margin:1%" type="text" name="code" ></p>
-			<p> <label> Item Name</label> : <input style="margin:1%" type="text" name="name" ></p>
-			<p> <label> Description</label> : <textarea style="margin:1%" rows="4" cols="50" name="description"></textarea></p>
-			<p> <label> Brand Name</label> : 
+			<p> <label> Item Code</label> : <input style="margin:1%" type="text" name="code" value = "{{ items.code }}"></p>
+			<p> <label> Item Name</label> : <input style="margin:1%" type="text" name="name" value="{{ items.name }}"></p>
+			<p> <label> Description</label> : <textarea style="margin:1%" rows="4" cols="50" name="description">{{ items.description }}</textarea></p>
+			{% for brand in brands%}
+			{{brand}}1 {{items.brand.brand}}	
+			{% if brand == items.brand.brand%}		
+			 enterying
+			 {% endif %}
+			{% endfor %}
+			<p> <label> Brand Name</label> :
+					<select style="margin:1%">
+						{% for brand in brands%}
+							{% if brand == items.brand.brand%}
+								<option value="{{brand}}" selected="true">{{brand}}</option>
+							{% else %}
+								<option value="{{brand}}">{{brand}}</option>
+							{% endif %}
+						{% endfor %}
+					</select></p>
+			<p> <label> Bar Code</label> : <input style="margin:1%" type="text" name="barcode" value="{{ items.barcode }}"></p>
+			<p> <label> UOM</label> :
 						<select style="margin:1%">
-	  						<option value=""></option>
-							<option value=""></option>
-							<option value=""></option>
+							{% for uom in uoms%}
+							{% if uom in items.uom.uom%}
+	  						<option value="{{brand}}" selected>{{uom}}</option>
+	  						{% else %}
+	  						<option value="{{brand}}">{{uom}}</option>
+	  						{% endif %}
+							{% endfor %}
 						</select></p>
-			<p> <label> Bar Code</label> : <input style="margin:1%" type="text" name="barcode"></p>
-			<p> <label> UOM</label> : 
-						<select style="margin:1%">
-	  						<option value=""></option>
-							<option value=""></option>
-							<option value=""></option>
-						</select></p>
+
 			<p> <label>Vendor</label> : 
 						<select style="margin:1%">
 	  						<option value=""></option>
@@ -33,7 +48,7 @@
 							 <option value=""></option>
 						</select></p>
 			<p> <label>Selling Price</label> : <input style="margin:1%" type="text" name="sellingprice"></p>
-			<p> <label>Tax(%)</label> : <input style="margin:1%" type="text" name="tax"></p>
+			<p> <label>Tax(%)</label> : <input style="margin:1%" type="text" name="tax" value"{{ items.tax }}"></p>
 			<p> <input style="margin:1%" type="submit" value="Upadate" name="Update">
 				<input type="submit" value="Cancel" name="Cancel"></p>	
 		</form>
