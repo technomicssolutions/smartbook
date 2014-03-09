@@ -22,22 +22,18 @@
 			<p> <label> Brand Name</label> :
 					<select style="margin:1%">
 						{% for brand in brands%}
-							{% if brand == items.brand.brand%}
-								<option value="{{brand}}" selected="true">{{brand}}</option>
-							{% else %}
-								<option value="{{brand}}">{{brand}}</option>
-							{% endif %}
+						  <option value="{{brand}}" {%if brand == items.brand.brand%}selected="true"{%endif%}>{{brand}}</option>
 						{% endfor %}
 					</select></p>
 			<p> <label> Bar Code</label> : <input style="margin:1%" type="text" name="barcode" value="{{ items.barcode }}"></p>
 			<p> <label> UOM</label> :
 						<select style="margin:1%">
 							{% for uom in uoms%}
-							{% if uom in items.uom.uom%}
-	  						<option value="{{brand}}" selected>{{uom}}</option>
-	  						{% else %}
-	  						<option value="{{brand}}">{{uom}}</option>
-	  						{% endif %}
+								{% if uom in items.uom.uom%}
+	  								<option value="{{brand}}" selected>{{uom}}</option>
+	  							{% else %}
+	  								<option value="{{brand}}">{{uom}}</option>
+	  							{% endif %}
 							{% endfor %}
 						</select></p>
 
