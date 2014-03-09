@@ -52,6 +52,7 @@ class ItemAdd(View):
 class ItemList(View):
 	def get(self, request, *args, **kwargs):
 		items = Item.objects.all()
+
 		ctx = {
 			'items':items,
 		}
@@ -63,8 +64,12 @@ class ItemEdit(View):
 		print "item ",kwargs['item_id']
 		items = Item.objects.get(id = kwargs['item_id'])
 		print "items",items.name
+		brand = Brand.objects.all()
+		uom = UnitOfMeasure.objects.all()
 		ctx ={
 			'items':items,
+			'uoms': uom,
+			'brands': brand,
 		}
 		return render(request, 'inventory/edit_item.html',ctx)
 
