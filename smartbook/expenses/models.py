@@ -7,12 +7,13 @@ class ExpenseHead(models.Model):
 
 class  Expense(models.Model):
 	created_by = models.ForeignKey(User)
+
 	expense_head = models.ForeignKey(ExpenseHead)
 	voucher_no = models.IntegerField('Voucher No')
 	date = models.DateField('Date')
-	head = models.CharField('Head', max_length=15)
 	amount = models.IntegerField('Amount')
-	pay_mode = models.CharField('Payment Mode', max_length=8)
+	payment_mode = models.BooleanField('Payment Mode', default=False)
+	narration = models.TextField('Narration', max_length=300, null=True, blank=True)
 	
 	cheque_no = models.IntegerField('Cheque No')
 	cheque_date = models.DateField('Cheque Date')
