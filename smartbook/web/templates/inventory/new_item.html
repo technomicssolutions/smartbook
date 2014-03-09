@@ -21,7 +21,12 @@
   							<option value="{{uom.uom}}">{{uom.uom}}</option>
 						{% endfor %}
 					</select></p>
-
+		<p> <label> Brand</label>  
+					<select name="brand">
+						{% for brand in barnds %}
+  							<option value="{{brand.brand}}">{{brand.brand}}</option>
+						{% endfor %}
+					</select></p>
 		<p> <label>Barcode</label>  <input type="text" name="barcode"></p>
 		<p> <label>Tax(%)</label>  <input type="text" name="tax"></p>
 		<p> <input type="submit" value="Submit" name="Submit">

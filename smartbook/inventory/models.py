@@ -22,7 +22,7 @@ class Item(models.Model):
 	code = models.CharField('Item Code', max_length=10)
 	name = models.CharField('Name', max_length=50)
 	description = models.TextField('Description', max_length=50,null=True, blank=True)
-	
+	brand = models.ForeignKey(Brand)
 	barcode = models.CharField('Barcode', max_length=50,null=True, blank=True)
 	tax = models.DecimalField('Tax',max_digits=14, decimal_places=2, default=0)
 	def __unicode__(self):
