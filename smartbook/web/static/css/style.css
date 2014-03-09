@@ -181,8 +181,7 @@ height:auto;
 }
 
 .expense_form_container {
-	border: 1px solid;
-    margin: auto;
+	margin: auto;
     max-width: 1024px;
     min-height: 500px;
 }
@@ -223,6 +222,10 @@ height:auto;
 .buttons {
 	margin: auto;
     width: 50%;
+}
+
+.message p{
+	color: #FF0000;
 }
 
 
