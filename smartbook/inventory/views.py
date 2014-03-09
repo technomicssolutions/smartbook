@@ -30,13 +30,13 @@ class ItemAdd(View):
 		brand_add = Brand()
 		
 		context={}
-		
-            
+		            
 		item_add.code =request.POST['code']
 		item_add.name =request.POST['name']
 		item_add.description =request.POST['description']
-		uom=UnitOfMeasure.objects.get(uom=request.POST['uom'])
-		brand=Brand.objects.get(brand=request.POST['brand'])
+		uom =UnitOfMeasure.objects.get(uom=request.POST['uom'])
+		brand =Brand.objects.get(brand=request.POST['brand'])
+
 		item_add.barcode =request.POST['barcode']
 		item_add.tax =request.POST['tax']
 		item_add.save()
