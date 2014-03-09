@@ -38,6 +38,8 @@ class ItemAdd(View):
 		brand =Brand.objects.get(brand=request.POST['brand'])
 		item_add.barcode =request.POST['barcode']
 		item_add.tax =request.POST['tax']
+		item_add.brand=brand
+		item_add.uom=uom
 		item_add.save()
 		brand = Brand.objects.all()
 		uom = UnitOfMeasure.objects.all()
