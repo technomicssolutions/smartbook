@@ -8,53 +8,53 @@
 </div>
 
 <div class="form_container">
-	<form name="staffadd" method="post" action="{% url 'addstaff' %}">
+	<form name="staffadd" method="post" action="{% url 'register_user' user_type='staff' %}">
 		{% csrf_token %}
 		{{ message }}
 		<div class="control">
 			<label>Name</label>
-			<input name="name" type="text">
+			<input name="name" type="text" value={{name}} />
 		</div>
 		<div class="control">
 			<label>Designation</label>
-			<select>			
+			<select name="designation">			
 	  			{% for designation in designations %}
-					<option value="{{designation.title}}">{{designation.title}}</option>
+					<option value="{{designation.title}}" {% if designation == designation.title %} selected {% endif %}>{{designation.title}}</option>
 				{% endfor %}
 			</select>
 		</div>
 		
 		<div class="control">
 			<label>House Name</label>
-			<input name="house" type="text">
+			<input name="house" type="text" value="{{house}}" />
 		</div>
 		<div class="control">
 			<label>Street</label>
-			<input name="street" type="text">
+			<input name="street" type="text" value="{{street}}" />
 		</div>
 		<div class="control">
 			<label>City</label>
-			<input name="city" type="text">
+			<input name="city" type="text" value="{{city}}" />
 		</div>
 		<div class="control">
 			<label>District</label>
-			<input name="district" type="text">
+			<input name="district" type="text" value="{{district}}" />
 		</div>
 		<div class="control">
 			<label>Pin</label>
-			<input name="pin" type="text">
+			<input name="pin" type="text" value="{{pin}}" />
 		</div>
 		<div class="control">
 			<label>Mobile</label>
-			<input name="mobile" type="text">
+			<input name="mobile" type="text" value="{{mobile}}" />
 		</div>
 		<div class="control">
 			<label>Land Line</label>
-			<input name="phone" type="text">
+			<input name="phone" type="text" value="{{phone}}" />
 		</div>
 		<div class="control">
 			<label>Email Id</label>
-			<input name="email" type="text">
+			<input name="email" type="text" value="{{email}}" />
 		</div>
 		<div class="control">
 			<label> </label>
