@@ -270,3 +270,46 @@ form {
 .btn:hover a {
 	color: #FFFFFF;
 }
+
+
+
+
+.purchase_form_container {
+	margin: auto;
+    max-width: 1024px;
+    min-height: 500px;
+}
+.form_contents_purchase {
+	margin: 10px 5px;
+}
+.section_1_purchase {
+	float: left;
+	
+	width: 500px;
+}
+.section_2_purchase {
+	float: left;
+	
+	width: 500px;
+}
+.section_3_purchase {
+	float: left;
+	width: auto;
+	height: 223px;
+
+	
+}
+.formrow_purchase {
+	min-height: 40px;
+    width: 100%;
+}
+.formtext_purchase {
+	float: left;
+    width: 200px;
+}
+.forminput_purchase {
+	float: left;
+}
+.search_purchase{
+	background-color: #D9EDF7;
+}
