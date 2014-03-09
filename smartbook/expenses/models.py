@@ -3,7 +3,7 @@ from django.contrib.auth.models import User
 from django.conf import settings
 
 class ExpenseHead(models.Model):
-	expense_head = models.CharField('Expense Head', max_length=15)
+	expense_head = models.CharField('Expense Head', max_length=15, unique=True)
 
 class  Expense(models.Model):
 	created_by = models.ForeignKey(User)
