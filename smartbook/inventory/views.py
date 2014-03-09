@@ -41,3 +41,10 @@ class ItemAdd(View):
 		return render(request, 'inventory/new_item.html',{
 			'uoms': uom
 		})
+
+
+class ItemList(View):
+	def get(self, request, *args, **kwargs):
+		items = Item.objects.all()
+		print "item code",items
+		return render(request, 'inventory/item_list.html',{})
