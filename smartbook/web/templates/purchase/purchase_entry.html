@@ -1,38 +1,110 @@
 {% extends 'base.html' %}
-
+{% block title %} Purchase Entry {% endblock title %}
+{% block body_id %} purchase_entry {% endblock body_id %}
 {% block content %}
 
 <div id="main-title">
-	<div class="alert alert-info" align="Center"><h4>Purchase Entry</h4></div>
+	<div class="alert alert-info" align="Center">Purchase Entry</div>
 </div>
-<div>
 
-
-	<form name="purchase_entry" method="post" action="{% url 'purchase' %}">
+<div class="form_container">
+<form name="purchase" method="post" action="{% url 'purchase' %}">
+	
 		{% csrf_token %}
 		{{ message }}
-		<label>Invoice Number</label>
-		<input name="invoice_number" type="text">
-		<label>Contact Person</label>
-		<input name="contact" type="text">
-		<label>House Name</label>
-		<input name="house" type="text">
-		<label>Street</label>
-		<input name="street" type="text">
-		<label>City</label>
-		<input name="city" type="text">
-		<label>District</label>
-		<input name="district" type="text">
-		<label>Pin</label>
-		<input name="pin" type="text">
-		<label>Mobile</label>
-		<input name="mobile" type="text">
-		<label>Land line</label>
-		<input name="phone" type="text">
-		<label>Email Id</label>
-		<input name="email" type="text">
-		<input type="submit">
+		<div class="control"> 
+			<label>Purchase Invoice Number</label>
+			<input name="purchase_invoice_number" type="text">
+		</div>
+
+		<div class="control"> 
+			<label>Date</label>
+			<input name="date" type="text">
+		</div>
+		<div class="control"> 
+			<label>Time</label>
+			<input name="time" type="text">
+		</div>
+
+
+		<div class="control"> 
+			<label>Vendor Invoice Number</label>
+			<input name="vendor_invoice_number" type="text">
+		</div>
+		<div class="control"> 
+			<label>Vendor DO Number</label>
+			<input name="vendor_do_number" type="text">
+		</div>
+		<div class="control"> 
+			<label>Vendor Invoice Date</label>
+			<input name="vendor_invoice_date" type="text">
+		</div>
+	
+
+	   <p> <label> Itemcode</label>  
+					<select name="code">
+						{% for code in codes %}
+  							<option value="{{code.code}}">{{code.code}}</option>
+						{% endfor %}
+					</select></p>
+
+
+		<p> <label> Item Name</label>  
+					<select name="name">
+						{% for name in names %}
+  							<option value="{{name.name}}">{{name.name}}</option>
+						{% endfor %}
+					</select></p>
+
+
+		<p> <label> Barcode</label>  
+					<select name="barcode">
+						{% for barcode in barcodes %}
+  							<option value="{{barcode.barcode}}">{{barcode.barcode}}</option>
+						{% endfor %}
+					</select></p>
+
+
+		<p> <label> Brand</label>  
+					<select name="brand">
+						{% for brand in brands %}
+  							<option value="{{brand.brand}}">{{brand.brand}}</option>
+						{% endfor %}
+					</select></p>
+
+		<p> <label> Vendor</label>  
+					<select name="vendor">
+						{% for vendor in vendors %}
+  							<option value="{{vendor.vendor}}">{{vendor.vendor}}</option>
+						{% endfor %}
+					</select></p>
+
+
+
+		<div class="control"> 
+			<label>Date</label>
+			<input name="date" type="text">
+		</div>
+		<div class="control"> 
+			<label>Time</label>
+			<input name="time" type="text">
+		</div>
+		<div class="control"> 
+			<label>Quantity</label>
+			<input name="quantity" type="text">
+		</div>
+		<div class="control"> 
+			<label>Cost Price</label>
+			<input name="cost" type="text">
+		</div>
+		<div class="control"> 
+			<label>Selling Price</label>
+			<input name="phone" type="text">
+		</div>
+		
 	</form>
 </div>
+	
+		
 
 {% endblock content %}
