@@ -20,10 +20,10 @@
 				<li class="menu"> <img src="/static/images/user.png" width="24px" >
 					<ul>
 						<li> <a href="{% url 'vendors' %}"> Vendors </a> </li>
-						<li> <a href="{% url 'addvendor' %}"> New Vendor </a> </li>
+						<li> <a href="{% url 'register_user' user_type=vendor %}"> New Vendor </a> </li>
 						<li> <a href="{% url 'staffs' %}"> Staff </a> </li>
-						<li> <a href="{% url 'addstaff' %}"> New Staff </a> </li>
-						<li> <a href="{% url 'customer' %}"> Customer </a> </li>
+						<li> <a href="{% url 'register_user' user_type=staff %}"> New Staff </a> </li>
+						<li> <a href="{% url 'register_user' user_type=customer %}"> Customer </a> </li>
 						<li> <a href="{% url 'customeradd' %}"> New Customer </a> </li>
 						<li> <a href="{% url 'logout' %}"> Logout </a> </li>
 						<li> <a href=""> Reset password </a> </li>

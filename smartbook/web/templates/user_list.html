@@ -1,0 +1,31 @@
+{% extends 'base.html' %}
+{% block title %}List-Customer
+{% endblock title %}
+{% block body_id %}list-customer{% endblock %}
+
+{% block content %}
+<table>
+	<tr>
+				
+		<th> Name </th>
+		<th> Mobile </th>
+		<th> Phone </th>
+		<th> Email </th>
+		{% if user_type == 'staff' %}
+			<th> Designation </td>	
+		{% endif %}
+		{% for user in users %}
+			<tr>
+				<td> {{ user.user.username }} </td>
+				<td> {{ user.mobile }} </td>
+				<td> {{ user.phone }} </td>
+				<td> {{ user.email }} </td>
+				{% if user_type == 'staff' %}
+					<th> {{ user.user.vendor_set.all.0.designation}} </td>	
+				{% endif %}
+			</tr>
+		{% endfor %}
+	</tr>
+<table>
+
+{% endblock content %}
