@@ -6,11 +6,6 @@ urlpatterns = patterns('',
 	url(r'^$', Home.as_view(), name='home'),
 	url(r'login/$', Login.as_view(), name='login'),
 	url(r'logout/$', Logout.as_view(), name='logout'),
-	url(r'^vendor-list/$', VendorList.as_view(),name='vendors'),
-	url(r'^add-vendor/$', VendorAdd.as_view(),name='addvendor'),
-	url(r'^staff-list/$', StaffList.as_view(),name='staffs'),
-	url(r'^add-staff/$', StaffAdd.as_view(),name='addstaff'),
-	url(r'^customer-list/$', CustomerList.as_view(),name='customer'),
-	url(r'^add-customer/$', CustomerAdd.as_view(),name='customeradd'),
-	
+	url(r'^register/(?P<user_type>\w+)/$', RegisterUser.as_view(), name='register_user'),
+	url(r'^(?P<user_type>\w+)/list/$', UserList.as_view(), name='users'),	
 )
