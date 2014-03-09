@@ -20,8 +20,6 @@ from web.models import (UserProfile, Vendor, Customer, Staff, Designation)
 
 class Home(View):
     def get(self, request, *args, **kwargs):
-        #userprofile=UserProfile.objects.all()
-        #context = {'userprofile':userprofile,}
         context = {}
         return render(request, 'home.html',context)
 
@@ -64,69 +62,80 @@ class RegisterUser(View):
     def get(self, request, *args, **kwargs):
         user_type = kwargs['user_type']
         if user_type == 'vendor':
-            return render(request, 'add_vendor.html',{})
+            return render(request, 'register_user.html',{'user_type': user_type})
         elif user_type == 'staff':
             designations = Designation.objects.all()
-            return render(request, 'add_staff.html',{'designations': designations})
+            return render(request, 'register_user.html',{
+                'designations': designations,
+                'user_type': user_type
+            })
         elif user_type == 'customer':
-            return render(request, 'add_customer.html',{})
+            return render(request, 'register_user.html',{'user_type': user_type})
 
 
     def post(self, request, *args, **kwargs):
-
+        
         userprofile = UserProfile()
         context={}
         user_type = kwargs['user_type']
-        try:
-            user = User.objects.create(username=request.POST['name'], email = request.POST['email'])
-            user.save()
-            userprofile.user_type="vendor"
-            userprofile.user = user
-            userprofile.house_name =request.POST['house']
-            userprofile.street = request.POST['street']
-            userprofile.city = request.POST['city']
-            userprofile.district = request.POST['district']
-            userprofile.pin = request.POST['pin']
-            userprofile.mobile = request.POST['mobile']
-            userprofile.land_line = request.POST['phone']
-            userprofile.email_id = request.POST['email']
-            userprofile.save()
-            if user_type == 'vendor':
-                vendor = Vendor()  
-                vendor.contact_person= request.POST['contact']
-                vendor.user = user
-                vendor.save()
-                context = {
-                    'message' : 'Vendor added correctly',
-                }
-                return render(request, 'add_vendor.html',context)
-            elif user_type == 'staff':
-                staff = Staff()
-                staff.designation = request.POST['designation']
-                staff.save()
-                context = {
-                    'message' : 'Staff added correctly',
-                }
-                return render(request, 'add_staff.html',context)
-            elif user_type == 'customer':
-                context = {
-                    'message' : 'Customer Added Successfully',
-                }
-                return render(request, 'add_customer.html', context)
         
-        except IntegrityError:
+        user, created = User.objects.get_or_create(username=request.POST['name']+user_type, first_name = request.POST['name'])
+        if not created:
             message = ''
+            template = 'register_user.html'
             if user_type == 'vendor':
                 message = 'Vendor with this name already exists'
             elif user_type == 'staff':
                 message = 'Staff with this name already exists'
             elif user_type == 'customer':
-                message = 'Cuatomer with this name already exists'
+                message = 'Customer with this name already exists'
             context = {
-                'error_message': message
+                'error_message': message,
+                'user_type': user_type
             }
             context.update(request.POST)
-            return render(request, 'add_customer.html', context)
+            return render(request, template, context)
+        else:
+            user.email = request.POST['email']
+            user.save()
+        userprofile.user_type=user_type
+        userprofile.user = user
+        userprofile.house_name =request.POST['house']
+        userprofile.street = request.POST['street']
+        userprofile.city = request.POST['city']
+        userprofile.district = request.POST['district']
+        userprofile.pin = request.POST['pin']
+        userprofile.mobile = request.POST['mobile']
+        userprofile.land_line = request.POST['phone']
+        userprofile.email_id = request.POST['email']
+        userprofile.save()
+        if user_type == 'vendor':
+            vendor = Vendor()  
+            vendor.contact_person= request.POST['contact']
+            vendor.user = user
+            vendor.save()
+            context = {
+                'message' : 'Vendor added correctly',
+                'user_type': user_type
+            }
+            return render(request, 'register_user.html',context)
+        elif user_type == 'staff':
+            staff = Staff()
+            staff.designation = request.POST['designation']
+            staff.save()
+            context = {
+                'message' : 'Staff added correctly',
+                'user_type': user_type
+            }
+            return render(request, 'register_user.html',context)
+        elif user_type == 'customer':
+            context = {
+                'message' : 'Customer Added Successfully',
+                'user_type': user_type
+            }
+            return render(request, 'register_user.html', context)
+    
+        
         
 
 class StaffList(View):
