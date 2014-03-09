@@ -11,32 +11,55 @@
 	<form name="staffadd" method="post" action="{% url 'addstaff' %}">
 		{% csrf_token %}
 		{{ message }}
-		<label>Name</label>
-		<input name="name" type="text">
-		<label>Designation</label>
-		<select>
-  			<option value="Select Designation"></option>
-			<option value=""></option>
-			<option value=""></option>
-		</select>
-		<label>House Name</label>
-		<input name="house" type="text">
-		<label>Street</label>
-		<input name="street" type="text">
-		<label>City</label>
-		<input name="city" type="text">
-		<label>District</label>
-		<input name="district" type="text">
-		<label>Pin</label>
-		<input name="pin" type="text">
-		<label>Mobile</label>
-		<input name="mobile" type="text">
-		<label>Land Line</label>
-		<input name="phone" type="text">
-		<label>Email Id</label>
-		<input name="email" type="text">
-		<label> </label>
-		<input type="submit" value="Submit">
+		<div class="control">
+			<label>Name</label>
+			<input name="name" type="text">
+		</div>
+		<div class="control">
+			<label>Designation</label>
+			<select>			
+	  			{% for designation in designations %}
+					<option value="{{designation.title}}">{{designation.title}}</option>
+				{% endfor %}
+			</select>
+		</div>
+		
+		<div class="control">
+			<label>House Name</label>
+			<input name="house" type="text">
+		</div>
+		<div class="control">
+			<label>Street</label>
+			<input name="street" type="text">
+		</div>
+		<div class="control">
+			<label>City</label>
+			<input name="city" type="text">
+		</div>
+		<div class="control">
+			<label>District</label>
+			<input name="district" type="text">
+		</div>
+		<div class="control">
+			<label>Pin</label>
+			<input name="pin" type="text">
+		</div>
+		<div class="control">
+			<label>Mobile</label>
+			<input name="mobile" type="text">
+		</div>
+		<div class="control">
+			<label>Land Line</label>
+			<input name="phone" type="text">
+		</div>
+		<div class="control">
+			<label>Email Id</label>
+			<input name="email" type="text">
+		</div>
+		<div class="control">
+			<label> </label>
+			<input type="submit" value="Submit">
+		</div>
 	</form>
 </div>
 

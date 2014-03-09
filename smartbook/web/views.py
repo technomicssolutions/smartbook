@@ -43,18 +43,37 @@ class Logout(View):
         logout(request)
         return HttpResponseRedirect(reverse('home'))
 
-class VendorList(View):
+class UserList(View):
     def get(self, request, *args, **kwargs):
-        return render(request, 'list_vendor.html',{})
+        user_type = kwargs['user_type']
+        if user_type == 'staff':
+            users = UserProfile.objects.filter(user_type='staff')
+        elif user_type == 'vendor':
+            users = UserProfile.objects.filter(user_type='vendor')
+        elif user_type == 'customer':
+            users = UserProfile.objects.filter(user_type='customer'):
+        return render(request, 'user_list.html',{
+            'users': users,
+            'user_type': user_type
+        })
 
-class VendorAdd(View):
+class RegisterUser(View):
     def get(self, request, *args, **kwargs):
-        return render(request, 'add_vendor.html',{})
+        user_type = kwargs['user_type']
+        if user_type == 'vendor':
+            return render(request, 'add_vendor.html',{})
+        elif user_type == 'staff':
+            designations = Designation.objects.all()
+            return render(request, 'list_staff.html',{'designations': designations})
+        elif user_type == 'customer':
+            return render(request, 'list_customer.html',{})
+
 
     def post(self, request, *args, **kwargs):
         userprofile = UserProfile()
-        vendor = Vendor()
+        
         context={}
+        user_type = kwargs['user_type']
         #try:
         user = User.objects.create(username=request.POST['name'], email = request.POST['email'])
         user.save()
@@ -69,86 +88,43 @@ class VendorAdd(View):
         userprofile.land_line = request.POST['phone']
         userprofile.email_id = request.POST['email']
         userprofile.save()
-        vendor.contact_person= request.POST['contact']
-        vendor.user = user
-        vendor.save()
-        context = {
+        if user_type == 'vendor':
+            vendor = Vendor()  
+            vendor.contact_person= request.POST['contact']
+            vendor.user = user
+            vendor.save()
+            context = {
                 'message' : 'Vendor added correctly',
             }
+            return render(request, 'add_vendor.html',context)
+        elif user_type == 'staff':
+            staff = Staff()
+            staff.designation = request.POST['designation']
+            staff.save()
+            context = {
+                'message' : 'Staff added correctly',
+            }
+            return render(request, 'add_staff.html',context)
+        elif user_type == 'customer':
+            context = {
+                'message' : 'Customer Added Successfully',
+            }
+            return render(request, 'add_customer.html', context)
+        
         # except:
         #     print "Unexpected error:", sys.exc_info()[0]
-        return render(request, 'add_vendor.html',context)
+        
 
 class StaffList(View):
     def get(self, request, *args, **kwargs):
         return render(request, 'list_staff.html',{})
 
-class StaffAdd(View):
-    def get(self, request, *args, **kwargs):
-        return render(request, 'add_staff.html',{})
-
-    def post(self, request, *args, **kwargs):
-        user = User()
-        userprofile = UserProfile()
-        staff = Staff()
-        context = {}
-        #try:
-        user.username=request.POST['name']
-        user.save()
-        print "2222", request.POST['house']
-        userprofile.user_type="staff"
-        userprofile.house_name = request.POST['house']
-        userprofile.street = request.POST['street']
-        userprofile.city = request.POST['city']
-        userprofile.district = request.POST['district']
-        userprofile.pin = request.POST['pin']
-        userprofile.mobile = request.POST['mobile']
-        userprofile.land_line = request.POST['phone']
-        userprofile.email_id = request.POST['email']
-        userprofile.save()
-        staff.designation = request.POST['designation']
-        staff.save()
-        context = {
-                'message' : 'Staff Added Successfully',
-            }
-        # except:
-        #     print "Unexpected error:", sys.exc_info()[0]
-        return render(request, 'add_staff.html',context)
 
 
 class CustomerList(View):
     def get(self, request, *args, **kwargs):
         return render(request, 'list_customer.html',{})
 
-class CustomerAdd(View):
-    def get(self, request, *args, **kwargs):
-        return render(request, 'add_customer.html',{})
-
-    def post(self, request, *args, **kwargs):
-        user = User()
-        userprofile = UserProfile()
-        customer = Customer()
-        context = {}
-        try:
-            user.username=request.POST['name']
-            user.save()
-            print "2222", request.POST['house']
-            userprofile.user_type="staff"
-            userprofile.house_name = request.POST['house']
-            userprofile.street = request.POST['street']
-            userprofile.city = request.POST['city']
-            userprofile.district = request.POST['district']
-            userprofile.pin = request.POST['pin']
-            userprofile.mobile = request.POST['mobile']
-            userprofile.land_line = request.POST['phone']
-            userprofile.email_id = request.POST['email']
-            userprofile.save()
-            context = {
-                    'message' : 'Customer Added Successfully',
-                }
-        except:
-            print "Unexpected error:", sys.exc_info()[0]
-        return render(request, 'add_customer.html', context)
 
 
 
