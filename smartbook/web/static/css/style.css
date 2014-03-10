@@ -153,6 +153,12 @@ height:auto;
 
 }*/
 
+textarea{
+    height: 32px;
+    margin-left: 22% !important;
+    padding-left: 3px;
+}
+
 .field{position:relative;}
 .field .popup{padding:10px;display:block;position:absolute;top:0;left:0;height:30px;width:200px;background:#ffffff;}
 
