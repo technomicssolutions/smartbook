@@ -7,6 +7,8 @@ function ExpenseController($scope, $element, $http, $timeout, $location) {
 
 	$scope.expense_heads = [];
 	$scope.expense_head = '';
+    $scope.payment_mode = 'true';
+    $scope.payment_mode_selection = true;
 
 	$scope.init = function(csrf_token)
     {
@@ -22,6 +24,13 @@ function ExpenseController($scope, $element, $http, $timeout, $location) {
         {
             console.log(data || "Request failed");
         });
+    }
+    $scope.payment_mode_change = function(payment_mode) {
+        if(payment_mode == 'cheque') {
+            $scope.payment_mode_selection = false;
+        } else {
+            $scope.payment_mode_selection = true;
+        }
     }
 }
 

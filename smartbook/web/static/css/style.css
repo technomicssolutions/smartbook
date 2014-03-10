@@ -280,6 +280,17 @@ form {
 
 #radio_text {
 	width: 100px;
+
+}
+#radio_input label, #radio_input input[type=radio] {
+	float: left;
+	margin-left: 4px;
+    margin-right: 4px;
+}
+#expense textarea {
+	height: auto ;
+    margin-left: 0px !important;
+    padding-left: 0px !important;
 }
 .purchase_form_container {
 	margin: auto;
