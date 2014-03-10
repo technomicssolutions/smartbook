@@ -367,19 +367,7 @@ th {
 	clear: both;
 }
 
-<<<<<<< HEAD
-#c1, #c2, #c3 {
-    width: 33%; 
-    border:1px solid red;
-}
 
-.search
-{
--moz-column-count:3; /* Firefox */
--webkit-column-count:3; /* Safari and Chrome */
-column-count:3;
-}
-=======
 #overlay {
   background-color: #FFFFFF;
   background:url(../images/overlay.png) repeat 0 0;
@@ -388,6 +376,7 @@ column-count:3;
   position: absolute;
   width: 100%;
 }
+
 
 #dialogue_popup_container {
   z-index: 2;
@@ -410,18 +399,5 @@ column-count:3;
   width: 384px;
   border: 1px solid;
 }
-.close_pop {
-  width: 32px;
-  height: 32px;
-  background: url('../images/close_pop.png');
-  display: block;
-  float: right;
-  position: relative;
-  /*top: -15px;
-  right: -15px;*/
 
-}
 
-.sign_box {float:none !important; margin:0 auto !important; padding:0 0 0px 0;}
-
->>>>>>> 00937964791629a38f91b85a36a2ead261045621

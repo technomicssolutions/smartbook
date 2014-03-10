@@ -14,9 +14,13 @@
 {% block controller %}
 	ng-controller="AddEditUserController" ng-init="init('{{csrf_token}}', '{{user_type}}')"   
 {% endblock controller %}
+{% block dialogue_popup %}
+	{% include 'add_designation.html' %}              	
+{% endblock %}
+
 {% block content %}
 
-<div id="main-title">
+<div id="main-title" ng-show="new_desiganation_flag">
 	<div class="alert alert-info" align="Center">
 		{% if user_type == 'staff' %} 
 			Edit Staff
@@ -30,7 +34,7 @@
 	</div>
 </div>
 
-<div class="form_container">
+<div class="form_container" ng-show="new_desiganation_flag">
 	<form name="staffadd" method="post" action="{% url 'edit_user' user_type=user_type profile_id=profile.id%}">
 		{% csrf_token %}
 		{{ message }}
@@ -47,9 +51,10 @@
 		{% if user_type == 'staff' %}
 			<div class="control">
 				<label>Designation</label>
-				<input type="text" value="{{profile.user.staff_set.all.0.designation.title}}" ng-click="show_designation_list()" id="designation_val">
-				<select name="designation" ng-model="designation" ng-show="designation_flag">
+				<input type="text" name="old_designation"value="{{profile.user.staff_set.all.0.designation.title}}" ng-click="show_designation_list()" id="designation_val">
+				<select name="new_designation" ng-model="designation" ng-show="designation_flag" ng-change="add_designation()">
 						<option ng-repeat="designatn in designations" value="[[designatn.title]]" ng-selected="designatn.title == designation">[[designatn.title]]</option>
+						<option value="other">Other</option>
 				</select>
 			</div>
 		{% endif %}

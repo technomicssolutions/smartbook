@@ -5,10 +5,14 @@
                 <div class="span12 sign_mid">
                     <span>
                         <form action="" id="register" name="register" method="post" class="reg_sec">
-                            <p>
-                                <label>Designation</label>
-                                <input type="text" name="designation" ng-model="new_designation" />
-                            </p>
+                            <div class="formrow">
+                                <div class="formtext">
+                                    <label>Designation</label>
+                                </div>
+                                <div class="forminput">  
+                                    <input type="text" name="designation" ng-model="new_designation" />
+                                </div>  
+                            </div>
                             <div align="center">
                                 <p ng-show="error_flag" class="subscribe_message">[[message]]</p>
                                 <input name="submit" type="button" value="Add" ng-click="add_new_designation()">

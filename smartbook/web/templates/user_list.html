@@ -55,7 +55,7 @@
 					</td>
 					{% if user.is_superuser %}
 						<td>
-							<a href=""><img src="/static/images/delete.png"></a>
+							<a href="{% url 'delete_user' user_type=user_type profile_id=usr.id%}"><img src="/static/images/delete.png"></a>
 						</td>
 					{% endif %}	
 				</tr>
