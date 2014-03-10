@@ -10,14 +10,19 @@
 		New Customer
 	{% endif %}
 {% endblock title %}
+{% block controller %}
+	ng-controller="AddEditUserController" ng-init="init('{{csrf_token}}', '{{user_type}}')"   
+{% endblock controller %}
 {% block body_id %} new_{{user_type}} {% endblock body_id %}
 {% block content %}
+{% block dialogue_popup %}
+	{% include 'add_designation.html' %}              	
+{% endblock %}
 
-<div id="main-title">
+<div id="main-title" ng-show="new_desiganation_flag">
 	<div class="alert alert-info" align="Center">New Staff</div>
 </div>
-
-<div class="form_container">
+<div class="form_container" ng-show="new_desiganation_flag">
 	<form name="staffadd" method="post" action="{% url 'register_user' user_type=user_type %}">
 		{% csrf_token %}
 		{{ message }}
@@ -34,11 +39,13 @@
 		{% if user_type == 'staff' %}
 			<div class="control">
 				<label>Designation</label>
-				<select name="designation">			
-		  			{% for designation in designations %}
-						<option value="{{designation.title}}" {% if designation.0 == designation.title %} selected {% endif %}>{{designation.title}}</option>
-					{% endfor %}
+
+				<select name="designation" ng-model="designation" ng-change="add_designation()">
+					<option value="select">Select</option>
+					<option ng-repeat="designatn in designations" value="[[designatn.title]]" ng-selected="designatn.title == designation">[[designatn.title]]</option>
+					<option value="other">Other</option>
 				</select>
+
 			</div>
 		{% endif %}
 		
