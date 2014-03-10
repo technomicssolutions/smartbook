@@ -276,10 +276,9 @@ form {
 .btn:hover a {
 	color: #FFFFFF;
 }
-
-
-
-
+#radio_text {
+	width: 100px;
+}
 .purchase_form_container {
 	margin: auto;
     max-width: 1024px;
