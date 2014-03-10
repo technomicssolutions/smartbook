@@ -275,6 +275,7 @@ form {
 #radio_text {
 	width: 100px;
 }
+
 .purchase_form_container {
 	margin: auto;
     max-width: 1024px;
@@ -360,3 +361,14 @@ th {
 	clear: both;
 }
 
+#c1, #c2, #c3 {
+    width: 33%; 
+    border:1px solid red;
+}
+
+.search
+{
+-moz-column-count:3; /* Firefox */
+-webkit-column-count:3; /* Safari and Chrome */
+column-count:3;
+}

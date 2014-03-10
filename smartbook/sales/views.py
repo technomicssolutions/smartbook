@@ -15,7 +15,15 @@ from django.contrib.auth.models import User
 
 class Sales(View):
     def get(self, request, *args, **kwargs):
-        return render(request, 'sales/sales.html',{})
+        return render(request, 'sales/sales_entry.html',{})
+
+class SalesReturn(View):
+    def get(self, request, *args, **kwargs):
+        return render(request, 'sales/sales_return.html',{})
+
+class ViewSales(View):
+    def get(self, request, *args, **kwargs):
+        return render(request, 'sales/view_sales.html',{})
 
 class Sales_reports(View):
     def get(self, request, *args, **kwargs):

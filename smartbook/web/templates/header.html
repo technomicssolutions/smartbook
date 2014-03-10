@@ -41,11 +41,16 @@
 						<li> <a href="{% url 'purchase' %}"> Purchase </a> </li>
 						<li> <a href="{% url 'edit_purchase' %}">Edit Purchase </a> </li>
 						<li> <a href=""> New Entry </a> </li>
-
 						<li> <a href=""> Vendor Accounts </a> </li>
 					</ul>
 				</li>
-				<li class="menu"> <a href="{% url 'sales' %}"> Sales </a> </li>
+				<li class="menu"> <a href=""> Sales </a>
+					<ul>
+						<li> <a href="{% url 'sales_entry' %}"> Sales Entry </a> </li>
+						<li> <a href="{% url 'sales_return' %}"> Sales Return </a> </li>
+						<li> <a href="{% url 'view_sales' %}"> View Sales </a> </li>
+					</ul>
+				</li>
 				<li class="menu"> <a href="{% url 'new_expense' %}"> Expenses </a> 
 					<ul>
 						<li><a href="{% url 'new_expense' %}">Expenses</a></li>
