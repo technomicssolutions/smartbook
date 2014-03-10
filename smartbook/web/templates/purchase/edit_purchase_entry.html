@@ -1,0 +1,217 @@
+{% extends 'base.html' %}
+
+{% block body_id %}edit_purchase{% endblock %}
+
+{% block title %}Edit Purchase{% endblock title %}
+
+{% block content %}
+
+	<div id="main-title">
+		<div class="alert alert-info" align="Center"><h4>Edit Purchase </h4></div>
+	</div>
+
+	<div class="purchase_form_container">
+		<form name="purchase_entry" method="post">
+			<div class="form_contents_purchase">
+				<div class="section_1_purchase">
+					<div class="formrow_purchase">
+						<div class="formtext_purchase">
+							<label for="purchase_invoice_number">Purchase Invoice Number</label>
+						</div>
+
+						<div class="forminput">
+							<input type="text" name="purchase_invoice_number" >
+						</div>
+					</div>
+
+
+					<div class="formrow_purchase">
+						<div class="formtext_purchase">
+							<label for="vendor_invoice_number">Vendor Invoice Number </label>
+						</div>
+						<div class="forminput">
+							<input type="text" name="vendor_invoice_number"  >
+						</div>
+					</div>
+
+					<div class="formrow_purchase">
+						<div class="formtext_purchase">
+							<label for="vendor_do_number">Vendor DO Number</label>
+						</div>
+						<div class="forminput">
+							<input type="text" name="vendor_do_number"  >
+						</div>
+					</div>
+					<div class="formrow_purchase">
+						<div class="formtext_purchase">
+							<label for="vendor_invoice_date">Vendor Invoice Date</label>
+						</div>
+						<div class="forminput">
+							<input type="text" name="vendor_invoice_date">
+						</div>
+					</div>
+					
+				</div>
+				<div class="section_2_purchase">
+
+					<div class="formrow_purchase">
+						<div class="formtext_purchase">
+							<label for="purchase_invoice_date">Purchase Invoice Date</label>
+						</div>
+						<div class="forminput">
+							<input type="text" name="purchase_invoice_date">
+						</div>
+					</div>
+
+
+					<div class="formrow_purchase">
+						<div class="formtext_purchase">
+							<label for="brand">Brand</label>
+						</div>
+						<div class="forminput">
+							<select name="brand" >
+								{% for brand in brands %}
+  									<option value="{{brand.brand}}">{{brand.brand}}</option>
+								{% endfor %}
+								
+							</select>
+						</div>
+					</div>
+
+					<div class="formrow_purchase">
+						<div class="formtext_purchase">
+							<label for="vendor">Vendor</label>
+						</div>
+						<div class="forminput">
+							<select name="vendor" >
+								<option value="select">Select</option>
+							</select>
+						</div>
+					</div>
+
+					<div class="formrow_purchase">
+						<div class="formtext_purchase">
+							<label for="transport">Transport</label>
+						</div>
+						<div class="forminput">
+							<select name="transport" >
+								<option value="select">Select</option>
+							</select>
+						</div>
+					</div>
+
+						
+				</div>	
+		
+				<div class="section_3_purchase">
+					   				
+
+				</div>
+
+				<div class="section_1_purchase">
+					<div class="formrow_purchase">
+						<div class="formtext_purchase">
+							<label for="vendor_amout">Vendor Amount</label>
+						</div>
+						<div class="forminput">
+							<input type="text" name="vendor_amount">
+						</div>
+					</div>
+
+					<div class="formrow_purchase">
+						<div class="formtext_purchase">
+							<label for="purchase_expense">Purchase Expense</label>
+						</div>
+						<div class="forminput">
+							<input type="text" name="purchase_expense">
+						</div>
+					</div>
+
+				</div>
+
+				<div class="section_2_purchase">
+					<div class="formrow_purchase">
+						<div class="formtext_purchase">
+							<label for="net_total">Net Total</label>
+						</div>
+						<div class="forminput">
+							<input type="text" name="net_total">
+						</div>
+					</div>
+
+					<div class="formrow_purchase">
+						<div class="formtext_purchase">
+							<label for="discount">Discount</label>
+						</div>
+						<div class="forminput">
+							<input type="text" name="discount">
+						</div>
+					</div>
+					<div class="formrow_purchase">
+						<div class="formtext_purchase">
+							<label for="grant_total">Grant Total</label>
+						</div>
+						<div class="forminput">
+							<input type="text" name="grant_total">
+						</div>
+					</div>
+
+
+				</div>
+				
+					
+
+
+		</div>
+					<div  align="Center">
+						<div class="buttons">
+							<input type="submit" value="Submit">
+							<a href="{% url 'home' %}"><input type="button" value="Cancel"></a>
+						</div>
+					</div>
+			
+		</form>
+
+	</div>
+
+{% endblock content %}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

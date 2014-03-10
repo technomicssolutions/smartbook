@@ -153,8 +153,6 @@ height:auto;
 
 }*/
 
-.field{position:relative;}
-.field .popup{padding:10px;display:block;position:absolute;top:0;left:0;height:30px;width:200px;background:#ffffff;}
 
 .form_container {
 	margin: auto;
@@ -314,3 +312,11 @@ form {
 	background-color: #D9EDF7;
 }
 
+.reporttext {
+	float: left;
+	padding-left: 10px;
+    width: 90px;
+}
+.reportinput {
+	float: left;
+}
