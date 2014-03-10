@@ -270,3 +270,6 @@ form {
 .btn:hover a {
 	color: #FFFFFF;
 }
+#radio_text {
+	width: 100px;
+}
