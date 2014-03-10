@@ -73,4 +73,22 @@ class ItemEdit(View):
 		}
 		return render(request, 'inventory/edit_item.html',ctx)
 
+class UpdateItem(View):
+	def post(self, request, *args, **kwargs):
+		item = Item.objects.get(id = request.POST['id'])
+		item.code = request.POST['code']
+		item.name =request.POST['name']
+		item.description =request.POST['description']
+		item.tax =request.POST['tax']
+		brand =Brand.objects.get(brand=request.POST['brand'])
+		item.brand=brand
+		uom =UnitOfMeasure.objects.get(uom=request.POST['uom'])
+		item.uom=uom
+		item.save()
+		print "item",item
+		items = Item.objects.all()
+		return render(request, 'inventory/item_list.html',{
+			'items':items,
+		})
+
 

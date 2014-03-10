@@ -8,31 +8,58 @@
 </div>
 
 
-<div align="Center">
+<div class="form_container">
 	<form class="" name="add_item" method="post" action="{% url 'add_item' %}">
 		{% csrf_token %}
 		{{ message }}
-		<p> <label > Item Code</label>  <input type="text"  name="code" ></p>
-		<p> <label> Item Name</label>  <input type="text" name="name" ></p>
-		<p> <label> Description</label>  <textarea rows="4" cols="50" name="description"></textarea></p>
-		<p> <label> UOM</label>  
+		<div class="control">
+			<label > Item Code</label>  
+			<input type="text"  name="code" >
+		</div>
+		<div class="control">
+
+			{{ message }}
+
+			<label> Item Name</label>
+			<input type="text" name="name" >
+		</div>
+		<div class="control">
+			<label> Description</label>
+			<input type="text"name="description"></textarea>
+		</div>
+		<div class="control">
+			<label> UOM</label>  
 					<select name="uom">
 						{% for uom in uoms %}
   							<option value="{{uom.uom}}">{{uom.uom}}</option>
 						{% endfor %}
 					</select></p>
-		<p> <label> Brand</label>  
-			
+		</div>
+		<div class="control">
+			<label> Brand</label>  
 					<select name="brand">
 						{% for brand in brands%}
 							<option value="{{brand.brand}}">{{brand.brand}}</option>
 						{% endfor %}
-					</select></p>
-		<p> <label>Barcode</label>  <input type="text" name="barcode"></p>
-		<p> <label>Tax(%)</label>  <input type="text" name="tax"></p>
-		<p> <input type="submit" value="Submit" name="Submit">
-			<input type="submit" value="Cancel" name="Cancel"></p>	
-			{{ message }}
+					</select>
+		</div>
+		<div class="control">
+			<label>Barcode</label>
+			<input type="text" name="barcode">
+		</div>
+
+		<div class="control">
+			<label>Tax(%)</label>  
+			<input type="text" name="tax">
+		</div>
+		
+		<div  align="Center">
+			<div class="buttons">
+				<a href="{% url 'home' %}"><input type="button" value="Cancel"></a>
+				<input type="submit" value="Submit">
+				
+			</div>
+		</div>
 	</form>
 </div>
 

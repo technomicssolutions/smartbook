@@ -1,38 +1,240 @@
 {% extends 'base.html' %}
 
+{% block body_id %}purchase{% endblock %}
+
+{% block title %}Purchase Entry{% endblock title %}
+
 {% block content %}
 
-<div id="main-title">
-	<div class="alert alert-info" align="Center"><h4>Purchase Entry</h4></div>
-</div>
-<div>
+	<div id="main-title">
+		<div class="alert alert-info" align="Center"><h4>Purchase Entry</h4></div>
+	</div>
+
+	<div class="purchase_form_container">
+		<form name="purchase_entry" method="post">
+			<div class="form_contents_purchase">
+				<div class="section_1_purchase">
+					<div class="formrow_purchase">
+						<div class="formtext_purchase">
+							<label for="purchase_invoice_number">Purchase Invoice Number</label>
+						</div>
+
+						<div class="forminput">
+							<input type="text" name="purchase_invoice_number" >
+						</div>
+					</div>
 
 
-	<form name="purchase_entry" method="post" action="{% url 'purchase' %}">
-		{% csrf_token %}
-		{{ message }}
-		<label>Invoice Number</label>
-		<input name="invoice_number" type="text">
-		<label>Contact Person</label>
-		<input name="contact" type="text">
-		<label>House Name</label>
-		<input name="house" type="text">
-		<label>Street</label>
-		<input name="street" type="text">
-		<label>City</label>
-		<input name="city" type="text">
-		<label>District</label>
-		<input name="district" type="text">
-		<label>Pin</label>
-		<input name="pin" type="text">
-		<label>Mobile</label>
-		<input name="mobile" type="text">
-		<label>Land line</label>
-		<input name="phone" type="text">
-		<label>Email Id</label>
-		<input name="email" type="text">
-		<input type="submit">
-	</form>
-</div>
+					<div class="formrow_purchase">
+						<div class="formtext_purchase">
+							<label for="vendor_invoice_number">Vendor Invoice Number </label>
+						</div>
+						<div class="forminput">
+							<input type="text" name="vendor_invoice_number"  >
+						</div>
+					</div>
+
+					<div class="formrow_purchase">
+						<div class="formtext_purchase">
+							<label for="vendor_do_number">Vendor DO Number</label>
+						</div>
+						<div class="forminput">
+							<input type="text" name="vendor_do_number"  >
+						</div>
+					</div>
+					<div class="formrow_purchase">
+						<div class="formtext_purchase">
+							<label for="vendor_invoice_date">Vendor Invoice Date</label>
+						</div>
+						<div class="forminput">
+							<input type="text" name="vendor_invoice_date">
+						</div>
+					</div>
+					
+				</div>
+				<div class="section_2_purchase">
+
+					<div class="formrow_purchase">
+						<div class="formtext_purchase">
+							<label for="purchase_invoice_date">Purchase Invoice Date</label>
+						</div>
+						<div class="forminput">
+							<input type="text" name="purchase_invoice_date">
+						</div>
+					</div>
+
+
+					<div class="formrow_purchase">
+						<div class="formtext_purchase">
+							<label for="brand">Brand</label>
+						</div>
+						<div class="forminput">
+							<select name="brand" >
+								{% for brand in brands %}
+  									<option value="{{brand.brand}}">{{brand.brand}}</option>
+								{% endfor %}
+								
+							</select>
+						</div>
+					</div>
+
+					<div class="formrow_purchase">
+						<div class="formtext_purchase">
+							<label for="vendor">Vendor</label>
+						</div>
+						<div class="forminput">
+							<select name="vendor" >
+								<option value="select">Select</option>
+							</select>
+						</div>
+					</div>
+
+					<div class="formrow_purchase">
+						<div class="formtext_purchase">
+							<label for="transport">Transport</label>
+						</div>
+						<div class="forminput">
+							<select name="transport" >
+								<option value="select">Select</option>
+							</select>
+						</div>
+					</div>
+
+						
+				</div>	
+		
+				<div class="section_3_purchase">
+					<div>
+       				<table>
+           				<tr class='search_purchase'>
+           					<td>&nbsp;&nbsp;Item Code</td>
+           					<td>
+           						<div class="input-append">
+           							<p></p><input type='text' id="item_code"/>
+           						</div>
+           					</td>
+           					<td>&nbsp;&nbsp;&nbsp;&nbsp;Item Name</td>
+           					<td>&nbsp;&nbsp; 
+           						<div class="input-append">
+           							<p></p><input type="text" id='item_name'/>
+           						</div>
+           					</td>
+           					<td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Barcode</td>
+           					<td> 
+           						<div class="input-append">
+           							<p></p><input type="text" id='barcode'/>
+           						</div>&nbsp;&nbsp;
+           					</td>
+           				</tr>
+       				</table>
+    				</div>
+
+				</div>
+
+				<div class="section_1_purchase">
+					<div class="formrow_purchase">
+						<div class="formtext_purchase">
+							<label for="vendor_amout">Vendor Amount</label>
+						</div>
+						<div class="forminput">
+							<input type="text" name="vendor_amount">
+						</div>
+					</div>
+
+					<div class="formrow_purchase">
+						<div class="formtext_purchase">
+							<label for="purchase_expense">Purchase Expense</label>
+						</div>
+						<div class="forminput">
+							<input type="text" name="purchase_expense">
+						</div>
+					</div>
+
+				</div>
+
+				<div class="section_2_purchase">
+					<div class="formrow_purchase">
+						<div class="formtext_purchase">
+							<label for="net_total">Net Total</label>
+						</div>
+						<div class="forminput">
+							<input type="text" name="net_total">
+						</div>
+					</div>
+
+					<div class="formrow_purchase">
+						<div class="formtext_purchase">
+							<label for="discount">Discount</label>
+						</div>
+						<div class="forminput">
+							<input type="text" name="discount">
+						</div>
+					</div>
+					<div class="formrow_purchase">
+						<div class="formtext_purchase">
+							<label for="grant_total">Grant Total</label>
+						</div>
+						<div class="forminput">
+							<input type="text" name="grant_total">
+						</div>
+					</div>
+
+
+				</div>
+				
+					
+
+
+		</div>
+					<div  align="Center">
+						<div class="buttons">
+							<input type="submit" value="Submit">
+							<a href="{% url 'home' %}"><input type="button" value="Cancel"></a>
+						</div>
+					</div>
+			
+		</form>
+
+	</div>
 
 {% endblock content %}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
