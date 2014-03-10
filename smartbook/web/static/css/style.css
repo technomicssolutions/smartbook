@@ -199,4 +199,124 @@ form {
 	color: red;
 }
 
+.expense_form_container {
+	margin: auto;
+    max-width: 1024px;
+    min-height: 500px;
+}
+.form_contents {
+	margin: 10px 5px;
+}
+.section_1 {
+	float: left;
+	margin-right: 25px;
+	width: 315px;
+}
+.section_2 {
+	float: left;
+	margin-right: 25px;
+	width: 315px;
+}
+.section_3 {
+	float: left;
+	width: 245px;
+	height: 223px;
+	overflow: auto;
+}
+.formrow {
+	min-height: 40px;
+    width: 100%;
+}
+.formtext {
+	float: left;
+    width: 95px;
+}
+.forminput {
+	float: left;
+}
+.add_expense_head {
+	height: 100%;
+	margin: auto;
+    margin-top: 30px;
+    width: 38%;
+    float: none;
+}
+.required_field {
+	color: #FF0000;
+}
+.buttons {
+	margin: auto;
+    width: 50%;
+}
+
+.message p{
+	color: #FF0000;
+}
+
+.btn {
+	background-color: #49AFCD;
+    background-image: linear-gradient(to bottom, #5BC0DE, #2F96B4);
+    background-repeat: repeat-x;
+    border-color: rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.25);
+    color: #FFFFFF;
+    text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.25);
+    float: left;
+    width: 230px;
+    height: 30px;
+    margin-bottom: 3px;
+    text-align: left;
+}
+.btn a {
+	color: #FFFFFF;
+}
+.btn:hover {
+	background-color: #2F96B4;
+	color: #FFFFFF;
+}
+.btn:hover a {
+	color: #FFFFFF;
+}
+
+
+
+
+.purchase_form_container {
+	margin: auto;
+    max-width: 1024px;
+    min-height: 500px;
+}
+.form_contents_purchase {
+	margin: 10px 5px;
+}
+.section_1_purchase {
+	float: left;
+	
+	width: 500px;
+}
+.section_2_purchase {
+	float: left;
+	
+	width: 500px;
+}
+.section_3_purchase {
+	float: left;
+	width: auto;
+	height: 223px;
+
+	
+}
+.formrow_purchase {
+	min-height: 40px;
+    width: 100%;
+}
+.formtext_purchase {
+	float: left;
+    width: 200px;
+}
+.forminput_purchase {
+	float: left;
+}
+.search_purchase{
+	background-color: #D9EDF7;
+}
 

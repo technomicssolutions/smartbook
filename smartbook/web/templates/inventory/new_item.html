@@ -17,42 +17,49 @@
 			<input type="text"  name="code" >
 		</div>
 		<div class="control">
-			<label> Item Name</label>  
+
+			{{ message }}
+
+			<label> Item Name</label>
 			<input type="text" name="name" >
 		</div>
 		<div class="control">
-			<label> Description</label>  
-			<textarea rows="4" cols="4" name="description"></textarea>
+			<label> Description</label>
+			<input type="text"name="description"></textarea>
 		</div>
 		<div class="control">
 			<label> UOM</label>  
-			<select name="uom">
-				{% for uom in uoms %}
-  					<option value="{{uom.uom}}">{{uom.uom}}</option>
-				{% endfor %}
-			</select>
+					<select name="uom">
+						{% for uom in uoms %}
+  							<option value="{{uom.uom}}">{{uom.uom}}</option>
+						{% endfor %}
+					</select></p>
 		</div>
 		<div class="control">
 			<label> Brand</label>  
-			<select name="brand">
-				{% for brand in brands%}
-					<option value="{{brand.brand}}">{{brand.brand}}</option>
-				{% endfor %}
-			</select>
+					<select name="brand">
+						{% for brand in brands%}
+							<option value="{{brand.brand}}">{{brand.brand}}</option>
+						{% endfor %}
+					</select>
 		</div>
-		<div class="control"> 
-			<label>Barcode</label>  
+		<div class="control">
+			<label>Barcode</label>
 			<input type="text" name="barcode">
 		</div>
-		<div class="control"> 
+
+		<div class="control">
 			<label>Tax(%)</label>  
 			<input type="text" name="tax">
 		</div>
-		<div class="control"> 
-			<input type="submit" value="Submit" name="Submit">
-			<input type="submit" value="Cancel" name="Cancel">
-		</div>	
-			{{ message }}
+		
+		<div  align="Center">
+			<div class="buttons">
+				<a href="{% url 'home' %}"><input type="button" value="Cancel"></a>
+				<input type="submit" value="Submit">
+				
+			</div>
+		</div>
 	</form>
 </div>
 
