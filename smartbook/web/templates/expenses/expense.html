@@ -31,7 +31,7 @@
 							<label for="date">Date :</label>
 						</div>
 						<div class="forminput">
-							<input type="text" name="date" id="date" ng-model="date">
+							<input type="text" name="date" id="date" ng-model="date" readonly>
 						</div>
 					</div>
 					<div class="formrow">
@@ -47,7 +47,7 @@
 					</div>
 					<div class="formrow">
 						<div class="formtext">
-							<label for="amount">Amount</label>
+							<label for="amount">Amount :</label>
 						</div>
 						<div class="forminput">
 							<input type="text" name="amount" ng-model="amount">
@@ -57,9 +57,9 @@
 						<div class="formtext" id="radio_text">
 							<label for="payment_mode">Payment Mode:</label>
 						</div>
-						<div class="forminput">
-							<input type="radio" name="payment_mode" ng-model="payment_mode" value="true"><label>Cash</label>
-							<input type="radio" name="payment_mode" ng-model="payment_mode" value="false"><label>Cheque</label>
+						<div class="forminput" id="radio_input">
+							<input type="radio" name="payment_mode" ng-model="payment_mode" value="true" ng-change="payment_mode_change('cash')"><label>Cash</label>
+							<input type="radio" name="payment_mode" ng-model="payment_mode" value="false" ng-change="payment_mode_change('cheque')"><label>Cheque</label>
 						</div>
 					</div>
 					<div class="formrow">
@@ -74,40 +74,38 @@
 				<div class="section_2">
 					<div class="formrow">
 						<div class="formtext">
-							<label for="checkno">Check No :</label>
+							<label for="checkno">Cheque No :</label>
 						</div>
 						<div class="forminput">
-							<input type="text" name="checkno" ng-model="checkno">
+							<input type="text" name="checkno" ng-model="checkno" ng-readonly="payment_mode_selection">
 						</div>
 					</div>
 					<div class="formrow">
 						<div class="formtext">
-							<label for="check_date">Check Date :</label>
+							<label for="check_date">Cheque Date :</label>
 						</div>
 						<div class="forminput">
-							<input type="text" name="check_date" id="check_date" ng-model="check_date">
+							<input type="text" name="check_date" id="check_date" ng-model="check_date" ng-readonly="payment_mode_selection">
 						</div>
 					</div>
 					<div class="formrow">
 						<div class="formtext">
-							<label for="bank_name">Bank Name</label>
+							<label for="bank_name">Bank Name :</label>
 						</div>
 						<div class="forminput">
-							<input type="text" name="bank_name" ng-model="bank_name">
+							<input type="text" name="bank_name" ng-model="bank_name" ng-readonly="payment_mode_selection">
 						</div>
 					</div>
 					<div class="formrow">
 						<div class="formtext">
-							<label for="branch">Branch</label>
+							<label for="branch">Branch :</label>
 						</div>
 						<div class="forminput">
-							<input type="text" name="branch" ng-model="branch">
+							<input type="text" name="branch" ng-model="branch" ng-readonly="payment_mode_selection">
 						</div>
 					</div>
 				</div>	
-				<div class="section_3">
-					
-				</div>
+				
 			</div>
 			<div></div>
 		</form>

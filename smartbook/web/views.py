@@ -1,6 +1,7 @@
 # Create your views here.
 
 import sys
+import simplejson
 
 from django.db import IntegrityError
 
@@ -53,6 +54,7 @@ class UserList(View):
             users = UserProfile.objects.filter(user_type='vendor')
         elif user_type == 'customer':
             users = UserProfile.objects.filter(user_type='customer')
+
         return render(request, 'user_list.html',{
             'users': users,
             'user_type': user_type
@@ -64,9 +66,7 @@ class RegisterUser(View):
         if user_type == 'vendor':
             return render(request, 'register_user.html',{'user_type': user_type})
         elif user_type == 'staff':
-            designations = Designation.objects.all()
             return render(request, 'register_user.html',{
-                'designations': designations,
                 'user_type': user_type
             })
         elif user_type == 'customer':
@@ -112,6 +112,8 @@ class RegisterUser(View):
         if user_type == 'vendor':
             vendor = Vendor()  
             vendor.contact_person= request.POST['contact_person']
+            user.is_active = False
+            user.save()
             vendor.user = user
             vendor.save()
             context = {
@@ -120,8 +122,18 @@ class RegisterUser(View):
             }
             return render(request, 'register_user.html',context)
         elif user_type == 'staff':
+            try:
+                designation = Designation.objects.get(title=request.POST['designation'])
+            except Designation.DoesNotExist:
+                context = {
+                    'message' : 'Please choose designation',
+                    'user_type': user_type
+                }
+                context.update(request.POST)
+                return render(request, 'register_user.html',context)
             staff = Staff()
-            staff.designation = request.POST['designation']
+            staff.designation = designation
+            staff.user = user
             staff.save()
             context = {
                 'message' : 'Staff added correctly',
@@ -129,6 +141,11 @@ class RegisterUser(View):
             }
             return render(request, 'register_user.html',context)
         elif user_type == 'customer':
+            customer = Customer()
+            user.is_active = False
+            user.save()
+            customer.user = user
+            customer.save()
             context = {
                 'message' : 'Customer Added Successfully',
                 'user_type': user_type
@@ -136,11 +153,134 @@ class RegisterUser(View):
             return render(request, 'register_user.html', context)
     
         
-# class UsersListView(View):
+class EditUser(View):
 
-#     def get(self, request, *args, *kwargs):
+    def get(self, request, *args, **kwargs):
 
-        
+        user_type = kwargs['user_type']
+        userprofile = UserProfile.objects.get(id=kwargs['profile_id'])
+        if user_type == 'vendor':
+            return render(request, 'edit_user.html',{'user_type': user_type, 'profile': userprofile})
+        elif user_type == 'staff':
+            return render(request, 'edit_user.html',{
+                'user_type': user_type,
+                'profile': userprofile
+
+            })
+        elif user_type == 'customer':
+            return render(request, 'edit_user.html',{'user_type': user_type,'profile': userprofile})
+
+    def post(self, request, *args, **kwargs):
+
+        user_type = kwargs['user_type']
+        userprofile = UserProfile.objects.get(id=kwargs['profile_id'])
+        post_dict = request.POST
+        user = userprofile.user
+        user.first_name = post_dict['name']
+        user.username= post_dict['name']+user_type
+        user.email = post_dict['email']
+        user.save()
+        userprofile.user_type=user_type
+        userprofile.user = user
+        userprofile.house_name =request.POST['house']
+        userprofile.street = request.POST['street']
+        userprofile.city = request.POST['city']
+        userprofile.district = request.POST['district']
+        userprofile.pin = request.POST['pin']
+        userprofile.mobile = request.POST['mobile']
+        userprofile.land_line = request.POST['phone']
+        userprofile.email_id = request.POST['email']
+        userprofile.save()
+        if user_type == 'vendor':
+            vendor = user.vendor_set.all()[0]  
+            vendor.contact_person= request.POST['contact_person']
+            vendor.user = user
+            vendor.save()
+            context = {
+                'message' : 'Vendor edited correctly',
+                'user_type': user_type,
+                'profile': userprofile
+            }
+            return render(request, 'edit_user.html',context)
+        elif user_type == 'customer':
+            customer = user.customer_set.all()[0]
+            customer.user = user
+            customer.save()
+            context = {
+                'message' : 'Customer edited correctly',
+                'user_type': user_type,
+                'profile': userprofile
+            }
+            return render(request, 'edit_user.html',context)
+        elif user_type == 'staff':
+            staff = user.staff_set.all()[0]
+            staff.user = user
+            if request.POST['old_designation'] != request.POST['new_designation']:
+                try:
+                    designation =  Designation.objects.get(title=request.POST['new_designation'])
+                    staff.designation = designation
+                except Designation.DoesNotExist:
+                    pass   
+            staff.save()
+            context = {
+                'message' : 'Staff edited correctly',
+                'user_type': user_type,
+                'profile': userprofile
+            }
+            return render(request, 'edit_user.html',context)
+
+class DesignationList(View):
+
+    def get(self, request, *args, **kwargs):
+
+        ctx = []
+        designations = Designation.objects.all()
+        if designations.count() > 0:
+            for designation in designations:
+                ctx.append({
+                    'title':designation.title,    
+                })
+        res = {
+            'designations': ctx,
+        } 
+        response = simplejson.dumps(res)
+        status_code = 200
+        return HttpResponse(response, status = status_code, mimetype="application/json")
+
+class AddDesignation(View):
+
+    def post(self, request, *args, **kwargs):
+
+        designation, created = Designation.objects.get_or_create(title=request.POST['new_designation']) 
+        if not created:
+            res = {
+                'result': 'error',
+                'message': 'Designation Already exists'
+            }
+        else:
+            res = {
+                'result': 'ok',
+                'designation': designation.title
+            }
+        response = simplejson.dumps(res)
+        return HttpResponse(response, status=200, mimetype='application/json')
+
+class DeleteUser(View):
+
+    def get(self, request, *args, **kwargs):
+
+        user_type = kwargs['user_type']
+        profile = UserProfile.objects.get(id=kwargs['profile_id'])
+        user = profile.user
+        if request.user.is_superuser:
+            user.delete()
+            context = {
+                'message': 'Deleted Successfully'
+            }
+            return HttpResponseRedirect(reverse('users', kwargs={'user_type': user_type}))
+
+
+
 
 
 

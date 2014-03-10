@@ -14,3 +14,23 @@ from django.contrib.auth.models import User
 class Reports(View):
 	def get(self, request, *args, **kwarg):
 		return render(request, 'reports/report.html', {})
+class SalesReportsDate(View):
+    def get(self, request, *args, **kwargs):
+        return render(request, 'reports/sales_reports_date.html',{})        
+
+class SalesReportsItem(View):
+    def get(self, request, *args, **kwargs):
+        return render(request, 'reports/sales_reports_item.html',{})    
+
+class SalesReportsSalesman(View):
+    def get(self, request, *args, **kwargs):
+        return render(request, 'reports/sales_reports_salesman.html',{})
+
+class SalesReportsCustomer(View):
+    def get(self, request, *args, **kwargs):
+        return render(request, 'reports/sales_reports_customer.html',{})	
+
+class SalesReportsArea(View):
+    def get(self, request, *args, **kwargs):
+        return render(request, 'reports/sales_reports_area.html',{})		
+

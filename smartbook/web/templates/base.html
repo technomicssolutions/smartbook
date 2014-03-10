@@ -62,20 +62,33 @@
 		
 	</head>
 	<body id="{% block body_id %}base{% endblock %}"  {% block controller %}{% endblock controller %}>
+		
 		<div class="container" >
 
 			{% block header %}
 				{% include 'header.html' %}
 			{% endblock header %}
-			
+			<!-- <div id="overlay"></div> -->
+			<div id="dialogue_popup_container">
+				<div id="dialogue_popup">
+					<a href="" class="close_pop" ng-click="hide_popup()"></a>
+					{% block dialogue_popup %}
+	                	
+	                {% endblock %}
+					<p class="message"></p>
+
+				</div>
+			</div>
+
 			<div class="content">
 				{% block content %}
 				{% endblock content %}
 			</div>		
-
+			<div style="width:100%">
 			{% block footer %}
 				{% include 'footer.html' %}
 			{% endblock footer %}
+		</div>
 		</div>
 	</body>
 </html>
