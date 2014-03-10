@@ -154,6 +154,14 @@ height:auto;
 }*/
 
 
+textarea{
+    height: 32px;
+    margin-left: 22% !important;
+    padding-left: 3px;
+}
+
+
+
 .form_container {
 	margin: auto;
 	width: 30%;
@@ -252,26 +260,21 @@ form {
     border-color: rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.25);
     color: #FFFFFF;
     text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.25);
-    float: left;
-    width: 230px;
-    height: 30px;
+    float: right;
     margin-bottom: 3px;
-    text-align: left;
-}
-.btn a {
-	color: #FFFFFF;
+    text-align: center;
+    height: 21px;
+    width: 100px;
+    font-weight: bold;
 }
 .btn:hover {
 	background-color: #2F96B4;
 	color: #FFFFFF;
 }
-.btn:hover a {
-	color: #FFFFFF;
+
+#radio_text {
+	width: 100px;
 }
-
-
-
-
 .purchase_form_container {
 	margin: auto;
     max-width: 1024px;
@@ -312,6 +315,7 @@ form {
 	background-color: #D9EDF7;
 }
 
+
 .reporttext {
 	float: left;
 	padding-left: 10px;
@@ -320,3 +324,39 @@ form {
 .reportinput {
 	float: left;
 }
+
+.table_list td, th {
+    border-color: #E6E6E6;
+    /*padding: 7px;*/
+    padding: 11px;
+}
+th {
+    font-size: 13px;
+}
+
+.table_list {
+    border-color: #E6E6E6;
+    margin: auto;
+    text-align: left;
+    font-size: 14px;
+    margin-top: 30px;
+}
+.table_list th{
+    height: 30px;
+}
+
+.table_list .odd{
+    background-color: #F9F9F9;
+}
+.table_list .even{
+    background-color: #FFFFFF;
+}
+.top_section {
+	height: 50px;
+    width: 89%;
+    margin-top: 15px;
+
+.clear {
+	clear: both;
+}
+

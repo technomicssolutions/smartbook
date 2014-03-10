@@ -8,45 +8,57 @@
 		<div class="alert alert-info" align="Center">EDIT INFORMATION</div>
 	</div>
 	<div class="main-content">
-		<div class="div_content">
-		<form name="EditItem" action=" " method="POST">
-			<p> <label> Item Code</label> : <input style="margin:1%" type="text" name="code" value = "{{ items.code }}"></p>
-			<p> <label> Item Name</label> : <input style="margin:1%" type="text" name="name" value="{{ items.name }}"></p>
-			<p> <label> Description</label> : <textarea style="margin:1%" rows="4" cols="50" name="description">{{ items.description }}</textarea></p>
-			{% for brand in brands%}
-			{{brand}}1 {{items.brand.brand}}	
-			{% if brand == items.brand.brand%}		
-			 enterying
-			 {% endif %}
-			{% endfor %}
-			<p> <label> Brand Name</label> :
-					<select style="margin:1%">
+		<div class="form_container">
+			<form name="EditItem" action="{% url 'update_item' %}" method="POST">
+				{% csrf_token %}
+				<input type="hidden" value="{{ items.id}}" name="id">
+				<div class="control"> 
+					<label> Item Code</label> : <input type="text" name="code" value = "{{ items.code }}">
+				</div>
+				<div class="control"> 
+					<label> Item Name</label> : <input type="text" name="name" value="{{ items.name }}">
+				</div>
+				<div class="control"> 
+					<label> Description</label> : <textarea  rows="4" cols="50" name="description">{{ items.description }}</textarea>
+				</div>
+				<div class="control"> 
+					<label> Brand Name</label> :
+					<select name="brand">
 						{% for brand in brands%}
-						  <option value="{{brand}}" {%if brand == items.brand.brand%}selected="true"{%endif%}>{{brand}}</option>
+						  <option value="{{brand}}" {% if items.brand == brand %} selected="true"{%endif%}>{{brand}}</option>
 						{% endfor %}
-					</select></p>
-			<p> <label> Bar Code</label> : <input style="margin:1%" type="text" name="barcode" value="{{ items.barcode }}"></p>
-			<p> <label> UOM</label> :
-						<select style="margin:1%">
-							{% for uom in uoms%}
-								{% if uom in items.uom.uom%}
-	  								<option value="{{brand}}" selected>{{uom}}</option>
-	  							{% else %}
-	  								<option value="{{brand}}">{{uom}}</option>
-	  							{% endif %}
-							{% endfor %}
-						</select></p>
+					</select>
+				</div>
+				<div class="control"> 
+					<label> Bar Code</label> : <input type="text" name="barcode" value="{{ items.barcode }}">
+				</div>
+			<div class="control"> 
+				<label> UOM</label> :
+				<select name="uom">
+					{% for uom in uoms%}
+						<option value="{{uom}}" {% if items.uom == uom %} selected="true"{%endif%}>{{uom}}</option>
+					{% endfor %}
+				</select>
+			</div>
 
-			<p> <label>Vendor</label> : 
-						<select style="margin:1%">
-	  						<option value=""></option>
-							 <option value=""></option>
-							 <option value=""></option>
-						</select></p>
-			<p> <label>Selling Price</label> : <input style="margin:1%" type="text" name="sellingprice"></p>
-			<p> <label>Tax(%)</label> : <input style="margin:1%" type="text" name="tax" value"{{ items.tax }}"></p>
-			<p> <input style="margin:1%" type="submit" value="Upadate" name="Update">
-				<input type="submit" value="Cancel" name="Cancel"></p>	
+			<div class="control"> 
+				<label>Vendor</label> : 
+				<select>
+					<option value=""></option>
+					 <option value=""></option>
+					 <option value=""></option>
+				</select>
+			</div>
+			<div class="control"> 
+				<label>Selling Price</label> : <input type="text" name="sellingprice">
+			</div>
+			<div class="control"> 
+				<label>Tax(%)</label> : <input type="text" name="tax" value="{{ items.tax }}">
+			</div>
+			<div class="control"> 
+				<input type="submit" value="Upadate" name="Update">
+				<input type="submit" value="Cancel" name="Cancel">
+			</div>	
 		</form>
 		</div>
 	</div>	

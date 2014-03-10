@@ -3,6 +3,7 @@
 {% block body_id %}purchase{% endblock %}
 
 {% block title %}Purchase Entry{% endblock title %}
+{% block controller %}ng-controller="PurchaseController" ng-init="init('{{csrf_token}}')"{% endblock controller %}
 
 {% block content %}
 
@@ -83,7 +84,7 @@
 							<label for="vendor">Vendor</label>
 						</div>
 						<div class="forminput">
-							<select name="vendor" >
+							<select name="vendor" ng-model="vendor">
 								<option value="select">Select</option>
 							</select>
 						</div>
@@ -105,29 +106,39 @@
 		
 				<div class="section_3_purchase">
 					<div>
-       				<table>
-           				<tr class='search_purchase'>
-           					<td>&nbsp;&nbsp;Item Code</td>
-           					<td>
-           						<div class="input-append">
-           							<p></p><input type='text' id="item_code"/>
-           						</div>
-           					</td>
-           					<td>&nbsp;&nbsp;&nbsp;&nbsp;Item Name</td>
-           					<td>&nbsp;&nbsp; 
-           						<div class="input-append">
-           							<p></p><input type="text" id='item_name'/>
-           						</div>
-           					</td>
-           					<td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Barcode</td>
-           					<td> 
-           						<div class="input-append">
-           							<p></p><input type="text" id='barcode'/>
-           						</div>&nbsp;&nbsp;
-           					</td>
-           				</tr>
-       				</table>
+	       				<table>
+	           				<tr class='search_purchase'>
+	           					<td>&nbsp;&nbsp;Item Code</td>
+	           					<td>
+	           						<div class="input-append">
+	           							<p></p><input type='text' id="item_code" ng-model="item_code" ng-change="getItems('item_code')"/>
+	           						</div>
+	           					</td>
+	           					<td>&nbsp;&nbsp;&nbsp;&nbsp;Item Name</td>
+	           					<td>&nbsp;&nbsp; 
+	           						<div class="input-append">
+	           							<p></p><input type="text" id='item_name' ng-model="item_name" ng-change="getItems('item_name')"/>
+	           						</div>
+	           					</td>
+	           					<td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Barcode</td>
+	           					<td> 
+	           						<div class="input-append">
+	           							<p></p><input type="text" id='barcode' ng-model="barcode" ng-change="getItems('barcode')"/>
+	           						</div>&nbsp;&nbsp;
+	           					</td>
+	           				</tr>
+	       				</table>
     				</div>
+    				<div class="item_list" ng-show='selecting_item' ng-hide="item_selected">
+						<table>
+							<tr><th> Item Code </th><th> Item name </th><th> Barcode </th></tr>
+							<tr ng-repeat="item in items" ng-click="select_item(item)">
+								<td> [[item.item_code]] </td>
+								<td> [[item.item_name]] </td>
+								<td> [[item.barcode]] </td>
+							</tr>
+						</table>
+					</div>
 
 				</div>
 
@@ -149,8 +160,8 @@
 							<input type="text" name="purchase_expense">
 						</div>
 					</div>
-
 				</div>
+				
 
 				<div class="section_2_purchase">
 					<div class="formrow_purchase">
