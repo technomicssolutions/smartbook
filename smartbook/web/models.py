@@ -33,7 +33,7 @@ class UserProfile(models.Model):
 
 class Vendor(models.Model):
 	user = models.ForeignKey(User)
-	contact_person = models.CharField('Contact Person', max_length=10)	
+	contact_person = models.CharField('Contact Person', max_length=50)	
 
 	def __unicode__(self):
 		return "vendor - ", self.user.userprofile.user.first_name

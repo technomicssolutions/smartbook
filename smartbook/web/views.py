@@ -111,7 +111,7 @@ class RegisterUser(View):
         userprofile.save()
         if user_type == 'vendor':
             vendor = Vendor()  
-            vendor.contact_person= request.POST['contact']
+            vendor.contact_person= request.POST['contact_person']
             vendor.user = user
             vendor.save()
             context = {
