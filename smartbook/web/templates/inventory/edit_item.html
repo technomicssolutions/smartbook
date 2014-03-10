@@ -25,7 +25,7 @@
 					<label> Brand Name</label> :
 					<select name="brand">
 						{% for brand in brands%}
-						  <option value="{{brand}}" {%if brand == items.brand.brand%}selected="true"{%endif%}>{{brand}}</option>
+						  <option value="{{brand}}" {% if items.brand == brand %} selected="true"{%endif%}>{{brand}}</option>
 						{% endfor %}
 					</select>
 				</div>
@@ -36,11 +36,7 @@
 				<label> UOM</label> :
 				<select name="uom">
 					{% for uom in uoms%}
-						{% if uom in items.uom.uom%}
-								<option value="{{uom}}" selected>{{uom}}</option>
-							{% else %}
-								<option value="{{uom}}">{{uom}}</option>
-							{% endif %}
+						<option value="{{uom}}" {% if items.uom == uom %} selected="true"{%endif%}>{{uom}}</option>
 					{% endfor %}
 				</select>
 			</div>

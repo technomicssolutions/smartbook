@@ -37,7 +37,8 @@
 			  <td>Vendor</td>
 			  <td>{{item.uom.uom}}</td>
 			  <td>stock</td>
-			  <td><a href="{% url 'edit_item' item.id %}">EDIT</a></td>
+			  <td><a href="{% url 'edit_item' item.id %}"><img src="/static/images/edit.png"></a></td>
+			  <td><a href="{% url 'delete_item' item.id %}"><img src="/static/images/delete.png"></a></td>
 			</tr>
 			{% endfor %}
 		</table> 

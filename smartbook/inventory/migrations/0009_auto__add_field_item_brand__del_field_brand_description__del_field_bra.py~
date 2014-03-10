@@ -21,7 +21,7 @@ class Migration(SchemaMigration):
 
         # Adding field 'Brand.brand'
         db.add_column(u'inventory_brand', 'brand',
-                      self.gf('django.db.models.fields.CharField')(default=1, max_length=50),
+                      self.gf('django.db.models.fields.CharField')(default=2, max_length=50),
                       keep_default=False)
 
     def backwards(self, orm):

@@ -54,6 +54,15 @@
 						</div>
 					</div>
 					<div class="formrow">
+						<div class="formtext" id="radio_text">
+							<label for="payment_mode">Payment Mode:</label>
+						</div>
+						<div class="forminput">
+							<input type="radio" name="payment_mode" ng-model="payment_mode" value="true"><label>Cash</label>
+							<input type="radio" name="payment_mode" ng-model="payment_mode" value="false"><label>Cheque</label>
+						</div>
+					</div>
+					<div class="formrow">
 						<div class="formtext">
 							<label for="narration">Narration :</label>
 						</div>
@@ -97,7 +106,7 @@
 					</div>
 				</div>	
 				<div class="section_3">
-					<button class="btn" ng-repeat="head in expense_heads"><a href="" ng-click="selected_head('[[head.head_name]]')">[[head.head_name]]</a></button class="btn">
+					
 				</div>
 			</div>
 			<div></div>

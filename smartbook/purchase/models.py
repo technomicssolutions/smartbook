@@ -8,6 +8,7 @@ from django.contrib.auth.models import User
 
 
 class Purchase(models.Model):
+	
 	invoice_number = models.IntegerField('Invoice Number')
 	item = models.ForeignKey(Item)
 	brand = models.ForeignKey(Brand)
