@@ -53,12 +53,26 @@
 					</ul>
 				</li>
 
-				<li class="menu last"> <a href="{% url 'reports' %}"> Reports </a> 
+				<li class="menu last"> <a href="{% url 'reports' %}"> Reports </a>
+				<ul>
+				<li class="menu last"> <a href=""> Sales </a> 
 					<ul>
-						<li><a href="{% url 'sales_reports' %}">Sales </a></li>
-						
-						
+						<li><a href="{% url 'sales_reports_date' %}">Date Wise </a></li>
+						<li><a href="{% url 'sales_reports_item' %}">Item Wise</a></li>
+						<li><a href="{% url 'sales_reports_customer' %}">Customer Wise</a></li>
+						<li><a href="{% url 'sales_reports_salesman' %}">Salesman Wise</a></li>
+						<li><a href="{% url 'sales_reports_area' %}">Area Wise</a></li>
+
+
 					</ul>
+				</li>
+				<li class="menu last"> <a href=""> Purchase </a> 
+					<ul>
+						
+
+					</ul>
+				</li>
+				</ul>
 				</li>
 
 
