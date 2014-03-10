@@ -59,11 +59,11 @@ class ItemList(View):
         barcode = request.GET.get('barcode', '')
         items = []
         if item_code:
-            items = Item.objects.filter(code__startswith=item_code)
+            items = Item.objects.filter(code__istartswith=item_code)
         elif item_name:
-            items = Item.objects.filter(name__startswith=item_name)
+            items = Item.objects.filter(name__istartswith=item_name)
         elif barcode:
-            items = Item.onjects.filter(barcode__startswith=barcode)
+            items = Item.objects.filter(barcode__istartswith=barcode)
         item_list = []
         for item in items:
             item_list.append({
@@ -73,6 +73,7 @@ class ItemList(View):
                 'brand': item.brand.brand,
                 'tax': item.tax,
                 'uom': item.uom.uom,
+                'current_stock': item.inventory_set.all()[0].quantity if item.inventory_set.count() > 0  else 0
             })
 
         res = {

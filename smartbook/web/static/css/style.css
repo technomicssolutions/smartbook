@@ -277,32 +277,27 @@ form {
 }
 .purchase_form_container {
 	margin: auto;
-    max-width: 1024px;
-    min-height: 500px;
+    width: 90%;
 }
 .form_contents_purchase {
 	margin: 10px 5px;
 }
 .section_1_purchase {
-	float: left;
-	
-	width: 500px;
+	float: left;	
+	width: 100%;
 }
 .section_2_purchase {
-	float: left;
-	
-	width: 500px;
+	float: left;	
+	width: 50%;
 }
 .section_3_purchase {
 	float: left;
-	width: auto;
-	height: 223px;
-
-	
+	width: 100%;
 }
 .formrow_purchase {
 	min-height: 40px;
-    width: 100%;
+    width: 50%;
+    float: left;
 }
 .formtext_purchase {
 	float: left;
@@ -312,9 +307,17 @@ form {
 	float: left;
 }
 .search_purchase{
-	background-color: #D9EDF7;
+	width: 100%;
+	height: 100%;
+	padding-bottom: 30px;
 }
 
+.search_purchase .control {
+	background-color: #ADD8E6;
+    float: left;
+    padding: 13px;
+    width: 31%;
+}
 .table_list td, th {
     border-color: #E6E6E6;
     /*padding: 7px;*/
@@ -345,7 +348,70 @@ th {
 	height: 50px;
     width: 89%;
     margin-top: 15px;
-
+}
 .clear {
 	clear: both;
+}
+
+.item_list {
+	background-color: #FFFFFF;
+    border: 1px solid #ADD8E6;
+    position: absolute;
+    margin-top: -10px;
+    width: 89%;
+    z-index: 1;
+    border-top-color: #FFFFFF;
+}
+
+.item_list .item_list_row, .purchase_item_list .item_list_row{
+	width: 100%;
+	text-align: center;
+	border-top: 1px solid #ADD8E6;
+	float: left;
+	height: 30px;
+}
+.purchase_item_list .header{
+	height: 75px !important;
+}
+.purchase_item_list .item_list_row {
+	height: 50px;
+	padding-top: 5px;
+}
+.item_list .item_list_row span, .purchase_item_list .item_list_row span {
+	padding: 5px;
+	display: block;
+	float: left;
+	width: 32%;
+}
+.purchase_item_list .item_list_row span {
+	width: 5%;
+}
+.purchase_item_list .item_list_row span input {
+	width: 70%;
+}
+.purchase_item_list .item_list_row span .large_input {
+	width: 100% !important;
+}
+.purchase_item_list .item_list_row span .small_input {
+	width: 100% !important;
+}
+.item_list .header, .purchase_item_list .header {
+	background-color: #ADD8E6;
+}
+
+.purchase_items_list {
+	width: 100%;
+	float: left;
+	position: relative;
+	min-height: 100px;
+	padding-bottom: 30px;
+}
+
+.purchase_items_list .purchase_item_list {
+	width: 100% !important;
+	border: 1px solid #ADD8E6;
+}
+
+.small_column{
+	width: 4% !important;
 }
