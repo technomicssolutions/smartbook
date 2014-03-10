@@ -345,4 +345,7 @@ th {
 	height: 50px;
     width: 89%;
     margin-top: 15px;
+
+.clear {
+	clear: both;
 }
