@@ -4,28 +4,66 @@
 {% block body_id %}list-customer{% endblock %}
 
 {% block content %}
-<table>
-	<tr>
-				
-		<th> Name </th>
-		<th> Mobile </th>
-		<th> Phone </th>
-		<th> Email </th>
-		{% if user_type == 'staff' %}
-			<th> Designation </td>	
-		{% endif %}
-		{% for user in users %}
-			<tr>
-				<td> {{ user.user.username }} </td>
-				<td> {{ user.mobile }} </td>
-				<td> {{ user.phone }} </td>
-				<td> {{ user.email }} </td>
-				{% if user_type == 'staff' %}
-					<th> {{ user.user.vendor_set.all.0.designation}} </td>	
-				{% endif %}
-			</tr>
-		{% endfor %}
-	</tr>
-<table>
+
+<div class="top_section">
+	{% if user_type == 'vendor' %}
+		<a class="btn" href="{% url 'register_user' user_type='vendor' %}">New Vendor</a>
+	{% elif user_type == 'staff' %}
+		<a class="btn" href="{% url 'register_user' user_type='staff' %}">New Staff</a>
+	{% elif user_type == 'customer' %}
+		<a class="btn" href="{% url 'register_user' user_type='customer' %}">New Customer</a> 
+	{% endif %}
+</div>
+{% if users|length > 0 %}
+	<table border="0" class="table_list" cellspacing="0">
+		<tr>
+					
+			<th> Name </th>
+			<th> House Name</th>
+			<th> Street </th>
+			<th> City </th>
+			<th> District </th>
+			<th> Pincode </th>
+			<th> Mobile </th>
+			<th> Phone </th>
+			<th> Email </th>
+
+			{% if user_type == 'staff' %}
+				<th> Designation </td>	
+			{% endif %}
+			<th>&nbsp;&nbsp;&nbsp;</th>'
+			{% if user.is_superuser %}
+				<th>&nbsp;&nbsp;&nbsp;</th>
+			{% endif %}
+			{% for usr in users %}
+				<tr class="{% cycle 'odd' 'even' %}">
+					<td> {{ usr.user.first_name }} </td>
+					<td> {{ usr.house_name }} </td>
+					<td> {{ usr.street }}</td>
+					<td> {{ usr.city }} </td>
+					<td> {{ usr.district }} </td>
+					<td> {{ usr.pin }} </td>
+					<td> {{ usr.mobile }} </td>
+					<td> {{ usr.land_line }} </td>
+					<td> {{ usr.email_id }} </td>
+					{% if user_type == 'staff' %}
+						<td> {{ usr.user.staff_set.all.0.designation.title}} </td>	
+					{% endif %}
+					<td><a href="{% url 'edit_user' user_type=user_type profile_id=usr.id%}">
+						<img src="/static/images/edit.png">
+						</a>
+					</td>
+					{% if user.is_superuser %}
+						<td>
+							<a href=""><img src="/static/images/delete.png"></a>
+						</td>
+					{% endif %}	
+				</tr>
+			{% endfor %}
+		</tr>
+	</table>
+{% else %}
+	<div class="message"><p>No {{user_type}}s</p></div>
+{% endif %}
 
 {% endblock content %}

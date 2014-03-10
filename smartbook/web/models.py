@@ -10,11 +10,15 @@ USER_TYPE = (
 
 class Designation(models.Model):
 
-	title = models.CharField('Designation title', max_length=50)
+	title = models.CharField('Designation title', max_length=50, unique=True)
 	description = models.CharField('Description', max_length=100, null=True, blank=True)
 
 	def __unicode__(self):
 		return self.title
+
+	class Meta:
+		verbose_name = 'Designation'
+		verbose_name_plural = 'Designation'
 
 class UserProfile(models.Model):
 	user = models.ForeignKey(User)
@@ -26,24 +30,38 @@ class UserProfile(models.Model):
 	pin = models.CharField('Pin', max_length=10, null=True, blank=True,)
 	mobile = models.CharField('Mobile', max_length=15, null=True, blank=True)
 	land_line = models.CharField('Land Line',max_length=15, blank=True)
-	email_id = models.CharField('Email Id', max_length=25)
+	email_id = models.CharField('Email Id', max_length=30)
 
 	def __unicode__(self):
 		return self.user.username
+
+	class Meta:
+		verbose_name = 'User Profile'
+		verbose_name_plural = 'User Profile'
 
 class Vendor(models.Model):
 	user = models.ForeignKey(User)
 	contact_person = models.CharField('Contact Person', max_length=50)	
 
 	def __unicode__(self):
-		return "vendor - ", self.user.userprofile.user.first_name
+		return "vendor - "+self.user.first_name
+
+	class Meta:
+
+		verbose_name = 'Vendor'
+		verbose_name_plural = 'Vendor'
 
 	
 class Customer(models.Model):
 	user = models.ForeignKey(User)
 
 	def __unicode__(self):
-		return "customer - ", self.user.userprofile.user.first_name
+		return "customer - "+self.user.first_name
+
+	class Meta:
+
+		verbose_name = 'Customer'
+		verbose_name_plural = 'Customer'
 
 		
 class Staff(models.Model):
@@ -51,5 +69,10 @@ class Staff(models.Model):
 	designation = models.ForeignKey(Designation, null=True, blank=True)
 
 	def __unicode__(self):
-		return "staff - ", self.user.userprofile.user.first_name
+		return "staff - "+self.user.first_name
+
+	class Meta:
+
+		verbose_name = 'Staff'
+		verbose_name_plural = 'Staff'
 			
