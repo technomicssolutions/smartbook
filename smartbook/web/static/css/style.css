@@ -319,3 +319,7 @@ form {
 	background-color: #D9EDF7;
 }
 
+
+.clear {
+	clear: both;
+}
