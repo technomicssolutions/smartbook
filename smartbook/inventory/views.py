@@ -61,9 +61,7 @@ class ItemList(View):
 
 class ItemEdit(View):
 	def get(self, request, *args, **kwargs):
-		print "item ",kwargs['item_id']
 		items = Item.objects.get(id = kwargs['item_id'])
-		print "items",items.name
 		brand = Brand.objects.all()
 		uom = UnitOfMeasure.objects.all()
 		ctx ={
@@ -72,6 +70,19 @@ class ItemEdit(View):
 			'brands': brand,
 		}
 		return render(request, 'inventory/edit_item.html',ctx)
+
+class Itemdelete(View):
+	def get(self, request, *args, **kwargs):
+		message =""
+		try:
+			items = Item.objects.get(id = kwargs['item_id']).delete()
+		except:
+			message = "already deleted"
+		items = Item.objects.all()
+		return render(request, 'inventory/item_list.html',{
+			'items':items,
+			'message':message,
+		})
 
 class UpdateItem(View):
 	def post(self, request, *args, **kwargs):
@@ -85,7 +96,6 @@ class UpdateItem(View):
 		uom =UnitOfMeasure.objects.get(uom=request.POST['uom'])
 		item.uom=uom
 		item.save()
-		print "item",item
 		items = Item.objects.all()
 		return render(request, 'inventory/item_list.html',{
 			'items':items,
