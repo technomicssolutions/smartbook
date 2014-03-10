@@ -292,6 +292,7 @@ form {
     margin-left: 0px !important;
     padding-left: 0px !important;
 }
+
 .purchase_form_container {
 	margin: auto;
     max-width: 1024px;
@@ -376,6 +377,17 @@ th {
 .clear {
 	clear: both;
 }
+
+
+#overlay {
+  background-color: #FFFFFF;
+  background:url(../images/overlay.png) repeat 0 0;
+  opacity: 0.9;
+  z-index: 1;
+  position: absolute;
+  width: 100%;
+}
+
 
 #dialogue_popup_container {
   z-index: 2;
