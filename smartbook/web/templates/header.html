@@ -49,7 +49,17 @@
 						<li><a href="{% url 'new_expense_head' %}">New Expense Head</a></li>
 					</ul>
 				</li>
-				<li class="menu last"> <a href="{% url 'reports' %}"> Reports </a> </li>
+
+				<li class="menu last"> <a href="{% url 'reports' %}"> Reports </a> 
+					<ul>
+						<li><a href="{% url 'sales_reports' %}">Sales </a></li>
+						
+						
+					</ul>
+				</li>
+
+
+				
 				
 			</ul>
 		{% endif %}
