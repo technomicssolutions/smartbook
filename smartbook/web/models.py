@@ -19,13 +19,13 @@ class Designation(models.Model):
 class UserProfile(models.Model):
 	user = models.ForeignKey(User)
 	user_type = models.CharField('User Type', max_length=10, choices=USER_TYPE)
-	house_name = models.CharField('House name', null=True, blank=True, max_length=15)
-	street = models.CharField('Street', null=True, blank=True, max_length=10)
-	city = models.CharField('City', null=True, blank=True, max_length=10)
-	district = models.CharField('District', null=True, blank=True, max_length=10)
+	house_name = models.CharField('House name', null=True, blank=True, max_length=50)
+	street = models.CharField('Street', null=True, blank=True, max_length=50)
+	city = models.CharField('City', null=True, blank=True, max_length=50)
+	district = models.CharField('District', null=True, blank=True, max_length=50)
 	pin = models.CharField('Pin', max_length=10, null=True, blank=True,)
-	mobile = models.CharField('Mobile', max_length=10, null=True, blank=True)
-	land_line = models.CharField('Land Line',max_length=10, blank=True)
+	mobile = models.CharField('Mobile', max_length=15, null=True, blank=True)
+	land_line = models.CharField('Land Line',max_length=15, blank=True)
 	email_id = models.CharField('Email Id', max_length=25)
 
 	def __unicode__(self):

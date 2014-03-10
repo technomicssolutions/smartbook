@@ -136,17 +136,11 @@ class RegisterUser(View):
             return render(request, 'register_user.html', context)
     
         
+# class UsersListView(View):
+
+#     def get(self, request, *args, *kwargs):
+
         
-
-class StaffList(View):
-    def get(self, request, *args, **kwargs):
-        return render(request, 'list_staff.html',{})
-
-
-
-class CustomerList(View):
-    def get(self, request, *args, **kwargs):
-        return render(request, 'list_customer.html',{})
 
 
 
