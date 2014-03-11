@@ -31,7 +31,7 @@ class Purchase(models.Model):
 		verbose_name = 'Purchase'
 		verbose_name_plural = 'Purchase'
 
-class PurchaseItems(models.Model):
+class PurchaseItem(models.Model):
 
 	item = models.ForeignKey(Item, null=True, blank=True)
 	purchase = models.ForeignKey(Purchase, null=True, blank=True)
