@@ -547,7 +547,16 @@ th {
   width: 384px;
   border: 1px solid;
 }
-
+#dialogue_popup form {
+	width: 100%;
+}
+#dialogue_popup .control {
+	width: 100%;
+}
+#dialogue_popup label {
+	width: 50% !important;
+	float: left;
+}
 .close_pop {
   width: 32px;
   height: 32px;

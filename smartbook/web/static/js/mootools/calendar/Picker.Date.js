@@ -131,7 +131,7 @@ this.DatePicker = Picker.Date = new Class({
 			var storeDate = input.retrieve('datepicker:value');
 			if (storeDate) date = Date.parse(storeDate);
 		}
-		if (date != null && date.isValid()) this.date = date;
+		if (date != null && date.isValid()) this.date = date.format(this.options.format);
 	},
 
 	// Control the previous and next elements
