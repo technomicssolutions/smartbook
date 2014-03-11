@@ -106,9 +106,7 @@
 								<option value="other">Other</option>
 							</select>
 						</div>
-					</div>
-
-						
+					</div>						
 				</div>	
 		
 				<div class="section_3_purchase">
@@ -195,13 +193,13 @@
 							<label for="vendor_amout">Vendor Amount</label>
 						</div>
 						<div class="forminput">
-							<input type="text" name="vendor_amount" ng-model="purchase.vendor_amount">
+							<input type="text" name="vendor_amount" ng-model="purchase.vendor_amount" readonly />
 						</div>
 						<div class="formtext_purchase">
 							<label for="purchase_expense">Purchase Expense</label>
 						</div>
 						<div class="forminput">
-							<input type="text" name="purchase_expense" ng-model="purchase.purchase_expense" />
+							<input type="text" name="purchase_expense" ng-model="purchase.purchase_expense" readonly />
 						</div>
 					</div>
 					<div class="formrow_purchase">
@@ -209,7 +207,7 @@
 							<label for="net_total">Net Total</label>
 						</div>
 						<div class="forminput">
-							<input type="text" name="net_total" ng-model="purchase.net_total" ng-change="calculate_grant_total()"/>
+							<input type="text" name="net_total" ng-model="purchase.net_total" ng-change="calculate_grant_total()" readonly/>
 						</div>
 					</div>
 
@@ -226,7 +224,7 @@
 							<label for="grant_total">Grant Total</label>
 						</div>
 						<div class="forminput">
-							<input type="text" name="grant_total" ng-model="purchase.grant_total">
+							<input type="text" name="grant_total" ng-model="purchase.grant_total" readonly />
 						</div>
 					</div>
 				</div>

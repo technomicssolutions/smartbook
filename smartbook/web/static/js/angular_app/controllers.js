@@ -536,6 +536,19 @@ function PurchaseController($scope, $element, $http, $timeout, share, $location)
             });
         }
     }
+
+    $scope.load_purchase = function() {
+        console.log('$scope.purchase.purchase_invoice_number', $scope.purchase.purchase_invoice_number);
+        $http.get('/purchase/?invoice_no='+$scope.purchase.purchase_invoice_number).success(function(data)
+        {
+            $scope.selecting_item = true;
+            $scope.item_selected = false;
+            $scope.purchase = data.purchase;
+        }).error(function(data, status)
+        {
+            console.log(data || "Request failed");
+        });
+    }
 }
 
 function SalesController($scope, $element, $http, $timeout, share, $location) {

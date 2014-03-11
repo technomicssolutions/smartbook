@@ -24,7 +24,7 @@ class Purchase(models.Model):
 	
 	
 	def __unicode__(self):
-		return self.purchase_invoice_number
+		return str(self.purchase_invoice_number)
 
 	class Meta:
 
