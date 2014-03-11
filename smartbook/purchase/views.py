@@ -1,6 +1,7 @@
 import sys
 import ast
 import simplejson
+from datetime import datetime
 
 from django.contrib.auth.views import password_reset
 from django.shortcuts import get_object_or_404, render
@@ -16,7 +17,8 @@ from inventory.models import UnitOfMeasure
 from inventory.models import Brand
 
 from web.models import (UserProfile, Vendor, Customer, Staff, TransportationCompany)
-from purchase.models import Purchase
+from purchase.models import Purchase, PurchaseItem
+from inventory.models import Inventory
 
 class PurchaseEntry(View):
 
@@ -39,12 +41,12 @@ class PurchaseEntry(View):
         purchase.invoice_number = purchase_dict['purchase_invoice_number']
         purchase.vendor_invoice_number = purchase_dict['vendor_invoice_number']
         purchase.vendor_do_number = purchase_dict['vendor_do_number']
-        purchase.vendor_invoice_date = purchase_dict['vendor_invoice_date']
-        purchase.purchase_invoice_date = purchase_dict['purchase_invoice_date']
-        barnd = Brand.objects.get(brand=purchase_dict['brand'])
+        purchase.vendor_invoice_date = datetime.strptime(purchase_dict['vendor_invoice_date'], '%d/%m/%Y')
+        purchase.purchase_invoice_date = datetime.strptime(purchase_dict['purchase_invoice_date'], '%d/%m/%Y')
+        brand = Brand.objects.get(brand=purchase_dict['brand'])
         purchase.brand = brand
-        vendor = Vendor.objects.get(user__firstname=purchase_dict['vendor'])
-        transport = TransportationCompany.objects.get(user__firstname=purchase_dict['transport'])
+        vendor = Vendor.objects.get(user__first_name=purchase_dict['vendor'])
+        transport = TransportationCompany.objects.get(company_name=purchase_dict['transport'])
         purchase.vendor = vendor
         purchase.transport = transport
         purchase.discount = purchase_dict['discount']
@@ -70,11 +72,11 @@ class PurchaseEntry(View):
             p_item.cost_price = purchase_item['cost_price']
             p_item.save()
 
-            inventory, created = Inventory.objects.get_or_create(item=item)
+            inventory, created = Inventory.objects.get_or_create(item=item, quantity=0)
             if created:
-                inventory.quantity = inventory.quantity + purchase_item['qty_purchased']
+                inventory.quantity = inventory.quantity + int(purchase_item['qty_purchased'])
             else:
-                inventory.quantity = purchase_item['qty_purchased']
+                inventory.quantity = int(purchase_item['qty_purchased'])
             inventory.selling_price = purchase_item['selling_price']
             inventory.unit_price = purchase_item['unit_price']
             inventory.discount_permit_percentage = purchase_item['permit_disc_percent']

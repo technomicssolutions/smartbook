@@ -53,7 +53,7 @@
 							<label for="vendor_invoice_date">Vendor Invoice Date</label>
 						</div>
 						<div class="forminput">
-							<input type="text" name="vendor_invoice_date" ng-model="purchase.vendor_invoice" id="vendor_invoice_date">
+							<input type="text" name="vendor_invoice_date" ng-model="purchase.vendor_invoice_date" id="vendor_invoice_date">
 						</div>
 					</div>
 					
@@ -64,7 +64,7 @@
 							<label for="purchase_invoice_date">Purchase Invoice Date</label>
 						</div>
 						<div class="forminput">
-							<input type="text" name="purchase_invoice_date" ng-model="purchase.purchase_invoice_date" id="purchase_invoice_id"/>
+							<input type="text" name="purchase_invoice_date" ng-model="purchase.purchase_invoice_date" id="purchase_invoice_date"/>
 						</div>
 					</div>
 
@@ -76,7 +76,7 @@
 						<div class="forminput">
 							<select name="brand" ng-model="purchase.brand" ng-change="add_brand()">
 								<option value="select">Select</option>
-								<option ng-repeat="brand in brands" value="[[brand.vendor_name]]" ng-selected="brand.brand_name == purchase.brand">[[brand.brand_name]]</option>
+								<option ng-repeat="brand in brands" value="[[brand.brand_name]]" ng-selected="brand.brand_name == purchase.brand">[[brand.brand_name]]</option>
 								<option value="other">Other</option>
 							</select>
 						</div>
