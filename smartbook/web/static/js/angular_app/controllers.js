@@ -28,12 +28,14 @@ function ExpenseController($scope, $element, $http, $timeout, $location) {
     $scope.payment_mode_change = function(payment_mode) {
         if(payment_mode == 'cheque') {
             $scope.payment_mode_selection = false;
+            
             new Picker.Date($$('#check_date'), {
                 // timePicker: true,
                 positionOffset: {x: 5, y: 0},
                 pickerClass: 'datepicker_bootstrap',
                 useFadeInOut: !Browser.ie,
                 format:'%d/%m/%Y',
+                // minDate: 
                 // onSelect: function(date){
                 //     myHiddenField.set('value', date.format('%s');
                 // } 
@@ -52,7 +54,7 @@ function AddEditUserController($scope, $element, $http, $timeout, $location) {
         $scope.new_designation = '';
         $scope.csrf_token = csrf_token;
         $scope.user_type = user_type;
-        $scope.new_desiganation_flag = true;
+        // $scope.new_desiganation_flag = true;
         $scope.error_flag = true;
         $scope.designation_flag = false;
         $scope.message = '';
@@ -86,7 +88,7 @@ function AddEditUserController($scope, $element, $http, $timeout, $location) {
             var height = $(document).height();
             $scope.popup.set_overlay_height(height);
             $scope.popup.show_content();
-            $scope.new_desiganation_flag = false;
+            // $scope.new_desiganation_flag = false;
         }
     }
     $scope.add_new_designation = function() {
@@ -110,7 +112,7 @@ function AddEditUserController($scope, $element, $http, $timeout, $location) {
                 $scope.popup.hide_popup();
                 $scope.get_designation_list();
                 $scope.designation = $scope.new_designation;
-                $scope.new_desiganation_flag = true;
+                // $scope.new_desiganation_flag = true;
             }
         }).error(function(data, success){
             
@@ -125,7 +127,7 @@ function AddEditUserController($scope, $element, $http, $timeout, $location) {
     	$scope.expense_head = head_name;
     }
     $scope.close_popup = function(){
-        $scope.new_desiganation_flag = true;
+        // $scope.new_desiganation_flag = true;
         $scope.popup.hide_popup();
     }
 	
@@ -238,7 +240,6 @@ function PurchaseController($scope, $element, $http, $timeout, share, $location)
             item.cost_price = parseFloat(item.unit_price) + parseFloat(item.frieght_unit) + parseFloat(item.handling_unit) + parseFloat(item.expense_unit)
         }
         $scope.calculate_net_amount(item);
-        $scope.calculate_vendor_amount();
     }
 
     $scope.calculate_net_amount = function(item) {
@@ -341,5 +342,4 @@ function PurchaseController($scope, $element, $http, $timeout, share, $location)
             });
         }
     }
-
 }
