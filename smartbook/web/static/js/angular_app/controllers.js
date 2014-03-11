@@ -54,7 +54,7 @@ function AddEditUserController($scope, $element, $http, $timeout, $location) {
         $scope.new_designation = '';
         $scope.csrf_token = csrf_token;
         $scope.user_type = user_type;
-        $scope.new_desiganation_flag = true;
+        // $scope.new_desiganation_flag = true;
         $scope.error_flag = true;
         $scope.designation_flag = false;
         $scope.message = '';
@@ -88,7 +88,7 @@ function AddEditUserController($scope, $element, $http, $timeout, $location) {
             var height = $(document).height();
             $scope.popup.set_overlay_height(height);
             $scope.popup.show_content();
-            $scope.new_desiganation_flag = false;
+            // $scope.new_desiganation_flag = false;
         }
     }
     $scope.add_new_designation = function() {
@@ -112,7 +112,7 @@ function AddEditUserController($scope, $element, $http, $timeout, $location) {
                 $scope.popup.hide_popup();
                 $scope.get_designation_list();
                 $scope.designation = $scope.new_designation;
-                $scope.new_desiganation_flag = true;
+                // $scope.new_desiganation_flag = true;
             }
         }).error(function(data, success){
             
@@ -127,7 +127,7 @@ function AddEditUserController($scope, $element, $http, $timeout, $location) {
     	$scope.expense_head = head_name;
     }
     $scope.close_popup = function(){
-        $scope.new_desiganation_flag = true;
+        // $scope.new_desiganation_flag = true;
         $scope.popup.hide_popup();
     }
 	
