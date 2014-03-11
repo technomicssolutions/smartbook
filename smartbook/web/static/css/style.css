@@ -293,6 +293,8 @@ form {
     padding-left: 0px !important;
 }
 
+
+/*purchase module */
 .purchase_form_container {
 	margin: auto;
     width: 90%;
@@ -330,15 +332,63 @@ form {
 	padding-bottom: 30px;
 }
 
-<<<<<<< HEAD
+
 .search_purchase .control {
 	background-color: #ADD8E6;
     float: left;
     padding: 13px;
     width: 31%;
 }
-=======
 
+/*sales module */
+.sales_form_container {
+	margin: auto;
+    width: 90%;
+}
+.form_contents_sales {
+	margin: 10px 5px;
+}
+.section_1_sales {
+	float: left;	
+	width: 100%;
+}
+.section_2_sales {
+	float: left;	
+	width: 50%;
+}
+.section_3_sales {
+	float: left;
+	width: 100%;
+}
+.formrow_sales {
+	min-height: 40px;
+    width: 50%;
+    float: left;
+}
+.formtext_sales {
+	float: left;
+    width: 200px;
+}
+.forminput_sales {
+	float: left;
+}
+.search_sales{
+	width: 100%;
+	height: 100%;
+	padding-bottom: 30px;
+}
+
+
+.search_sales .control {
+	background-color: #ADD8E6;
+    float: left;
+    padding: 13px;
+    width: 31%;
+}
+
+
+
+/*reports*/
 .reporttext {
 	float: left;
 	padding-left: 10px;
@@ -348,7 +398,7 @@ form {
 	float: left;
 }
 
->>>>>>> 6d227f9e6f3a06883463195bff7c01107b423b39
+
 .table_list td, th {
     border-color: #E6E6E6;
     /*padding: 7px;*/

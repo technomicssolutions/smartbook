@@ -226,3 +226,95 @@ function PurchaseController($scope, $element, $http, $timeout, share, $location)
         }
     }
 }
+
+
+function SalesController($scope, $element, $http, $timeout, share, $location) {
+
+    $scope.items = [];
+    $scope.selected_item = '';
+    $scope.selecting_item = false;
+    $scope.item_selected = false;
+    $scope.sales_items = [];
+    $scope.init = function(csrf_token)
+    {
+        $scope.csrf_token = csrf_token;
+    }
+
+    $scope.getItems = function(parameter){
+
+        console.log('parameter', parameter);
+        if(parameter == 'item_code')
+            var param = $scope.item_code;
+        else if(parameter == 'item_name')
+            var param = $scope.item_name;
+        else if (parameter == 'barcode')
+            var param = $scope.barcode;
+        $http.get('/inventory/items/?'+parameter+'='+param).success(function(data)
+        {
+            $scope.selecting_item = true;
+            $scope.item_selected = false;
+            $scope.items = data.items;
+        }).error(function(data, status)
+        {
+            console.log(data || "Request failed");
+        });
+    }
+
+    $scope.addSalesItem = function(item) {
+        $scope.selecting_item = false;
+        $scope.item_selected = true;
+        $scope.item_code = '';
+        $scope.item_name = '';
+        $scope.barcode = '';
+        var selected_item = {
+
+            'item_code': item.item_code,
+            'item_name': item.item_name,
+            'barcode': item.barcode,
+            'current_stock': item.current_stock,
+            'unit_price': item.selling_price,
+            'tax': item.tax,
+            'tax_amount':0,
+            'qty_sold': 0,
+            'uom': item.uom,
+            'discount_permit': item.discount_permit,
+            'discount_permit_amount':0,
+            'disc_given': 0,
+            'unit_cost':0,
+            'net_amount': 0,
+
+            
+        }
+        $scope.calculate_tax_amount_sale(selected_item);
+        $scope.calculate_discount_amount_sale(selected_item);
+        $scope.calculate_unit_cost_sale(selected_item);
+        $scope.sales_items.push(selected_item);
+    }
+    
+    
+    $scope.calculate_net_amount_sale = function(item) {
+        if(item.qty_sold != '' && item.unit_price != ''){
+            item.net_amount = ((parseFloat(item.qty_sold)*parseFloat(item.unit_price))+parseFloat(item.tax_amount)-parseFloat(item.disc_given)).toFixed(2);
+            
+        }
+    }
+    $scope.calculate_tax_amount_sale = function(item) {
+        if(item.tax != '' && item.unit_price != ''){
+            item.tax_amount = (parseFloat(item.unit_price)*parseFloat(item.tax))/100;
+        }
+    }
+    $scope.calculate_discount_amount_sale = function(item) {
+        if(item.discount_permit != '' && item.unit_price != ''){
+            item.discount_permit_amount = (parseFloat(item.unit_price)*parseFloat(item.discount_permit))/100;
+        }
+    }
+    $scope.calculate_unit_cost_sale = function(item) {
+        if(item.unit_price != ''){
+            item.unit_cost = (parseFloat(item.unit_price)+parseFloat(item.tax_amount)-parseFloat(item.disc_given)).toFixed(2);
+            
+        }
+    }
+
+
+
+}
