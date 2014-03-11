@@ -20,7 +20,7 @@ class  Expense(models.Model):
 	voucher_no = models.IntegerField('Voucher No')
 	date = models.DateField('Date')
 	amount = models.IntegerField('Amount')
-	payment_mode = models.BooleanField('Payment Mode', default=False)
+	payment_mode = models.CharField('Payment Mode', null=True, blank=True, max_length=25)
 	narration = models.TextField('Narration', max_length=300, null=True, blank=True)
 	
 	cheque_no = models.IntegerField('Cheque No')
