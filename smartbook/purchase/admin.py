@@ -5,5 +5,5 @@ from purchase.models import *
 
 admin.site.register(Purchase)
 admin.site.register(PurchaseReturn)
-admin.site.register(PurchaseItems)
+admin.site.register(PurchaseItem)
 
