@@ -82,7 +82,7 @@ function AddEditUserController($scope, $element, $http, $timeout, $location) {
                 'message_padding': '0px',
                 'left': '28%',
                 'top': '175px',
-                'height': 200,
+                'height': '115px',
                 'content_div': '#add_designation'
             });
             var height = $(document).height();
