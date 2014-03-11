@@ -203,30 +203,35 @@ form {
 	color: red;
 }
 
+/************************** Expense module start***********************/
+
 .expense_form_container {
 	margin: auto;
     max-width: 1024px;
     min-height: 500px;
 }
+.expense_form_container form {
+	width: 100% ! important;
+}
 .form_contents {
+	border: 1px solid;
+    display: inline-block;
+    height: auto;
+    margin: 10px 5px;
+    width: 100%;
 	margin: 10px 5px;
 }
 .section_1 {
 	float: left;
 	margin-right: 25px;
-	width: 315px;
+	width: 33%;
 }
 .section_2 {
 	float: left;
 	margin-right: 25px;
-	width: 315px;
+	width: 33%;
 }
-.section_3 {
-	float: left;
-	width: 245px;
-	height: 223px;
-	overflow: auto;
-}
+
 .formrow {
 	min-height: 40px;
     width: 100%;
@@ -293,6 +298,7 @@ form {
     padding-left: 0px !important;
 }
 
+/************************** Expense module end ***********************/
 
 
 
