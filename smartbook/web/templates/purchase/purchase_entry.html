@@ -3,7 +3,7 @@
 {% block body_id %}purchase{% endblock %}
 
 {% block title %}Purchase Entry{% endblock title %}
-{% block controller %}ng-controller="PurchaseController" ng-init="init('{{csrf_token}}')"{% endblock controller %}
+{% block controller %}ng-controller="PurchaseController" ng-init="init('{{csrf_token}}', '{{invoice_number}}')"{% endblock controller %}
 
 {% block content %}
 
@@ -20,7 +20,7 @@
 							<label for="purchase_invoice_number">Purchase Invoice Number</label>
 						</div>
 						<div class="forminput">
-							<input type="text" name="purchase_invoice_number" ng-model="purchse.purchase_invoice_number" />
+							<input type="text" name="purchase_invoice_number" ng-model="purchase.purchase_invoice_number"  readonly/>
 						</div>
 					</div>
 
@@ -224,7 +224,8 @@
 			</div>
 			<div  align="Center">
 				<div class="buttons">
-					<input type="submit" value="Submit">
+					<p class="error_message"> [[validation_error]] </p>
+					<input type="button" value="Submit" ng-click="save_purchase();">
 					<a href="{% url 'home' %}"><input type="button" value="Cancel"></a>
 				</div>
 			</div>			
