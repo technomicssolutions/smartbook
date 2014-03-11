@@ -74,12 +74,6 @@
 							<label for="brand">Brand</label>
 						</div>
 						<div class="forminput">
-							<!-- <select name="brand" ng-model="purchase.brand">
-								{% for brand in brands %}
-  									<option value="{{brand.brand}}">{{brand.brand}}</option>
-								{% endfor %}
-								
-							</select> -->
 							<select name="brand" ng-model="purchase.brand" ng-change="add_brand()">
 								<option value="select">Select</option>
 								<option ng-repeat="brand in brands" value="[[brand.vendor_name]]" ng-selected="brand.brand_name == purchase.brand">[[brand.brand_name]]</option>
@@ -106,9 +100,6 @@
 							<label for="transport">Transport</label>
 						</div>
 						<div class="forminput">
-							<!-- <select name="transport" ng-model="purchase.transport">
-								<option value="select">Select</option>
-							</select> -->
 							<select name="transport" ng-model="purchase.transport" ng-change="add_transport()">
 								<option value="select">Select</option>
 								<option ng-repeat="company in companies" value="[[company.company_name]]" ng-selected="company.company_name == purchase.transport">[[company.company_name]]</option>
