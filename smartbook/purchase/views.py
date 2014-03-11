@@ -24,7 +24,7 @@ class PurchaseEntry(View):
     	brand = Brand.objects.all()
     	vendor = Vendor.objects.all()
         transport = TransportationCompany.objects.all()
-        invoice_number = Purchase.objects.aggregate(Max('invoice_number'))['invoice_number__max']
+        invoice_number = Purchase.objects.aggregate(Max('purchase_invoice_number'))['purchase_invoice_number__max']
         if not invoice_number:
             invoice_number = 1
         return render(request, 'purchase/purchase_entry.html',{
@@ -97,4 +97,6 @@ class PurchaseEdit(View):
         return render(request, 'purchase/edit_purchase_entry.html',{
         	
         	})
+
+
 
