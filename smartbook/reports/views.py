@@ -79,6 +79,10 @@ class PurchaseAccountsVendor(View):
     def get(self, request, *args, **kwargs):
         return render(request, 'reports/purchase_accounts_vendor.html',{})
 
+class Stock(View):
+    def get(self, request, *args, **kwargs):
+        return render(request, 'reports/stock.html',{})
+
 
 
 

@@ -36,10 +36,10 @@
 		</div>
 
 		<div class="reportinput">
-			<select name="type">
+			<select name="form" onchange="location = this.options[this.selectedIndex].value;">
 				<option>Select Report Type</option>
-				<option>Date Wise Accounts</option>
-				<option>Vendor Wise Accounts</option>
+				<option value="{% url 'purchase_accounts_date' %}">Date Wise Accounts</option>
+				<option value="{% url 'purchase_accounts_vendor' %}">Vendor Wise Accounts</option>
 			</select>
 		</div>
 

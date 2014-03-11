@@ -43,13 +43,13 @@
 		</div>
 
 		<div class="reportinput">
-			<select name="type">
+			<select name="form" onchange="location = this.options[this.selectedIndex].value;">
 				<option>Select Report Type</option>
-				<option>Date Wise Report<a href="{% url '' %}"> </a></option>
-				<option>Item Wise Report</option>
-				<option>Customer Wise Report</option>
-				<option>Salesman Wise Report</option>
-				<option>Area Wise Report</option>
+				<option value="{% url 'sales_reports_date' %}">Date Wise Report</option>
+				<option value="{% url 'sales_reports_item' %}">Item Wise Report</option>
+				<option value="{% url 'sales_reports_customer' %}">Customer Wise Report</option>
+				<option value="{% url 'sales_reports_salesman' %}">Salesman Wise Report</option>
+				<option value="{% url 'sales_reports_area' %}">Area Wise Report</option>
 			</select>
 		</div>
 
@@ -66,21 +66,7 @@
 			  <th></th>
 			</tr>
 
-<!-- 			{% for item in items %}
-
-			<tr class="success" style="font-size: 12px"style="width:auto">
-			  <td>{{item.code}}</td>
-			  <td>{{item.barcode}}</td>
-			  <td>{{item.name}}</td>
-			  <td>{{item.description}}</td>
-			  <td>{{item.brand.brand}}</td>
-			  <td>Vendor</td>
-			  <td>{{item.uom.uom}}</td>
-			  <td>stock</td>
-			  <td><a href="{% url 'edit_item' item.id %}">EDIT</a></td>
-			</tr>
-			{% endfor %}
- -->		</table> 
+		</table> 
 		
 
 	

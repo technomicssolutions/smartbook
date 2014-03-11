@@ -38,13 +38,13 @@
 		</div>
 
 		<div class="reportinput">
-			<select name="type">
+			<select name="form" onchange="location = this.options[this.selectedIndex].value;">
 				<option>Select Report Type</option>
-				<option>Date Wise Report</option>
-				<option>Item Wise Report</option>
-				<option>Customer Wise Report</option>
-				<option>Salesman Wise Report</option>
-				<option>Area Wise Report</option>
+				<option value="{% url 'sales_reports_date' %}">Date Wise Report</option>
+				<option value="{% url 'sales_reports_item' %}">Item Wise Report</option>
+				<option value="{% url 'sales_reports_customer' %}">Customer Wise Report</option>
+				<option value="{% url 'sales_reports_salesman' %}">Salesman Wise Report</option>
+				<option value="{% url 'sales_reports_area' %}">Area Wise Report</option>
 			</select>
 		</div>
 
