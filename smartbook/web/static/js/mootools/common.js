@@ -57,13 +57,13 @@ var DialogueModelWindow = new Class({
     },
     show_popup: function(){
         this.overlay.setStyle('display', 'block');
-        this.pop_window.setStyle('width', '0px');
-        this.pop_window.setStyle('height', '0px');
+        this.pop_window.setStyle('width', this.options.dialogue_popup_width);
+        this.pop_window.setStyle('height', this.options.height);
         this.pop_window.setStyle('display', 'block');
-        this.pop_window.morph({
-            'width': this.options.dialogue_popup_width,
-            'height': this.options.height,
-        });
+        // this.pop_window.morph({
+        //     'width': this.options.dialogue_popup_width,
+        //     'height': this.options.height,
+        // });
     },  
     show_content: function(){       
         $$(this.options.content_div)[0].setStyle('display', 'block');
