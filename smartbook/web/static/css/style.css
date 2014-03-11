@@ -287,7 +287,11 @@ form {
 }
 
 
+
+
+
 /******************************  Purchase module start *************/
+
 .purchase_form_container {
 	margin: auto;
     width: 90%;
@@ -325,12 +329,67 @@ form {
 	padding-bottom: 30px;
 }
 
+
+
+
+
 .search_purchase .control {
 	background-color: #ADD8E6;
     float: left;
     padding: 13px;
     width: 31%;
 }
+
+
+/*sales module */
+.sales_form_container {
+	margin: auto;
+    width: 90%;
+}
+.form_contents_sales {
+	margin: 10px 5px;
+}
+.section_1_sales {
+	float: left;	
+	width: 100%;
+}
+.section_2_sales {
+	float: left;	
+	width: 50%;
+}
+.section_3_sales {
+	float: left;
+	width: 100%;
+}
+.formrow_sales {
+	min-height: 40px;
+    width: 50%;
+    float: left;
+}
+.formtext_sales {
+	float: left;
+    width: 200px;
+}
+.forminput_sales {
+	float: left;
+}
+.search_sales{
+	width: 100%;
+	height: 100%;
+	padding-bottom: 30px;
+}
+
+
+.search_sales .control {
+	background-color: #ADD8E6;
+    float: left;
+    padding: 13px;
+    width: 31%;
+}
+
+
+
+/*reports*/
 
 .reporttext {
 	float: left;
@@ -340,6 +399,7 @@ form {
 .reportinput {
 	float: left;
 }
+
 
 .table_list td, th {
     border-color: #E6E6E6;
@@ -441,8 +501,10 @@ th {
 
 /******************************  Purchase module end *************/
 
+/******************************  Popup box **********************/
+
 #overlay {
-  background-color: #FFFFFF;
+  background-color: #000000;
   background:url(../images/overlay.png) repeat 0 0;
   opacity: 0.9;
   z-index: 1;
@@ -473,5 +535,14 @@ th {
   border: 1px solid;
 }
 
-
-/*******************************Reports Module Starts*************/
+.close_pop {
+  width: 32px;
+  height: 32px;
+  background: url('../images/close_pop.png');
+  display: block;
+  float: right;
+  position: relative;
+  /*top: -15px;
+  right: -15px;*/
+}
+/******************************  Popup box end **********************/

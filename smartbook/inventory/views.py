@@ -73,7 +73,9 @@ class ItemList(View):
                 'brand': item.brand.brand,
                 'tax': item.tax,
                 'uom': item.uom.uom,
-                'current_stock': item.inventory_set.all()[0].quantity if item.inventory_set.count() > 0  else 0
+                'current_stock': item.inventory_set.all()[0].quantity if item.inventory_set.count() > 0  else 0 ,
+                'selling_price': item.inventory_set.all()[0].selling_price if item.inventory_set.count() > 0 else 0 ,
+                'discount_permit': item.inventory_set.all()[0].discount_permit_amount if item.inventory_set.count() > 0 else 0,
             })
 
         res = {
@@ -129,5 +131,47 @@ class UpdateItem(View):
         return render(request, 'inventory/item_list.html',{
             'items':items,
         })
+
+class BrandList(View):
+
+    def get(self, request, *args, **kwargs):
+
+        ctx_brand = []
+        brands = Brand.objects.all()
+        if len(brands) > 0:
+            for brand in brands:
+                ctx_brand.append({
+                    'brand_name': brand.brand,
+                })
+        res = {
+            'brands': ctx_brand,
+        }
+        response = simplejson.dumps(res)
+        return HttpResponse(response, status = 200, mimetype="application/json")
+
+class AddBrand(View):
+
+    def post(self, request, *args, **kwargs):
+
+        if len(request.POST['brand_name']) > 0 and not request.POST['brand_name'].isspace():
+            brand, created = Brand.objects.get_or_create(brand=request.POST['brand_name']) 
+            if not created:
+                res = {
+                    'result': 'error',
+                    'message': 'Brand name Already exists'
+                }
+            else:
+                res = {
+                    'result': 'ok',
+                    'brand': brand.brand
+                }
+        else:
+            res = {
+                 'result': 'error',
+                 'message': 'Brand name Cannot be null'
+            }
+        response = simplejson.dumps(res)
+        return HttpResponse(response, status=200, mimetype='application/json')
+
 
 
