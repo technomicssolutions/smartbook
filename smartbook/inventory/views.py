@@ -75,7 +75,7 @@ class ItemList(View):
                 'uom': item.uom.uom,
                 'current_stock': item.inventory_set.all()[0].quantity if item.inventory_set.count() > 0  else 0 ,
                 'selling_price': item.inventory_set.all()[0].selling_price if item.inventory_set.count() > 0 else 0 ,
-                'discount_permit': item.inventory_set.all()[0].discount_permit if item.inventory_set.count >0 else 0,
+                'discount_permit': item.inventory_set.all()[0].discount_permit_amount if item.inventory_set.count() > 0 else 0,
             })
 
         res = {
