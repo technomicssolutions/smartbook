@@ -1,11 +1,11 @@
 {% extends 'base.html' %}
-{% block title %}Date Wise Sales Reports{% endblock title %}
-{% block body_id %}sales_reports_date{% endblock %}
+{% block title %}Purchase_Reports_Date{% endblock title %}
+{% block body_id %}purchase_reports_date{% endblock %}
 
 {% block content %}
 <div class="main-title">
 		
-		<div class="alert alert-info" align="Center">Date Wise Sales Report
+		<div class="alert alert-info" align="Center">Date Wise Purchase Report
 								
 		</div>
 
@@ -41,10 +41,7 @@
 			<select name="type">
 				<option>Select Report Type</option>
 				<option>Date Wise Report</option>
-				<option>Item Wise Report</option>
-				<option>Customer Wise Report</option>
-				<option>Salesman Wise Report</option>
-				<option>Area Wise Report</option>
+				<option>Vendor Wise Report</option>
 			</select>
 		</div>
 
@@ -54,32 +51,13 @@
 			<tr class="success" style="font-size: 12px"style="width:auto">
 			  <th>Date</th>
 			  <th>Invoice Number</th>
+			  <th>Vendor Inv No</th>
+			  <th>Item Code</th>
 			  <th>Item Name</th>
+			  <th>UOM</th>
+			  <th>Unit Cost Price</th>
 			  <th>Quantity</th>
-			  <th>Discount</th>
-			  <th>Selling Price</th>
-			  <th>Profit</th>
-			  <th></th>
-			</tr>
-
-<!-- 			{% for item in items %}
-
-			<tr class="success" style="font-size: 12px"style="width:auto">
-			  <td>{{item.code}}</td>
-			  <td>{{item.barcode}}</td>
-			  <td>{{item.name}}</td>
-			  <td>{{item.description}}</td>
-			  <td>{{item.brand.brand}}</td>
-			  <td>Vendor</td>
-			  <td>{{item.uom.uom}}</td>
-			  <td>stock</td>
-			  <td><a href="{% url 'edit_item' item.id %}">EDIT</a></td>
-			</tr>
-			{% endfor %}
- -->		</table> 
-		
-
-	
-
-
+			  <th>Amount</th>
+			  </tr>
+		</table>
 {% endblock content %}

@@ -140,7 +140,7 @@ footer {
 	padding:8px 0 8px 0;
     font-weight: bold;
 }
-.div_content
+/*.div_content
 {
 margin-left:40%;
 margin-top:50px;
@@ -148,14 +148,7 @@ width:300px;
 height:auto;
 //background-color:#80b280;   
 //border:1px solid red;
-}
-
-/*.item label
-{
-	padding:8px 0 8px 0;
-
-
-}*/
+} */
 
 
 textarea{
@@ -481,3 +474,4 @@ th {
 }
 
 
+/*******************************Reports Module Starts*************/

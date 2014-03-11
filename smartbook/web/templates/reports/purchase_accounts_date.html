@@ -1,23 +1,15 @@
 {% extends 'base.html' %}
-{% block title %}Area Wise Sales Report{% endblock title %}
-{% block body_id %}sales_reports_area{% endblock %}
+{% block title %}Purchase_Reports_Date{% endblock title %}
+{% block body_id %}purchase_reports_date{% endblock %}
 
 {% block content %}
 <div class="main-title">
 		
-		<div class="alert alert-info" align="Center">Area Wise Sales Report</div>
+		<div class="alert alert-info" align="Center">Data Wise Purchase Accounts</div>
 
 </div>
 	
-		<div class="reporttext">
-			<label>Area</label> 
-		</div>
-		<div class="reportinput">
-				<select name="type">
-				 	<option value="salesman">Select One</option>
-				</select>
-		</div>
-		
+			
 		<div class="reporttext">
 				<label for="s_date">Start Date</label>
 		</div>
@@ -46,25 +38,21 @@
 		<div class="reportinput">
 			<select name="type">
 				<option>Select Report Type</option>
-				<option>Date Wise Report</option>
-				<option>Item Wise Report</option>
-				<option>Customer Wise Report</option>
-				<option>Salesman Wise Report</option>
-				<option>Area Wise Report</option>
+				<option>Date Wise Accounts</option>
+				<option>Vendor Wise Accounts</option>
 			</select>
 		</div>
+
 
 		<table id="list" class="table table-hover" >
 			<tr class="success" style="font-size: 12px"style="width:auto">
 			  <th>Date</th>
-			  <th>Invoice Number</th>
-			  <th>Item Name</th>
-			  <th>Quantity</th>
-			  <th>Discount</th>
-			  <th>Selling Price</th>
+			  <th>Vendor</th>
+			  <th>Payment Mode</th>
+			  <th>Narration</th>
 			  <th>Total</th>
-			  <th>Profit</th>
-			  <th></th>
+			  <th>Paid</th>
+			  <th>Balance</th>
 			</tr>
 
 		</table> 

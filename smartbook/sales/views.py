@@ -17,9 +17,9 @@ class Sales(View):
     def get(self, request, *args, **kwargs):
         return render(request, 'sales/sales_entry.html',{})
 
-class SalesReturn(View):
+class ReturnEntry(View):
     def get(self, request, *args, **kwargs):
-        return render(request, 'sales/sales_return.html',{})
+        return render(request, 'sales/return_entry.html',{})
 
 class ViewSales(View):
     def get(self, request, *args, **kwargs):
