@@ -43,6 +43,7 @@ class PurchaseItems(models.Model):
 	expense_per_unit = models.IntegerField('Expense per Unit', default=0)
 	net_amount = models.DecimalField('Net Amount',max_digits=14, decimal_places=3, default=0)
 	vendor_amount = models.DecimalField('Vendor Amount',max_digits=14, decimal_places=3, default=0)
+	quantity_purchased = models.IntegerField('Quantity Purchased', default=0)
 
 
 	def __unicode__(self):
