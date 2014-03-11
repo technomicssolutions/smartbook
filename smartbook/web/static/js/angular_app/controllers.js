@@ -161,6 +161,21 @@ function PurchaseController($scope, $element, $http, $timeout, share, $location)
         $scope.csrf_token = csrf_token;
         $scope.purchase.purchase_invoice_number = invoice_number;
 
+        new Picker.Date($$('#vendor_invoice_date'), {
+            timePicker: false,
+            positionOffset: {x: 5, y: 0},
+            pickerClass: 'datepicker_bootstrap',
+            useFadeInOut: !Browser.ie,
+            format:'%d/%m/%Y',
+        });
+        new Picker.Date($$('#purchase_invoice_id'), {
+            timePicker: false,
+            positionOffset: {x: 5, y: 0},
+            pickerClass: 'datepicker_bootstrap',
+            useFadeInOut: !Browser.ie,
+            format:'%d/%m/%Y',
+        });
+
         console.log("$scope.purchase.purchase_invoice_number ", $scope.purchase.purchase_invoice_number );
     }
 
