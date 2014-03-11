@@ -44,7 +44,7 @@
 				<li class="menu"> <a href=""> Sales </a>
 					<ul>
 						<li> <a href="{% url 'sales_entry' %}"> Sales Entry </a> </li>
-						<li> <a href="{% url 'sales_return' %}"> Sales Return </a> </li>
+						<li> <a href="{% url 'return_entry' %}"> Return Entry</a> </li>
 						<li> <a href="{% url 'view_sales' %}"> View Sales </a> </li>
 					</ul>
 				</li>
@@ -56,9 +56,18 @@
 				</li>
 
 				<li class="menu last"> <a href="{% url 'reports' %}"> Reports </a>
-				<ul>
-				<li class="menu last"> <a href=""> Sales </a> 
 					<ul>
+						<li><a href="{% url 'daily_report' %}"> Daily Reports </a> </li>
+						<li><a href="{% url 'sales_reports_date' %}"> Sales </a> </li>
+						<li><a href="{% url 'sales_return' %}"> Sales Return</a> </li>
+						<li><a href="{% url 'stock' %}"> Stock </a> </li>
+						<li><a href="{% url 'purchase_reports_date' %}"> Purchase </a> </li>
+						<li><a href="{% url 'purchase_return' %}"> Purchase Return </a> </li>
+						<li><a href="{% url 'expense_report' %}"> Expense Report </a> </li>
+						<li><a href="{% url 'purchase_accounts_date' %}"> Purchase Accounts </a> </li>
+					</ul>
+				</li>
+					<!-- <ul>
 						<li><a href="{% url 'sales_reports_date' %}">Date Wise </a></li>
 						<li><a href="{% url 'sales_reports_item' %}">Item Wise</a></li>
 						<li><a href="{% url 'sales_reports_customer' %}">Customer Wise</a></li>
@@ -66,16 +75,12 @@
 						<li><a href="{% url 'sales_reports_area' %}">Area Wise</a></li>
 
 
-					</ul>
-				</li>
-				<li class="menu last"> <a href=""> Purchase </a> 
-					<ul>
-						
-
-					</ul>
+					</ul> 
+			
+				
 				</li>
 				</ul>
-				</li>
+				</li> .-->
 
 
 				
