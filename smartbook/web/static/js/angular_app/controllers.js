@@ -77,7 +77,7 @@ function AddEditUserController($scope, $element, $http, $timeout, $location) {
     $scope.add_designation = function() {
         if($scope.designation == 'other') {
             $scope.popup = new DialogueModelWindow({
-                'dialogue_popup_width': '384px',
+                'dialogue_popup_width': '25%',
                 'message_padding': '0px',
                 'left': '28%',
                 'top': '175px',
@@ -262,7 +262,7 @@ function PurchaseController($scope, $element, $http, $timeout, share, $location)
     $scope.add_brand = function() {
         if($scope.purchase.brand == 'other') {
             $scope.popup = new DialogueModelWindow({
-                'dialogue_popup_width': '384px',
+                'dialogue_popup_width': '25%',
                 'message_padding': '0px',
                 'left': '28%',
                 'top': '150px',
@@ -315,7 +315,7 @@ function PurchaseController($scope, $element, $http, $timeout, share, $location)
     $scope.add_transport = function() {
         if($scope.purchase.transport == 'other') {
             $scope.popup = new DialogueModelWindow({
-                'dialogue_popup_width': '384px',
+                'dialogue_popup_width': '25%',
                 'message_padding': '0px',
                 'left': '28%',
                 'top': '150px',
