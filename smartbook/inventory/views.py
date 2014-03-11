@@ -132,4 +132,46 @@ class UpdateItem(View):
             'items':items,
         })
 
+class BrandList(View):
+
+    def get(self, request, *args, **kwargs):
+
+        ctx_brand = []
+        brands = Brand.objects.all()
+        if len(brands) > 0:
+            for brand in brands:
+                ctx_brand.append({
+                    'brand_name': brand.brand,
+                })
+        res = {
+            'brands': ctx_brand,
+        }
+        response = simplejson.dumps(res)
+        return HttpResponse(response, status = 200, mimetype="application/json")
+
+class AddBrand(View):
+
+    def post(self, request, *args, **kwargs):
+
+        if len(request.POST['brand_name']) > 0 and not request.POST['brand_name'].isspace():
+            brand, created = Brand.objects.get_or_create(brand=request.POST['brand_name']) 
+            if not created:
+                res = {
+                    'result': 'error',
+                    'message': 'Brand name Already exists'
+                }
+            else:
+                res = {
+                    'result': 'ok',
+                    'brand': brand.brand
+                }
+        else:
+            res = {
+                 'result': 'error',
+                 'message': 'Brand name Cannot be null'
+            }
+        response = simplejson.dumps(res)
+        return HttpResponse(response, status=200, mimetype='application/json')
+
+
 

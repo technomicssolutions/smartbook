@@ -16,7 +16,7 @@ from django.contrib.auth.models import User
 
 from django.db import IntegrityError
 
-from web.models import (UserProfile, Vendor, Customer, Staff, Designation)
+from web.models import (UserProfile, Vendor, Customer, Staff, Designation, TransportationCompany)
 
 
 class Home(View):
@@ -48,10 +48,23 @@ class Logout(View):
 class UserList(View):
     def get(self, request, *args, **kwargs):
         user_type = kwargs['user_type']
+        ctx_vendors = []
         if user_type == 'staff':
             users = UserProfile.objects.filter(user_type='staff')
         elif user_type == 'vendor':
             users = UserProfile.objects.filter(user_type='vendor')
+            if request.is_ajax():
+                if len(users) > 0:
+                    for usr in users:
+                        ctx_vendors.append({
+                            'vendor_name': usr.user.first_name,
+                        })
+                res = {
+                    'vendors': ctx_vendors,
+                } 
+                response = simplejson.dumps(res)
+                status_code = 200
+                return HttpResponse(response, status = status_code, mimetype="application/json")
         elif user_type == 'customer':
             users = UserProfile.objects.filter(user_type='customer')
 
@@ -85,6 +98,13 @@ class RegisterUser(View):
             template = 'register_user.html'
             if user_type == 'vendor':
                 message = 'Vendor with this name already exists'
+                if request.is_ajax():
+                    res = {
+                        'result': 'error',
+                        'message': 'Designation Already exists'
+                    }
+                    response = simplejson.dumps(res)
+                    return HttpResponse(response, status = 500, mimetype="application/json")
             elif user_type == 'staff':
                 message = 'Staff with this name already exists'
             elif user_type == 'customer':
@@ -116,6 +136,13 @@ class RegisterUser(View):
             user.save()
             vendor.user = user
             vendor.save()
+            if request.is_ajax():
+                res = {
+                    'result': 'ok',
+                    'vendor_name': user.first_name
+                }
+                response = simplejson.dumps(res)
+                return HttpResponse(response, status = 200, mimetype="application/json")
             context = {
                 'message' : 'Vendor added correctly',
                 'user_type': user_type
@@ -250,17 +277,22 @@ class DesignationList(View):
 class AddDesignation(View):
 
     def post(self, request, *args, **kwargs):
-
-        designation, created = Designation.objects.get_or_create(title=request.POST['new_designation']) 
-        if not created:
-            res = {
-                'result': 'error',
-                'message': 'Designation Already exists'
-            }
+        if len(request.POST['new_designation']) > 0 and not request.POST['new_designation'].isspace():
+            designation, created = Designation.objects.get_or_create(title=request.POST['new_designation']) 
+            if not created:
+                res = {
+                    'result': 'error',
+                    'message': 'Designation Already exists'
+                }
+            else:
+                res = {
+                    'result': 'ok',
+                    'designation': designation.title
+                }
         else:
             res = {
-                'result': 'ok',
-                'designation': designation.title
+                 'result': 'error',
+                 'message': 'Designation Cannot be null'
             }
         response = simplejson.dumps(res)
         return HttpResponse(response, status=200, mimetype='application/json')
@@ -278,6 +310,48 @@ class DeleteUser(View):
                 'message': 'Deleted Successfully'
             }
             return HttpResponseRedirect(reverse('users', kwargs={'user_type': user_type}))
+
+class TransportationCompanyList(View):
+
+    def get(self, request, *args, **kwargs):
+
+        ctx = []
+        transportationcompanies = TransportationCompany.objects.all()
+        if len(transportationcompanies) > 0:
+            for transportationcompany in transportationcompanies:
+                ctx.append({
+                    'company_name': transportationcompany.company_name,    
+                })
+        res = {
+            'company_names': ctx,    
+        }
+        response = simplejson.dumps(res)
+        return HttpResponse(response, status=200, mimetype="application/json")
+
+class AddTransportationCompany(View):
+
+    def post(self, request, *args, **kwargs):
+
+        if len(request.POST['new_company']) > 0 and not request.POST['new_company'].isspace():
+            new_company, created = TransportationCompany.objects.get_or_create(company_name=request.POST['new_company']) 
+            if not created:
+                res = {
+                    'result': 'error',
+                    'message': 'Company name already exists'
+                }
+            else:
+                res = {
+                    'result': 'ok',
+                    'company_name': new_company.company_name
+                }
+        else:
+            res = {
+                 'result': 'error',
+                 'message': 'Company name cannot be null'
+            }
+        response = simplejson.dumps(res)
+        return HttpResponse(response, status=200, mimetype='application/json')
+
 
 
 

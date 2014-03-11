@@ -68,7 +68,6 @@ function AddEditUserController($scope, $element, $http, $timeout, $location) {
     $scope.get_designation_list = function() {
          $http.get('/designation_list/').success(function(data)
         {
-            console.log(data);
             $scope.designations = data.designations;
         }).error(function(data, status)
         {
@@ -137,6 +136,9 @@ function PurchaseController($scope, $element, $http, $timeout, share, $location)
 
     $scope.items = [];
     $scope.selected_item = '';
+    $scope.vendor_name = '';
+    $scope.brand_name = '';
+    $scope.company_name = '';
     $scope.selecting_item = false;
     $scope.item_selected = false;
     $scope.purchase = {
@@ -154,12 +156,15 @@ function PurchaseController($scope, $element, $http, $timeout, share, $location)
         'purchase_expense': '',
         'grant_total': '',
         'vendor_amount': '',
-
     }
+    $scope.purchase.vendor = 'select';
+    $scope.purchase.brand = 'select';
+    $scope.purchase.transport = 'select';
     $scope.init = function(csrf_token, invoice_number)
     {
         $scope.csrf_token = csrf_token;
         $scope.purchase.purchase_invoice_number = invoice_number;
+        $scope.popup = '';
 
         new Picker.Date($$('#vendor_invoice_date'), {
             timePicker: false,
@@ -176,7 +181,179 @@ function PurchaseController($scope, $element, $http, $timeout, share, $location)
             format:'%d/%m/%Y',
         });
 
+        $scope.get_vendors();
+        $scope.get_brands();
+        $scope.get_companies();
+
         console.log("$scope.purchase.purchase_invoice_number ", $scope.purchase.purchase_invoice_number );
+    }
+
+    $scope.get_vendors = function() {
+        $http.get('/vendor/list/').success(function(data)
+        {
+            $scope.vendors = data.vendors;
+        }).error(function(data, status)
+        {
+            console.log(data || "Request failed");
+        });
+    }
+    $scope.add_vendor = function() {
+        if($scope.purchase.vendor == 'other') {
+            $scope.popup = new DialogueModelWindow({
+                'dialogue_popup_width': '384px',
+                'message_padding': '0px',
+                'left': '28%',
+                'top': '40px',
+                'height': '702px',
+                'content_div': '#add_vendor'
+            });
+            var height = $(document).height();
+            $scope.popup.set_overlay_height(height);
+            $scope.popup.show_content();
+        }
+    }
+
+    $scope.add_new_vendor = function() {
+        params = { 
+            'name':$scope.vendor_name,
+            'contact_person': $scope.contact_person,
+            'house': $scope.house_name,
+            'street': $scope.street,
+            'city': $scope.city,
+            'district':$scope.district,
+            'pin': $scope.pin,
+            'mobile': $scope.mobile,
+            'phone': $scope.land_line,
+            'email': $scope.email_id,
+            "csrfmiddlewaretoken" : $scope.csrf_token
+        }
+        $http({
+            method : 'post',
+            url : "/register/vendor/",
+            data : $.param(params),
+            headers : {
+                'Content-Type' : 'application/x-www-form-urlencoded'
+            }
+        }).success(function(data, status) {
+            
+            if (data.result == 'error'){
+                $scope.error_flag=true;
+                $scope.message = data.message;
+            } else {
+                $scope.popup.hide_popup();
+                $scope.get_vendors();
+                $scope.purchase.vendor = $scope.vendor_name;
+                $scope.purchase.vendor = data.vendor_name;
+            }
+        }).error(function(data, success){
+            
+        });
+    }
+
+    $scope.get_brands = function() {
+        $http.get('/inventory/brand_list/').success(function(data)
+        {
+            $scope.brands = data.brands;
+        }).error(function(data, status)
+        {
+            console.log(data || "Request failed");
+        });
+    }
+    $scope.add_brand = function() {
+        if($scope.purchase.brand == 'other') {
+            $scope.popup = new DialogueModelWindow({
+                'dialogue_popup_width': '384px',
+                'message_padding': '0px',
+                'left': '28%',
+                'top': '150px',
+                'height': '115px',
+                'content_div': '#add_brand'
+            });
+            var height = $(document).height();
+            $scope.popup.set_overlay_height(height);
+            $scope.popup.show_content();
+        }
+    }
+
+    $scope.add_new_brand = function() {
+        params = { 
+            'brand_name':$scope.brand_name,
+            "csrfmiddlewaretoken" : $scope.csrf_token
+        }
+        $http({
+            method : 'post',
+            url : "/inventory/add/brand/",
+            data : $.param(params),
+            headers : {
+                'Content-Type' : 'application/x-www-form-urlencoded'
+            }
+        }).success(function(data, status) {
+            
+            if (data.result == 'error'){
+                $scope.error_flag=true;
+                $scope.message = data.message;
+            } else {
+                $scope.popup.hide_popup();
+                $scope.get_brands();
+                $scope.purchase.brand = $scope.brand_name;
+                
+            }
+        }).error(function(data, success){
+            
+        });
+    }
+
+    $scope.get_companies = function() {
+        $http.get('/company_list/').success(function(data)
+        {
+            $scope.companies = data.company_names;
+        }).error(function(data, status)
+        {
+            console.log(data || "Request failed");
+        });
+    }
+    $scope.add_transport = function() {
+        if($scope.purchase.transport == 'other') {
+            $scope.popup = new DialogueModelWindow({
+                'dialogue_popup_width': '384px',
+                'message_padding': '0px',
+                'left': '28%',
+                'top': '150px',
+                'height': '115px',
+                'content_div': '#add_company'
+            });
+            var height = $(document).height();
+            $scope.popup.set_overlay_height(height);
+            $scope.popup.show_content();
+        }
+    }
+
+    $scope.add_new_company = function() {
+        params = { 
+            'new_company':$scope.company_name,
+            "csrfmiddlewaretoken" : $scope.csrf_token
+        }
+        $http({
+            method : 'post',
+            url : "/add_company/",
+            data : $.param(params),
+            headers : {
+                'Content-Type' : 'application/x-www-form-urlencoded'
+            }
+        }).success(function(data, status) {
+            
+            if (data.result == 'error'){
+                $scope.error_flag=true;
+                $scope.message = data.message;
+            } else {
+                $scope.popup.hide_popup();
+                $scope.get_companies();
+                $scope.purchase.transport = $scope.company_name;
+                
+            }
+        }).error(function(data, success){
+            
+        });
     }
 
     $scope.getItems = function(parameter){

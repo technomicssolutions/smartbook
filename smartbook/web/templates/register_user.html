@@ -20,7 +20,17 @@
 {% endblock %}
 
 <div id="main-title">
-	<div class="alert alert-info" align="Center">New Staff</div>
+	<div class="alert alert-info" align="Center">
+		{% if user_type == 'staff' %} 
+			New Staff
+		{% endif %}
+		{% if user_type == 'vendor' %} 
+			New Vendor
+		{% endif %}
+		{% if user_type == 'customer' %} 
+			New Customer
+		{% endif %}
+	</div>
 </div>
 <div class="form_container">
 	<form name="staffadd" method="post" action="{% url 'register_user' user_type=user_type %}">
