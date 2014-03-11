@@ -77,7 +77,7 @@ function AddEditUserController($scope, $element, $http, $timeout, $location) {
     $scope.add_designation = function() {
         if($scope.designation == 'other') {
             $scope.popup = new DialogueModelWindow({
-                'dialogue_popup_width': '25%',
+                'dialogue_popup_width': '27%',
                 'message_padding': '0px',
                 'left': '28%',
                 'top': '175px',
@@ -173,7 +173,7 @@ function PurchaseController($scope, $element, $http, $timeout, share, $location)
             useFadeInOut: !Browser.ie,
             format:'%d/%m/%Y',
         });
-        new Picker.Date($$('#purchase_invoice_id'), {
+        new Picker.Date($$('#purchase_invoice_date'), {
             timePicker: false,
             positionOffset: {x: 5, y: 0},
             pickerClass: 'datepicker_bootstrap',
@@ -204,7 +204,7 @@ function PurchaseController($scope, $element, $http, $timeout, share, $location)
                 'message_padding': '0px',
                 'left': '28%',
                 'top': '40px',
-                'height': '702px',
+                'height': 'auto',
                 'content_div': '#add_vendor'
             });
             var height = $(document).height();
@@ -262,7 +262,7 @@ function PurchaseController($scope, $element, $http, $timeout, share, $location)
     $scope.add_brand = function() {
         if($scope.purchase.brand == 'other') {
             $scope.popup = new DialogueModelWindow({
-                'dialogue_popup_width': '25%',
+                'dialogue_popup_width': '27%',
                 'message_padding': '0px',
                 'left': '28%',
                 'top': '150px',
@@ -295,8 +295,7 @@ function PurchaseController($scope, $element, $http, $timeout, share, $location)
             } else {
                 $scope.popup.hide_popup();
                 $scope.get_brands();
-                $scope.purchase.brand = $scope.brand_name;
-                
+                $scope.purchase.brand = $scope.brand_name;                
             }
         }).error(function(data, success){
             
@@ -315,7 +314,7 @@ function PurchaseController($scope, $element, $http, $timeout, share, $location)
     $scope.add_transport = function() {
         if($scope.purchase.transport == 'other') {
             $scope.popup = new DialogueModelWindow({
-                'dialogue_popup_width': '25%',
+                'dialogue_popup_width': '27%',
                 'message_padding': '0px',
                 'left': '28%',
                 'top': '150px',
@@ -516,7 +515,8 @@ function PurchaseController($scope, $element, $http, $timeout, share, $location)
 
     $scope.save_purchase = function() {
         if($scope.validate_purchase) {
-            console.log($scope.purchase.brand)
+            $scope.purchase.purchase_invoice_date = $$('#purchase_invoice_date')[0].get('value');
+            $scope.purchase.vendor_invoice_date = $$('#vendor_invoice_date')[0].get('value');
             params = { 
                 'purchase': angular.toJson($scope.purchase),
                 "csrfmiddlewaretoken" : $scope.csrf_token
