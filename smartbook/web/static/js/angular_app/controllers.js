@@ -200,7 +200,7 @@ function PurchaseController($scope, $element, $http, $timeout, share, $location)
     $scope.add_vendor = function() {
         if($scope.purchase.vendor == 'other') {
             $scope.popup = new DialogueModelWindow({
-                'dialogue_popup_width': '384px',
+                'dialogue_popup_width': '36%',
                 'message_padding': '0px',
                 'left': '28%',
                 'top': '40px',
