@@ -293,6 +293,8 @@ form {
     padding-left: 0px !important;
 }
 
+
+/******************************  Purchase module start *************/
 .purchase_form_container {
 	margin: auto;
     width: 90%;
@@ -443,6 +445,8 @@ th {
 .small_column{
 	width: 4% !important;
 }
+
+/******************************  Purchase module end *************/
 
 #overlay {
   background-color: #FFFFFF;
