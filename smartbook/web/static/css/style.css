@@ -330,15 +330,12 @@ form {
 	padding-bottom: 30px;
 }
 
-<<<<<<< HEAD
 .search_purchase .control {
 	background-color: #ADD8E6;
     float: left;
     padding: 13px;
     width: 31%;
 }
-=======
-
 .reporttext {
 	float: left;
 	padding-left: 10px;
@@ -348,7 +345,6 @@ form {
 	float: left;
 }
 
->>>>>>> 6d227f9e6f3a06883463195bff7c01107b423b39
 .table_list td, th {
     border-color: #E6E6E6;
     /*padding: 7px;*/

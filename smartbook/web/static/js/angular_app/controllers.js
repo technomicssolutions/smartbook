@@ -28,6 +28,17 @@ function ExpenseController($scope, $element, $http, $timeout, $location) {
     $scope.payment_mode_change = function(payment_mode) {
         if(payment_mode == 'cheque') {
             $scope.payment_mode_selection = false;
+            new Picker.Date($$('#check_date'), {
+                // timePicker: true,
+                positionOffset: {x: 5, y: 0},
+                pickerClass: 'datepicker_bootstrap',
+                useFadeInOut: !Browser.ie,
+                format:'%d/%m/%Y',
+                // onSelect: function(date){
+                //     myHiddenField.set('value', date.format('%s');
+                // } 
+            
+            });
         } else {
             $scope.payment_mode_selection = true;
         }
