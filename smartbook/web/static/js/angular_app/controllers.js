@@ -28,12 +28,14 @@ function ExpenseController($scope, $element, $http, $timeout, $location) {
     $scope.payment_mode_change = function(payment_mode) {
         if(payment_mode == 'cheque') {
             $scope.payment_mode_selection = false;
+            
             new Picker.Date($$('#check_date'), {
                 // timePicker: true,
                 positionOffset: {x: 5, y: 0},
                 pickerClass: 'datepicker_bootstrap',
                 useFadeInOut: !Browser.ie,
                 format:'%d/%m/%Y',
+                // minDate: 
                 // onSelect: function(date){
                 //     myHiddenField.set('value', date.format('%s');
                 // } 
@@ -218,14 +220,12 @@ function PurchaseController($scope, $element, $http, $timeout, share, $location)
             item.cost_price = parseFloat(item.unit_price) + parseFloat(item.frieght_unit) + parseFloat(item.handling_unit) + parseFloat(item.expense_unit)
         }
         $scope.calculate_net_amount(item);
-        $scope.calculate_vendor_amount();
     }
 
     $scope.calculate_net_amount = function(item) {
         if(item.qty_purchased != '' && item.unit_price != ''){
             item.net_amount = (parseFloat(item.qty_purchased)*parseFloat(item.unit_price)) + parseFloat(item.frieght_unit)+ parseFloat(item.handling_unit)+parseFloat(item.expense_unit).toFixed(3);
         }
-        $scope.calculate_vendor_amount();
     }
     $scope.calculate_discount_amt = function(item) {
         if((item.permit_disc_percent != '' || item.permit_disc_percent != 0) && (item.selling_price != '' || item.selling_price != 0)) {
@@ -237,13 +237,5 @@ function PurchaseController($scope, $element, $http, $timeout, share, $location)
         if((item.permit_disc_amt != '' || item.permit_disc_amt != '') && (item.selling_price != '' || item.selling_price != 0)) {
             item.permit_disc_percent = (parseFloat(item.permit_disc_amt)/parseFloat(item.selling_price))*100;
         }
-    }
-    $scope.calculate_vendor_amount = function(){
-        var vendor_amount = 0;
-        for(i=0; i<=purchase_items.length; i++){
-            vendor_amount = vendor_amount + (parseFloat(purchase_items[i].unit_price)*parseFloat(purchase_items[i].qty_purchased));
-        }
-
-        $scope.vendor_amount = vendor_amount;
     }
 }
