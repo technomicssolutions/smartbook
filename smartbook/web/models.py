@@ -75,4 +75,17 @@ class Staff(models.Model):
 
 		verbose_name = 'Staff'
 		verbose_name_plural = 'Staff'
+
+class TransportationCompany(models.Model):
+
+	company_name = models.CharField('Company Name', null=True, blank=True, max_length=50)
+
+	def __unicode__(self):
+
+		return self.company_name
+
+	class Meta:
+
+		verbose_name = 'Transportation Company'
+		verbose_name_plural = 'Transportation Company'
 			

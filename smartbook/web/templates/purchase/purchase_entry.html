@@ -3,7 +3,7 @@
 {% block body_id %}purchase{% endblock %}
 
 {% block title %}Purchase Entry{% endblock title %}
-{% block controller %}ng-controller="PurchaseController" ng-init="init('{{csrf_token}}')"{% endblock controller %}
+{% block controller %}ng-controller="PurchaseController" ng-init="init('{{csrf_token}}', '{{invoice_number}}')"{% endblock controller %}
 
 {% block content %}
 
@@ -19,9 +19,8 @@
 						<div class="formtext_purchase">
 							<label for="purchase_invoice_number">Purchase Invoice Number</label>
 						</div>
-
 						<div class="forminput">
-							<input type="text" name="purchase_invoice_number" >
+							<input type="text" name="purchase_invoice_number" ng-model="purchase.purchase_invoice_number"  readonly/>
 						</div>
 					</div>
 
@@ -31,7 +30,7 @@
 							<label for="vendor_invoice_number">Vendor Invoice Number </label>
 						</div>
 						<div class="forminput">
-							<input type="text" name="vendor_invoice_number"  >
+							<input type="text" name="vendor_invoice_number"  ng-model="purchase.vendor_invoice_number" />
 						</div>
 					</div>
 
@@ -40,7 +39,7 @@
 							<label for="vendor_do_number">Vendor DO Number</label>
 						</div>
 						<div class="forminput">
-							<input type="text" name="vendor_do_number"  >
+							<input type="text" name="vendor_do_number" ng-model="purchase.vendor_do_number" />
 						</div>
 					</div>
 					<div class="formrow_purchase">
@@ -48,7 +47,7 @@
 							<label for="vendor_invoice_date">Vendor Invoice Date</label>
 						</div>
 						<div class="forminput">
-							<input type="text" name="vendor_invoice_date">
+							<input type="text" name="vendor_invoice_date" ng-model="purchase.vendor_invoice" id="vendor_invoice_date">
 						</div>
 					</div>
 					
@@ -59,7 +58,7 @@
 							<label for="purchase_invoice_date">Purchase Invoice Date</label>
 						</div>
 						<div class="forminput">
-							<input type="text" name="purchase_invoice_date">
+							<input type="text" name="purchase_invoice_date" ng-model="purchase.purchase_invoice_date" id="purchase_invoice_id"/>
 						</div>
 					</div>
 
@@ -69,7 +68,7 @@
 							<label for="brand">Brand</label>
 						</div>
 						<div class="forminput">
-							<select name="brand" >
+							<select name="brand" ng-model="purchase.brand">
 								{% for brand in brands %}
   									<option value="{{brand.brand}}">{{brand.brand}}</option>
 								{% endfor %}
@@ -83,7 +82,7 @@
 							<label for="vendor">Vendor</label>
 						</div>
 						<div class="forminput">
-							<select name="vendor" ng-model="vendor">
+							<select name="vendor" ng-model="purchase.vendor">
 								<option value="select">Select</option>
 							</select>
 						</div>
@@ -94,7 +93,7 @@
 							<label for="transport">Transport</label>
 						</div>
 						<div class="forminput">
-							<select name="transport" >
+							<select name="transport" ng-model="purchase.transport">
 								<option value="select">Select</option>
 							</select>
 						</div>
@@ -135,7 +134,7 @@
     				<div class="clear"></div>
    				</div>
 
-   				<div class="purchase_items_list" ng-show="purchase_items.length > 0">
+   				<div class="purchase_items_list" ng-show="purchase.purchase_items.length > 0">
    					<div class="purchase_item_list">
    						<div class="item_list_row header">
 							<span class="small_column"> Item Code </span>
@@ -156,7 +155,7 @@
 							<span> Permit Discount (%) </span>
 							<span> Net Amount </span>
 						</div>
-						<div ng-repeat="item in purchase_items" class="item_list_row">
+						<div ng-repeat="item in purchase.purchase_items" class="item_list_row">
 							<span class="small_column">[[item.item_code]] </span>
 							<span>[[item.item_name]] </span>
 							<span>[[item.barcode]] </span>
@@ -187,13 +186,13 @@
 							<label for="vendor_amout">Vendor Amount</label>
 						</div>
 						<div class="forminput">
-							<input type="text" name="vendor_amount">
+							<input type="text" name="vendor_amount" ng-model="purchase.vendor_amount">
 						</div>
 						<div class="formtext_purchase">
 							<label for="purchase_expense">Purchase Expense</label>
 						</div>
 						<div class="forminput">
-							<input type="text" name="purchase_expense">
+							<input type="text" name="purchase_expense" ng-model="purchase.purchase_expense" />
 						</div>
 					</div>
 					<div class="formrow_purchase">
@@ -201,7 +200,7 @@
 							<label for="net_total">Net Total</label>
 						</div>
 						<div class="forminput">
-							<input type="text" name="net_total">
+							<input type="text" name="net_total" ng-model="purchase.net_total" ng-change="calculate_grant_total()"/>
 						</div>
 					</div>
 
@@ -210,7 +209,7 @@
 							<label for="discount">Discount</label>
 						</div>
 						<div class="forminput">
-							<input type="text" name="discount">
+							<input type="text" name="discount" ng-model="purchase.discount" ng-change="calculate_grant_total()" />
 						</div>
 					</div>
 					<div class="formrow_purchase">
@@ -218,14 +217,15 @@
 							<label for="grant_total">Grant Total</label>
 						</div>
 						<div class="forminput">
-							<input type="text" name="grant_total">
+							<input type="text" name="grant_total" ng-model="purchase.grant_total">
 						</div>
 					</div>
 				</div>
 			</div>
 			<div  align="Center">
 				<div class="buttons">
-					<input type="submit" value="Submit">
+					<p class="error_message"> [[validation_error]] </p>
+					<input type="button" value="Submit" ng-click="save_purchase();">
 					<a href="{% url 'home' %}"><input type="button" value="Cancel"></a>
 				</div>
 			</div>			

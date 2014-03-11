@@ -294,7 +294,11 @@ form {
 }
 
 
-/*purchase module */
+
+
+
+/******************************  Purchase module start *************/
+
 .purchase_form_container {
 	margin: auto;
     width: 90%;
@@ -333,12 +337,16 @@ form {
 }
 
 
+
+
+
 .search_purchase .control {
 	background-color: #ADD8E6;
     float: left;
     padding: 13px;
     width: 31%;
 }
+
 
 /*sales module */
 .sales_form_container {
@@ -389,6 +397,7 @@ form {
 
 
 /*reports*/
+
 .reporttext {
 	float: left;
 	padding-left: 10px;
@@ -496,6 +505,8 @@ th {
 .small_column{
 	width: 4% !important;
 }
+
+/******************************  Purchase module end *************/
 
 #overlay {
   background-color: #FFFFFF;

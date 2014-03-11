@@ -19,10 +19,10 @@
 	{% include 'add_designation.html' %}              	
 {% endblock %}
 
-<div id="main-title" ng-show="new_desiganation_flag">
+<div id="main-title">
 	<div class="alert alert-info" align="Center">New Staff</div>
 </div>
-<div class="form_container" ng-show="new_desiganation_flag">
+<div class="form_container">
 	<form name="staffadd" method="post" action="{% url 'register_user' user_type=user_type %}">
 		{% csrf_token %}
 		{{ message }}
