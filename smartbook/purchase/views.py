@@ -34,6 +34,7 @@ class PurchaseEntry(View):
     def post(self, request, *args, **kwargs):
 
         purchase_dict = ast.literal_eval(request.POST['purchase'])
+        print purchase_dict
         purchase = Purchase()
         purchase.invoice_number = purchase_dict['purchase_invoice_number']
         purchase.vendor_invoice_number = purchase_dict['vendor_invoice_number']

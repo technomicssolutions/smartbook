@@ -495,7 +495,7 @@ function PurchaseController($scope, $element, $http, $timeout, share, $location)
         } else if($scope.purchase.purchase_invoice_date == ''){
             $scope.validation_error = "Please enter purchase invoice date";
             return false;
-        } else if($scope.purchase.beand == '') {
+        } else if($scope.purchase.brand == '') {
             $scope.validation_error = "Please select brand";
             return false;
         } else if($scope.purchase.vendor == '') {
@@ -515,6 +515,7 @@ function PurchaseController($scope, $element, $http, $timeout, share, $location)
 
     $scope.save_purchase = function() {
         if($scope.validate_purchase) {
+            console.log($scope.purchase.brand)
             params = { 
                 'purchase': angular.toJson($scope.purchase),
                 "csrfmiddlewaretoken" : $scope.csrf_token
