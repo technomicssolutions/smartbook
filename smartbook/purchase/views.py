@@ -30,9 +30,7 @@ class PurchaseEntry(View):
         if not invoice_number:
             invoice_number = 1
         return render(request, 'purchase/purchase_entry.html',{
-        	'brands' : brand,
-        	'vendors' : vendor,
-            'transport': transport,
+        	'transport': transport,
             'invoice_number': invoice_number
     	})
 
@@ -53,6 +51,5 @@ class PurchaseEdit(View):
         return render(request, 'purchase/edit_purchase_entry.html',{
         	
         	})
-
 
 

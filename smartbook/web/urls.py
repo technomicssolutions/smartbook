@@ -12,4 +12,6 @@ urlpatterns = patterns('',
 	url(r'^(?P<user_type>\w+)/(?P<profile_id>\d+)/delete/$', DeleteUser.as_view(), name='delete_user'),
 	url(r'^designation_list/$', DesignationList.as_view(), name="designation_list"),
 	url(r'^add_designation/$', AddDesignation.as_view(), name="add_designation"),	
+	url(r'^company_list/$', TransportationCompanyList.as_view(), name="designation_list"),
+	url(r'^add_company/$', AddTransportationCompany.as_view(), name="add_designation"),
 )

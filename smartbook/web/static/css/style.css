@@ -447,8 +447,10 @@ th {
 
 /******************************  Purchase module end *************/
 
+/******************************  Popup box **********************/
+
 #overlay {
-  background-color: #FFFFFF;
+  background-color: #000000;
   background:url(../images/overlay.png) repeat 0 0;
   opacity: 0.9;
   z-index: 1;
@@ -479,4 +481,15 @@ th {
   border: 1px solid;
 }
 
+.close_pop {
+  width: 32px;
+  height: 32px;
+  background: url('../images/close_pop.png');
+  display: block;
+  float: right;
+  position: relative;
+  /*top: -15px;
+  right: -15px;*/
 
+}
+/******************************  Popup box end **********************/
