@@ -21,10 +21,11 @@ class Purchase(models.Model):
 	vendor = models.ForeignKey(Vendor, null=True, blank=True)
 	transportation_company = models.ForeignKey(TransportationCompany, null=True, blank=True)
 	discount = models.DecimalField('Discount',max_digits=14, decimal_places=3, default=0)
-	net_amount = models.DecimalField('Net Amount',max_digits=14, decimal_places=3, default=0)
+	net_total = models.DecimalField('Net Total',max_digits=14, decimal_places=3, default=0)
 	vendor_amount = models.DecimalField('Vendor Amount',max_digits=14, decimal_places=3, default=0)
 	grant_total = models.DecimalField('Grant Total', max_digits=14, decimal_places=3, default=0)
 	purchase_expense = models.DecimalField('Purchase Expense', max_digits=14, decimal_places=3, default=0)
+	
 	def __unicode__(self):
 		return str(self.purchase_invoice_number)
 
@@ -45,11 +46,11 @@ class PurchaseItem(models.Model):
 	expense_per_unit = models.IntegerField('Expense per Unit', default=0)
 	quantity_purchased = models.IntegerField('Quantity Purchased', default=0)
 	cost_price = models.DecimalField('Cost Price',max_digits=14, decimal_places=3, default=0)
-
+	net_amount = models.DecimalField('Net Amount',max_digits=14, decimal_places=3, default=0)
 
 	def __unicode__(self):
 
-		return self.purchase.purchase_invoice_number
+		return str(self.purchase.purchase_invoice_number)
 
 	class Meta:
 

@@ -36,8 +36,8 @@ class Item(models.Model):
 
 class Inventory(models.Model):
 
-	item = models.ForeignKey(Item)
-	quantity = models.IntegerField('Quantity')
+	item = models.ForeignKey(Item, unique=True)
+	quantity = models.IntegerField('Quantity', default=0)
 	unit_price = models.DecimalField('Unit Price',max_digits=14, decimal_places=2, default=0)
 	selling_price = models.DecimalField('Selling Price',max_digits=14, decimal_places=2, default=0)
 	discount_permit_percentage = models.DecimalField('Discount permitted percentage',max_digits=14, decimal_places=3, default=0,null=True, blank=True)
@@ -45,3 +45,6 @@ class Inventory(models.Model):
 
 	def __unicode__(self):
 		return self.item.code
+
+	class Meta:
+		verbose_name_plural = 'Inventory'

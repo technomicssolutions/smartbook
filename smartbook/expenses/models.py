@@ -16,17 +16,17 @@ class ExpenseHead(models.Model):
 class  Expense(models.Model):
 	created_by = models.ForeignKey(User)
 
-	expense_head = models.ForeignKey(ExpenseHead)
-	voucher_no = models.IntegerField('Voucher No')
-	date = models.DateField('Date')
-	amount = models.IntegerField('Amount')
+	expense_head = models.ForeignKey(ExpenseHead, null=True, blank=True)
+	voucher_no = models.IntegerField('Voucher No', unique=True)
+	date = models.DateField('Date', null=True, blank=True)
+	amount = models.IntegerField('Amount', null=True, blank=True)
 	payment_mode = models.CharField('Payment Mode', null=True, blank=True, max_length=25)
 	narration = models.TextField('Narration', max_length=300, null=True, blank=True)
 	
-	cheque_no = models.IntegerField('Cheque No')
-	cheque_date = models.DateField('Cheque Date')
-	bank_name = models.CharField('Bank Name', max_length=15)
-	branch = models.CharField('Branch', max_length=10)
+	cheque_no = models.IntegerField('Cheque No', null=True, blank=True)
+	cheque_date = models.DateField('Cheque Date', null=True, blank=True)
+	bank_name = models.CharField('Bank Name', max_length=15, null=True, blank=True)
+	branch = models.CharField('Branch', max_length=10, null=True, blank=True)
 
 	class Meta:
 		verbose_name = 'Expense'
@@ -34,5 +34,5 @@ class  Expense(models.Model):
 
 	def __unicode__(self):
 
-		return self.voucher_no
+		return self.expense_head.expense_head
 
