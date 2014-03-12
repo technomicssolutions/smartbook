@@ -153,7 +153,6 @@ height:auto;
 
 textarea{
     height: 32px;
-    margin-left: 22% !important;
     padding-left: 3px;
 }
 
@@ -340,16 +339,19 @@ form {
 	padding-bottom: 30px;
 }
 
-
-
-
-
 .search_purchase .control {
 	background-color: #ADD8E6;
     float: left;
     padding: 13px;
     width: 31%;
 }
+
+.vendor_section_1 {
+	float: left;
+	width:100%;
+	border: 1px solid black;
+}
+
 
 
 /*sales module */
@@ -397,6 +399,7 @@ form {
     padding: 13px;
     width: 31%;
 }
+
 
 
 
@@ -536,8 +539,7 @@ th {
 #dialogue_popup {
   height: auto;
   border-radius: 15px 15px 15px 15px;
-  /*border: 2px solid #1ABC9C ;*/
-  border: 2px solid #CCCCCC;
+  border: 2px solid #ADD8E6;
   margin: auto;
   z-index: 2;
   position: relative;
@@ -547,7 +549,7 @@ th {
   overflow: hidden;
   padding-bottom: 20px;
   width: 384px;
-  border: 1px solid;
+  padding: 1%;
 }
 #dialogue_popup form {
 	width: 100%;
@@ -571,6 +573,18 @@ th {
 }
 /******************************  Popup box end **********************/
 
+/************************ Userlist Module ***************************/
+
+.top_section a{
+	float: right;
+	margin-right: 10px;
+	font-size: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+}
+/************************ Userlist Module end************************/
+
+
 /************************ Report Module *****************************/
 
 .report_button {
@@ -579,3 +593,10 @@ th {
 }
 
 /************************ Report Module End *************************/
+
+/************* Vendor account start ********************/
+
+.form_contents_vendor_account {
+	width: 80%;
+	margin: auto;
+}

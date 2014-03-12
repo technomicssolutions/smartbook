@@ -26,7 +26,7 @@ class Sales(models.Model):
 		verbose_name = 'Sales'
 		verbose_name_plural = 'Sales'
 
-class SalesItems(models.Model):
+class SalesItem(models.Model):
 
 	item = models.ForeignKey(Item, null=True, blank=True)
 	sales = models.ForeignKey(Sales, null=True, blank=True)
