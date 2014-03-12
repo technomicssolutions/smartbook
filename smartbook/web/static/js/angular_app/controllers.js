@@ -211,7 +211,6 @@ function AddEditUserController($scope, $element, $http, $timeout, $location) {
     	$scope.expense_head = head_name;
     }
     $scope.close_popup = function(){
-        // $scope.new_desiganation_flag = true;
         $scope.popup.hide_popup();
     }
 	
@@ -650,6 +649,10 @@ function PurchaseController($scope, $element, $http, $timeout, share, $location)
             console.log(data || "Request failed");
         });
     }
+
+    $scope.close_popup = function(){
+        $scope.popup.hide_popup();
+    }
 }
 
 function SalesController($scope, $element, $http, $timeout, share, $location) {
@@ -825,7 +828,39 @@ function ReportController($scope, $element, $http, $timeout, $location){
         
         $http.get('/reports/daily_report/?start_date='+$scope.start_date+'&end_date='+$scope.end_date).success(function(data){
             console.log("success");
+            console.log(data);
         });
     }
 
+}
+
+function VendorAccountController($scope, $element, $http, $timeout, $location){    
+    $scope.init = function(csrf_token) 
+    {
+        var date_picker = new Picker.Date($$('#purchase_account_date'), {
+            timePicker: false,
+            positionOffset: {x: 5, y: 0},
+            pickerClass: 'datepicker_bootstrap',
+            useFadeInOut: !Browser.ie,
+            format:'%d/%m/%Y',
+        });
+        console.log(date_picker);
+    }
+}
+
+function PurchaseReportController($scope, $element, $http, $location) {
+    $scope.report_name = '';
+    $scope.start_date = '';
+    $scope.end_date = '';
+    $scope.init = function(csrf_token) {
+        $scope.csrf_token = csrf_token;
+        $scope.report_name == 'date';
+    }
+    $scope.get_report = function(){
+        if($scope.report_name == 'date') {
+            document.location.href = '/reports/purchase_reports_date/';
+        } else if ($scope.report_name == 'vendor') {
+            document.location.href = '/reports/purchase_reports_vendor/';
+        }
+    }
 }

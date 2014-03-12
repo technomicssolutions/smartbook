@@ -17,8 +17,12 @@ class Sales(models.Model):
 	sales_invoice_date = models.DateField('Sales Invoice Date', null=True, blank=True)
 	customer = models.ForeignKey(Customer, null=True, blank=True)
 	salesman = models.ForeignKey(Staff, null=True, blank=True)
-		
+	net_amount = models.DecimalField('Net Amount',max_digits=14, decimal_places=3, default=0)
+	round_off = models.DecimalField('Net Round Off',max_digits=14, decimal_places=3, default=0)
+	grant_total = models.DecimalField('Grand Total',max_digits=14, decimal_places=3, default=0)
+	discount = models.DecimalField('Total Discount',max_digits=14, decimal_places=3, default=0)		
 	def __unicode__(self):
+
 		return str(self.sales_invoice_number)
 
 	class Meta:
@@ -31,10 +35,8 @@ class SalesItem(models.Model):
 	item = models.ForeignKey(Item)
 	sales = models.ForeignKey(Sales)
 	quantity_sold = models.IntegerField('Quantity Sold', default=0)
-	discount_given = models.DecimalField('Discount Given',max_digits=14, decimal_places=3, default=0)
-	net_amount = models.DecimalField('Net Amount',max_digits=14, decimal_places=3, default=0)
-	round_off = models.DecimalField('Net Round Off',max_digits=14, decimal_places=3, default=0)
-	grant_total = models.DecimalField('Grand Total',max_digits=14, decimal_places=3, default=0)
+	discount_given = models.DecimalField('Discount Given',max_digits=14, decimal_places=3, default=0)	
+	
 	
 	def __unicode__(self):
 

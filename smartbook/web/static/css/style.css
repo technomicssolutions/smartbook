@@ -153,7 +153,6 @@ height:auto;
 
 textarea{
     height: 32px;
-    margin-left: 22% !important;
     padding-left: 3px;
 }
 
@@ -594,4 +593,10 @@ th {
 }
 
 /************************ Report Module End *************************/
->>>>>>> 2b1a5cb57204a9e31e36660e926281ba923f64a5
+
+/************* Vendor account start ********************/
+
+.form_contents_vendor_account {
+	width: 80%;
+	margin: auto;
+}

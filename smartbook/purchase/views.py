@@ -18,7 +18,7 @@ from inventory.models import UnitOfMeasure
 from inventory.models import Brand
 
 from web.models import (UserProfile, Vendor, Customer, Staff, TransportationCompany)
-from purchase.models import Purchase, PurchaseItem
+from purchase.models import Purchase, PurchaseItem, VendorAccount
 from inventory.models import Inventory
 from expenses.models import Expense, ExpenseHead
 
@@ -110,13 +110,31 @@ class PurchaseEntry(View):
         purchase.purchase_invoice_date = datetime.strptime(purchase_dict['purchase_invoice_date'], '%d/%m/%Y')
         brand = Brand.objects.get(brand=purchase_dict['brand'])
         purchase.brand = brand
-        vendor = Vendor.objects.get(user__first_name=purchase_dict['vendor'])
+        vendor = Vendor.objects.get(user__first_name=purchase_dict['vendor'])       
         transport = TransportationCompany.objects.get(company_name=purchase_dict['transport'])
         purchase.vendor = vendor
         purchase.transportation_company = transport
         purchase.discount = purchase_dict['discount']
         purchase.net_total = purchase_dict['net_total']
         purchase.purchase_expense = purchase_dict['purchase_expense']
+        purchase.grant_total = purchase_dict['grant_total']
+
+        vendor_account, vendor_account_created = VendorAccount.objects.get_or_create(vendor=vendor)
+        if vendor_account_created:
+            vendor_account.total_amount = purchase.vendor_amount
+            vendor_account.balance = purchase.vendor_amount
+        else:
+            if purchase_created:
+                vendor_account.total_amount = vendor_account.total_amount + purchase_dict['vendor_amount']
+                vendor_account.balance = vendor_account.balance + purchase_dict['vendor_amount']
+            else:
+                vendor_account.total_amount = vendor_account.total_amount - purchase.vendor_amount + purchase_dict['vendor_amount']
+                vendor_account.balance = vendor_account.balance - purchase.vendor_amount + purchase_dict['vendor_amount']
+        vendor_account.save()       
+        purchase.vendor_amount = purchase_dict['vendor_amount']
+        purchase.save()
+
+        
 
         # Save purchase_expense in Expense
         if Expense.objects.exists():
@@ -135,9 +153,7 @@ class PurchaseEntry(View):
         expense.narration = 'By purchase'
         expense.save()
 
-        purchase.grant_total = purchase_dict['grant_total']
-        purchase.vendor_amount = purchase_dict['vendor_amount']
-        purchase.save()
+        
 
         purchase_items = purchase_dict['purchase_items']
         deleted_items = purchase_dict['deleted_items']
@@ -198,7 +214,17 @@ class PurchaseEdit(View):
 
 class VendorAccounts(View):
     def get(self, request, *args, **kwargs):
-        
-        return render(request, 'purchase/vendor_accounts.html',{})
+        vendor_accounts =  VendorAccount.objects.all()
+        return render(request, 'purchase/vendor_accounts.html', {
+            'vendor_accounts' : vendor_accounts
+        })
         
 
+class VendorAccountDetails(View):
+    def get(self, request, *args, **kwargs):
+        vendor = Vendor.objects.get_object_or_404(user__first_name=kwargs['vendor'])
+        vendor_account =  VendorAccount.objects.get(vendor=vendor)
+        return render(request, 'purchase/vendor_accounts.html', {
+            'vendor_accounts' : vendor_account
+        })
+        
