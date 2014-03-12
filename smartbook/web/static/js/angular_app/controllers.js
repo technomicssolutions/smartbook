@@ -211,7 +211,6 @@ function AddEditUserController($scope, $element, $http, $timeout, $location) {
     	$scope.expense_head = head_name;
     }
     $scope.close_popup = function(){
-        // $scope.new_desiganation_flag = true;
         $scope.popup.hide_popup();
     }
 	
@@ -649,6 +648,10 @@ function PurchaseController($scope, $element, $http, $timeout, share, $location)
         {
             console.log(data || "Request failed");
         });
+    }
+
+    $scope.close_popup = function(){
+        $scope.popup.hide_popup();
     }
 }
 
