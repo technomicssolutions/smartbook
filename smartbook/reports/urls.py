@@ -10,8 +10,7 @@ urlpatterns = patterns('',
 	url(r'^sales_reports_salesman/$', SalesReportsSalesman.as_view(), name='sales_reports_salesman'),
 	url(r'^sales_reports_customer/$', SalesReportsCustomer.as_view(), name='sales_reports_customer'),
 	url(r'^sales_reports_area/$', SalesReportsArea.as_view(), name='sales_reports_area'),
-	url(r'^purchase_reports_date/$', PurchaseReportsDate.as_view(), name='purchase_reports_date'),
-	url(r'^purchase_reports_vendor/$', PurchaseReportsVendor.as_view(), name='purchase_reports_vendor'),
+	url(r'^purchase/$', PurchaseReportsDate.as_view(), name='purchase_reports'),
 	url(r'^purchase_accounts_date/$', PurchaseAccountsDate.as_view(), name='purchase_accounts_date'),
 	url(r'^purchase_accounts_vendor/$', PurchaseAccountsVendor.as_view(), name='purchase_accounts_vendor'),
 	url(r'^stock_reports_date/$', StockReportsDate.as_view(), name='stock_reports_date'),
@@ -19,8 +18,6 @@ urlpatterns = patterns('',
 	url(r'^daily_report/$', DailyReport.as_view(), name='daily_report'),
 	url(r'^purchase_return/$', PurchaseReturn.as_view(), name='purchase_return'),
 	url(r'^expense_report/$', ExpenseReport.as_view(), name='expense_report'),
-	url(r'^stock/$', Stock.as_view(), name='stock'),
-
-	
+	url(r'^stock/$', Stock.as_view(), name='stock'),	
 
 )

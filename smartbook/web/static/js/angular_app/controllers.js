@@ -827,7 +827,10 @@ function ReportController($scope, $element, $http, $timeout, $location){
         console.log($scope.end_date);
         
         $http.get('/reports/daily_report/?start_date='+$scope.start_date+'&end_date='+$scope.end_date).success(function(data){
-            console.log("success");
+            console.log("success");            
+            $scope.daily_reports = data['daily_report'];
+            $scope.daily_report_sales = data['daily_report_sales'][0];
+            console.log($scope.daily_report_sales)
         });
     }
 
@@ -921,4 +924,54 @@ function VendorAccountController($scope, $element, $http, $timeout, $location){
             
         });
     }
+}
+
+function PurchaseReportController($scope, $element, $http, $location) {
+    $scope.report_name = 'date';
+    $scope.start_date = '';
+    $scope.end_date = '';
+    $scope.report_type = '';
+    $scope.report_date_wise_flag = true;
+    $scope.report_vendor_wise_flag = false;
+    $scope.init = function(csrf_token, report_name) {
+
+        $scope.csrf_token = csrf_token;
+        new Picker.Date($$('#start_date'), {
+            timePicker: false,
+            positionOffset: {x: 5, y: 0},
+            pickerClass: 'datepicker_bootstrap',
+            useFadeInOut: !Browser.ie,
+            format:'%d/%m/%Y', 
+        });
+        new Picker.Date($$('#end_date'), {
+            timePicker: false,
+            positionOffset: {x: 5, y: 0},
+            pickerClass: 'datepicker_bootstrap',
+            useFadeInOut: !Browser.ie,
+            format:'%d/%m/%Y', 
+        });
+        if (report_name == 'date')
+            $scope.report_name == 'date';
+        else {
+            $scope.report_name == 'vendor';
+        }
+    }
+    $scope.get_report = function(){
+        if($scope.report_name == 'date') {
+            $scope.report_date_wise_flag = true;
+            $scope.report_vendor_wise_flag = false;
+        } else if ($scope.report_name == 'vendor') {
+            $scope.report_date_wise_flag = false;
+            $scope.report_vendor_wise_flag = true;
+        }
+    }
+    $scope.view_report = function(report_type) {
+        $scope.report_type = report_type;
+        $scope.start_date = $$('#start_date')[0].get('value');
+        $scope.end_date = $$('#end_date')[0].get('value');
+        $http.get('/reports/purchase/?report_name=date&start_date='+$scope.start_date+'&end_date='+$scope.end_date).success(function(data){
+            $scope.purchases = data.purchases;
+        });
+
+    } 
 }
