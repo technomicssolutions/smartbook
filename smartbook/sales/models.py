@@ -19,7 +19,7 @@ class Sales(models.Model):
 	salesman = models.ForeignKey(Staff, null=True, blank=True)
 		
 	def __unicode__(self):
-		return self.sales_invoice_number
+		return self.customer.user.first_name
 
 	class Meta:
 
@@ -38,7 +38,8 @@ class SalesItems(models.Model):
 	
 	def __unicode__(self):
 
-		return self.sales.sales_invoice_number
+		return self.sales.customer.user.first_name
+
 
 	class Meta:
 

@@ -11,6 +11,9 @@ from django.http import Http404, HttpResponse, HttpResponseRedirect
 from django.contrib.auth import authenticate, login, logout
 from django.core.urlresolvers import reverse
 from django.contrib.auth.models import User
+from sales.models import Sales, SalesItems
+from expenses.models import Expense
+
 
 class Reports(View):
 	def get(self, request, *args, **kwarg):
@@ -64,21 +67,39 @@ class DailyReport(View):
     def get(self, request, *args, **kwargs):
         if request.is_ajax():
             status_code = 200
-
-            print " In DailyReport View"
             start = request.GET['start_date']
-            end = request.GET['end_date']
-            print "start", start
-            print "end", end
+            end = request.GET['end_date']            
             start_date = datetime.strptime(start, '%d/%m/%Y')
             end_date = datetime.strptime(end, '%d/%m/%Y')
-            print start_date
-            print end_date
-            
+            daily_report = []
+            sales = Sales.objects.filter(sales_invoice_date__gte=start_date,sales_invoice_date__lte=end_date)
+            if sales.count()>0:
+                for sale in sales:
+                    salesitem = sale.salesitems_set.all()[0]
+                    income = salesitem.net_amount
+                    invoice_no = sale.sales_invoice_number
+                    dates = sale.sales_invoice_date
+                    daily_report.append({
+                        'income' : income,
+                        'invoice_no' : invoice_no,
+                        'income_date' : dates.strftime('%d-%m-%Y'),
+                    })
+            expenses = Expense.objects.filter(date__gte=start_date, date__lte=end_date)
+            if expenses.count()>0:
+                for expense in expenses:
+                    voucher_no = expense.voucher_no,
+                    dates = expense.date,
+                    exp = expense.amount,
+                    daily_report.append({
+                        'voucher_no' :voucher_no,
+                        'expense_date' : dates.strftime('%d-%m-%Y'),
+                        'expense' : exp,
+                        })            
             try:
                 
                 res = {
-                    'result': 'ok',                    
+                    'result': 'ok',    
+                    'daily_report' : daily_report,                
                 }    
                 response = simplejson.dumps(res)
             except Exception as ex:
