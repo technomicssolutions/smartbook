@@ -53,7 +53,7 @@
 							<label for="vendor_invoice_date">Vendor Invoice Date</label>
 						</div>
 						<div class="forminput">
-							<input type="text" name="vendor_invoice_date" ng-model="purchase.vendor_invoice" id="vendor_invoice_date">
+							<input type="text" name="vendor_invoice_date" ng-model="purchase.vendor_invoice_date" id="vendor_invoice_date">
 						</div>
 					</div>
 					
@@ -64,7 +64,7 @@
 							<label for="purchase_invoice_date">Purchase Invoice Date</label>
 						</div>
 						<div class="forminput">
-							<input type="text" name="purchase_invoice_date" ng-model="purchase.purchase_invoice_date" id="purchase_invoice_id"/>
+							<input type="text" name="purchase_invoice_date" ng-model="purchase.purchase_invoice_date" id="purchase_invoice_date"/>
 						</div>
 					</div>
 
@@ -74,15 +74,9 @@
 							<label for="brand">Brand</label>
 						</div>
 						<div class="forminput">
-							<!-- <select name="brand" ng-model="purchase.brand">
-								{% for brand in brands %}
-  									<option value="{{brand.brand}}">{{brand.brand}}</option>
-								{% endfor %}
-								
-							</select> -->
 							<select name="brand" ng-model="purchase.brand" ng-change="add_brand()">
 								<option value="select">Select</option>
-								<option ng-repeat="brand in brands" value="[[brand.vendor_name]]" ng-selected="brand.brand_name == purchase.brand">[[brand.brand_name]]</option>
+								<option ng-repeat="brand in brands" value="[[brand.brand_name]]" ng-selected="brand.brand_name == purchase.brand">[[brand.brand_name]]</option>
 								<option value="other">Other</option>
 							</select>
 						</div>
@@ -106,18 +100,13 @@
 							<label for="transport">Transport</label>
 						</div>
 						<div class="forminput">
-							<!-- <select name="transport" ng-model="purchase.transport">
-								<option value="select">Select</option>
-							</select> -->
 							<select name="transport" ng-model="purchase.transport" ng-change="add_transport()">
 								<option value="select">Select</option>
 								<option ng-repeat="company in companies" value="[[company.company_name]]" ng-selected="company.company_name == purchase.transport">[[company.company_name]]</option>
 								<option value="other">Other</option>
 							</select>
 						</div>
-					</div>
-
-						
+					</div>						
 				</div>	
 		
 				<div class="section_3_purchase">
@@ -204,13 +193,13 @@
 							<label for="vendor_amout">Vendor Amount</label>
 						</div>
 						<div class="forminput">
-							<input type="text" name="vendor_amount" ng-model="purchase.vendor_amount">
+							<input type="text" name="vendor_amount" ng-model="purchase.vendor_amount" readonly />
 						</div>
 						<div class="formtext_purchase">
 							<label for="purchase_expense">Purchase Expense</label>
 						</div>
 						<div class="forminput">
-							<input type="text" name="purchase_expense" ng-model="purchase.purchase_expense" />
+							<input type="text" name="purchase_expense" ng-model="purchase.purchase_expense" readonly />
 						</div>
 					</div>
 					<div class="formrow_purchase">
@@ -218,7 +207,7 @@
 							<label for="net_total">Net Total</label>
 						</div>
 						<div class="forminput">
-							<input type="text" name="net_total" ng-model="purchase.net_total" ng-change="calculate_grant_total()"/>
+							<input type="text" name="net_total" ng-model="purchase.net_total" ng-change="calculate_grant_total()" readonly/>
 						</div>
 					</div>
 
@@ -235,7 +224,7 @@
 							<label for="grant_total">Grant Total</label>
 						</div>
 						<div class="forminput">
-							<input type="text" name="grant_total" ng-model="purchase.grant_total">
+							<input type="text" name="grant_total" ng-model="purchase.grant_total" readonly />
 						</div>
 					</div>
 				</div>

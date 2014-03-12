@@ -37,6 +37,17 @@
 			<a href=""><img src="/static/images/print.png" height='25px' width='25px'/></a>
 		</div>
 
+		<div class="reportinput">
+			<select name="form" onchange="location = this.options[this.selectedIndex].value;">
+				<option>Select Report Type</option>
+				<option value="{% url 'sales_reports_date' %}">Date Wise Report</option>
+				<option value="{% url 'sales_reports_item' %}">Item Wise Report</option>
+				<option value="{% url 'sales_reports_customer' %}">Customer Wise Report</option>
+				<option value="{% url 'sales_reports_salesman' %}">Salesman Wise Report</option>
+				<option value="{% url 'sales_reports_area' %}">Area Wise Report</option>
+			</select>
+		</div>
+
 				
 
 		<table id="list" class="table table-hover" >
@@ -47,7 +58,6 @@
 			  <th>Quantity</th>
 			  <th>Discount</th>
 			  <th>Selling Price</th>
-			  <th>Total</th>
 			  <th>Profit</th>
 			  <th></th>
 			</tr>

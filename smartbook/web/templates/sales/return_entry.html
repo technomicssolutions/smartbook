@@ -1,16 +1,15 @@
 {% extends 'base.html' %}
-{% block title %}Sales View
-{% endblock title %}
-{% block body_id %}sales_view{% endblock %}
+{% block title %}Return Entry{% endblock title %}
+{% block body_id %}return_entry{% endblock %}
 
 {% block content %}
 
 	<div id="main-title">
-		<div class="alert alert-info" align="Center"><h4>View Sales</h4></div>
+		<div class="alert alert-info" align="Center"><h4>Sales Return Entry</h4></div>
 	</div>
 
 	<div class="purchase_form_container">
-		<form name="view_sales" method="post">
+		<form name="sales_return" method="post">
 			<div class="form_contents_purchase">
 				<div class="section_1_purchase">
 					<div class="formrow_purchase">
@@ -62,14 +61,13 @@
 						<tr class="success" style="font-size: 12px"style="width:auto">
 						  <th>Item Code </th>
 						  <th>Item Name</th>
-						  <th>Quantity</th>			
-						  <th>UOM</th>
+						  <th>Stock</th>
 						  <th>Unit Price</th>
-						  <th>Tax (%)</th>
-						  <th>Tax Amount</th>
-						  <th>unit Price</th>
-						  <th>Discount</th>
-						  <th>Net Amount</th>			 
+						  <th>UOM</th>
+						  <th>Quantity</th>
+						  <th>Return Quantity</th>
+						  <th>Discount (%)</th>
+						  <th>Amount</th>			 
 						</tr>
 					</table>
 					</div>
@@ -133,6 +131,10 @@
 					<br><br><br>
 					<div>
 						<input style="background-color:#cce6ff" type="submit" value="Print">
+						<input style="background-color:#cce6ff" type="submit" value="New Invoice">
+						<input style="background-color:#cce6ff" type="submit" value="Submit">
+						<input style="background-color:#cce6ff" type="submit" value="Reset">
+						<input style="background-color:#cce6ff" type="submit" value="Cancel">
 					</div>
 				</div>
 

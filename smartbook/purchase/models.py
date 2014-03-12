@@ -12,7 +12,7 @@ from web.models import Vendor, TransportationCompany
 
 class Purchase(models.Model):
 	
-	purchase_invoice_number = models.IntegerField('Purchase Invoice Number', default=0)
+	purchase_invoice_number = models.IntegerField('Purchase Invoice Number', unique=True)
 	vendor_invoice_number = models.IntegerField('Vendor Invoice Number', default=0)
 	vendor_do_number = models.IntegerField('Vendor DO Number', default=0)
 	vendor_invoice_date = models.DateField('Vendor Invoice Date', null=True, blank=True)
@@ -21,17 +21,19 @@ class Purchase(models.Model):
 	vendor = models.ForeignKey(Vendor, null=True, blank=True)
 	transportation_company = models.ForeignKey(TransportationCompany, null=True, blank=True)
 	discount = models.DecimalField('Discount',max_digits=14, decimal_places=3, default=0)
-	
-	
+	net_total = models.DecimalField('Net Total',max_digits=14, decimal_places=3, default=0)
+	vendor_amount = models.DecimalField('Vendor Amount',max_digits=14, decimal_places=3, default=0)
+	grant_total = models.DecimalField('Grant Total', max_digits=14, decimal_places=3, default=0)
+	purchase_expense = models.DecimalField('Purchase Expense', max_digits=14, decimal_places=3, default=0)
 	def __unicode__(self):
-		return self.purchase_invoice_number
+		return str(self.purchase_invoice_number)
 
 	class Meta:
 
 		verbose_name = 'Purchase'
 		verbose_name_plural = 'Purchase'
 
-class PurchaseItems(models.Model):
+class PurchaseItem(models.Model):
 
 	item = models.ForeignKey(Item, null=True, blank=True)
 	purchase = models.ForeignKey(Purchase, null=True, blank=True)
@@ -41,11 +43,9 @@ class PurchaseItems(models.Model):
 	handling_per_unit = models.IntegerField('Item Handling per Unit', default=0)
 	expense = models.IntegerField('Expense', default=0)
 	expense_per_unit = models.IntegerField('Expense per Unit', default=0)
-	net_amount = models.DecimalField('Net Amount',max_digits=14, decimal_places=3, default=0)
-	vendor_amount = models.DecimalField('Vendor Amount',max_digits=14, decimal_places=3, default=0)
 	quantity_purchased = models.IntegerField('Quantity Purchased', default=0)
 	cost_price = models.DecimalField('Cost Price',max_digits=14, decimal_places=3, default=0)
-
+	net_amount = models.DecimalField('Net Amount',max_digits=14, decimal_places=3, default=0)
 
 	def __unicode__(self):
 

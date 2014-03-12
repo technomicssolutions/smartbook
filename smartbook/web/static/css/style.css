@@ -140,7 +140,7 @@ footer {
 	padding:8px 0 8px 0;
     font-weight: bold;
 }
-.div_content
+/*.div_content
 {
 margin-left:40%;
 margin-top:50px;
@@ -148,14 +148,7 @@ width:300px;
 height:auto;
 //background-color:#80b280;   
 //border:1px solid red;
-}
-
-/*.item label
-{
-	padding:8px 0 8px 0;
-
-
-}*/
+} */
 
 
 textarea{
@@ -203,30 +196,35 @@ form {
 	color: red;
 }
 
+/************************** Expense module start***********************/
+
 .expense_form_container {
 	margin: auto;
     max-width: 1024px;
     min-height: 500px;
 }
+.expense_form_container form {
+	width: 100% ! important;
+}
 .form_contents {
+	border: 1px solid;
+    display: inline-block;
+    height: auto;
+    margin: 10px 5px;
+    width: 100%;
 	margin: 10px 5px;
 }
 .section_1 {
 	float: left;
 	margin-right: 25px;
-	width: 315px;
+	width: 33%;
 }
 .section_2 {
 	float: left;
 	margin-right: 25px;
-	width: 315px;
+	width: 33%;
 }
-.section_3 {
-	float: left;
-	width: 245px;
-	height: 223px;
-	overflow: auto;
-}
+
 .formrow {
 	min-height: 40px;
     width: 100%;
@@ -293,6 +291,7 @@ form {
     padding-left: 0px !important;
 }
 
+/************************** Expense module end ***********************/
 
 
 
@@ -541,7 +540,16 @@ th {
   width: 384px;
   border: 1px solid;
 }
-
+#dialogue_popup form {
+	width: 100%;
+}
+#dialogue_popup .control {
+	width: 100%;
+}
+#dialogue_popup label {
+	width: 50% !important;
+	float: left;
+}
 .close_pop {
   width: 32px;
   height: 32px;
@@ -551,6 +559,5 @@ th {
   position: relative;
   /*top: -15px;
   right: -15px;*/
-
 }
 /******************************  Popup box end **********************/
