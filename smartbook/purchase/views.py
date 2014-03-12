@@ -1,6 +1,7 @@
 import sys
 import ast
 import simplejson
+import datetime as dt
 from datetime import datetime
 
 from django.contrib.auth.views import password_reset
@@ -19,6 +20,7 @@ from inventory.models import Brand
 from web.models import (UserProfile, Vendor, Customer, Staff, TransportationCompany)
 from purchase.models import Purchase, PurchaseItem
 from inventory.models import Inventory
+from expenses.models import Expense, ExpenseHead
 
 class PurchaseDetail(View):
 
@@ -115,6 +117,24 @@ class PurchaseEntry(View):
         purchase.discount = purchase_dict['discount']
         purchase.net_total = purchase_dict['net_total']
         purchase.purchase_expense = purchase_dict['purchase_expense']
+
+        # Save purchase_expense in Expense
+        if Expense.objects.exists():
+            voucher_no = int(Expense.objects.aggregate(Max('voucher_no'))['voucher_no__max']) + 1
+        else:
+            voucher_no = 1
+        if not voucher_no:
+            voucher_no = 1
+        expense = Expense()
+        expense.created_by = request.user
+        expense.expense_head, created = ExpenseHead.objects.get_or_create(expense_head = 'purchase')
+        expense.date = dt.datetime.now().date().strftime('%Y-%m-%d')
+        expense.voucher_no = voucher_no
+        expense.amount = purchase_dict['purchase_expense']
+        expense.payment_mode = 'cash'
+        expense.narration = 'By purchase'
+        expense.save()
+
         purchase.grant_total = purchase_dict['grant_total']
         purchase.vendor_amount = purchase_dict['vendor_amount']
         purchase.save()
