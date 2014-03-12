@@ -836,13 +836,89 @@ function ReportController($scope, $element, $http, $timeout, $location){
 function VendorAccountController($scope, $element, $http, $timeout, $location){    
     $scope.init = function(csrf_token) 
     {
-        var date_picker = new Picker.Date($$('#purchase_account_date'), {
+        $scope.csrf_token = csrf_token;
+        $scope.vendor_account = {
+            'payment_mode': 'cash',
+            'total_amount': 0,
+            'balance_amount': 0,
+            'amount_paid': 0,
+        }
+        var date_picker = new Picker.Date($$('#vendor_account_date'), {
             timePicker: false,
             positionOffset: {x: 5, y: 0},
             pickerClass: 'datepicker_bootstrap',
             useFadeInOut: !Browser.ie,
             format:'%d/%m/%Y',
         });
-        console.log(date_picker);
+    }
+    $scope.select_payment_mode = function(){
+        console.log('payment mode', $scope.vendor_account.payment_mode);
+        if($scope.vendor_account.payment_mode == 'cheque') {
+            $scope.cheque = true;
+        } else {
+            $scope.cheque = false;
+        }
+    }
+    $scope.get_vendor_account_details = function(){
+        var vendor = $scope.vendor_account.vendor;
+        $http.get('/purchase/vendor_account/'+$scope.vendor_account.vendor+'/').success(function(data, status)
+        {
+            if (status==200) {
+                $scope.vendor_account = data.vendor_account;
+            }
+            
+        }).error(function(data, status)
+        {
+            console.log(data || "Request failed");
+        });
+    }
+    $scope.validate_vendor_account = function(){
+        if($scope.vendor_account.vendor == '') {
+            $scope.validation_error = "Please select Vendor";
+            return false;
+        } else if($scope.vendor_account.amount == ''){
+            $scope.validation_error = "Please enter amount";            
+            return false;
+        } else if($scope.vendor_account.vendor_account_date == '') {
+            $scope.validation_error = "Please select date";
+            return false;
+        }
+        return true;
+    }
+    $scope.reset_vendor_account = function(){
+        $scope.vendor_account.vendor = '';
+    }
+    $scope.calculate_vendor_account_amounts = function(){
+        var total_amount = $scope.vendor_account.total_amount;
+        var balance_amount = $scope.vendor_account.balance_amount;
+        var amount_paid = $scope.vendor_account.amount_paid;
+        var amount = $scope.vendor_account.amount
+        $scope.vendor_account.total_amount = parseInt(amount) + parseInt(total_amount);
+        $scope.vendor_account.amount_paid = parseInt(amount) + parseInt(amount_paid);
+        if(parseInt(balance_amount) > parseInt(amount) ) {
+            $scope.vendor_account.balance_amount = parseInt(balance_amount) - parseInt(amount);
+        } else {
+            $scope.vendor_account.balance_amount = 0
+        }
+         
+    }
+    $scope.save_vendor_account = function(){
+        params = { 
+            'vendor_account': angular.toJson($scope.vendor_account),
+            "csrfmiddlewaretoken" : $scope.csrf_token
+        }
+        $http({
+            method : 'post',
+            url : '/purchase/vendor_account/'+$scope.vendor_account.vendor+'/',
+            data : $.param(params),
+            headers : {
+                'Content-Type' : 'application/x-www-form-urlencoded'
+            }
+        }).success(function(data, status) {
+            document.location.href = '/purchase/entry/';
+           
+        }).error(function(data, success){
+            
+        });
     }
 }
