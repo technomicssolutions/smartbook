@@ -212,11 +212,19 @@ class PurchaseEdit(View):
     	
         return render(request, 'purchase/edit_purchase_entry.html',{})
 
-class VendorAccountList(View):
+class VendorAccounts(View):
     def get(self, request, *args, **kwargs):
         vendor_accounts =  VendorAccount.objects.all()
-        return render(request, 'purchase/vendor_accounts.html',{
+        return render(request, 'purchase/vendor_accounts.html', {
             'vendor_accounts' : vendor_accounts
         })
         
 
+class VendorAccountDetails(View):
+    def get(self, request, *args, **kwargs):
+        vendor = Vendor.objects.get_object_or_404(user__first_name=kwargs['vendor'])
+        vendor_account =  VendorAccount.objects.get(vendor=vendor)
+        return render(request, 'purchase/vendor_accounts.html', {
+            'vendor_accounts' : vendor_account
+        })
+        

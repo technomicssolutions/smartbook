@@ -67,15 +67,23 @@ class PurchaseReturn(models.Model):
 	def __unicode__(self):
 		return self.purchase
 
+PAYMENT_MODE = (
+	('cash', 'Cash'),
+	('cheque', 'Cheque')
+)
 class VendorAccount(models.Model):
 
 	vendor = models.ForeignKey(Vendor, unique=True)
 	date = models.DateField('Date', null=True, blank=True)
-	payment_mode = models.CharField('Payment Mode', max_length=10, null=True, blank=True)
+	payment_mode = models.CharField('Payment Mode', max_length=10, choices=PAYMENT_MODE)
 	narration = models.CharField('Narration', max_length=10, null=True, blank=True)
 	total_amount = models.IntegerField('Total Amount', default=0)
 	paid_amount = models.IntegerField('Paid Amount', default=0)
-	balance = models.IntegerField('balance', default=0)
+	balance = models.IntegerField('Balance', default=0)
+	cheque_no = models.IntegerField('Cheque No', null=True, blank=True)
+	cheque_date = models.DateField('Cheque Date', null=True, blank=True)
+	bank_name = models.CharField('Bank Name', max_length=200, null=True, blank=True)
+	branch_name = models.CharField('Branch Name', max_length=200, null=True, blank=True)
 
 	def __unicode__(self):
 		return self.vendor

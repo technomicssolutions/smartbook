@@ -3,7 +3,7 @@
 {% block body_id %}Vendor Accounts{% endblock %}
 
 {% block title %}Vendor Accounts{% endblock title %}
-{% block controller %}ng-controller="PurchaseController" ng-init="init('{{csrf_token}}', '{{invoice_number}}')" {% endblock controller %}
+{% block controller %}ng-controller="VendorAccountController" ng-init="init('{{csrf_token}}')" {% endblock controller %}
 {% block content %}
 
 	<div id="main-title">
@@ -12,7 +12,7 @@
 
 	<div class="purchase_form_container">
 		<form name="vendor_accounts" method="post">
-			<div class="form_contents_purchase">
+			<div class="form_contents_vendor_account">
 				<div class="section_1_purchase">
 					<div class="formrow_purchase">
 						<div class="formtext_purchase">
@@ -41,7 +41,7 @@
 							<label for="date">Date</label>
 						</div>
 						<div class="forminput_purchase">
-							<input type="text" name="date" >
+							<input type="text" name="date" id="purchase_account_date" />
 							
 						</div>
 					</div>
@@ -102,7 +102,7 @@
 							<label for="narration">Narration</label>
 						</div>
 						<div class="forminput_purchase">
-							<textarea rows="4" cols="25" >
+							<textarea rows="4" cols="25" ></textarea>
 							
 						</div>
 					</div>
