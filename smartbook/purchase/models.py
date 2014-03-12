@@ -66,3 +66,16 @@ class PurchaseReturn(models.Model):
 
 	def __unicode__(self):
 		return self.purchase
+
+class VendorAccounts(models.Model):
+
+	vendor = models.ForeignKey('Vendor', null=True, blank=True)
+	date = models.DateField('Date', null=True, blank=True)
+	amount = models.IntegerField('Amount', default=0)
+	payment_mode = models.CharField('Payment Mode')
+	narration = models.CharField('Narration', null=True, blank=True)
+	total_amount = models.IntegerField('Total Amount', default=0)
+	paid_amount = models.IntegerField('Paid Amount')
+	balance = models.IntegerField('balance')
+	
+	

@@ -775,6 +775,7 @@ function SalesController($scope, $element, $http, $timeout, share, $location) {
             
         }
     }
+
     $scope.calculate_net_total_sale = function(){
         var net_total = 0;
         for(i=0; i<$scope.sales_items.length; i++){
@@ -789,4 +790,42 @@ function SalesController($scope, $element, $http, $timeout, share, $location) {
     $scope.calculate_balance_sale = function () {
         $scope.sales.balance = $scope.sales.grant_total - $scope.sales.paid;
     }
+
+}
+
+function ReportController($scope, $element, $http, $timeout, $location){    
+
+    $scope.start_date = '';
+    $scope.end_date = '';
+
+    $scope.init = function(){       
+
+        new Picker.Date($$('#start_date'), {
+            timePicker: false,
+            positionOffset: {x: 5, y: 0},
+            pickerClass: 'datepicker_bootstrap',
+            useFadeInOut: !Browser.ie,
+            format:'%d/%m/%Y', 
+        });
+        new Picker.Date($$('#end_date'), {
+            timePicker: false,
+            positionOffset: {x: 5, y: 0},
+            pickerClass: 'datepicker_bootstrap',
+            useFadeInOut: !Browser.ie,
+            format:'%d/%m/%Y', 
+        });
+    }
+    $scope.view_report = function(report_type){
+        $scope.start_date = $$('#start_date')[0].get('value');
+        $scope.end_date = $$('#end_date')[0].get('value');
+
+        console.log("hi");
+        console.log($scope.start_date);
+        console.log($scope.end_date);
+        
+        $http.get('/reports/daily_report/?start_date='+$scope.start_date+'&end_date='+$scope.end_date).success(function(data){
+            console.log("success");
+        });
+    }
+
 }

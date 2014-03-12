@@ -2,32 +2,33 @@
 {% block title %}Daily Report{% endblock title %}
 {% block body_id %}daily_report{% endblock %}
 
-{% block content %}
-<div class="main-title">
-		
-		<div class="alert alert-info" align="Center">Daily Reports</div>
+{% block controller %}
+	ng-controller="ReportController" ng-init="init('{{csrf_token}}')"   
+{% endblock controller %}
 
+{% block content %}
+<div class="main-title">		
+	<div class="alert alert-info" align="Center" >Daily Reports</div>
 </div>
 	
 			
 		<div class="reporttext">
-				<label for="s_date">Start Date</label>
+			<label for="s_date">Start Date</label>
+		</div>
+
+		<div class="reportinput">			
+			<input type="text" name="start_date" id="start_date">
+		</div>					
+
+		<div class="reporttext">
+			<label for="e_date">End Date</label>
 		</div>
 
 		<div class="reportinput">
-				<input type="text" name="start_date" >
-		</div>
-					
-
-		<div class="reporttext">
-				<label for="e_date">End Date</label>
-		</div>
-
-		<div class="reportinput">
-				<input type="text" name="end_date" >
+			<input type="text" name="end_date" id="end_date">
 		</div>
 		<div class="reporttext">
-			<input type="submit" value="Genrate" class="btn btn-info " style="border-top-width: 0px; margin-top: 3px;">
+			<input type="submit" value="View Report" class="btn btn-info report_button " style="border-top-width: 0px; margin-top: 3px;" ng-click="view_report('daily_report')">
 		</div>
 
 
