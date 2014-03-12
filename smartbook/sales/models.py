@@ -19,17 +19,17 @@ class Sales(models.Model):
 	salesman = models.ForeignKey(Staff, null=True, blank=True)
 		
 	def __unicode__(self):
-		return self.sales_invoice_number
+		return str(self.sales_invoice_number)
 
 	class Meta:
 
 		verbose_name = 'Sales'
 		verbose_name_plural = 'Sales'
 
-class SalesItems(models.Model):
+class SalesItem(models.Model):
 
-	item = models.ForeignKey(Item, null=True, blank=True)
-	sales = models.ForeignKey(Sales, null=True, blank=True)
+	item = models.ForeignKey(Item)
+	sales = models.ForeignKey(Sales)
 	quantity_sold = models.IntegerField('Quantity Sold', default=0)
 	discount_given = models.DecimalField('Discount Given',max_digits=14, decimal_places=3, default=0)
 	net_amount = models.DecimalField('Net Amount',max_digits=14, decimal_places=3, default=0)
@@ -38,11 +38,35 @@ class SalesItems(models.Model):
 	
 	def __unicode__(self):
 
-		return self.sales.sales_invoice_number
+		return str(self.sales.sales_invoice_number)
 
 	class Meta:
 
 		verbose_name = 'Sales Items'
 		verbose_name_plural = 'Sales Items'
+
+class SalesReturn(models.Model):
+	sales = models.ForeignKey(Sales)
+	date = models.DateField('Date', null=True, blank=True)
+	total = models.IntegerField('Total', null=True, blank=True)
+	discount = models.IntegerField('Discount', null=True, blank=True)
+	round_off = models.IntegerField('Round Off', null=True, blank=True)
+	grand_total = models.IntegerField('Grand Total', null=True, blank=True)
+
+	def __unicode__(self):
+
+		return str(self.sales.sales_invoice_number)
+
+class SalesReturnItem(models.Model):
+	sales = models.ForeignKey(Sales, null=True, blank=True)
+	item = models.ForeignKey(SalesItem, null=True, blank=True)
+	return_quantity = models.IntegerField('Return Quantity', null=True, blank=True)
+	discount_amount = models.IntegerField('Discount Amount', null=True, blank=True)
+	net_amount = models.IntegerField('Amount', null=True, blank=True)
+
+	def __unicode__(self):
+
+		return str(self.sales.sales_invoice_number)
+		
 
 
