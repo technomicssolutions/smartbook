@@ -14,6 +14,18 @@ function ExpenseController($scope, $element, $http, $timeout, $location) {
     {
         $scope.csrf_token = csrf_token;
         $scope.get_expense_head_list();
+        // new Picker.Date($$('#check_date'), {
+        //     timePicker: false,
+        //     positionOffset: {x: 5, y: 0},
+        //     pickerClass: 'datepicker_bootstrap',
+        //     useFadeInOut: !Browser.ie,
+        //     format:'%d/%m/%Y',
+        //     minDate: 
+        //     // onSelect: function(date){
+        //     //     myHiddenField.set('value', date.format('%s');
+        //     // } 
+        
+        // });
     }
     $scope.get_expense_head_list = function() {
     	$http.get('/expenses/expense_head_list/').success(function(data)
@@ -29,13 +41,13 @@ function ExpenseController($scope, $element, $http, $timeout, $location) {
         if(payment_mode == 'cheque') {
             $scope.payment_mode_selection = false;
             
-            new Picker.Date($$('#check_date'), {
-                // timePicker: true,
+            new Picker.Date($$('#cheque_date'), {
+                timePicker: false,
                 positionOffset: {x: 5, y: 0},
                 pickerClass: 'datepicker_bootstrap',
                 useFadeInOut: !Browser.ie,
                 format:'%d/%m/%Y',
-                // minDate: 
+                // minDate: new Date(),
                 // onSelect: function(date){
                 //     myHiddenField.set('value', date.format('%s');
                 // } 
