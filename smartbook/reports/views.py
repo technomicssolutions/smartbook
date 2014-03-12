@@ -11,7 +11,7 @@ from django.http import Http404, HttpResponse, HttpResponseRedirect
 from django.contrib.auth import authenticate, login, logout
 from django.core.urlresolvers import reverse
 from django.contrib.auth.models import User
-from sales.models import Sales, SalesItems
+from sales.models import Sales, SalesItem
 from expenses.models import Expense
 
 
@@ -75,7 +75,7 @@ class DailyReport(View):
             sales = Sales.objects.filter(sales_invoice_date__gte=start_date,sales_invoice_date__lte=end_date)
             if sales.count()>0:
                 for sale in sales:
-                    salesitem = sale.salesitems_set.all()[0]
+                    # salesitem = sale.salesitems_set.all()[0]
                     income = salesitem.net_amount
                     invoice_no = sale.sales_invoice_number
                     dates = sale.sales_invoice_date
