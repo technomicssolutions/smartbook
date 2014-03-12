@@ -832,3 +832,20 @@ function ReportController($scope, $element, $http, $timeout, $location){
     }
 
 }
+
+function PurchaseReportController($scope, $element, $http, $location) {
+    $scope.report_name = '';
+    $scope.start_date = '';
+    $scope.end_date = '';
+    $scope.init = function(csrf_token) {
+        $scope.csrf_token = csrf_token;
+        $scope.report_name == 'date';
+    }
+    $scope.get_report = function(){
+        if($scope.report_name == 'date') {
+            document.location.href = '/reports/purchase_reports_date/';
+        } else if ($scope.report_name == 'vendor') {
+            document.location.href = '/reports/purchase_reports_vendor/';
+        }
+    }
+}
