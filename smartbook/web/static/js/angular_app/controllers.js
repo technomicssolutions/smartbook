@@ -556,7 +556,7 @@ function PurchaseController($scope, $element, $http, $timeout, share, $location)
                     'Content-Type' : 'application/x-www-form-urlencoded'
                 }
             }).success(function(data, status) {
-                /*document.location.href = '/purchase/entry/';*/
+                document.location.href = '/purchase/entry/';
                
             }).error(function(data, success){
                 

@@ -123,22 +123,22 @@ class PurchaseEntry(View):
         deleted_items = purchase_dict['deleted_items']
 
         for p_item in deleted_items:
-            item = Item.objects.get(code = p_item['item_code'])
-            ps_item = PurchaseItem.objects.get(item=item)
-            ps_item.delete()
+            item = Item.objects.get(code = p_item['item_code']) 
+            ps_item = PurchaseItem.objects.get(item=item)           
             inventory = Inventory.objects.get(item=item)
-            inventory.quantity = inventory.quantity + int(purchase_item['qty_purchased'])
+            inventory.quantity = inventory.quantity + ps_item.quantity_purchased
             inventory.save()
+            ps_item.delete()
 
         for purchase_item in purchase_items:
 
             item = Item.objects.get(code=purchase_item['item_code'])
             p_item, item_created = PurchaseItem.objects.get_or_create(item=item, purchase=purchase)
-            inventory, created = Inventory.objects.get_or_create(item=item, quantity=0)
+            inventory, created = Inventory.objects.get_or_create(item=item)
             if created:
                 inventory.quantity = int(purchase_item['qty_purchased'])                
             else:
-                if purchse_created:
+                if purchase_created:
                     inventory.quantity = inventory.quantity + int(purchase_item['qty_purchased'])
                 else:
                     inventory.quantity = inventory.quantity - p_item.quantity_purchased + int(purchase_item['qty_purchased'])
