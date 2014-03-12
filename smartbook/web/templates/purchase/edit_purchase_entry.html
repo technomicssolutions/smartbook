@@ -112,7 +112,7 @@
 						
 				</div>	
 		
-				<!-- <div class="section_3_purchase">
+				<div class="section_3_purchase">
 					<div class="search_purchase">
 						<div class="control">
 							<label> Item Code </label>
@@ -140,8 +140,9 @@
 							</div>
 							<div class="clear"></div>
 						</div>
-    				</div> -->
+    				</div>
     				<div class="clear"></div>
+    				<p class="error_message"> [[item_select_error]] </p>
    				</div>
 
    				<div class="purchase_items_list" ng-show="purchase.purchase_items.length > 0">
@@ -184,6 +185,7 @@
 							<span> <input type="text" ng-model="item.permit_disc_amt" ng-change="calculate_discount_percent(item)" /> </span>
 							<span> <input type="text" ng-model="item.permit_disc_percent" ng-change="calculate_discount_amt(item)"/> </span>
 							<span> [[item.net_amount]] </span>
+							<a class="delete_anch" href="" ng-click="delete_purchase_item(item);"> <img src="/static/images/delete.png" /> </a> 
 						</div>
 						<div class="clear"></div>
    					</div>
