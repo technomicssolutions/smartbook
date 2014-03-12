@@ -833,6 +833,20 @@ function ReportController($scope, $element, $http, $timeout, $location){
 
 }
 
+function VendorAccountController($scope, $element, $http, $timeout, $location){    
+    $scope.init = function(csrf_token) 
+    {
+        var date_picker = new Picker.Date($$('#purchase_account_date'), {
+            timePicker: false,
+            positionOffset: {x: 5, y: 0},
+            pickerClass: 'datepicker_bootstrap',
+            useFadeInOut: !Browser.ie,
+            format:'%d/%m/%Y',
+        });
+        console.log(date_picker);
+    }
+}
+
 function PurchaseReportController($scope, $element, $http, $location) {
     $scope.report_name = '';
     $scope.start_date = '';
