@@ -510,6 +510,10 @@ th {
 	width: 4% !important;
 }
 
+.delete_anch {
+	display: block;
+	margin-top: 4px;
+}
 /******************************  Purchase module end *************/
 
 /******************************  Popup box **********************/

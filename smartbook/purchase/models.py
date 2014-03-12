@@ -25,6 +25,7 @@ class Purchase(models.Model):
 	vendor_amount = models.DecimalField('Vendor Amount',max_digits=14, decimal_places=3, default=0)
 	grant_total = models.DecimalField('Grant Total', max_digits=14, decimal_places=3, default=0)
 	purchase_expense = models.DecimalField('Purchase Expense', max_digits=14, decimal_places=3, default=0)
+	
 	def __unicode__(self):
 		return str(self.purchase_invoice_number)
 
@@ -49,7 +50,7 @@ class PurchaseItem(models.Model):
 
 	def __unicode__(self):
 
-		return self.purchase.purchase_invoice_number
+		return str(self.purchase.purchase_invoice_number)
 
 	class Meta:
 

@@ -241,6 +241,7 @@ function PurchaseController($scope, $element, $http, $timeout, share, $location)
         'purchase_expense': '',
         'grant_total': '',
         'vendor_amount': '',
+        'deleted_items': []
     }
     $scope.purchase.vendor = 'select';
     $scope.purchase.brand = 'select';
@@ -466,6 +467,15 @@ function PurchaseController($scope, $element, $http, $timeout, share, $location)
         $scope.item_code = '';
         $scope.item_name = '';
         $scope.barcode = '';
+        $scope.item_select_error = '';
+        if($scope.purchase.purchase_items.length > 0) {
+            for(var i=0; i< $scope.purchase.purchase_items.length; i++) {
+                if($scope.purchase.purchase_items[i].item_code == item.item_code) {
+                    $scope.item_select_error = "Item already selected";
+                    return false;
+                }
+            }
+        } 
         var selected_item = {
             'item_code': item.item_code,
             'item_name': item.item_name,
@@ -488,6 +498,12 @@ function PurchaseController($scope, $element, $http, $timeout, share, $location)
             'expense_unit': 0
         }
         $scope.purchase.purchase_items.push(selected_item);
+    }
+    $scope.delete_purchase_item = function(item){
+        var index = $scope.purchase.purchase_items.indexOf(item);
+        $scope.purchase.purchase_items.splice(index, 1);
+        $scope.purchase.deleted_items.push(item);
+        console.log($scope.purchase.purchase_items, index);
     }
     $scope.calculate_frieght = function(item){
         if(item.qty_purchased != '' && item.frieght != ''){
@@ -557,7 +573,6 @@ function PurchaseController($scope, $element, $http, $timeout, share, $location)
 
     $scope.calculate_purchase_expense = function(){
         var purchase_expense = 0;
-        console.log('expense');
         for(i=0; i<$scope.purchase.purchase_items.length; i++){
             purchase_expense = purchase_expense + parseFloat($scope.purchase.purchase_items[i].expense);
         }
@@ -608,13 +623,13 @@ function PurchaseController($scope, $element, $http, $timeout, share, $location)
             }
             $http({
                 method : 'post',
-                url : "/purchase/purchase-entry/",
+                url : "/purchase/entry/",
                 data : $.param(params),
                 headers : {
                     'Content-Type' : 'application/x-www-form-urlencoded'
                 }
             }).success(function(data, status) {
-                
+                /*document.location.href = '/purchase/entry/';*/
                
             }).error(function(data, success){
                 
@@ -629,6 +644,7 @@ function PurchaseController($scope, $element, $http, $timeout, share, $location)
             $scope.selecting_item = true;
             $scope.item_selected = false;
             $scope.purchase = data.purchase;
+            $scope.purchase.deleted_items = [];
         }).error(function(data, status)
         {
             console.log(data || "Request failed");
