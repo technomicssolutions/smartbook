@@ -207,22 +207,25 @@ form {
 	width: 100% ! important;
 }
 .form_contents {
-	border: 1px solid;
-    display: inline-block;
+	display: inline-block;
     height: auto;
-    margin: 10px 5px;
     width: 100%;
-	margin: 10px 5px;
+}
+.content_div {
+	width: 33%;
+	margin: auto;
+}
+#expense_head .formrow .buttons {
+	width: 48%;
+	height: 38px;
 }
 .section_1 {
 	float: left;
-	margin-right: 25px;
-	width: 33%;
+	width: 50%;
 }
 .section_2 {
 	float: left;
-	margin-right: 25px;
-	width: 33%;
+	width: 50%;
 }
 
 .formrow {
@@ -248,7 +251,23 @@ form {
 }
 .buttons {
 	margin: auto;
-    width: 50%;
+    width: 25%;
+}
+
+.buttons a {
+	float: left;
+	margin-right: 10px;
+	font-size: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+}
+
+#cancel_butn {
+	font-size: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+    width: 46px;
+    height: 16px;
 }
 
 .message p{
@@ -257,20 +276,6 @@ form {
 	font-size: 20px;
 }
 
-.btn {
-	background-color: #49AFCD;
-    background-image: linear-gradient(to bottom, #5BC0DE, #2F96B4);
-    background-repeat: repeat-x;
-    border-color: rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.25);
-    color: #FFFFFF;
-    text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.25);
-    float: right;
-    margin-bottom: 3px;
-    text-align: center;
-    height: 21px;
-    width: 100px;
-    font-weight: bold;
-}
 .btn:hover {
 	background-color: #2F96B4;
 	color: #FFFFFF;

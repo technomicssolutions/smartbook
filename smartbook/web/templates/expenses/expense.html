@@ -58,8 +58,8 @@
 							<label for="payment_mode">Payment Mode:</label>
 						</div>
 						<div class="forminput" id="radio_input">
-							<input type="radio" name="payment_mode" ng-model="payment_mode" value="true" ng-change="payment_mode_change('cash')"><label>Cash</label>
-							<input type="radio" name="payment_mode" ng-model="payment_mode" value="false" ng-change="payment_mode_change('cheque')"><label>Cheque</label>
+							<input type="radio" name="payment_mode" ng-model="payment_mode" value="cash" ng-change="payment_mode_change('cash')"><label>Cash</label>
+							<input type="radio" name="payment_mode" ng-model="payment_mode" value="cheque" ng-change="payment_mode_change('cheque')"><label>Cheque</label>
 						</div>
 					</div>
 					<div class="formrow">
@@ -74,18 +74,18 @@
 				<div class="section_2">
 					<div class="formrow">
 						<div class="formtext">
-							<label for="checkno">Cheque No :</label>
+							<label for="chequeno">Cheque No :</label>
 						</div>
 						<div class="forminput">
-							<input type="text" name="checkno" ng-model="checkno" ng-readonly="payment_mode_selection">
+							<input type="text" name="chequeno" ng-model="cheque_no" ng-readonly="payment_mode_selection">
 						</div>
 					</div>
 					<div class="formrow">
 						<div class="formtext">
-							<label for="check_date">Cheque Date :</label>
+							<label for="cheque_date">Cheque Date :</label>
 						</div>
 						<div class="forminput">
-							<input type="text" name="check_date" id="check_date" value="{{current_date}}" ng-readonly="payment_mode_selection">
+							<input type="text" name="cheque_date" id="cheque_date" value="" ng-readonly="payment_mode_selection">
 						</div>
 					</div>
 					<div class="formrow">
@@ -107,11 +107,15 @@
 				</div>	
 				
 			</div>
-			<div class="buttons">
-				<a href="">Submit</a>
-				<a href="">Reset</a>
-				<a href="{% url 'home' %}">Cancel</a>
+			<div ng-show="error_flag">
+				<p class="error_message">[[error_message]]</p>
 			</div>
+			<div class="buttons">
+				<a href="" class="btn btn-info" ng-click="save_expense()">Submit</a>
+				<a href="" class="btn btn-info" ng-click="reset()">Reset</a>
+				<a href="{% url 'home' %}"class="btn btn-info">Cancel</a>
+			</div>
+			
 		</form>
 
 	</div>
