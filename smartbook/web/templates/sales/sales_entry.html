@@ -3,7 +3,7 @@
 {% block body_id %}Sales{% endblock %}
 
 {% block title %}Sales Entry{% endblock title %}
-{% block controller %}ng-controller="SalesController" ng-init="init('{{csrf_token}}')"{% endblock controller %}
+{% block controller %}ng-controller="SalesController" ng-init="init('{{csrf_token}}', '{{sales_invoice_number}}')"{% endblock controller %}
 
 {% block content %}
 
@@ -21,7 +21,7 @@
 						</div>
 
 						<div class="forminput_sales">
-							<input type="text" name="date" >
+							<input type="text" name="sales_invoice_date" ng-model="sales.sales_invoice" id="sales_invoice_date">
 						</div>
 					</div>
 
@@ -41,10 +41,10 @@
 
 					<div class="formrow_sales">
 						<div class="formtext_sales">
-							<label for="invoice_number">Invoice Number </label>
+							<label for="sales_invoice_number">Invoice Number </label>
 						</div>
 						<div class="forminput_sales">
-							<input type="text" name="invoice_number"  >
+							<input type="text" name="sales_invoice_number"  ng-model="sales.sales_invoice_number"  readonly / >
 						</div>
 					</div>
 
@@ -159,45 +159,45 @@
 
 					<div class="formrow_sales">
 						<div class="formtext_sales">
-							<label for="total">Total</label>
+							<label for="net_total">Net Total</label>
 						</div>
 						<div class="forminput_sales">
-							<input type="text" name="total">
+							<input type="text" name="net_total"ng-model="sales.net_total" >
 						</div>
 					
 						<div class="formtext_sales">
 							<label for="discount">Discount</label>
 						</div>
 						<div class="forminput_sales">
-							<input type="text" name="discount">
+							<input type="text" name="discount" ng-model="sales.discount"ng-change="calculate_grant_total_sale()">
 						</div>
 
 						<div class="formtext_sales">
 							<label for="round">Round Off</label>
 						</div>
 						<div class="forminput_sales">
-							<input type="text" name="roundoff">
+							<input type="text" name="roundoff" ng-model="sales.roundoff" ng-change="calculate_grant_total_sale()">
 						</div>
 
 						<div class="formtext_sales">
 							<label for="Grant Total">Grant Total</label>
 						</div>
 						<div class="forminput_sales">
-							<input type="text" name="Grant Total">
+							<input type="text" name="grant_total" ng-model="sales.grant_total">
 						</div>
 
 						<div class="formtext_sales">
 							<label for="paid">Paid</label>
 						</div>
 						<div class="forminput_sales">
-							<input type="text" name="paid">
+							<input type="text" name="paid" ng-model="sales.paid" ng-change="calculate_balance_sale()">
 						</div>
 
 						<div class="formtext_sales">
 							<label for="balance">Balance</label>
 						</div>
 						<div class="forminput_sales">
-							<input type="text" name="balance">
+							<input type="text" name="balance" ng-model="sales.balance">
 						</div>
 					</div>
 				</div>

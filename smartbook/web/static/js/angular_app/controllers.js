@@ -541,14 +541,50 @@ function SalesController($scope, $element, $http, $timeout, share, $location) {
 
     $scope.items = [];
     $scope.selected_item = '';
+    $scope.customer_name = '';
+    $scope.salesman_code = '';
+    $scope.selecting_item = false;
+    $scope.item_selected = false;
+    $scope.sales = {
+        'sales_items': [],
+        'sales_invoice_number': '',
+        'date_sales': '',
+        'salesman_code': '',
+        'net_total': 0,
+        'discount': 0,
+        'roundoff': 0,
+        'grant_total': 0,
+        'paid': 0,
+        'balance': 0,
+        
+    }
+    
+  
+    $scope.init = function(csrf_token, sales_invoice_number)
+    {
+        $scope.csrf_token = csrf_token;
+        $scope.sales.sales_invoice_number = sales_invoice_number;
+        $scope.popup = '';
+        var date_picker = new Picker.Date($$('#sales_invoice_date'), {
+            timePicker: false,
+            positionOffset: {x: 5, y: 0},
+            pickerClass: 'datepicker_bootstrap',
+            useFadeInOut: !Browser.ie,
+            format:'%d/%m/%Y',
+        });
+        
+
+            
+        console.log("$scope.sales.sales_invoice_number ", $scope.sales.sales_invoice_number );
+    }
+
+
+    $scope.items = [];
+    $scope.selected_item = '';
     $scope.selecting_item = false;
     $scope.item_selected = false;
     $scope.sales_items = [];
-    $scope.init = function(csrf_token)
-    {
-        $scope.csrf_token = csrf_token;
-    }
-
+    
     $scope.getItems = function(parameter){
 
         console.log('parameter', parameter);
@@ -606,6 +642,7 @@ function SalesController($scope, $element, $http, $timeout, share, $location) {
             item.net_amount = ((parseFloat(item.qty_sold)*parseFloat(item.unit_price))+parseFloat(item.tax_amount)-parseFloat(item.disc_given)).toFixed(2);
             
         }
+        $scope.calculate_net_total_sale();
     }
     $scope.calculate_tax_amount_sale = function(item) {
         if(item.tax != '' && item.unit_price != ''){
@@ -622,5 +659,19 @@ function SalesController($scope, $element, $http, $timeout, share, $location) {
             item.unit_cost = (parseFloat(item.unit_price)+parseFloat(item.tax_amount)-parseFloat(item.disc_given)).toFixed(2);
             
         }
+    }
+    $scope.calculate_net_total_sale = function(){
+        var net_total = 0;
+        for(i=0; i<$scope.sales_items.length; i++){
+            net_total = net_total + parseFloat($scope.sales_items[i].net_amount);
+        }
+        $scope.sales.net_total = net_total;
+        $scope.calculate_grant_total_sale();
+    }
+    $scope.calculate_grant_total_sale = function(){
+        $scope.sales.grant_total = $scope.sales.net_total - $scope.sales.discount - $scope.sales.roundoff;
+    }
+    $scope.calculate_balance_sale = function () {
+        $scope.sales.balance = $scope.sales.grant_total - $scope.sales.paid;
     }
 }
