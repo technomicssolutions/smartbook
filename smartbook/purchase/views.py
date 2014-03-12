@@ -174,8 +174,11 @@ class PurchaseEntry(View):
 class PurchaseEdit(View):
     def get(self, request, *args, **kwargs):
     	
-        return render(request, 'purchase/edit_purchase_entry.html',{
-        	
-        })
+        return render(request, 'purchase/edit_purchase_entry.html',{})
 
+class VendorAccounts(View):
+    def get(self, request, *args, **kwargs):
+        
+        return render(request, 'purchase/vendor_accounts.html',{})
+        
 

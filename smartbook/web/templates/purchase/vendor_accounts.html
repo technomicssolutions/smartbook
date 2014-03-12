@@ -1,0 +1,159 @@
+{% extends 'base.html' %}
+
+{% block body_id %}Vendor Accounts{% endblock %}
+
+{% block title %}Vendor Accounts{% endblock title %}
+{% block controller %}ng-controller="PurchaseController" ng-init="init('{{csrf_token}}', '{{invoice_number}}')" {% endblock controller %}
+{% block content %}
+
+	<div id="main-title">
+		<div class="alert alert-info" align="Center"><h4>Vendor Accounts</h4></div>
+	</div>
+
+	<div class="purchase_form_container">
+		<form name="vendor_accounts" method="post">
+			<div class="form_contents_purchase">
+				<div class="section_1_purchase">
+					<div class="formrow_purchase">
+						<div class="formtext_purchase">
+							<label for="vendor">Vendor Name</label>
+						</div>
+						<div class="forminput_purchase">
+							<select name="vendor" >
+								<option>Select Vendor</option>					
+							</select>
+							
+						</div>
+					</div>
+
+					<div class="formrow_purchase">
+						<div class="formtext_purchase">
+							<label for="Total">Total Amount</label>
+						</div>
+
+						<div class="forminput_purchase">
+							<input type="text" name="total" >
+						</div>
+					</div>
+
+					<div class="formrow_purchase">
+						<div class="formtext_purchase">
+							<label for="date">Date</label>
+						</div>
+						<div class="forminput_purchase">
+							<input type="text" name="date" >
+							
+						</div>
+					</div>
+
+					<div class="formrow_purchase">
+						<div class="formtext_purchase">
+							<label for="paid">Paid Amount</label>
+						</div>
+						<div class="forminput_purchase">
+							<input type="text" name="paid" >
+							
+						</div>
+					</div>
+
+					<div class="formrow_purchase">
+						<div class="formtext_purchase">
+							<label for="amount">Amount</label>
+						</div>
+						<div class="forminput_purchase">
+							<input type="text" name="amount" >
+							
+						</div>
+					</div>
+
+					<div class="formrow_purchase">
+						<div class="formtext_purchase">
+							<label for="balance">Balance Amount</label>
+						</div>
+						<div class="forminput_purchase">
+							<input type="text" name="balance" >
+							
+						</div>
+					</div>
+
+					<div class="formrow_purchase">
+						<div class="formtext_purchase">
+							<label for="payment">Payment Mode</label>
+						</div>
+						<div class="forminput_purchase">
+							<input type="radio" name="cash" > Cash
+							<input type="radio" name="cheque"> Cheque
+							
+						</div>
+					</div>
+
+					<div class="formrow_purchase">
+						<div class="formtext_purchase">
+							<label for="cheque_no">Cheque No</label>
+						</div>
+						<div class="forminput_purchase">
+							<input type="text" name="cheque_no" >
+							
+						</div>
+					</div>
+
+					<div class="formrow_purchase">
+						<div class="formtext_purchase">
+							<label for="narration">Narration</label>
+						</div>
+						<div class="forminput_purchase">
+							<textarea rows="4" cols="25" >
+							
+						</div>
+					</div>
+
+					<div class="formrow_purchase">
+						<div class="formtext_purchase">
+							<label for="cheque_name">Cheque Name</label>
+						</div>
+						<div class="forminput_purchase">
+							<input type="text" name="cheque_name" >
+							
+						</div>
+					</div>
+
+					<div class="formrow_purchase">
+						<div class="formtext_purchase">
+							<label for="bank">Bank Name</label>
+						</div>
+						<div class="forminput_purchase">
+							<input type="text" name="bank" >
+							
+						</div>
+					</div>
+
+					<div class="formrow_purchase">
+						<div class="formtext_purchase">
+							<label for="branch">Branch Name</label>
+						</div>
+						<div class="forminput_purchase">
+							<input type="text" name="branch" >
+						</div>
+					</div>
+
+					<div class="formrow_purchase">
+						
+						<div class="formrow_purchase">
+							<input type="submit" name="submit" value="Submit">
+							<input type="submit" name="submit" value="Reset">
+							<input type="submit" name="submit" value="Cancel">
+						</div>
+					</div>
+
+
+
+
+
+				</div>
+			</div>
+		</form>
+	</div>
+
+
+
+{% endblock content %}

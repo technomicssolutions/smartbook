@@ -340,16 +340,19 @@ form {
 	padding-bottom: 30px;
 }
 
-
-
-
-
 .search_purchase .control {
 	background-color: #ADD8E6;
     float: left;
     padding: 13px;
     width: 31%;
 }
+
+.vendor_section_1 {
+	float: left;
+	width:100%;
+	border: 1px solid black;
+}
+
 
 
 /*sales module */
@@ -397,6 +400,7 @@ form {
     padding: 13px;
     width: 31%;
 }
+
 
 
 
@@ -569,3 +573,12 @@ th {
   right: -15px;*/
 }
 /******************************  Popup box end **********************/
+
+/************************ Report Module *****************************/
+
+.report_button {
+	padding-left: 6px;
+    padding-right: 6px;
+}
+
+/************************ Report Module End *************************/
