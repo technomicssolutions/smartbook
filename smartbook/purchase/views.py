@@ -143,12 +143,10 @@ class PurchaseEntry(View):
                 else:
                     inventory.quantity = inventory.quantity - p_item.quantity_purchased + int(purchase_item['qty_purchased'])
             inventory.selling_price = purchase_item['selling_price']
-            print "saving unit prixce ", purchase_item['unit_price']
             inventory.unit_price = purchase_item['unit_price']
             inventory.discount_permit_percentage = purchase_item['permit_disc_percent']
             inventory.discount_permit_amount = purchase_item['permit_disc_amt']
             inventory.save()  
-            print "inventory unit price", inventory.unit_price
                     
             p_item, item_created = PurchaseItem.objects.get_or_create(item=item, purchase=purchase)
             p_item.purchase = purchase

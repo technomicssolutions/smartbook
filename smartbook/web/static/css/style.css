@@ -536,8 +536,7 @@ th {
 #dialogue_popup {
   height: auto;
   border-radius: 15px 15px 15px 15px;
-  /*border: 2px solid #1ABC9C ;*/
-  border: 2px solid #CCCCCC;
+  border: 2px solid #ADD8E6;
   margin: auto;
   z-index: 2;
   position: relative;
@@ -547,7 +546,7 @@ th {
   overflow: hidden;
   padding-bottom: 20px;
   width: 384px;
-  border: 1px solid;
+  padding: 1%;
 }
 #dialogue_popup form {
 	width: 100%;
