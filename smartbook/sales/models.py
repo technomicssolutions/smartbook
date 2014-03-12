@@ -11,8 +11,7 @@ from web.models import Customer, Staff
 # Create your models here.   
 
 
-class Sales(models.Model):
-	
+class Sales(models.Model):	
 	sales_invoice_number = models.IntegerField('Sales Invoice Number', default=0)
 	sales_invoice_date = models.DateField('Sales Invoice Date', null=True, blank=True)
 	customer = models.ForeignKey(Customer, null=True, blank=True)
@@ -30,7 +29,6 @@ class Sales(models.Model):
 		verbose_name_plural = 'Sales'
 
 class SalesItem(models.Model):
-
 	item = models.ForeignKey(Item, null=True, blank=True)
 	sales = models.ForeignKey(Sales, null=True, blank=True)
 	quantity_sold = models.IntegerField('Quantity Sold', default=0)

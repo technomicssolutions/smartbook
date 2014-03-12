@@ -72,34 +72,50 @@ class DailyReport(View):
             start_date = datetime.strptime(start, '%d/%m/%Y')
             end_date = datetime.strptime(end, '%d/%m/%Y')
             daily_report = []
+            round_off = 0
+            discount = 0
+            total_income = 0
+            total_expense = 0
+            daily_report_sales = []
             sales = Sales.objects.filter(sales_invoice_date__gte=start_date,sales_invoice_date__lte=end_date)
             if sales.count()>0:
                 for sale in sales:
-                    # salesitem = sale.salesitems_set.all()[0]
-                    income = salesitem.net_amount
-                    invoice_no = sale.sales_invoice_number
-                    dates = sale.sales_invoice_date
                     daily_report.append({
-                        'income' : income,
-                        'invoice_no' : invoice_no,
-                        'income_date' : dates.strftime('%d-%m-%Y'),
+                        'income' : sale.grant_total,
+                        'invoice_no' : sale.sales_invoice_number,
+                        'date' : (sale.sales_invoice_date).strftime('%d-%m-%Y'),
+                        'type' :True,
                     })
+                    round_off = round_off+sale.round_off
+                    discount = discount+sale.discount
+                    total_income = total_income + sale.grant_total            
+            
             expenses = Expense.objects.filter(date__gte=start_date, date__lte=end_date)
             if expenses.count()>0:
-                for expense in expenses:
-                    voucher_no = expense.voucher_no,
-                    dates = expense.date,
-                    exp = expense.amount,
+                for expense in expenses:     
                     daily_report.append({
-                        'voucher_no' :voucher_no,
-                        'expense_date' : dates.strftime('%d-%m-%Y'),
-                        'expense' : exp,
-                        })            
+                        'voucher_no' : expense.voucher_no,
+                        'date' : (expense.date).strftime('%d-%m-%Y'),
+                        'expense' : expense.amount,
+                        'narration' : expense.narration,
+                        'type' : False,
+                        }) 
+                    total_expense = total_expense + expense.amount 
+            total_expense = total_expense + round_off + discount
+            difference = total_income - total_expense
+            daily_report_sales.append({
+                'round_off' : round_off,
+                'discount' : discount,
+                'total_income' : total_income,
+                'total_expense' : total_expense,
+                'difference' : difference,
+                })         
             try:
                 
                 res = {
                     'result': 'ok',    
-                    'daily_report' : daily_report,                
+                    'daily_report' : daily_report, 
+                    'daily_report_sales' : daily_report_sales,               
                 }    
                 response = simplejson.dumps(res)
             except Exception as ex:

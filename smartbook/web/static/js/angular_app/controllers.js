@@ -827,8 +827,10 @@ function ReportController($scope, $element, $http, $timeout, $location){
         console.log($scope.end_date);
         
         $http.get('/reports/daily_report/?start_date='+$scope.start_date+'&end_date='+$scope.end_date).success(function(data){
-            console.log("success");
-            console.log(data);
+            console.log("success");            
+            $scope.daily_reports = data['daily_report'];
+            $scope.daily_report_sales = data['daily_report_sales'][0];
+            console.log($scope.daily_report_sales)
         });
     }
 
