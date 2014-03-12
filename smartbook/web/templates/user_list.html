@@ -7,11 +7,11 @@
 
 <div class="top_section">
 	{% if user_type == 'vendor' %}
-		<a class="btn" href="{% url 'register_user' user_type='vendor' %}">New Vendor</a>
+		<a class="btn btn-info" href="{% url 'register_user' user_type='vendor' %}">New Vendor</a>
 	{% elif user_type == 'staff' %}
-		<a class="btn" href="{% url 'register_user' user_type='staff' %}">New Staff</a>
+		<a class="btn btn-info" href="{% url 'register_user' user_type='staff' %}">New Staff</a>
 	{% elif user_type == 'customer' %}
-		<a class="btn" href="{% url 'register_user' user_type='customer' %}">New Customer</a> 
+		<a class="btn btn-info" href="{% url 'register_user' user_type='customer' %}">New Customer</a> 
 	{% endif %}
 </div>
 {% if users|length > 0 %}

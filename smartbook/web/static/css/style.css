@@ -574,6 +574,18 @@ th {
 }
 /******************************  Popup box end **********************/
 
+/************************ Userlist Module ***************************/
+
+.top_section a{
+	float: right;
+	margin-right: 10px;
+	font-size: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+}
+/************************ Userlist Module end************************/
+
+
 /************************ Report Module *****************************/
 
 .report_button {
@@ -582,3 +594,4 @@ th {
 }
 
 /************************ Report Module End *************************/
+>>>>>>> 2b1a5cb57204a9e31e36660e926281ba923f64a5
