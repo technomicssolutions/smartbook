@@ -853,9 +853,10 @@ function PurchaseReportController($scope, $element, $http, $location) {
     $scope.start_date = '';
     $scope.end_date = '';
     $scope.report_type = '';
+    $scope.vendor_name = 'select';
     $scope.report_date_wise_flag = true;
     $scope.report_vendor_wise_flag = false;
-    $scope.init = function(csrf_token, report_name) {
+    $scope.init = function(csrf_token) {
 
         $scope.csrf_token = csrf_token;
         new Picker.Date($$('#start_date'), {
@@ -872,12 +873,25 @@ function PurchaseReportController($scope, $element, $http, $location) {
             useFadeInOut: !Browser.ie,
             format:'%d/%m/%Y', 
         });
-        if (report_name == 'date')
-            $scope.report_name == 'date';
-        else {
-            $scope.report_name == 'vendor';
-        }
+        // if (report_name == 'date')
+        //     $scope.report_name == 'date';
+        // else {
+        //     $scope.report_name == 'vendor';
+        // }
+        $scope.get_vendors();
+
     }
+    $scope.get_vendors = function() {
+        $http.get('/vendor/list/').success(function(data)
+        {
+            $scope.vendors = data.vendors;
+            $scope.vendor_name = 'select';
+        }).error(function(data, status)
+        {
+            console.log(data || "Request failed");
+        });
+    }
+
     $scope.get_report = function(){
         if($scope.report_name == 'date') {
             $scope.report_date_wise_flag = true;
@@ -891,9 +905,16 @@ function PurchaseReportController($scope, $element, $http, $location) {
         $scope.report_type = report_type;
         $scope.start_date = $$('#start_date')[0].get('value');
         $scope.end_date = $$('#end_date')[0].get('value');
-        $http.get('/reports/purchase/?report_name=date&start_date='+$scope.start_date+'&end_date='+$scope.end_date).success(function(data){
-            $scope.purchases = data.purchases;
-        });
-
+        console.log($scope.vendor_name)
+        if ($scope.report_type == 'date') {
+           $http.get('/reports/purchase/?report_name=date&start_date='+$scope.start_date+'&end_date='+$scope.end_date).success(function(data){
+                $scope.purchases = data.purchases;
+            }); 
+       } else {
+            $http.get('/reports/purchase/?report_name=vendor&vendor_name='+$scope.vendor_name).success(function(data){
+                $scope.purchases = data.purchases;
+            });
+       }
+        
     } 
 }
