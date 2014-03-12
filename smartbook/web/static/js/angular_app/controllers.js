@@ -656,15 +656,16 @@ function SalesController($scope, $element, $http, $timeout, share, $location) {
 
     $scope.items = [];
     $scope.selected_item = '';
-    $scope.customer_name = '';
-    $scope.salesman_code = '';
+    $scope.customer = '';
+    $scope.staff = '';
     $scope.selecting_item = false;
     $scope.item_selected = false;
     $scope.sales = {
         'sales_items': [],
         'sales_invoice_number': '',
         'date_sales': '',
-        'salesman_code': '',
+        'customer':'',
+        'staff': '',
         'net_total': 0,
         'discount': 0,
         'roundoff': 0,
@@ -673,8 +674,8 @@ function SalesController($scope, $element, $http, $timeout, share, $location) {
         'balance': 0,
         
     }
-    
-  
+    $scope.sales.staff = 'select';
+    $scope.sales.customer = 'select';
     $scope.init = function(csrf_token, sales_invoice_number)
     {
         $scope.csrf_token = csrf_token;
@@ -688,11 +689,143 @@ function SalesController($scope, $element, $http, $timeout, share, $location) {
             format:'%d/%m/%Y',
         });
         
-
+        $scope.get_staff();
+        $scope.get_customers();
             
         console.log("$scope.sales.sales_invoice_number ", $scope.sales.sales_invoice_number );
     }
+    $scope.get_staff = function() {
+        $http.get('/staff/list/').success(function(data)
+        {
+            $scope.staffs = data.staffs;
 
+        }).error(function(data, status)
+        {
+            console.log(data || "Request failed");
+        });
+    }
+        $scope.add_staff = function() {
+
+        if($scope.sales.staff == 'other') {
+
+            $scope.popup = new DialogueModelWindow({
+                'dialogue_popup_width': '384px',
+                'message_padding': '0px',
+                'left': '28%',
+                'top': '40px',
+                'height': '702px',
+                'content_div': '#'
+            });
+            var height = $(document).height();
+            $scope.popup.set_overlay_height(height);
+            $scope.popup.show_content();
+        }
+    }
+
+    $scope.add_new_staff = function() {
+        params = { 
+            'name':$scope.staff_name,
+            'contact_person': $scope.contact_person,
+            'house': $scope.house_name,
+            'street': $scope.street,
+            'city': $scope.city,
+            'district':$scope.district,
+            'pin': $scope.pin,
+            'mobile': $scope.mobile,
+            'phone': $scope.land_line,
+            'email': $scope.email_id,
+            "csrfmiddlewaretoken" : $scope.csrf_token
+        }
+        $http({
+            method : 'post',
+            url : "/register/staff/",
+            data : $.param(params),
+            headers : {
+                'Content-Type' : 'application/x-www-form-urlencoded'
+            }
+        }).success(function(data, status) {
+            
+            if (data.result == 'error'){
+                $scope.error_flag=true;
+                $scope.message = data.message;
+            } else {
+                $scope.popup.hide_popup();
+                $scope.get_staff();
+                $scope.sales.staff = $scope.staff_name;
+                $scope.sales.staff = data.staff_name;
+            }
+        }).error(function(data, success){
+            
+        });
+    }
+
+    $scope.get_customers = function() {
+        $http.get('/customer/list/').success(function(data)
+        {   
+            
+            $scope.customers = data.customers;
+
+        }).error(function(data, status)
+        {
+            console.log(data || "Request failed");
+        });
+    }
+        $scope.add_customer = function() {
+
+        if($scope.sales.customer == 'other') {
+
+
+            $scope.popup = new DialogueModelWindow({
+                'dialogue_popup_width': '384px',
+                'message_padding': '0px',
+                'left': '28%',
+                'top': '40px',
+                'height': '702px',
+                'content_div': '#add_customer'
+            });
+            var height = $(document).height();
+            $scope.popup.set_overlay_height(height);
+            $scope.popup.show_content();
+        }
+    }
+
+    $scope.add_new_customer = function() { 
+        params = { 
+            'name':$scope.customer_name,
+            'contact_person': $scope.contact_person,
+            'house': $scope.house_name,
+            'street': $scope.street,
+            'city': $scope.city,
+            'district':$scope.district,
+            'pin': $scope.pin,
+            'mobile': $scope.mobile,
+            'phone': $scope.land_line,
+            'email': $scope.email_id,
+            "csrfmiddlewaretoken" : $scope.csrf_token
+        }
+        $http({
+            method : 'post',
+            url : "/register/customer/",
+            data : $.param(params),
+            headers : {
+                'Content-Type' : 'application/x-www-form-urlencoded'
+            }
+        }).success(function(data, status) {
+            
+            if (data.result == 'error'){
+                $scope.error_flag=true;
+                $scope.message = data.message;
+            } else {
+                $scope.popup.hide_popup();
+                $scope.get_customers();
+
+                $scope.sales.customer = $scope.customer_name;
+                $scope.sales.customer = data.customer_name;
+            }
+        }).error(function(data, success){
+            
+        });
+    }
 
     $scope.items = [];
     $scope.selected_item = '';
@@ -783,6 +916,8 @@ function SalesController($scope, $element, $http, $timeout, share, $location) {
         $scope.sales.net_total = net_total;
         $scope.calculate_grant_total_sale();
     }
+
+
     $scope.calculate_grant_total_sale = function(){
         $scope.sales.grant_total = $scope.sales.net_total - $scope.sales.discount - $scope.sales.roundoff;
     }

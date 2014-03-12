@@ -4,6 +4,10 @@
 
 {% block title %}Sales Entry{% endblock title %}
 {% block controller %}ng-controller="SalesController" ng-init="init('{{csrf_token}}', '{{sales_invoice_number}}')"{% endblock controller %}
+{% block dialogue_popup %}
+	{% include 'add_new_customer.html' %} 
+	              	
+{% endblock %}
 
 {% block content %}
 
@@ -30,11 +34,13 @@
 							<label for="customer">Customer Name</label>
 						</div>
 						<div class="forminput_sales">
-							<select name="customer" >
-								
-								
+							<select name="customer" ng-model="sales.customer" ng-change="add_customer()" >
+								<option value="select">Select</option>[[customers]]
+								<option ng-repeat="customer in customers" value="[[customer.customer_name]]" ng-selected="customer.customer_name == sales.customer">[[customer.customer_name]]
+								</option>
+								<option value="other">Other</option>
 							</select>
-							<input type="submit" value="Add">
+							
 						</div>
 					</div>
 
@@ -141,8 +147,12 @@
 							<label for="salesman_code">Salesman Code</label>
 						</div>
 						<div class="forminput_sales">
-							<select name="salesman_code" >
-								
+							<select name="staff" ng-model="sales.staff" ng-change="add_staff()" >
+								<option value="select">Select</option>
+								<option ng-repeat="staff in staffs" value="[[staff.staff_name]]" ng-selected="staff.staff_name == sales.staff">[[staff.staff_name]]
+								</option>
+								<option value="other">Other</option>
+							</select>
 								
 							</select>
 						</div>
