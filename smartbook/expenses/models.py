@@ -34,5 +34,5 @@ class  Expense(models.Model):
 
 	def __unicode__(self):
 
-		return self.voucher_no
+		return self.expense_head.expense_head
 
