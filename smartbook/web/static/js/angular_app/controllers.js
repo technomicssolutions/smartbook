@@ -796,7 +796,7 @@ function SalesController($scope, $element, $http, $timeout, share, $location) {
 
 }
 
-function ReportController($scope, $element, $http, $timeout, $location){    
+function DailyReportController($scope, $element, $http, $timeout, $location){    
 
     $scope.start_date = '';
     $scope.end_date = '';
@@ -898,4 +898,61 @@ function PurchaseReportController($scope, $element, $http, $location) {
         });
 
     } 
+}
+function SalesReportController($scope, $element, $http, $timeout, $location){
+
+    $scope.report_date_wise = true;
+    $scope.report_item_wise = false;
+    $scope.report_customer_wise = false;
+    $scope.report_salesman_wise = false;
+    $scope.report_area_wise = false;
+
+    $scope.init
+
+    $scope.get_report_type =function() {
+        if($scope.report_type == 'date'){
+            $scope.report_date_wise = true;
+            $scope.report_item_wise = false;
+            $scope.report_customer_wise = false;
+            $scope.report_salesman_wise = false;
+            $scope.report_area_wise = false;
+
+        }
+        else if($scope.report_type == 'item'){
+            $scope.report_date_wise = false;
+            $scope.report_item_wise = true;
+            $scope.report_customer_wise = false;
+            $scope.report_salesman_wise = false;
+            $scope.report_area_wise = false;
+
+        }
+        else if($scope.report_type == 'customer'){
+            $scope.report_date_wise = false;
+            $scope.report_item_wise = false;
+            $scope.report_customer_wise = true;
+            $scope.report_salesman_wise = false;
+            $scope.report_area_wise = false;
+            
+        }
+        else if($scope.report_type == 'salesman'){
+            $scope.report_date_wise = false;
+            $scope.report_item_wise = false;
+            $scope.report_customer_wise = false;
+            $scope.report_salesman_wise = true;
+            $scope.report_area_wise = false;
+            
+        }
+        else if($scope.report_type == 'area'){
+            $scope.report_date_wise = false;
+            $scope.report_item_wise = false;
+            $scope.report_customer_wise = false;
+            $scope.report_salesman_wise = false;
+            $scope.report_area_wise = true;
+            
+        }
+    }
+    $scope.view_report = function(report_type){
+
+    }
+
 }
