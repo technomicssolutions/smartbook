@@ -570,3 +570,10 @@ th {
   right: -15px;*/
 }
 /******************************  Popup box end **********************/
+.top_section a{
+	float: right;
+	margin-right: 10px;
+	font-size: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+}
