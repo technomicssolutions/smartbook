@@ -7,25 +7,18 @@ function ExpenseController($scope, $element, $http, $timeout, $location) {
 
 	$scope.expense_heads = [];
 	$scope.expense_head = '';
-    $scope.payment_mode = 'true';
+    $scope.payment_mode = 'cash';
     $scope.payment_mode_selection = true;
+    $scope.voucher_no = '';
+    $scope.is_valid = false;
+    $scope.error_flag = false;
+    $scope.error_message = '';
 
 	$scope.init = function(csrf_token)
     {
         $scope.csrf_token = csrf_token;
         $scope.get_expense_head_list();
-        // new Picker.Date($$('#check_date'), {
-        //     timePicker: false,
-        //     positionOffset: {x: 5, y: 0},
-        //     pickerClass: 'datepicker_bootstrap',
-        //     useFadeInOut: !Browser.ie,
-        //     format:'%d/%m/%Y',
-        //     minDate: 
-        //     // onSelect: function(date){
-        //     //     myHiddenField.set('value', date.format('%s');
-        //     // } 
         
-        // });
     }
     $scope.get_expense_head_list = function() {
     	$http.get('/expenses/expense_head_list/').success(function(data)
@@ -47,14 +40,94 @@ function ExpenseController($scope, $element, $http, $timeout, $location) {
                 pickerClass: 'datepicker_bootstrap',
                 useFadeInOut: !Browser.ie,
                 format:'%d/%m/%Y',
-                // minDate: new Date(),
-                // onSelect: function(date){
-                //     myHiddenField.set('value', date.format('%s');
-                // } 
-            
             });
         } else {
             $scope.payment_mode_selection = true;
+        }
+    }
+    $scope.reset = function() {
+        $scope.expense_head = 'select';
+        $scope.amount = '';
+        $scope.payment_mode = 'cash';
+        $scope.payment_mode_selection = true;
+        $scope.narration = '';
+        $scope.cheque_no = '';
+        $scope.cheque_date = '';
+        $scope.branch = '';
+        $scope.bank_name = '';
+        $scope.cheque_date = $$('#cheque_date').set('value', '');
+    }
+    $scope.form_validation = function(){
+        $scope.voucher_no = $$('#voucher_no')[0].get('value');
+        $scope.date = $$('#date')[0].get('value');
+        $scope.cheque_date = $$('#cheque_date')[0].get('value');
+        if ($scope.expense_head == '' || $scope.expense_head == undefined || $scope.expense_head == 'select') {
+            $scope.error_flag = true;
+            $scope.error_message = 'Please choose expense head';
+            return false;
+        } else if ($scope.amount == '' || $scope.amount == undefined) {
+            $scope.error_flag = true;
+            $scope.error_message = 'Please enter amount';
+            return false;
+        } else if ($scope.narration == '' || $scope.narration == undefined) {
+            $scope.error_flag = true;
+            $scope.error_message = 'Please add narration';
+            return false;
+        } else if( $scope.payment_mode == 'cheque' && ($scope.cheque_no == '' || $scope.cheque_no == undefined)) {
+            $scope.error_flag = true;
+            $scope.error_message = 'Please add cheque no';
+            return false;
+        } else if( $scope.payment_mode == 'cheque' && ($scope.cheque_date == '' || $scope.cheque_date == undefined)) {
+            $scope.error_flag = true;
+            $scope.error_message = 'Please add cheque date';
+            return false;
+        } else if( $scope.payment_mode == 'cheque' && ($scope.bank_name == '' || $scope.bank_name == undefined)) {
+            $scope.error_flag = true;
+            $scope.error_message = 'Please add bank name';
+            return false;
+        } else if( $scope.payment_mode == 'cheque' && ($scope.branch == '' || $scope.branch == undefined)) {
+            $scope.error_flag = true;
+            $scope.error_message = 'Please add branch';
+            return false;
+        }
+        return true;
+    }
+    $scope.save_expense = function(){
+        $scope.is_valid = $scope.form_validation();
+        if ($scope.is_valid) {
+            $scope.error_flag = false;
+            $scope.error_message = '';
+            params = { 
+                'voucher_no':$scope.voucher_no,
+                'date': $scope.date,
+                'head_name': $scope.expense_head,
+                'amount': $scope.amount,
+                'payment_mode': $scope.payment_mode,
+                'cheque_date':$scope.cheque_date,
+                'cheque_no': $scope.cheque_no,
+                'bank_name': $scope.bank_name,
+                'branch': $scope.branch,
+                'narration': $scope.narration,
+                "csrfmiddlewaretoken" : $scope.csrf_token
+            }
+            $http({
+                method : 'post',
+                url : "/expenses/new_expense/",
+                data : $.param(params),
+                headers : {
+                    'Content-Type' : 'application/x-www-form-urlencoded'
+                }
+            }).success(function(data, status) {
+                
+                if (data.result == 'error'){
+                    $scope.error_flag=true;
+                    $scope.message = data.message;
+                } else {
+                    console.log('success');
+                }
+            }).error(function(data, status){
+                console.log(data);
+            });
         }
     }
 }
@@ -168,6 +241,7 @@ function PurchaseController($scope, $element, $http, $timeout, share, $location)
         'purchase_expense': '',
         'grant_total': '',
         'vendor_amount': '',
+        'deleted_items': []
     }
     $scope.purchase.vendor = 'select';
     $scope.purchase.brand = 'select';
@@ -393,6 +467,15 @@ function PurchaseController($scope, $element, $http, $timeout, share, $location)
         $scope.item_code = '';
         $scope.item_name = '';
         $scope.barcode = '';
+        $scope.item_select_error = '';
+        if($scope.purchase.purchase_items.length > 0) {
+            for(var i=0; i< $scope.purchase.purchase_items.length; i++) {
+                if($scope.purchase.purchase_items[i].item_code == item.item_code) {
+                    $scope.item_select_error = "Item already selected";
+                    return false;
+                }
+            }
+        } 
         var selected_item = {
             'item_code': item.item_code,
             'item_name': item.item_name,
@@ -415,6 +498,12 @@ function PurchaseController($scope, $element, $http, $timeout, share, $location)
             'expense_unit': 0
         }
         $scope.purchase.purchase_items.push(selected_item);
+    }
+    $scope.delete_purchase_item = function(item){
+        var index = $scope.purchase.purchase_items.indexOf(item);
+        $scope.purchase.purchase_items.splice(index, 1);
+        $scope.purchase.deleted_items.push(item);
+        console.log($scope.purchase.purchase_items, index);
     }
     $scope.calculate_frieght = function(item){
         if(item.qty_purchased != '' && item.frieght != ''){
@@ -484,7 +573,6 @@ function PurchaseController($scope, $element, $http, $timeout, share, $location)
 
     $scope.calculate_purchase_expense = function(){
         var purchase_expense = 0;
-        console.log('expense');
         for(i=0; i<$scope.purchase.purchase_items.length; i++){
             purchase_expense = purchase_expense + parseFloat($scope.purchase.purchase_items[i].expense);
         }
@@ -535,13 +623,13 @@ function PurchaseController($scope, $element, $http, $timeout, share, $location)
             }
             $http({
                 method : 'post',
-                url : "/purchase/purchase-entry/",
+                url : "/purchase/entry/",
                 data : $.param(params),
                 headers : {
                     'Content-Type' : 'application/x-www-form-urlencoded'
                 }
             }).success(function(data, status) {
-                
+                document.location.href = '/purchase/entry/';
                
             }).error(function(data, success){
                 
@@ -556,6 +644,7 @@ function PurchaseController($scope, $element, $http, $timeout, share, $location)
             $scope.selecting_item = true;
             $scope.item_selected = false;
             $scope.purchase = data.purchase;
+            $scope.purchase.deleted_items = [];
         }).error(function(data, status)
         {
             console.log(data || "Request failed");
@@ -567,14 +656,50 @@ function SalesController($scope, $element, $http, $timeout, share, $location) {
 
     $scope.items = [];
     $scope.selected_item = '';
+    $scope.customer_name = '';
+    $scope.salesman_code = '';
+    $scope.selecting_item = false;
+    $scope.item_selected = false;
+    $scope.sales = {
+        'sales_items': [],
+        'sales_invoice_number': '',
+        'date_sales': '',
+        'salesman_code': '',
+        'net_total': 0,
+        'discount': 0,
+        'roundoff': 0,
+        'grant_total': 0,
+        'paid': 0,
+        'balance': 0,
+        
+    }
+    
+  
+    $scope.init = function(csrf_token, sales_invoice_number)
+    {
+        $scope.csrf_token = csrf_token;
+        $scope.sales.sales_invoice_number = sales_invoice_number;
+        $scope.popup = '';
+        var date_picker = new Picker.Date($$('#sales_invoice_date'), {
+            timePicker: false,
+            positionOffset: {x: 5, y: 0},
+            pickerClass: 'datepicker_bootstrap',
+            useFadeInOut: !Browser.ie,
+            format:'%d/%m/%Y',
+        });
+        
+
+            
+        console.log("$scope.sales.sales_invoice_number ", $scope.sales.sales_invoice_number );
+    }
+
+
+    $scope.items = [];
+    $scope.selected_item = '';
     $scope.selecting_item = false;
     $scope.item_selected = false;
     $scope.sales_items = [];
-    $scope.init = function(csrf_token)
-    {
-        $scope.csrf_token = csrf_token;
-    }
-
+    
     $scope.getItems = function(parameter){
 
         console.log('parameter', parameter);
@@ -632,6 +757,7 @@ function SalesController($scope, $element, $http, $timeout, share, $location) {
             item.net_amount = ((parseFloat(item.qty_sold)*parseFloat(item.unit_price))+parseFloat(item.tax_amount)-parseFloat(item.disc_given)).toFixed(2);
             
         }
+        $scope.calculate_net_total_sale();
     }
     $scope.calculate_tax_amount_sale = function(item) {
         if(item.tax != '' && item.unit_price != ''){
@@ -649,4 +775,57 @@ function SalesController($scope, $element, $http, $timeout, share, $location) {
             
         }
     }
+
+    $scope.calculate_net_total_sale = function(){
+        var net_total = 0;
+        for(i=0; i<$scope.sales_items.length; i++){
+            net_total = net_total + parseFloat($scope.sales_items[i].net_amount);
+        }
+        $scope.sales.net_total = net_total;
+        $scope.calculate_grant_total_sale();
+    }
+    $scope.calculate_grant_total_sale = function(){
+        $scope.sales.grant_total = $scope.sales.net_total - $scope.sales.discount - $scope.sales.roundoff;
+    }
+    $scope.calculate_balance_sale = function () {
+        $scope.sales.balance = $scope.sales.grant_total - $scope.sales.paid;
+    }
+
+}
+
+function ReportController($scope, $element, $http, $timeout, $location){    
+
+    $scope.start_date = '';
+    $scope.end_date = '';
+
+    $scope.init = function(){       
+
+        new Picker.Date($$('#start_date'), {
+            timePicker: false,
+            positionOffset: {x: 5, y: 0},
+            pickerClass: 'datepicker_bootstrap',
+            useFadeInOut: !Browser.ie,
+            format:'%d/%m/%Y', 
+        });
+        new Picker.Date($$('#end_date'), {
+            timePicker: false,
+            positionOffset: {x: 5, y: 0},
+            pickerClass: 'datepicker_bootstrap',
+            useFadeInOut: !Browser.ie,
+            format:'%d/%m/%Y', 
+        });
+    }
+    $scope.view_report = function(report_type){
+        $scope.start_date = $$('#start_date')[0].get('value');
+        $scope.end_date = $$('#end_date')[0].get('value');
+
+        console.log("hi");
+        console.log($scope.start_date);
+        console.log($scope.end_date);
+        
+        $http.get('/reports/daily_report/?start_date='+$scope.start_date+'&end_date='+$scope.end_date).success(function(data){
+            console.log("success");
+        });
+    }
+
 }

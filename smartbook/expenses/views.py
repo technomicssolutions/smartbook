@@ -1,7 +1,8 @@
 # Create your views here.
 import sys
 import simplejson
-import datetime
+import datetime as dt
+from datetime import datetime
 
 from django.db import IntegrityError
 
@@ -18,21 +19,42 @@ class Expenses(View):
 
     def get(self, request, *args, **kwargs):
 
-        current_date = datetime.datetime.now().date()
-        print "current_date == ",current_date.strftime('%d/%m/%Y')
+        current_date = dt.datetime.now().date()
         expenses = Expense.objects.all().count()
         if int(expenses) > 0:
             latest_expense = Expense.objects.latest('id')
             voucher_no = int(latest_expense.voucher_no) + 1
         else:
             voucher_no = 1
-        print "voucher_no == ", voucher_no
         context = {
             'current_date': current_date.strftime('%d/%m/%Y'),
             'voucher_no': voucher_no
         }
         
         return render(request, 'expenses/expense.html', context)
+
+    def post(self, request, *args, **kwargs):
+
+        post_dict = request.POST
+        expense = Expense()
+        expense.created_by = request.user
+        expense.expense_head = ExpenseHead.objects.get(expense_head = post_dict['head_name'])
+        expense.date = datetime.strptime(post_dict['date'], '%d/%m/%Y')
+        expense.voucher_no = post_dict['voucher_no']
+        expense.amount = post_dict['amount']
+        expense.payment_mode = post_dict['payment_mode']
+        expense.narration = post_dict['narration']
+        if post_dict['payment_mode'] == 'cheque':
+            expense.cheque_no = post_dict['cheque_no']
+            expense.cheque_date = datetime.strptime(post_dict['cheque_date'], '%d/%m/%Y')
+            expense.bank_name = post_dict['bank_name']
+            expense.branch = post_dict['branch']
+        expense.save()
+        res = {
+            'result': 'ok'
+        }
+        response = simplejson.dumps(res)
+        return HttpResponse(response, status=200, mimetype="application/json")
 
 class AddExpenseHead(View):
 
