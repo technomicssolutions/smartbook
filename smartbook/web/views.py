@@ -50,6 +50,7 @@ class UserList(View):
         user_type = kwargs['user_type']
         ctx_vendors = []
         ctx_customers = []
+        ctx_salesman = []
         if user_type == 'staff':
             users = UserProfile.objects.filter(user_type='staff')
         elif user_type == 'vendor':
@@ -77,6 +78,23 @@ class UserList(View):
                         })
                 res = {
                     'customers' : ctx_customers,
+                }
+
+                response = simplejson.dumps(res)
+                status_code = 200
+                return HttpResponse(response, status = status_code, mimetype="application/json")
+        elif user_type == 'salesman': 
+            desig = Designation.objects.get(title = 'Salesman')
+            salesmen = Staff.objects.filter(designation = desig)
+
+            if request.is_ajax():
+                if len(salesmen)>0:
+                    for salesman in salesmen:
+                        ctx_salesman.append({
+                            'salesman_name' : salesman.user.first_name,
+                        })
+                res = {
+                    'salesmen' : ctx_salesman,
                 }
 
                 response = simplejson.dumps(res)

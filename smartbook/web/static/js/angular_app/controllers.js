@@ -1365,7 +1365,9 @@ function SalesReportController($scope, $element, $http, $timeout, $location){
     $scope.report_salesman_wise = false;
     $scope.report_area_wise = false;
 
-    $scope.init = function(){       
+    $scope.init = function(){ 
+
+        $scope.report_type = 'date';
 
         new Picker.Date($$('#start_date'), {
             timePicker: false,
@@ -1423,21 +1425,9 @@ function SalesReportController($scope, $element, $http, $timeout, $location){
             useFadeInOut: !Browser.ie,
             format:'%d/%m/%Y', 
         });
-        new Picker.Date($$('#area_start_date'), {
-            timePicker: false,
-            positionOffset: {x: 5, y: 0},
-            pickerClass: 'datepicker_bootstrap',
-            useFadeInOut: !Browser.ie,
-            format:'%d/%m/%Y', 
-        });
-        new Picker.Date($$('#area_end_date'), {
-            timePicker: false,
-            positionOffset: {x: 5, y: 0},
-            pickerClass: 'datepicker_bootstrap',
-            useFadeInOut: !Browser.ie,
-            format:'%d/%m/%Y', 
-        });
+        
         $scope.get_customers();
+        $scope.get_salesman();
     }
     $scope.get_report_type =function() {
         if($scope.report_type == 'date'){
@@ -1446,7 +1436,8 @@ function SalesReportController($scope, $element, $http, $timeout, $location){
             $scope.report_customer_wise = false;
             $scope.report_salesman_wise = false;
             $scope.report_area_wise = false;
-
+            $scope.sales_report = '';
+            $scope.total_sales_report = '';
         }
         else if($scope.report_type == 'item'){
             $scope.report_date_wise = false;
@@ -1454,7 +1445,8 @@ function SalesReportController($scope, $element, $http, $timeout, $location){
             $scope.report_customer_wise = false;
             $scope.report_salesman_wise = false;
             $scope.report_area_wise = false;
-
+            $scope.sales_report = '';
+            $scope.total_sales_report = '';
         }
         else if($scope.report_type == 'customer'){
             $scope.report_date_wise = false;
@@ -1462,7 +1454,8 @@ function SalesReportController($scope, $element, $http, $timeout, $location){
             $scope.report_customer_wise = true;
             $scope.report_salesman_wise = false;
             $scope.report_area_wise = false;
-            
+            $scope.sales_report = '';
+            $scope.total_sales_report = '';            
         }
         else if($scope.report_type == 'salesman'){
             $scope.report_date_wise = false;
@@ -1470,16 +1463,9 @@ function SalesReportController($scope, $element, $http, $timeout, $location){
             $scope.report_customer_wise = false;
             $scope.report_salesman_wise = true;
             $scope.report_area_wise = false;
-            
-        }
-        else if($scope.report_type == 'area'){
-            $scope.report_date_wise = false;
-            $scope.report_item_wise = false;
-            $scope.report_customer_wise = false;
-            $scope.report_salesman_wise = false;
-            $scope.report_area_wise = true;
-            
-        }
+            $scope.sales_report = '';
+            $scope.total_sales_report = '';            
+        }        
     }
     $scope.get_customers = function() {
         $http.get('/customer/list/').success(function(data)
@@ -1490,6 +1476,13 @@ function SalesReportController($scope, $element, $http, $timeout, $location){
         {
             console.log(data || "Request failed");
         });
+    }
+    $scope.get_salesman = function() {
+        $http.get('/salesman/list/').success(function(data)
+        {
+            $scope.salesmen = data.salesmen;
+            $scope.salesman_name = 'select';
+        })
     }
     $scope.view_report = function(report_type){
         if(report_type == 'date'){
@@ -1512,7 +1505,7 @@ function SalesReportController($scope, $element, $http, $timeout, $location){
         else if(report_type == 'customer'){
             $scope.start_date = $$('#customer_start_date')[0].get('value');
             $scope.end_date = $$('#customer_end_date')[0].get('value');            
-            $http.get('/reports/sales_reports/?report_name=item&customer_name='+$scope.customer_name+'&start_date='+$scope.start_date+'&end_date='+$scope.end_date).success(function(data){
+            $http.get('/reports/sales_reports/?report_name=customer&customer_name='+$scope.customer_name+'&start_date='+$scope.start_date+'&end_date='+$scope.end_date).success(function(data){
                 $scope.sales_report = data['sales_report'];
                 $scope.total_sales_report = data['total_sales_report'][0];
             });
@@ -1520,11 +1513,11 @@ function SalesReportController($scope, $element, $http, $timeout, $location){
         else if(report_type == 'salesman'){
             $scope.start_date = $$('#salesman_start_date')[0].get('value');
             $scope.end_date = $$('#salesman_end_date')[0].get('value');
-        }
-        else if(report_type == 'area'){
-            $scope.start_date = $$('#area_start_date')[0].get('value');
-            $scope.end_date = $$('#area_end_date')[0].get('value');
-        }
+            $http.get('/reports/sales_reports/?report_name=salesman&salesman_name='+$scope.salesman_name+'&start_date='+$scope.start_date+'&end_date='+$scope.end_date).success(function(data){
+                $scope.sales_report = data['sales_report'];
+                $scope.total_sales_report = data['total_sales_report'][0];
+            });
+        }        
     }
 
 }
