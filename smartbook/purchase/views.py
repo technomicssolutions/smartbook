@@ -18,7 +18,7 @@ from inventory.models import UnitOfMeasure
 from inventory.models import Brand
 
 from web.models import (UserProfile, Vendor, Customer, Staff, TransportationCompany)
-from purchase.models import Purchase, PurchaseItem, VendorAccount
+from purchase.models import Purchase, PurchaseItem, VendorAccount, PurchaseReturn
 from inventory.models import Inventory
 from expenses.models import Expense, ExpenseHead
 
@@ -281,7 +281,7 @@ class VendorAccountDetails(View):
         status_code = 200
         return HttpResponse(response, status = status_code, mimetype="application/json")
 
-class PurchaseReturn(View):
+class PurchaseReturnView(View):
 
     def get(self, request, *args, **kwargs):
         if PurchaseReturn.objects.exists():
