@@ -173,7 +173,7 @@ class PurchaseEntry(View):
 
             item = Item.objects.get(code=purchase_item['item_code'])
             p_item, item_created = PurchaseItem.objects.get_or_create(item=item, purchase=purchase)
-            inventory, created = Inventory.objects.get_or_create(item=item)
+            inventory, created = Inventory.objects.get_or_create(item=item, vendor=vendor)
             if created:
                 inventory.quantity = int(purchase_item['qty_purchased'])                
             else:
@@ -185,6 +185,7 @@ class PurchaseEntry(View):
             inventory.unit_price = purchase_item['unit_price']
             inventory.discount_permit_percentage = purchase_item['permit_disc_percent']
             inventory.discount_permit_amount = purchase_item['permit_disc_amt']
+            inventory.vendor = vendor
             inventory.save()  
                     
             p_item, item_created = PurchaseItem.objects.get_or_create(item=item, purchase=purchase)
@@ -283,10 +284,14 @@ class VendorAccountDetails(View):
 class PurchaseReturn(View):
 
     def get(self, request, *args, **kwargs):
-
-        return render(request, 'purchase/vendor_accounts.html', {
-            'vendor_accounts' : vendor_accounts,
-            'vendors': vendors
+        if PurchaseReturn.objects.exists():
+            invoice_number = int(PurchaseReturn.objects.aggregate(Max('purchase_invoice_number'))['purchase_invoice_number__max']) + 1
+        else:
+            invoice_number = 1
+        if not invoice_number:
+            invoice_number = 1
+        return render(request, 'purchase/purchase_return.html', {
+            'invoice_number' : invoice_number,
         })
 
 class PurchaseReturnEdit(View):
