@@ -1022,9 +1022,10 @@ function DailyReportController($scope, $element, $http, $timeout, $location){
 
     $scope.start_date = '';
     $scope.end_date = '';
+    $scope.error_flag = false;
 
-    $scope.init = function(){       
-
+    $scope.init = function(){ 
+        $scope.error_flag = false;      
         new Picker.Date($$('#start_date'), {
             timePicker: false,
             positionOffset: {x: 5, y: 0},
@@ -1041,19 +1042,24 @@ function DailyReportController($scope, $element, $http, $timeout, $location){
         });
     }
     $scope.view_report = function(report_type){
+        $scope.error_flag = false;
         $scope.start_date = $$('#start_date')[0].get('value');
         $scope.end_date = $$('#end_date')[0].get('value');
-
-        console.log("hi");
-        console.log($scope.start_date);
-        console.log($scope.end_date);
-        
-        $http.get('/reports/daily_report/?start_date='+$scope.start_date+'&end_date='+$scope.end_date).success(function(data){
-            console.log("success");            
-            $scope.daily_reports = data['daily_report'];
-            $scope.daily_report_sales = data['daily_report_sales'][0];
-            console.log($scope.daily_report_sales)
-        });
+        if ($scope.start_date == '' || $scope.start_date == undefined ){
+            $scope.error_flag = true;
+            $scope.messages = 'Please choose Start date';
+        } else if($scope.end_date == '' || $scope.end_date == undefined ){
+            $scope.error_flag = true;
+            $scope.messages = 'Please choose End date';
+        } else {
+    
+            $http.get('/reports/daily_report/?start_date='+$scope.start_date+'&end_date='+$scope.end_date).success(function(data){
+                          
+                $scope.daily_reports = data['daily_report'];
+                $scope.daily_report_sales = data['daily_report_sales'][0];
+                
+            });
+        }
     }
 
 }
@@ -1892,7 +1898,7 @@ function PurchaseReturnController($scope, $element, $http, $timeout, share, $loc
         $scope.purchase_return.purchase_invoice_number = $scope.purchase.purchase_invoice_number;
         params = {
             "csrfmiddlewaretoken" : $scope.csrf_token,
-            'purchase_return': angular.toJson($scope.purchase_return);
+            'purchase_return': angular.toJson($scope.purchase_return),
         }
         $http({
             method : 'post',
