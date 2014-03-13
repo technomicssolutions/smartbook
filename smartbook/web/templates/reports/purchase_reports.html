@@ -1,0 +1,145 @@
+{% extends 'base.html' %}
+{% block title %}Purchase_Reports_Date{% endblock title %}
+{% block body_id %}purchase_reports_date{% endblock %}
+{% block controller %}
+	ng-controller="PurchaseReportController" ng-init="init('{{csrf_token}}')"   
+{% endblock controller %}
+{% block content %}
+	<div ng-show="report_date_wise_flag">
+	
+		<div class="main-title">
+				
+			<div class="alert alert-info" align="Center">Date Wise Purchase Report
+									
+			</div>
+
+
+		</div>
+		
+			
+		<div class="reporttext">
+				<label for="s_date">Start Date</label>
+		</div>
+
+		<div class="reportinput">
+			<input type="text" name="start_date" id="start_date">
+		</div>
+					
+
+		<div class="reporttext">
+				<label for="e_date">End Date</label>
+		</div>
+
+		<div class="reportinput">
+			<input type="text" name="end_date" id="end_date">
+		</div>
+		<div class="reporttext">
+				<label for="e_date">Report type: </label>
+		</div>
+		<div class="reportinput">
+			<select name="report_type" ng-change="get_report()" ng-model="report_name">
+				<option value="date" >Date Wise Report</option>
+				<option value="vendor" >Vendor Wise Report</option>
+			</select>
+		</div>
+		<div class="reporttext">
+			<input type="submit" value="View Report" class="btn btn-info " style="border-top-width: 0px; margin-top: 3px;" ng-click="view_report('date')">
+		</div>
+
+		<div class="reporttext">
+			<a href=""><img src="/static/images/print.png" height='25px' width='25px'/></a>
+		</div>	
+
+		<table id="list" class="table table-hover" >
+			<tr class="success" style="font-size: 12px"style="width:auto">
+				  <th>Date</th>
+				  <th>Invoice Number</th>
+				  <th>Vendor Inv No</th>
+				  <th>Item Code</th>
+				  <th>Item Name</th>
+				  <th>UOM</th>
+				  <th>Unit Cost Price</th>
+				  <th>Quantity</th>
+				  <th>Amount</th>
+		  	</tr>
+		  	<tr ng-repeat="purchase in purchases">
+		  		<td>[[purchase.date]]</td>
+		  		<td>[[purchase.invoice_no]]</td>
+		  		<td>[[purchase.vendor_invoice_no]]</td>
+		  		<td>[[purchase.item_code]]</td>
+		  		<td>[[purchase.item_name]]</td>
+		  		<td>[[purchase.uom]]</td>
+		  		<td>[[purchase.unit_cost_price]]</td>
+		  		<td>[[purchase.quantity]]</td>
+		  		<td>[[purchase.amount]]</td>
+		  	</tr>
+		  	<tr class="error" id="last_row" ng-show="date_total_amount_flag">
+		  		<td>&nbsp;</td>
+		  		<td>&nbsp;</td>
+		  		<td>&nbsp;</td>
+		  		<td>&nbsp;</td>
+		  		<td>&nbsp;</td>
+		  		<td>&nbsp;</td>
+		  		<td>&nbsp;</td>
+		  		<td>&nbsp;</td>
+		  		<td>[[purchase_amount_total]]</td>
+		  	</tr>
+		</table>
+	</div>
+	<div ng-show="report_vendor_wise_flag">
+		<div class="main-title">
+		
+			<div class="alert alert-info" align="Center">Vendor Wise Purchase Report
+									
+			</div>
+
+		</div>
+
+		<div class="reportinput">
+			<select name="vendor" ng-model="vendor_name">
+				<option value="select">Select Vendor</option>
+				<option ng-repeat="vendor in vendors" value="[[vendor.vendor_name]]">[[vendor.vendor_name]]</option>
+
+			</select>
+		</div>
+
+		<div class="reportinput">
+			<select name="report_type" ng-change="get_report()" ng-model="report_name">
+				<option value="vendor" >Vendor Wise Report</option>
+				<option value="date" >Date Wise Report</option>
+			</select>
+		</div>
+
+
+		<div class="reporttext">
+			<input type="submit" value="View Report" class="btn btn-info " style="border-top-width: 0px; margin-top: 3px;" ng-click="view_report('vendor')">
+		</div>
+
+		<div class="reporttext">
+			<a href=""><img src="/static/images/print.png" height='25px' width='25px'/></a>
+		</div>	
+
+		<table id="list" class="table table-hover" >
+			<tr class="success" style="font-size: 12px"style="width:auto">
+			  <th>Date</th>
+			  <th>Invoice Number</th>
+			  <th>Vendor Inv No</th>
+			  <th>Amount</th>
+			  </tr>
+			<tr ng-repeat="purchase in purchases">
+		  		<td>[[purchase.date]]</td>
+		  		<td>[[purchase.invoice_no]]</td>
+		  		<td>[[purchase.vendor_invoice_no]]</td>
+		  		<td>[[purchase.amount]]</td>
+		  	</tr>
+		  	<tr class="error" id="last_row" ng-show="vendor_total_amount_flag">
+		  		
+		  		<td>&nbsp;</td>
+		  		<td>&nbsp;</td>
+		  		<td>&nbsp;</td>
+		  		<td>[[purchase_amount_total]]</td>
+		  		
+		  	</tr>
+		</table>
+	</div>
+{% endblock content %}

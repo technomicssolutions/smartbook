@@ -215,16 +215,46 @@ class PurchaseEdit(View):
 class VendorAccounts(View):
     def get(self, request, *args, **kwargs):
         vendor_accounts =  VendorAccount.objects.all()
+        vendors = Vendor.objects.all()
         return render(request, 'purchase/vendor_accounts.html', {
-            'vendor_accounts' : vendor_accounts
+            'vendor_accounts' : vendor_accounts,
+            'vendors': vendors
         })
         
 
 class VendorAccountDetails(View):
     def get(self, request, *args, **kwargs):
-        vendor = Vendor.objects.get_object_or_404(user__first_name=kwargs['vendor'])
-        vendor_account =  VendorAccount.objects.get(vendor=vendor)
-        return render(request, 'purchase/vendor_accounts.html', {
-            'vendor_accounts' : vendor_account
-        })
-        
+        try:
+            vendor = get_object_or_404(Vendor, user__first_name=kwargs['vendor'])
+            vendor_account =  VendorAccount.objects.get(vendor=vendor)
+            res = {
+                'result': 'Ok',
+                'vendor_account': {
+                    'date' : vendor_account.date.strftime('%d/%m/%Y'),
+                    'payment_mode': vendor_account.payment_mode,
+                    'narration': vendor_account.narration,
+                    'total_amount': vendor_account.total_amount,
+                    'paid_amount': vendor_account.paid_amount,
+                    'balance': vendor_account.balance,
+                }
+            } 
+
+            response = simplejson.dumps(res)
+            status_code = 200
+        except:
+            response = {
+                'result': 'Vendor or VendorAccount does not exists',
+            }
+            status_code = 201
+        return HttpResponse(response, status = status_code, mimetype="application/json")
+
+    def post(self, request, *args, **kwargs):
+
+        vendor_account_dict = ast.literal_eval(request.POST['vendor_account'])
+        vendor = get_object_or_404(Vendor, user__first_name=kwargs['vendor'])
+        vendor_account =  VendorAccount.objects.get_or_create(vendor=vendor) 
+        response = {
+                'result': 'Ok',
+            }
+        status_code = 200
+        return HttpResponse(response, status = status_code, mimetype="application/json")
