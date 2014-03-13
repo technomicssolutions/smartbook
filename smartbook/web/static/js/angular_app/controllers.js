@@ -325,10 +325,22 @@ function PurchaseController($scope, $element, $http, $timeout, share, $location)
                 $scope.error_flag=true;
                 $scope.message = data.message;
             } else {
-                $scope.popup.hide_popup();
+                $scope.popup.hide_popup();                             
                 $scope.get_vendors();
                 $scope.purchase.vendor = $scope.vendor_name;
                 $scope.purchase.vendor = data.vendor_name;
+                $scope.vendor_name = '';
+                $scope.contact_person = '';
+                $scope.house_name = '';
+                $scope.street = '';
+                $scope.city = '';
+                $scope.district = '';
+                $scope.pin = '';
+                $scope.mobile = '';
+                $scope.land_line = '';
+                $scope.email_id = '';
+
+
             }
         }).error(function(data, success){
             
@@ -357,6 +369,7 @@ function PurchaseController($scope, $element, $http, $timeout, share, $location)
             var height = $(document).height();
             $scope.popup.set_overlay_height(height);
             $scope.popup.show_content();
+
         }
     }
 
@@ -433,6 +446,8 @@ function PurchaseController($scope, $element, $http, $timeout, share, $location)
                 $scope.popup.hide_popup();
                 $scope.get_companies();
                 $scope.purchase.transport = $scope.company_name;
+                $scope.company_name = '';
+
                 
             }
         }).error(function(data, success){
