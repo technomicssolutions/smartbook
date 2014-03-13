@@ -8,9 +8,6 @@ from django.db import models
 class Migration(SchemaMigration):
 
     def forwards(self, orm):
-        # Deleting model 'SalesItems'
-        db.delete_table(u'sales_salesitems')
-
         # Adding model 'SalesReturnItem'
         db.create_table(u'sales_salesreturnitem', (
             (u'id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
@@ -34,42 +31,25 @@ class Migration(SchemaMigration):
         ))
         db.send_create_signal(u'sales', ['SalesReturn'])
 
-        # Adding model 'SalesItem'
-        db.create_table(u'sales_salesitem', (
-            (u'id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
-            ('item', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['inventory.Item'])),
-            ('sales', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['sales.Sales'])),
-            ('quantity_sold', self.gf('django.db.models.fields.IntegerField')(default=0)),
-            ('discount_given', self.gf('django.db.models.fields.DecimalField')(default=0, max_digits=14, decimal_places=3)),
-            ('net_amount', self.gf('django.db.models.fields.DecimalField')(default=0, max_digits=14, decimal_places=3)),
-            ('round_off', self.gf('django.db.models.fields.DecimalField')(default=0, max_digits=14, decimal_places=3)),
-            ('grant_total', self.gf('django.db.models.fields.DecimalField')(default=0, max_digits=14, decimal_places=3)),
-        ))
-        db.send_create_signal(u'sales', ['SalesItem'])
 
+        # Changing field 'SalesItem.sales'
+        db.alter_column(u'sales_salesitem', 'sales_id', self.gf('django.db.models.fields.related.ForeignKey')(default=1, to=orm['sales.Sales']))
+
+        # Changing field 'SalesItem.item'
+        db.alter_column(u'sales_salesitem', 'item_id', self.gf('django.db.models.fields.related.ForeignKey')(default=1, to=orm['inventory.Item']))
     def backwards(self, orm):
-        # Adding model 'SalesItems'
-        db.create_table(u'sales_salesitems', (
-            ('item', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['inventory.Item'], null=True, blank=True)),
-            ('grant_total', self.gf('django.db.models.fields.DecimalField')(default=0, max_digits=14, decimal_places=3)),
-            ('quantity_sold', self.gf('django.db.models.fields.IntegerField')(default=0)),
-            ('round_off', self.gf('django.db.models.fields.DecimalField')(default=0, max_digits=14, decimal_places=3)),
-            ('sales', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['sales.Sales'], null=True, blank=True)),
-            ('net_amount', self.gf('django.db.models.fields.DecimalField')(default=0, max_digits=14, decimal_places=3)),
-            ('discount_given', self.gf('django.db.models.fields.DecimalField')(default=0, max_digits=14, decimal_places=3)),
-            (u'id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
-        ))
-        db.send_create_signal(u'sales', ['SalesItems'])
-
         # Deleting model 'SalesReturnItem'
         db.delete_table(u'sales_salesreturnitem')
 
         # Deleting model 'SalesReturn'
         db.delete_table(u'sales_salesreturn')
 
-        # Deleting model 'SalesItem'
-        db.delete_table(u'sales_salesitem')
 
+        # Changing field 'SalesItem.sales'
+        db.alter_column(u'sales_salesitem', 'sales_id', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['sales.Sales'], null=True))
+
+        # Changing field 'SalesItem.item'
+        db.alter_column(u'sales_salesitem', 'item_id', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['inventory.Item'], null=True))
     models = {
         u'auth.group': {
             'Meta': {'object_name': 'Group'},
@@ -131,7 +111,11 @@ class Migration(SchemaMigration):
         u'sales.sales': {
             'Meta': {'object_name': 'Sales'},
             'customer': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['web.Customer']", 'null': 'True', 'blank': 'True'}),
+            'discount': ('django.db.models.fields.DecimalField', [], {'default': '0', 'max_digits': '14', 'decimal_places': '3'}),
+            'grant_total': ('django.db.models.fields.DecimalField', [], {'default': '0', 'max_digits': '14', 'decimal_places': '3'}),
             u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
+            'net_amount': ('django.db.models.fields.DecimalField', [], {'default': '0', 'max_digits': '14', 'decimal_places': '3'}),
+            'round_off': ('django.db.models.fields.DecimalField', [], {'default': '0', 'max_digits': '14', 'decimal_places': '3'}),
             'sales_invoice_date': ('django.db.models.fields.DateField', [], {'null': 'True', 'blank': 'True'}),
             'sales_invoice_number': ('django.db.models.fields.IntegerField', [], {'default': '0'}),
             'salesman': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['web.Staff']", 'null': 'True', 'blank': 'True'})
@@ -139,12 +123,9 @@ class Migration(SchemaMigration):
         u'sales.salesitem': {
             'Meta': {'object_name': 'SalesItem'},
             'discount_given': ('django.db.models.fields.DecimalField', [], {'default': '0', 'max_digits': '14', 'decimal_places': '3'}),
-            'grant_total': ('django.db.models.fields.DecimalField', [], {'default': '0', 'max_digits': '14', 'decimal_places': '3'}),
             u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'item': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['inventory.Item']"}),
-            'net_amount': ('django.db.models.fields.DecimalField', [], {'default': '0', 'max_digits': '14', 'decimal_places': '3'}),
             'quantity_sold': ('django.db.models.fields.IntegerField', [], {'default': '0'}),
-            'round_off': ('django.db.models.fields.DecimalField', [], {'default': '0', 'max_digits': '14', 'decimal_places': '3'}),
             'sales': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['sales.Sales']"})
         },
         u'sales.salesreturn': {
