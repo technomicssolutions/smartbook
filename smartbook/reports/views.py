@@ -146,7 +146,7 @@ class PurchaseReportsDate(View):
                 # with open(file_name, 'w') as destination:
                 #     for chunk in fileobj.chunks():
                 #         destination.write(chunk)
-                file_path = "uploads/reports/"+pdf_file_name
+                # file_path = "uploads/reports/"+pdf_file_name
             else:
                 vendor_name = request.GET['vendor_name']
                 vendor = Vendor.objects.get(user__first_name = vendor_name)
@@ -238,8 +238,31 @@ class PurchaseReturn(View):
         return render(request, 'reports/purchase_return.html',{})
 
 class ExpenseReport(View):
+
     def get(self, request, *args, **kwargs):
-        return render(request, 'reports/expense_report.html',{})
+        
+        if request.is_ajax():
+            ctx_purchase_report = []
+            status_code = 200
+            start_date = request.GET['start_date']
+            end_date = request.GET['end_date']
+            start_date = datetime.strptime(start_date, '%d/%m/%Y')
+            end_date = datetime.strptime(end_date, '%d/%m/%Y')
+            purchases = Purchase.objects.filter(purchase_invoice_date__gte=start_date, purchase_invoice_date__lte=end_date).order_by('purchase_invoice_date')
+            for purchase in purchases:
+                ctx_purchase_report.append({
+                    'date': purchase.purchase_invoice_date.strftime('%d/%m/%Y'),
+                    'invoice_no': purchase.purchase_invoice_number,
+                    'vendor_invoice_no': purchase.vendor_invoice_number,
+                    'item_code': purchase.purchaseitem_set.all()[0].item.code,
+                    'item_name': purchase.purchaseitem_set.all()[0].item.name,
+                    'uom': purchase.purchaseitem_set.all()[0].item.uom.uom,
+                    'unit_cost_price': purchase.purchaseitem_set.all()[0].cost_price,
+                    'quantity': purchase.purchaseitem_set.all()[0].quantity_purchased,
+                    'amount': purchase.purchaseitem_set.all()[0].net_amount,
+                })
+        else:
+            return render(request, 'reports/expense_report.html',{})
 
 class PurchaseAccountsDate(View):
     def get(self, request, *args, **kwargs):
