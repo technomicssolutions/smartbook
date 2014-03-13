@@ -3,14 +3,13 @@
 {% block body_id %}daily_report{% endblock %}
 
 {% block controller %}
-	ng-controller="ReportController" ng-init="init('{{csrf_token}}')"   
+	ng-controller="DailyReportController" ng-init="init('{{csrf_token}}')"   
 {% endblock controller %}
 
 {% block content %}
 <div class="main-title">		
 	<div class="alert alert-info" align="Center" >Daily Reports</div>
 </div>
-	
 			
 		<div class="reporttext">
 			<label for="s_date">Start Date</label>

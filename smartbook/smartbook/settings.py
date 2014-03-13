@@ -1,11 +1,15 @@
 # Django settings for smartbook project.
-
+import os 
 DEBUG = True
 TEMPLATE_DEBUG = DEBUG
+
+fillpath = lambda x: os.path.join(os.path.dirname(__file__), x)
 
 ADMINS = (
     # ('Your Name', 'your_email@example.com'),
 )
+
+PROJECT_ROOT = os.path.dirname(os.path.abspath(__file__))
 
 MANAGERS = ADMINS
 
