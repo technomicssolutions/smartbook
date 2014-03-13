@@ -126,12 +126,19 @@ this.DatePicker = Picker.Date = new Class({
 	getInputDate: function(input){
 		this.date = new Date();
 		if (!input) return;
-		var date = Date.parse(input.get('value'));
+		if(this.options.format == '%d/%m/%Y') {
+			var date_string = input.get('value').split('/')
+			date_string = date_string[1]+'/'+date_string[0]+'/'+date_string[2];
+
+			var date = Date.parse(date_string);
+		} else {
+			var date = Date.parse(input.get('value'));
+		}
 		if (date == null || !date.isValid()){
 			var storeDate = input.retrieve('datepicker:value');
 			if (storeDate) date = Date.parse(storeDate);
 		}
-		if (date != null && date.isValid()) this.date = date.format(this.options.format);
+		if (date != null && date.isValid()) this.date = date;
 	},
 
 	// Control the previous and next elements
