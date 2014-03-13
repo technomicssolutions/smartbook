@@ -49,10 +49,10 @@ class UserList(View):
     def get(self, request, *args, **kwargs):
         user_type = kwargs['user_type']
         ctx_vendors = []
-<<<<<<< HEAD
+
         ctx_staffs = []
-=======
->>>>>>> 0a5d818e8f3c1933f03dab22bf22ac0dd8427ed6
+
+
         ctx_customers = []
         if user_type == 'staff':
             users = UserProfile.objects.filter(user_type='staff')

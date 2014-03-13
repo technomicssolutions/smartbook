@@ -825,17 +825,20 @@ function SalesController($scope, $element, $http, $timeout, share, $location) {
 
 
             $scope.popup = new DialogueModelWindow({
-                'dialogue_popup_width': '384px',
+                'dialogue_popup_width': '36%',
                 'message_padding': '0px',
                 'left': '28%',
                 'top': '40px',
-                'height': '702px',
+                'height': 'auto',
                 'content_div': '#add_customer'
             });
             var height = $(document).height();
             $scope.popup.set_overlay_height(height);
             $scope.popup.show_content();
         }
+    }
+    $scope.close_popup = function(){
+        $scope.popup.hide_popup();
     }
 
     $scope.add_new_customer = function() { 
