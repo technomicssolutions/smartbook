@@ -75,7 +75,7 @@ class VendorAccount(models.Model):
 
 	vendor = models.ForeignKey(Vendor, unique=True)
 	date = models.DateField('Date', null=True, blank=True)
-	payment_mode = models.CharField('Payment Mode', max_length=10, choices=PAYMENT_MODE)
+	payment_mode = models.CharField('Payment Mode', max_length=10, choices=PAYMENT_MODE, default='cash')
 	narration = models.CharField('Narration', max_length=10, null=True, blank=True)
 	total_amount = models.IntegerField('Total Amount', default=0)
 	paid_amount = models.IntegerField('Paid Amount', default=0)
