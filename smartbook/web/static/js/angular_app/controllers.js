@@ -1585,8 +1585,7 @@ function SalesReportController($scope, $element, $http, $timeout, $location){
     $scope.report_date_wise = true;
     $scope.report_item_wise = false;
     $scope.report_customer_wise = false;
-    $scope.report_salesman_wise = false;
-    $scope.report_area_wise = false;
+    $scope.report_salesman_wise = false;    
 
     $scope.init = function(){ 
 
@@ -1658,7 +1657,7 @@ function SalesReportController($scope, $element, $http, $timeout, $location){
             $scope.report_item_wise = false;
             $scope.report_customer_wise = false;
             $scope.report_salesman_wise = false;
-            $scope.report_area_wise = false;
+            
             $scope.sales_report = '';
             $scope.total_sales_report = '';
         }
@@ -1667,7 +1666,7 @@ function SalesReportController($scope, $element, $http, $timeout, $location){
             $scope.report_item_wise = true;
             $scope.report_customer_wise = false;
             $scope.report_salesman_wise = false;
-            $scope.report_area_wise = false;
+            
             $scope.sales_report = '';
             $scope.total_sales_report = '';
         }
@@ -1676,7 +1675,7 @@ function SalesReportController($scope, $element, $http, $timeout, $location){
             $scope.report_item_wise = false;
             $scope.report_customer_wise = true;
             $scope.report_salesman_wise = false;
-            $scope.report_area_wise = false;
+            
             $scope.sales_report = '';
             $scope.total_sales_report = '';            
         }
@@ -1685,7 +1684,7 @@ function SalesReportController($scope, $element, $http, $timeout, $location){
             $scope.report_item_wise = false;
             $scope.report_customer_wise = false;
             $scope.report_salesman_wise = true;
-            $scope.report_area_wise = false;
+            
             $scope.sales_report = '';
             $scope.total_sales_report = '';            
         }        

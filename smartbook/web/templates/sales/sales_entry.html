@@ -60,7 +60,7 @@
 
 				</div>	
 		
-				<div class="section_3_purchase">
+				<div class="section_3_sales">
 					<div class="search_sales">
 						<div class="control">
 							<label> Item Code </label>
@@ -92,8 +92,10 @@
     				<div class="clear"></div>
    				</div>
 
+
    				<div class="purchase_items_list" ng-show="sales.sales_items.length > 0">
    					<div class="purchase_item_list">
+   						
    						<div class="item_list_row header">
 							<span class="small_column"> Item Code </span>
 							<span> Item Name </span>
@@ -128,10 +130,12 @@
 							 
 							
 						</div>
+						
 						<div class="clear"></div>
    					</div>
    					<div class="clear"></div>
    				</div>
+   				
    				<div class="clear"></div>
 
 				<div class="section_1_sales">
@@ -183,7 +187,7 @@
 						</div>
 
 						<div class="formtext_sales">
-							<label for="Grant Total">Grant Total</label>
+							<label for="Grant Total">Grand Total</label>
 						</div>
 						<div class="forminput_sales">
 							<input type="text" name="grant_total" ng-model="sales.grant_total" readonly/>

@@ -159,38 +159,39 @@ class SalesReports(View):
                 start_date = datetime.strptime(start, '%d/%m/%Y')
                 end_date = datetime.strptime(end, '%d/%m/%Y')
                 sales = Sales.objects.filter(sales_invoice_date__gte=start_date,sales_invoice_date__lte=end_date)
-                for sale in sales:
-                    items = sale.salesitem_set.all()
-                    for item in items:
-                        discount = item.discount_given                         
-                        total_qty = item.quantity_sold
-                        item_name = item.item.name
-                        item_code = item.item.code
-                        inventorys = item.item.inventory_set.all()[0]
-                        selling_price = inventorys.selling_price
+                if sales.count()>0:
+                    for sale in sales:
+                        items = sale.salesitem_set.all()
+                        for item in items:
+                            discount = item.discount_given                         
+                            total_qty = item.quantity_sold
+                            item_name = item.item.name
+                            item_code = item.item.code
+                            inventorys = item.item.inventory_set.all()[0]
+                            selling_price = inventorys.selling_price
 
-                        purchases = item.item.purchaseitem_set.all()
-                        if purchases.count()>0:
-                            for purchase in purchases:
-                                cost_price = cost_price + purchase.cost_price
-                                i = i + 1
-                            avg_cp = cost_price/i
-                        profit = (selling_price - avg_cp)*total_qty
+                            purchases = item.item.purchaseitem_set.all()
+                            if purchases.count()>0:
+                                for purchase in purchases:
+                                    cost_price = cost_price + purchase.cost_price
+                                    i = i + 1
+                                avg_cp = cost_price/i
+                            profit = (selling_price - avg_cp)*total_qty
 
-                        total_profit = total_profit + profit
-                        total_discount = total_discount + discount
-                        total_cp = total_cp + avg_cp
-                        total_sp = total_sp + selling_price
+                            total_profit = total_profit + profit
+                            total_discount = total_discount + discount
+                            total_cp = total_cp + avg_cp
+                            total_sp = total_sp + selling_price
 
-                        sales_report.append({
-                            'item_code' : item_code,
-                            'item_name' : item_name,
-                            'total_qty' : total_qty,
-                            'discount' : discount,
-                            'cost_price' : avg_cp,
-                            'selling_price' : selling_price,
-                            'profit' : profit,
-                        })
+                            sales_report.append({
+                                'item_code' : item_code,
+                                'item_name' : item_name,
+                                'total_qty' : total_qty,
+                                'discount' : discount,
+                                'cost_price' : avg_cp,
+                                'selling_price' : selling_price,
+                                'profit' : profit,
+                            })
                 total_sales_report.append({
                     'total_cp' : total_cp,
                     'total_sp' : total_sp,
@@ -206,41 +207,42 @@ class SalesReports(View):
                 customer_name = request.GET['customer_name']
                 customer = Customer.objects.get(user__first_name = customer_name)
                 sales = Sales.objects.filter(sales_invoice_date__gte=start_date,sales_invoice_date__lte=end_date,customer=customer)
-                for sale in sales:
-                    items = sale.salesitem_set.all()
-                    for item in items:
-                        dates = item.sales.sales_invoice_date
-                        invoice_no = item.sales.sales_invoice_number
-                        item_name = item.item.name
-                        qty = item.quantity_sold
-                        discount = item.discount_given
-                        inventorys = item.item.inventory_set.all()[0]
-                        selling_price = inventorys.selling_price
-                        total = selling_price * qty
+                if sales.count()>0:
+                    for sale in sales:
+                        items = sale.salesitem_set.all()
+                        for item in items:
+                            dates = item.sales.sales_invoice_date
+                            invoice_no = item.sales.sales_invoice_number
+                            item_name = item.item.name
+                            qty = item.quantity_sold
+                            discount = item.discount_given
+                            inventorys = item.item.inventory_set.all()[0]
+                            selling_price = inventorys.selling_price
+                            total = selling_price * qty
 
-                        purchases = item.item.purchaseitem_set.all()
-                        if purchases.count()>0:                                
-                            for purchase in purchases:
-                                cost_price = cost_price + purchase.cost_price
-                                i = i + 1
-                            avg_cp = cost_price/i
-                        profit = (selling_price - avg_cp)*qty
+                            purchases = item.item.purchaseitem_set.all()
+                            if purchases.count()>0:                                
+                                for purchase in purchases:
+                                    cost_price = cost_price + purchase.cost_price
+                                    i = i + 1
+                                avg_cp = cost_price/i
+                            profit = (selling_price - avg_cp)*qty
 
-                        total_profit = total_profit + profit
-                        total_discount = total_discount + discount                            
-                        total_sp = total_sp + selling_price
-                        grant_total = grant_total + total
+                            total_profit = total_profit + profit
+                            total_discount = total_discount + discount                            
+                            total_sp = total_sp + selling_price
+                            grant_total = grant_total + total
 
-                        sales_report.append({
-                            'dates' : dates.strftime('%d-%m-%Y'),
-                            'invoice_no' : invoice_no,
-                            'item_name' : item_name,
-                            'qty' : qty,
-                            'discount' : discount,
-                            'selling_price' : selling_price,
-                            'total' : total,
-                            'profit' : profit,
-                        })
+                            sales_report.append({
+                                'dates' : dates.strftime('%d-%m-%Y'),
+                                'invoice_no' : invoice_no,
+                                'item_name' : item_name,
+                                'qty' : qty,
+                                'discount' : discount,
+                                'selling_price' : selling_price,
+                                'total' : total,
+                                'profit' : profit,
+                            })
                 total_sales_report.append({
                     'grant_total' : grant_total,
                     'total_sp' : total_sp,
@@ -249,8 +251,58 @@ class SalesReports(View):
                 })
 
             elif request.GET['report_name'] == 'salesman':
+                start = request.GET['start_date']
+                end = request.GET['end_date']            
+                start_date = datetime.strptime(start, '%d/%m/%Y')
+                end_date = datetime.strptime(end, '%d/%m/%Y')
                 
-                pass
+                salesman_name = request.GET['salesman_name']
+                desig = Designation.objects.get(title = 'Salesman')                
+                salesmen = Staff.objects.filter(designation = desig, user__first_name=salesman_name)
+                
+                sales = Sales.objects.filter(sales_invoice_date__gte=start_date,sales_invoice_date__lte=end_date,salesman=salesmen)
+                if sales.count()>0:                    
+                    for sale in sales:
+                        items = sale.salesitem_set.all()
+                        for item in items:
+                            dates = item.sales.sales_invoice_date
+                            invoice_no = item.sales.sales_invoice_number
+                            item_name = item.item.name
+                            qty = item.quantity_sold
+                            discount = item.discount_given
+                            inventorys = item.item.inventory_set.all()[0]
+                            selling_price = inventorys.selling_price
+                            total = selling_price * qty
+
+                            purchases = item.item.purchaseitem_set.all()
+                            if purchases.count()>0:                                
+                                for purchase in purchases:
+                                    cost_price = cost_price + purchase.cost_price
+                                    i = i + 1
+                                avg_cp = cost_price/i
+                            profit = (selling_price - avg_cp)*qty
+
+                            total_profit = total_profit + profit
+                            total_discount = total_discount + discount                            
+                            total_sp = total_sp + selling_price
+                            grant_total = grant_total + total
+
+                            sales_report.append({
+                                'dates' : dates.strftime('%d-%m-%Y'),
+                                'invoice_no' : invoice_no,
+                                'item_name' : item_name,
+                                'qty' : qty,
+                                'discount' : discount,
+                                'selling_price' : selling_price,
+                                'total' : total,
+                                'profit' : profit,
+                            })
+                total_sales_report.append({
+                    'grant_total' : grant_total,
+                    'total_sp' : total_sp,
+                    'total_profit' : total_profit,
+                    'total_discount' : total_discount,
+                })
 
 
             try:                
