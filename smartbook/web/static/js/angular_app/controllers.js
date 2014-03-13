@@ -1205,7 +1205,7 @@ function PurchaseAccountReportController($scope, $element, $http, $location) {
                 $scope.error_flag = true;
                 $scope.messages = 'Please choose End date';
             } else {
-               $http.get('/reports/purchase_accounts_report/?report_name=date&start_date='+$scope.start_date+'&end_date='+$scope.end_date).success(function(data){
+               $http.get('/reports/purchase_accounts/?report_name=date&start_date='+$scope.start_date+'&end_date='+$scope.end_date).success(function(data){
                     for (i=0; i < data.purchase_accounts.length; i++) {
                         data.purchase_accounts[i].total_amount = data.purchase_accounts[i].total_amount.toFixed(2);
                         data.purchase_accounts[i].paid_amount = data.purchase_accounts[i].paid_amount.toFixed(2);
@@ -1219,7 +1219,7 @@ function PurchaseAccountReportController($scope, $element, $http, $location) {
                 $scope.error_flag = true;
                 $scope.messages = 'Please choose Vendor';
             } else {
-                $http.get('/reports/purchase_accounts_report/?report_name=vendor&vendor_name='+$scope.vendor_name).success(function(data){
+                $http.get('/reports/purchase_accounts/?report_name=vendor&vendor_name='+$scope.vendor_name).success(function(data){
                     
                     for (i=0; i < data.purchase_accounts.length; i++) {
                         data.purchase_accounts[i].total_amount = data.purchase_accounts[i].total_amount.toFixed(2);
@@ -1299,7 +1299,7 @@ function PurchaseReturnReportController($scope, $element, $http, $location) {
                 $scope.error_flag = true;
                 $scope.messages = 'Please choose End date';
             } else {
-               $http.get('/reports/purchase_return_report/?report_name=date&start_date='+$scope.start_date+'&end_date='+$scope.end_date).success(function(data){
+               $http.get('/reports/purchase_return/?report_name=date&start_date='+$scope.start_date+'&end_date='+$scope.end_date).success(function(data){
                     var total_amount = 0;
                     if (data.purchase_returns.length > 0) {
                         $scope.date_total_amount_flag = true;
@@ -1319,7 +1319,7 @@ function PurchaseReturnReportController($scope, $element, $http, $location) {
                 $scope.error_flag = true;
                 $scope.messages = 'Please choose Vendor';
             } else {
-                $http.get('/reports/purchase_return_report/?report_name=vendor&vendor_name='+$scope.vendor_name).success(function(data){
+                $http.get('/reports/purchase_return/?report_name=vendor&vendor_name='+$scope.vendor_name).success(function(data){
                     if (data.purchase_returns.length > 0) {
                         $scope.date_total_amount_flag = false;
                         $scope.vendor_total_amount_flag = true;
