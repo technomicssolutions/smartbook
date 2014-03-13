@@ -12,7 +12,7 @@ urlpatterns = patterns('',
 	url(r'^sales_return/$', SalesReturn.as_view(), name='sales_return'),
 	url(r'^daily_report/$', DailyReport.as_view(), name='daily_report'),
 	url(r'^purchase_return/$', PurchaseReturn.as_view(), name='purchase_return'),
-	url(r'^expense_report/$', ExpenseReport.as_view(), name='expense_report'),
+	url(r'^expenses/$', ExpenseReport.as_view(), name='expense_report'),
 	url(r'^stock/$', Stock.as_view(), name='stock'),	
 
 )

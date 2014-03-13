@@ -60,7 +60,7 @@
 				  <th>UOM</th>
 				  <th>Unit Cost Price</th>
 				  <th>Quantity</th>
-				  <th>Amount</th>
+				  <th id="amount_alignment">Amount</th>
 		  	</tr>
 		  	<tr ng-repeat="purchase in purchases">
 		  		<td>[[purchase.date]]</td>
@@ -71,7 +71,7 @@
 		  		<td>[[purchase.uom]]</td>
 		  		<td>[[purchase.unit_cost_price]]</td>
 		  		<td>[[purchase.quantity]]</td>
-		  		<td>[[purchase.amount]]</td>
+		  		<td id="amount_alignment">[[purchase.amount]]</td>
 		  	</tr>
 		  	<tr class="error" id="last_row" ng-show="date_total_amount_flag">
 		  		<td>&nbsp;</td>
@@ -82,7 +82,7 @@
 		  		<td>&nbsp;</td>
 		  		<td>&nbsp;</td>
 		  		<td>&nbsp;</td>
-		  		<td>[[purchase_amount_total]]</td>
+		  		<td id="amount_alignment">[[purchase_amount_total]]</td>
 		  	</tr>
 		</table>
 	</div>

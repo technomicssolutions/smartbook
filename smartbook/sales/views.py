@@ -76,8 +76,21 @@ class SalesEntry(View):
 
 class SalesReturn(View):
     def get(self, request, *args, **kwargs):
-        return render(request, 'sales/sales_return.html',{})
+        return render(request, 'sales/return_entry.html',{})
 
+    def post(self, request, *args, **kwargs):
+    	salesreturn = SalesReturn()
+    	salesreturn.sales = request.POST['sales']
+    	salesreturn.date = request.POST['date']
+    	salesreturn.total = request.POST['total']
+    	salesreturn.discount = request.POST['discount']
+    	salesreturn.round_off = request.POST['round_off']
+    	salesreturn.grand_total = request.POST['grand_total']
+    	salesreturn.save()
+
+    	return render(request, 'sales/return_entry.html',{})
+
+  	
 class ViewSales(View):
     def get(self, request, *args, **kwargs):
         return render(request, 'sales/view_sales.html',{})
