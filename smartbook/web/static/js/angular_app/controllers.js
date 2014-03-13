@@ -983,7 +983,79 @@ function SalesReportController($scope, $element, $http, $timeout, $location){
     $scope.report_salesman_wise = false;
     $scope.report_area_wise = false;
 
-    $scope.init
+    $scope.init = function(){       
+
+        new Picker.Date($$('#start_date'), {
+            timePicker: false,
+            positionOffset: {x: 5, y: 0},
+            pickerClass: 'datepicker_bootstrap',
+            useFadeInOut: !Browser.ie,
+            format:'%d/%m/%Y', 
+        });
+        new Picker.Date($$('#end_date'), {
+            timePicker: false,
+            positionOffset: {x: 5, y: 0},
+            pickerClass: 'datepicker_bootstrap',
+            useFadeInOut: !Browser.ie,
+            format:'%d/%m/%Y', 
+        });
+        new Picker.Date($$('#item_start_date'), {
+            timePicker: false,
+            positionOffset: {x: 5, y: 0},
+            pickerClass: 'datepicker_bootstrap',
+            useFadeInOut: !Browser.ie,
+            format:'%d/%m/%Y', 
+        });
+        new Picker.Date($$('#item_end_date'), {
+            timePicker: false,
+            positionOffset: {x: 5, y: 0},
+            pickerClass: 'datepicker_bootstrap',
+            useFadeInOut: !Browser.ie,
+            format:'%d/%m/%Y', 
+        });
+        new Picker.Date($$('#customer_start_date'), {
+            timePicker: false,
+            positionOffset: {x: 5, y: 0},
+            pickerClass: 'datepicker_bootstrap',
+            useFadeInOut: !Browser.ie,
+            format:'%d/%m/%Y', 
+        });
+        new Picker.Date($$('#customer_end_date'), {
+            timePicker: false,
+            positionOffset: {x: 5, y: 0},
+            pickerClass: 'datepicker_bootstrap',
+            useFadeInOut: !Browser.ie,
+            format:'%d/%m/%Y', 
+        });
+        new Picker.Date($$('#salesman_start_date'), {
+            timePicker: false,
+            positionOffset: {x: 5, y: 0},
+            pickerClass: 'datepicker_bootstrap',
+            useFadeInOut: !Browser.ie,
+            format:'%d/%m/%Y', 
+        });
+        new Picker.Date($$('#salesman_end_date'), {
+            timePicker: false,
+            positionOffset: {x: 5, y: 0},
+            pickerClass: 'datepicker_bootstrap',
+            useFadeInOut: !Browser.ie,
+            format:'%d/%m/%Y', 
+        });
+        new Picker.Date($$('#area_start_date'), {
+            timePicker: false,
+            positionOffset: {x: 5, y: 0},
+            pickerClass: 'datepicker_bootstrap',
+            useFadeInOut: !Browser.ie,
+            format:'%d/%m/%Y', 
+        });
+        new Picker.Date($$('#area_end_date'), {
+            timePicker: false,
+            positionOffset: {x: 5, y: 0},
+            pickerClass: 'datepicker_bootstrap',
+            useFadeInOut: !Browser.ie,
+            format:'%d/%m/%Y', 
+        });
+    }
 
     $scope.get_report_type =function() {
         if($scope.report_type == 'date'){
@@ -1028,7 +1100,26 @@ function SalesReportController($scope, $element, $http, $timeout, $location){
         }
     }
     $scope.view_report = function(report_type){
-
+        if(report_type == 'date'){
+            $scope.start_date = $$('#start_date')[0].get('value');
+            $scope.end_date = $$('#end_date')[0].get('value');
+        }
+        else if(report_type == 'item'){
+            $scope.start_date = $$('#item_start_date')[0].get('value');
+            $scope.end_date = $$('#item_end_date')[0].get('value');
+        }
+        else if(report_type == 'customer'){
+            $scope.start_date = $$('#customer_start_date')[0].get('value');
+            $scope.end_date = $$('#customer_end_date')[0].get('value');
+        }
+        else if(report_type == 'salesman'){
+            $scope.start_date = $$('#salesman_start_date')[0].get('value');
+            $scope.end_date = $$('#salesman_end_date')[0].get('value');
+        }
+        else if(report_type == 'area'){
+            $scope.start_date = $$('#area_start_date')[0].get('value');
+            $scope.end_date = $$('#area_end_date')[0].get('value');
+        }
     }
 
 }
