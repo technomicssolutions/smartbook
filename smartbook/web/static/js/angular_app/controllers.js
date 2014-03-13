@@ -1526,5 +1526,126 @@ function SalesReportController($scope, $element, $http, $timeout, $location){
             $scope.end_date = $$('#area_end_date')[0].get('value');
         }
     }
+}
 
+function PurchaseReturnController($scope, $element, $http, $timeout, share, $location) {
+    $scope.purchase_return = {
+        'date': '',
+        'invoice_number': '',
+        'purchase_items': []
+
+    }
+    $scope.init = function(csrf_token, invoice_number) {
+        $scope.csrf_token = csrf_token;
+        $scope.purchase_return.invoice_number = invoice_number;
+        new Picker.Date($$('#purchase_return_date'), {
+            timePicker: false,
+            positionOffset: {x: 5, y: 0},
+            pickerClass: 'datepicker_bootstrap',
+            useFadeInOut: !Browser.ie,
+            format:'%d/%m/%Y', 
+        });
+    }
+    $scope.getItems = function(parameter) {
+        $scope.items = [];
+        $scope.selecting_item = true;
+        $scope.item_selected = false;
+        console.log('in get items', parameter);
+        for(var i=0; i<$scope.purchase.purchase_items.length; i++){
+            if(parameter == 'item_code') {
+                if($scope.item_code == ''){
+                    $scope.items = [];
+                }
+                if($scope.purchase.purchase_items[i].item_code.indexOf($scope.item_code) == 0) {
+                    $scope.items.push($scope.purchase.purchase_items[i]);
+                } else {
+                    var ind = $scope.items.indexOf($scope.purchase.purchase_items[i]);
+                    if(ind > 0){
+                        $scope.items.splice($scope.purchase.purchase_items[i], 1);
+                    }
+                }
+            }
+            if(parameter == 'item_name') {
+                if($scope.item_name == ''){
+                    $scope.items = [];
+                }
+                if($scope.purchase.purchase_items[i].item_name.indexOf($scope.item_name) == 0) {
+                    $scope.items.push($scope.purchase.purchase_items[i]);
+                } else {
+                    var ind = $scope.items.indexOf($scope.purchase.purchase_items[i]);
+                    if(ind > 0){
+                        $scope.items.splice($scope.purchase.purchase_items[i], 1);
+                    }
+                }
+            }
+            if(parameter == 'barcode') {
+                if($scope.barcode == ''){
+                    $scope.items = [];
+                }
+                if($scope.purchase.purchase_items[i].barcode.indexOf($scope.barcode) == 0) {
+                    $scope.items.push($scope.purchase.purchase_items[i]);
+                } else {
+                    var ind = $scope.items.indexOf($scope.purchase.purchase_items[i]);
+                    if(ind > 0){
+                        $scope.items.splice($scope.purchase.purchase_items[i], 1);
+                    }
+                }
+            }
+        }
+
+    }
+    $scope.load_purchase = function() {
+        var invoice = $scope.purchase.purchase_invoice_number;
+        $http.get('/purchase/?invoice_no='+$scope.purchase.purchase_invoice_number).success(function(data)
+        {
+            $scope.selecting_item = true;
+            $scope.item_selected = false;
+            $scope.purchase = data.purchase;
+            $scope.purchase.deleted_items = [];
+            $scope.purchase.purchase_invoice_number = invoice;
+        }).error(function(data, status)
+        {
+            console.log(data || "Request failed");
+        });
+    }
+    $scope.addReturnItems = function(item) {
+        var ind = $scope.purchase_return.purchase_items.indexOf(item)
+        if(ind >= 0){
+            $scope.purchase_return.purchase_items.splice(ind, 1);
+        } else {
+            $scope.purchase_return.purchase_items.push(item);
+        }
+        
+    }
+    $scope.calculate_return_amount = function(item){
+        item.returned_amount = parseFloat(item.returned_quantity) * parseFloat(item.cost_price);
+        $scope.calculate_net_return_amount();
+    }
+    $scope.calculate_net_return_amount = function() {
+        var amount = 0;
+        for(var i=0;i<$scope.purchase_return.purchase_items.length;i++) {
+            amount = amount + $scope.purchase_return.purchase_items[i].returned_amount;
+        }
+        $scope.purchase_return.net_return_total = amount;
+    }
+    $scope.save_purchase_return = function() {
+        $scope.purchase_return.purchase_invoice_number = $scope.purchase.purchase_invoice_number;
+        params = {
+            "csrfmiddlewaretoken" : $scope.csrf_token,
+            'purchase_return': angular.toJson($scope.purchase_return);
+        }
+        $http({
+            method : 'post',
+            url : "/purchase/return/",
+            data : $.param(params),
+            headers : {
+                'Content-Type' : 'application/x-www-form-urlencoded'
+            }
+        }).success(function(data, status) {
+            document.location.href = '/purchase/entry/';
+           
+        }).error(function(data, success){
+            
+        });
+    }
 }

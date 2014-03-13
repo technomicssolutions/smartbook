@@ -293,7 +293,13 @@ class PurchaseReturnView(View):
         return render(request, 'purchase/purchase_return.html', {
             'invoice_number' : invoice_number,
         })
-
+    def post(self, request, *args, **kwargs):
+        post_dict = request.POST['purchase_return']
+        post_dict = ast.literal_eval(post_dict)
+        purchase = Purchase.objects.get(purchase_invoice_number=post_dict['purchase_invoice_number'])
+        purchase_return = PurchaseReturn.objects.get_or_create(purchase=purchase, return_invoice_number = post_dict['invoice_number'])
+        purchase_return.date = post_dict['purchase_return_date']
+        purchase_return.save()
 class PurchaseReturnEdit(View):
 
     def get(self, request, *args, **kwargs):
