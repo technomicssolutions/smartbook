@@ -22,7 +22,7 @@ from purchase.models import PurchaseItem
 from web.models import Vendor
 
 
-from purchase.models import Purchase
+from purchase.models import Purchase, VendorAccount
 
 from reportlab.lib.units import cm
 from reportlab.pdfgen.canvas import Canvas
@@ -410,8 +410,55 @@ class DailyReport(View):
             return render(request, 'reports/daily_report.html',{})
 
 class PurchaseReturn(View):
+
     def get(self, request, *args, **kwargs):
-        return render(request, 'reports/purchase_return.html',{})
+        if request.is_ajax():
+            ctx_purchase_return_report = []
+            status_code = 200
+            if request.GET['report_name'] == 'date':
+                                
+                start_date = request.GET['start_date']
+                end_date = request.GET['end_date']
+                start_date = datetime.strptime(start_date, '%d/%m/%Y')
+                end_date = datetime.strptime(end_date, '%d/%m/%Y')
+                # purchase_returns = PurchaseReturn.objects.filter(date__gte=start_date, date__lte=end_date).order_by('date')
+                # if len(purchase_returns) > 0:
+                #     for purchase_return in purchase_returns:
+                #         ctx_purchase_return_report.append({
+                #             'date': purchase_return.date.strftime('%d/%m/%Y'),
+                #             'vendor_name': purchase_return.vendor.user.first_name,
+                #             'payment_mode': purchase_return.payment_mode,
+                #             'narration': purchase_return.narration,
+                #             'total_amount': purchase_return.total_amount,
+                #             'paid_amount': purchase_return.paid_amount,
+                #             'balance': purchase_return.balance,
+                #         })
+            else:
+                vendor_name = request.GET['vendor_name']
+                vendor = Vendor.objects.get(user__first_name = vendor_name)
+                # purchase_returns = PurchaseReturn.objects.filter(vendor = vendor)
+                # if len(purchase_returns) > 0:
+                #     for purchasse_return in purchase_returns:
+                #         ctx_purchase_return_report.append({
+                #             'date': purchasse_return.date.strftime('%d/%m/%Y'),
+                #             'payment_mode': purchasse_return.payment_mode,
+                #             'narration': purchasse_return.narration,
+                #             'total_amount': purchasse_return.total_amount,
+                #             'paid_amount': purchasse_return.paid_amount,
+                #             'balance': purchasse_return.balance,
+                #         })
+            try:    
+                res = {
+                    'purchase_returns': ctx_purchase_return_report,                 
+                }    
+                response = simplejson.dumps(res)
+            except Exception as ex:
+                # remember to change exception
+                response = simplejson.dumps({'result': 'error', 'error': str(ex)})
+                status_code = 500
+            return HttpResponse(response, status = status_code, mimetype = 'application/json')
+        else:
+            return render(request, 'reports/purchase_return.html',{})
 
 class ExpenseReport(View):
 
@@ -441,33 +488,114 @@ class ExpenseReport(View):
         else:
             return render(request, 'reports/expense_report.html',{})
 
-class PurchaseAccountsDate(View):
+class PurchaseAccountsReport(View):
     def get(self, request, *args, **kwargs):
-        return render(request, 'reports/purchase_accounts_date.html',{})
+        if request.is_ajax():
+            ctx_purchase_accounts_report = []
+            status_code = 200
+            if request.GET['report_name'] == 'date':
+                                
+                start_date = request.GET['start_date']
+                end_date = request.GET['end_date']
+                start_date = datetime.strptime(start_date, '%d/%m/%Y')
+                end_date = datetime.strptime(end_date, '%d/%m/%Y')
+                purchase_accounts = VendorAccount.objects.filter(date__gte=start_date, date__lte=end_date).order_by('date')
+                if len(purchase_accounts) > 0:
+                    for purchase_account in purchase_accounts:
+                        ctx_purchase_accounts_report.append({
+                            'date': purchase_account.date.strftime('%d/%m/%Y'),
+                            'vendor_name': purchase_account.vendor.user.first_name,
+                            'payment_mode': purchase_account.payment_mode,
+                            'narration': purchase_account.narration,
+                            'total_amount': purchase_account.total_amount,
+                            'paid_amount': purchase_account.paid_amount,
+                            'balance': purchase_account.balance,
+                        })
+                # fileobj = createPDF(purchases)
+                # file_extension = 'pdf'
+                # path = settings.PROJECT_ROOT
+                # print path
+                # print 'root === ',settings.PROJECT_ROOT
+                # pdf_file_name = 'purchase_report_date_wise'+"."+file_extension
+                # pdf_name = path+'/media/uploads/reports/%s'%(pdf_file_name)
+                # file_name = '%s'%(pdf_name)
+                # print file_name
+                # with open(file_name, 'w') as destination:
+                #     for chunk in fileobj.chunks():
+                #         destination.write(chunk)
+                # file_path = "uploads/reports/"+pdf_file_name
+            else:
+                vendor_name = request.GET['vendor_name']
+                vendor = Vendor.objects.get(user__first_name = vendor_name)
+                purchase_accounts = VendorAccount.objects.filter(vendor = vendor)
+                if len(purchase_accounts) > 0:
+                    for purchase_account in purchase_accounts:
+                        ctx_purchase_accounts_report.append({
+                            'date': purchase_account.date.strftime('%d/%m/%Y'),
+                            'payment_mode': purchase_account.payment_mode,
+                            'narration': purchase_account.narration,
+                            'total_amount': purchase_account.total_amount,
+                            'paid_amount': purchase_account.paid_amount,
+                            'balance': purchase_account.balance,
+                        })
+            try:    
+                res = {
+                    'purchase_accounts': ctx_purchase_accounts_report,                 
+                }    
+                response = simplejson.dumps(res)
+            except Exception as ex:
+                # remember to change exception
+                response = simplejson.dumps({'result': 'error', 'error': str(ex)})
+                status_code = 500
+            return HttpResponse(response, status = status_code, mimetype = 'application/json')
+
+        else:
+            return render(request, 'reports/purchase_accounts_report.html',{})
 
 class PurchaseAccountsVendor(View):
     def get(self, request, *args, **kwargs):
         return render(request, 'reports/purchase_accounts_vendor.html',{})
 
-class Stock(View):
+class StockReports(View):
     def get(self, request, *args, **kwargs):
-        return render(request, 'reports/stock.html',{})
+        if request.is_ajax():
+            stocks = Inventory.objects.all()
+            print stocks
+            ctx_stock = []
+            if len(stocks) > 0:
+                for stock in stocks:
+                    print stock.item.purchaseitem_set.all()
+                    ctx_stock.append({
+                       'item_code': stock.item.code,
+                       'item_name': stock.item.name,
+                       'bar_code': stock.item.barcode,
+                       'description': stock.item.description,
+                       'brand_name': stock.item.brand.brand,
+                       'vendor_name': stock.item.purchaseitem_set.all()[0].purchase.vendor.user.first_name,
+                       'stock': stock.quantity,
+                       'uom': stock.item.uom.uom,
+                       'cost_price': stock.item.purchaseitem_set.all()[0].cost_price,
+                       'selling_price': stock.selling_price,
+                       'tax': stock.item.tax,
+                       'discount': stock.discount_permit_percentage,
+                       'stock_by_value': float(stock.quantity * stock.selling_price),
+                       'profit': stock.selling_price - stock.item.purchaseitem_set.all()[0].cost_price,
+                    })
+            try:
+                res = {
+                    'stocks': ctx_stock,
+                }
+                response = simplejson.dumps(res)
+            except Exception as ex:
+                # remember to change exception
+                response = simplejson.dumps({'result': 'error', 'error': str(ex)})
+                status_code = 500
+            return HttpResponse(response, status = status_code, mimetype = 'application/json')
+
+        else:
+            return render(request, 'reports/stock.html',{})
 
 
-# class ViewDailyReport(View):
-#     def get(self, request, *args, **kw):
-#         print " In DailyReport View"
-#         start = request.GET['start_date']
-#         end = request.GET['end_date']
-
-#         print "start", start
-#         print "end", end
-#         print "HI.............."
-
-
-#         return HttpResponse(simplejson.dumps({
-#             'success' : 'success',             
-#         }),status=200, mimetype='application/json')
 
 
 

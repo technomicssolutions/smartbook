@@ -151,7 +151,7 @@ function AddEditUserController($scope, $element, $http, $timeout, $location) {
         
     }
     $scope.get_designation_list = function() {
-         $http.get('/designation_list/').success(function(data)
+        $http.get('/designation_list/').success(function(data)
         {
             $scope.designations = data.designations;
         }).error(function(data, status)
@@ -992,6 +992,8 @@ function PurchaseReportController($scope, $element, $http, $location) {
     $scope.report_vendor_wise_flag = false;
     $scope.date_total_amount_flag = false;
     $scope.vendor_total_amount_flag = false;
+    $scope.error_flag = false;
+    $scope.messages = '';
     $scope.init = function(csrf_token) {
 
         $scope.csrf_token = csrf_token;
@@ -1038,35 +1040,49 @@ function PurchaseReportController($scope, $element, $http, $location) {
         $scope.start_date = $$('#start_date')[0].get('value');
         $scope.end_date = $$('#end_date')[0].get('value');
         if ($scope.report_type == 'date') {
-           $http.get('/reports/purchase/?report_name=date&start_date='+$scope.start_date+'&end_date='+$scope.end_date).success(function(data){
-                var total_amount = 0;
-                if (data.purchases.length > 0) {
-                    $scope.date_total_amount_flag = true;
-                    $scope.vendor_total_amount_flag = false;
-                }
-                for (i=0; i < data.purchases.length; i++) {
-                    total_amount = parseFloat(total_amount) + parseFloat(data.purchases[i].amount);
-                    data.purchases[i].amount = data.purchases[i].amount.toFixed(2);
-                }
-                $scope.purchases = data.purchases;
-                
-                $scope.purchase_amount_total = total_amount.toFixed(2);
-            }); 
+            if ($scope.start_date == '' || $scope.start_date == undefined ){
+                $scope.error_flag = true;
+                $scope.messages = 'Please choose Start date';
+            } else if($scope.end_date == '' || $scope.end_date == undefined ){
+                $scope.error_flag = true;
+                $scope.messages = 'Please choose End date';
+            } else {
+               $http.get('/reports/purchase/?report_name=date&start_date='+$scope.start_date+'&end_date='+$scope.end_date).success(function(data){
+                    var total_amount = 0;
+                    if (data.purchases.length > 0) {
+                        $scope.date_total_amount_flag = true;
+                        $scope.vendor_total_amount_flag = false;
+                    }
+                    for (i=0; i < data.purchases.length; i++) {
+                        total_amount = parseFloat(total_amount) + parseFloat(data.purchases[i].amount);
+                        data.purchases[i].amount = data.purchases[i].amount.toFixed(2);
+                    }
+                    $scope.purchases = data.purchases;
+                    
+                    $scope.purchase_amount_total = total_amount.toFixed(2);
+                }); 
+            }
        } else {
-            $http.get('/reports/purchase/?report_name=vendor&vendor_name='+$scope.vendor_name).success(function(data){
-                if (data.purchases.length > 0) {
-                    $scope.date_total_amount_flag = false;
-                    $scope.vendor_total_amount_flag = true;
-                }
-                var total_amount = 0;
-                for (i=0; i < data.purchases.length; i++) {
-                    total_amount = parseFloat(total_amount) + parseFloat(data.purchases[i].amount);
-                    data.purchases[i].amount = data.purchases[i].amount.toFixed(2);
-                }
-                $scope.purchases = data.purchases;
+            if ($scope.vendor_name == '' || $scope.vendor_name == undefined || $scope.vendor_name == 'select') {
+                $scope.error_flag = true;
+                $scope.messages = 'Please choose Vendor';
+            } else {
+                $http.get('/reports/purchase/?report_name=vendor&vendor_name='+$scope.vendor_name).success(function(data){
+                    if (data.purchases.length > 0) {
+                        $scope.date_total_amount_flag = false;
+                        $scope.vendor_total_amount_flag = true;
+                    }
+                    var total_amount = 0;
+                    for (i=0; i < data.purchases.length; i++) {
+                        total_amount = parseFloat(total_amount) + parseFloat(data.purchases[i].amount);
+                        data.purchases[i].amount = data.purchases[i].amount.toFixed(2);
+                    }
+                    $scope.purchases_vendor = data.purchases;
+                    
+                    $scope.purchase_amount_total = total_amount.toFixed(2);
+                });
                 
-                $scope.purchase_amount_total = total_amount.toFixed(2);
-            });
+            }
        }
         
     } 
@@ -1078,6 +1094,8 @@ function ExpenseReportController($scope, $http, $element, $timeout, $location){
     $scope.end_date = '';
 
     $scope.expense_total_amount_flag = false;
+    $scope.error_flag = false;
+    $scope.messages = '';
 
     $scope.init = function(csrf_token) {
         $scope.csrf_token = csrf_token;
@@ -1099,22 +1117,246 @@ function ExpenseReportController($scope, $http, $element, $timeout, $location){
     $scope.view_report = function() {
         $scope.start_date = $$('#start_date')[0].get('value');
         $scope.end_date = $$('#end_date')[0].get('value');
-        $http.get('/reports/expenses/?start_date='+$scope.start_date+'&end_date='+$scope.end_date).success(function(data){
-            var total_amount = 0;
-            if (data.expenses.length > 0) {
-                $scope.expense_total_amount_flag = true;
-            }
-            for (i=0; i < data.expenses.length; i++) {
+        if ($scope.start_date == '' || $scope.start_date == undefined ){
+            $scope.error_flag = true;
+            $scope.messages = 'Please choose Start date';
+        } else if($scope.end_date == '' || $scope.end_date == undefined ){
+            $scope.error_flag = true;
+            $scope.messages = 'Please choose End date';
+        } else {
+            $http.get('/reports/expenses/?start_date='+$scope.start_date+'&end_date='+$scope.end_date).success(function(data){
+                var total_amount = 0;
+                if (data.expenses.length > 0) {
+                    $scope.expense_total_amount_flag = true;
+                }
+                for (i=0; i < data.expenses.length; i++) {
 
-                total_amount = parseFloat(total_amount) + parseFloat(data.expenses[i].amount);
-                data.expenses[i].amount =  data.expenses[i].amount.toFixed(2) ;
-            }
-            $scope.expenses = data.expenses;
-            
-            $scope.expense_total_amount = total_amount.toFixed(2);
-        });       
+                    total_amount = parseFloat(total_amount) + parseFloat(data.expenses[i].amount);
+                    data.expenses[i].amount =  data.expenses[i].amount.toFixed(2) ;
+                }
+                $scope.expenses = data.expenses;
+                
+                $scope.expense_total_amount = total_amount.toFixed(2);
+            }); 
+        }      
     } 
 }
+
+function PurchaseAccountReportController($scope, $element, $http, $location) {
+    $scope.report_name = 'date';
+    $scope.start_date = '';
+    $scope.end_date = '';
+    $scope.report_type = '';
+    $scope.vendor_name = 'select';
+    $scope.report_date_wise_flag = true;
+    $scope.report_vendor_wise_flag = false;
+    $scope.error_flag = false;
+    $scope.messages = ' ';
+    $scope.init = function(csrf_token) {
+
+        $scope.csrf_token = csrf_token;
+        new Picker.Date($$('#start_date'), {
+            timePicker: false,
+            positionOffset: {x: 5, y: 0},
+            pickerClass: 'datepicker_bootstrap',
+            useFadeInOut: !Browser.ie,
+            format:'%d/%m/%Y', 
+        });
+        new Picker.Date($$('#end_date'), {
+            timePicker: false,
+            positionOffset: {x: 5, y: 0},
+            pickerClass: 'datepicker_bootstrap',
+            useFadeInOut: !Browser.ie,
+            format:'%d/%m/%Y', 
+        });
+        
+        $scope.get_vendors();
+
+    }
+    $scope.get_vendors = function() {
+        $http.get('/vendor/list/').success(function(data)
+        {
+            $scope.vendors = data.vendors;
+            $scope.vendor_name = 'select';
+        }).error(function(data, status)
+        {
+            console.log(data || "Request failed");
+        });
+    }
+
+    $scope.get_report = function(){
+        if($scope.report_name == 'date') {
+            $scope.report_date_wise_flag = true;
+            $scope.report_vendor_wise_flag = false;
+        } else if ($scope.report_name == 'vendor') {
+            $scope.report_date_wise_flag = false;
+            $scope.report_vendor_wise_flag = true;
+        }
+    }
+    $scope.view_report = function(report_type) {
+        $scope.report_type = report_type;
+        $scope.start_date = $$('#start_date')[0].get('value');
+        $scope.end_date = $$('#end_date')[0].get('value');
+        if ($scope.report_type == 'date') {
+            if ($scope.start_date == '' || $scope.start_date == undefined ){
+                $scope.error_flag = true;
+                $scope.messages = 'Please choose Start date';
+            } else if($scope.end_date == '' || $scope.end_date == undefined ){
+                $scope.error_flag = true;
+                $scope.messages = 'Please choose End date';
+            } else {
+               $http.get('/reports/purchase_accounts_report/?report_name=date&start_date='+$scope.start_date+'&end_date='+$scope.end_date).success(function(data){
+                    for (i=0; i < data.purchase_accounts.length; i++) {
+                        data.purchase_accounts[i].total_amount = data.purchase_accounts[i].total_amount.toFixed(2);
+                        data.purchase_accounts[i].paid_amount = data.purchase_accounts[i].paid_amount.toFixed(2);
+                        data.purchase_accounts[i].balance = data.purchase_accounts[i].balance.toFixed(2);  
+                    }
+                    $scope.purchase_accounts = data.purchase_accounts;
+                }); 
+            }
+       } else {
+            if ($scope.vendor_name == '' || $scope.vendor_name == undefined || $scope.vendor_name == 'select') {
+                $scope.error_flag = true;
+                $scope.messages = 'Please choose Vendor';
+            } else {
+                $http.get('/reports/purchase_accounts_report/?report_name=vendor&vendor_name='+$scope.vendor_name).success(function(data){
+                    
+                    for (i=0; i < data.purchase_accounts.length; i++) {
+                        data.purchase_accounts[i].total_amount = data.purchase_accounts[i].total_amount.toFixed(2);
+                        data.purchase_accounts[i].paid_amount = data.purchase_accounts[i].paid_amount.toFixed(2);
+                        data.purchase_accounts[i].balance = data.purchase_accounts[i].balance.toFixed(2); 
+                    }
+                    $scope.purchase_accounts_vendor = data.purchase_accounts;
+                });
+            }
+       }
+        
+    } 
+}
+
+function PurchaseReturnReportController($scope, $element, $http, $location) {
+    $scope.report_name = 'date';
+    $scope.start_date = '';
+    $scope.end_date = '';
+    $scope.report_type = '';
+    $scope.vendor_name = 'select';
+    $scope.report_date_wise_flag = true;
+    $scope.report_vendor_wise_flag = false;
+    $scope.date_total_amount_flag = false;
+    $scope.vendor_total_amount_flag = false;
+    $scope.error_flag = false;
+    $scope.messages = '';
+    $scope.init = function(csrf_token) {
+
+        $scope.csrf_token = csrf_token;
+        new Picker.Date($$('#start_date'), {
+            timePicker: false,
+            positionOffset: {x: 5, y: 0},
+            pickerClass: 'datepicker_bootstrap',
+            useFadeInOut: !Browser.ie,
+            format:'%d/%m/%Y', 
+        });
+        new Picker.Date($$('#end_date'), {
+            timePicker: false,
+            positionOffset: {x: 5, y: 0},
+            pickerClass: 'datepicker_bootstrap',
+            useFadeInOut: !Browser.ie,
+            format:'%d/%m/%Y', 
+        });
+        
+        $scope.get_vendors();
+
+    }
+    $scope.get_vendors = function() {
+        $http.get('/vendor/list/').success(function(data)
+        {
+            $scope.vendors = data.vendors;
+            $scope.vendor_name = 'select';
+        }).error(function(data, status)
+        {
+            console.log(data || "Request failed");
+        });
+    }
+
+    $scope.get_report = function(){
+        if($scope.report_name == 'date') {
+            $scope.report_date_wise_flag = true;
+            $scope.report_vendor_wise_flag = false;
+        } else if ($scope.report_name == 'vendor') {
+            $scope.report_date_wise_flag = false;
+            $scope.report_vendor_wise_flag = true;
+        }
+    }
+    $scope.view_report = function(report_type) {
+        $scope.report_type = report_type;
+        $scope.start_date = $$('#start_date')[0].get('value');
+        $scope.end_date = $$('#end_date')[0].get('value');
+        if ($scope.report_type == 'date') {
+            if ($scope.start_date == '' || $scope.start_date == undefined ){
+                $scope.error_flag = true;
+                $scope.messages = 'Please choose Start date';
+            } else if($scope.end_date == '' || $scope.end_date == undefined ){
+                $scope.error_flag = true;
+                $scope.messages = 'Please choose End date';
+            } else {
+               $http.get('/reports/purchase_return_report/?report_name=date&start_date='+$scope.start_date+'&end_date='+$scope.end_date).success(function(data){
+                    var total_amount = 0;
+                    if (data.purchase_returns.length > 0) {
+                        $scope.date_total_amount_flag = true;
+                        $scope.vendor_total_amount_flag = false;
+                    }
+                    // for (i=0; i < data.purchases.length; i++) {
+                    //     total_amount = parseFloat(total_amount) + parseFloat(data.purchases[i].amount);
+                    //     data.purchases[i].amount = data.purchases[i].amount.toFixed(2);
+                    // }
+                    // $scope.purchase_returns = data.purchases;
+                    
+                    // $scope.purchase_amount_total = total_amount.toFixed(2);
+                }); 
+            }
+       } else {
+            if ($scope.vendor_name == '' || $scope.vendor_name == undefined || $scope.vendor_name == 'select') {
+                $scope.error_flag = true;
+                $scope.messages = 'Please choose Vendor';
+            } else {
+                $http.get('/reports/purchase_return_report/?report_name=vendor&vendor_name='+$scope.vendor_name).success(function(data){
+                    if (data.purchase_returns.length > 0) {
+                        $scope.date_total_amount_flag = false;
+                        $scope.vendor_total_amount_flag = true;
+                    }
+                    // var total_amount = 0;
+                    // for (i=0; i < data.purchases.length; i++) {
+                    //     total_amount = parseFloat(total_amount) + parseFloat(data.purchases[i].amount);
+                    //     data.purchases[i].amount = data.purchases[i].amount.toFixed(2);
+                    // }
+                    // $scope.purchases_vendor = data.purchases;
+                    
+                    // $scope.purchase_amount_total = total_amount.toFixed(2);
+                });
+                
+            }
+       }
+        
+    } 
+}
+
+function StockReportController($scope, $element, $http, $timeout, $location) {
+    $scope.init = function(csrf_token) {
+        $scope.csrf_token = csrf_token;
+        $scope.get_stock();
+    }
+    $scope.get_stock = function(){
+        $http.get('/reports/stock_reports/').success(function(data)
+        {
+            $scope.stocks = data.stocks;
+        }).error(function(data, status)
+        {
+            console.log(data || "Request failed");
+        });
+    }
+}
+
+
 function SalesReportController($scope, $element, $http, $timeout, $location){
 
     $scope.report_date_wise = true;
@@ -1197,7 +1439,6 @@ function SalesReportController($scope, $element, $http, $timeout, $location){
         });
         $scope.get_customers();
     }
-
     $scope.get_report_type =function() {
         if($scope.report_type == 'date'){
             $scope.report_date_wise = true;

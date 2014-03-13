@@ -1,16 +1,16 @@
 {% extends 'base.html' %}
-{% block title %}Purchase Return{% endblock title %}
-{% block body_id %}purchase_return{% endblock %}
+{% block title %}Purchase Accounts Report{% endblock title %}
+{% block body_id %}purchase_accounts_reports{% endblock %}
 
 {% block controller %}
-	ng-controller="PurchaseReturnReportController" ng-init="init('{{csrf_token}}')"   
+	ng-controller="PurchaseAccountReportController" ng-init="init('{{csrf_token}}')"   
 {% endblock controller %}
 
 {% block content %}
 	<div ng-show="report_date_wise_flag">
 
 		<div class="main-title">		
-			<div class="alert alert-info" align="Center">Data Wise Purchase Returns</div>
+			<div class="alert alert-info" align="Center">Data Wise Purchase Accounts</div>
 		</div>
 		
 		<div class="message" ng-show="error_flag">
@@ -54,15 +54,14 @@
 		<table id="list" class="table table-hover">
 			<tr class="success" style="font-size: 12px"style="width:auto">
 			  <th>Date</th>
-			  <th>Invoice Number</th>
-			  <th>Item Code</th>
-			  <th>Item Name</th>
-			  <th>UOM</th>
-			  <th>Unit Price</th>
-			  <th>Quantity</th>
-			  <th>Amount</th>
+			  <th>Vendor</th>
+			  <th>Payment Mode</th>
+			  <th>Narration</th>
+			  <th id="amount_alignment">Total Amount</th>
+			  <th id="amount_alignment">Paid Amount</th>
+			  <th id="amount_alignment">Balance</th>
 			</tr>
-			<!-- <tr ng-repeat="purchase_account in purchase_accounts">
+			<tr ng-repeat="purchase_account in purchase_accounts">
 				<td>[[purchase_account.date]]</td>
 				<td>[[purchase_account.vendor_name]]</td>
 				<td>[[purchase_account.payment_mode]]</td>
@@ -71,7 +70,7 @@
 				<td id="amount_alignment">[[purchase_account.paid_amount]]</td>
 				<td id="amount_alignment">[[purchase_account.balance]]</td>
 			</tr>
- -->
+
 
 
 		</table> 
@@ -123,22 +122,20 @@
 		<table id="list" class="table table-hover">
 			<tr class="success" style="font-size: 12px"style="width:auto">
 			  <th>Date</th>
-			  <th>Invoice Number</th>
-			  <th>Item Code</th>
-			  <th>Item Name</th>
-			  <th>UOM</th>
-			  <th>Unit Price</th>
-			  <th>Quantity</th>
-			  <th>Amount</th>
+			  <th>Payment Mode</th>
+			  <th>Narration</th>
+			  <th>Total Amount</th>
+			  <th>Paid Amount</th>
+			  <th>Balance</th>
 			</tr>
-			<!-- <tr ng-repeat="purchase_account in purchase_accounts_vendor">
+			<tr ng-repeat="purchase_account in purchase_accounts_vendor">
 				<td>[[purchase_account.date]]</td>
 				<td>[[purchase_account.payment_mode]]</td>
 				<td>[[purchase_account.narration]]</td>
 				<td>[[purchase_account.total_amount]]</td>
 				<td>[[purchase_account.paid_amount]]</td>
 				<td>[[purchase_account.balance]]</td>
-			</tr> -->
+			</tr>
 
 
 		</table> 
@@ -147,18 +144,3 @@
 
 
 {% endblock content %}
-<!-- 
-		<table id="list" class="table table-hover" >
-			<tr class="success" style="font-size: 12px"style="width:auto">
-			  <th>Date</th>
-			  <th>Invoice Number</th>
-			  <th>Item Code</th>
-			  <th>Item Name</th>
-			  <th>UOM</th>
-			  <th>Unit Price</th>
-			  <th>Quantity</th>
-			  <th>Amount</th>
-			</tr>
-
-		</table>  -->
-		

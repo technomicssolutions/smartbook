@@ -15,7 +15,10 @@
 
 
 		</div>
-		
+			
+		<div class="message" ng-show="error_flag">
+			<p>[[messages]]</p>
+		</div>
 			
 		<div class="reporttext">
 				<label for="s_date">Start Date</label>
@@ -93,6 +96,15 @@
 									
 			</div>
 
+
+		</div>
+
+		<div class="message" ng-show="error_flag">
+			<p>[[messages]]</p>
+		</div>
+
+		<div class="reporttext">
+				<label for="e_date">Vendor: </label>
 		</div>
 
 		<div class="reportinput">
@@ -101,6 +113,10 @@
 				<option ng-repeat="vendor in vendors" value="[[vendor.vendor_name]]">[[vendor.vendor_name]]</option>
 
 			</select>
+		</div>
+
+		<div class="reporttext">
+				<label for="e_date">Report type: </label>
 		</div>
 
 		<div class="reportinput">
@@ -126,7 +142,7 @@
 			  <th>Vendor Inv No</th>
 			  <th>Amount</th>
 			  </tr>
-			<tr ng-repeat="purchase in purchases">
+			<tr ng-repeat="purchase in purchases_vendor">
 		  		<td>[[purchase.date]]</td>
 		  		<td>[[purchase.invoice_no]]</td>
 		  		<td>[[purchase.vendor_invoice_no]]</td>
