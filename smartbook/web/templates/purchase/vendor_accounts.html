@@ -60,7 +60,7 @@
 							<label for="amount">Amount</label>
 						</div>
 						<div class="forminput_purchase">
-							<input type="text" name="amount" ng-model="vendor_account.amount" ng-enter="calculate_vendor_account_amounts()" />
+							<input type="text" name="amount" ng-model="vendor_account.amount" ng-change="calculate_vendor_account_amounts()" />
 							
 						</div>
 					</div>
@@ -90,7 +90,7 @@
 							<label for="cheque_no">Cheque No</label>
 						</div>
 						<div class="forminput_purchase">
-							<input type="text" name="cheque_no" ng-model="cheque_no" ng-readonly="cheque"/>						
+							<input type="text" name="cheque_no" ng-model="vendor_account.cheque_no" ng-readonly="cash"/>						
 						</div>
 					</div>
 					
@@ -108,7 +108,7 @@
 							<label for="cheque_date">Cheque date</label>
 						</div>
 						<div class="forminput_purchase">
-							<input type="text" name="cheque_date" ng-model="cheque_date" ng-readonly="cheque"/>						
+							<input type="text" name="cheque_date" id="cheque_date" ng-model="vendor_account.cheque_date" ng-readonly="cash"/>						
 						</div>
 					</div>
 					<div class="formrow_purchase">
@@ -116,7 +116,7 @@
 							<label for="bank">Bank Name</label>
 						</div>
 						<div class="forminput_purchase">
-							<input type="text" name="bank_name" ng-model="vendor_account.bank_name" ng-readonly="cheque" />
+							<input type="text" name="bank_name" ng-model="vendor_account.bank_name" ng-readonly="cash" />
 							
 						</div>
 					</div>
@@ -126,14 +126,14 @@
 							<label for="branch">Branch Name</label>
 						</div>
 						<div class="forminput_purchase">
-							<input type="text" name="branch" ng-model="vendor_account.branch_name" ng-readonly="cheque" />
+							<input type="text" name="branch" ng-model="vendor_account.branch_name" ng-readonly="cash" />
 						</div> 
 					</div>
 
 					<div class="formrow_purchase">
-						
+						<p class="error_message"> [[validation_error]] </p>
 						<div class="formrow_purchase">
-							<input type="button" name="submit" value="Submit" ng-click="reset_vendor_account()" />
+							<input type="button" name="submit" value="Submit" ng-click="save_vendor_account()" />
 							<input type="button" name="submit" value="Reset" ng-click="reset_vendor_account()" />
 							<input type="button" name="submit" value="Cancel" ng-click="reset_vendor_account()" />
 						</div>

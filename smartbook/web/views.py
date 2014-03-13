@@ -49,7 +49,10 @@ class UserList(View):
     def get(self, request, *args, **kwargs):
         user_type = kwargs['user_type']
         ctx_vendors = []
+<<<<<<< HEAD
         ctx_staffs = []
+=======
+>>>>>>> 0a5d818e8f3c1933f03dab22bf22ac0dd8427ed6
         ctx_customers = []
         if user_type == 'staff':
             users = UserProfile.objects.filter(user_type='staff')
@@ -80,11 +83,13 @@ class UserList(View):
                     'vendors': ctx_vendors,
                     
                 } 
+                
                 response = simplejson.dumps(res)
                 status_code = 200
                 return HttpResponse(response, status = status_code, mimetype="application/json")
         elif user_type == 'customer':
             users = UserProfile.objects.filter(user_type='customer')
+
             
             if request.is_ajax():
                 if len(users) > 0:
@@ -96,6 +101,7 @@ class UserList(View):
                     'customers': ctx_customers,
                     
                 } 
+
 
                 response = simplejson.dumps(res)
                 status_code = 200

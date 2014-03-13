@@ -38,12 +38,12 @@ class PurchaseItem(models.Model):
 
 	item = models.ForeignKey(Item, null=True, blank=True)
 	purchase = models.ForeignKey(Purchase, null=True, blank=True)
-	item_frieght = models.IntegerField('Item Frieght', default=0)
-	frieght_per_unit = models.IntegerField('Item Frieght per Unit', default=0)
-	item_handling = models.IntegerField('Item Handling', default=0)
-	handling_per_unit = models.IntegerField('Item Handling per Unit', default=0)
-	expense = models.IntegerField('Expense', default=0)
-	expense_per_unit = models.IntegerField('Expense per Unit', default=0)
+	item_frieght = models.DecimalField('Item Frieght', max_digits=14, decimal_places=3, default=0)
+	frieght_per_unit = models.DecimalField('Item Frieght per Unit', max_digits=14, decimal_places=3, default=0)
+	item_handling = models.DecimalField('Item Handling', max_digits=14, decimal_places=3, default=0)
+	handling_per_unit = models.DecimalField('Item Handling per Unit', max_digits=14, decimal_places=3, default=0)
+	expense = models.DecimalField('Expense', max_digits=14, decimal_places=3, default=0)
+	expense_per_unit = models.DecimalField('Expense per Unit', max_digits=14, decimal_places=3, default=0)
 	quantity_purchased = models.IntegerField('Quantity Purchased', default=0)
 	cost_price = models.DecimalField('Cost Price',max_digits=14, decimal_places=3, default=0)
 	net_amount = models.DecimalField('Net Amount',max_digits=14, decimal_places=3, default=0)
@@ -60,10 +60,20 @@ class PurchaseItem(models.Model):
 
 class PurchaseReturn(models.Model):
 	purchase = models.ForeignKey(Purchase)
+	return_invoice_number = models.IntegerField('Purchase Return invoice number', unique=True)
 	date = models.DateField('Date')
-	time = models.TimeField('Time')
-	quantity = models.IntegerField('Quantity')
+	net_amount = models.DecimalField('Amount', max_digits=14, decimal_places=3, default=0)
 
+	def __unicode__(self):
+		return self.purchase
+
+class PurchaseReturnItems(models.Model):
+	purchase_return = models.ForeignKey(PurchaseReturn)
+	item = models.ForeignKey(Item)
+	date = models.DateField('Date')
+	amount = models.DecimalField('Amount', max_digits=14, decimal_places=3, default=0)
+	quantity = models.IntegerField('Quantity', default=0)
+	
 	def __unicode__(self):
 		return self.purchase
 
@@ -77,15 +87,15 @@ class VendorAccount(models.Model):
 	date = models.DateField('Date', null=True, blank=True)
 	payment_mode = models.CharField('Payment Mode', max_length=10, choices=PAYMENT_MODE, default='cash')
 	narration = models.CharField('Narration', max_length=10, null=True, blank=True)
-	total_amount = models.IntegerField('Total Amount', default=0)
-	paid_amount = models.IntegerField('Paid Amount', default=0)
-	balance = models.IntegerField('Balance', default=0)
+	total_amount = models.DecimalField('Total Amount', max_digits=14, decimal_places=3, default=0)
+	paid_amount = models.DecimalField('Paid Amount', max_digits=14, decimal_places=3, default=0)
+	balance = models.DecimalField('Balance', max_digits=14, decimal_places=3, default=0)
 	cheque_no = models.IntegerField('Cheque No', null=True, blank=True)
 	cheque_date = models.DateField('Cheque Date', null=True, blank=True)
 	bank_name = models.CharField('Bank Name', max_length=200, null=True, blank=True)
 	branch_name = models.CharField('Branch Name', max_length=200, null=True, blank=True)
 
 	def __unicode__(self):
-		return self.vendor
+		return self.vendor.user.first_name
 	
 	
