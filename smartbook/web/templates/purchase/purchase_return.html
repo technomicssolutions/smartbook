@@ -1,8 +1,8 @@
 {% extends 'base.html' %}
-
+{% block title %}Purchase Return{% endblock title %}
 {% block body_id %}purchase_return{% endblock %}
 
-{% block title %}Purchase Return{% endblock title %}
+
 {% block controller %}ng-controller="PurchaseReturnController" ng-init="init('{{csrf_token}}', '{{invoice_number}}')"{% endblock controller %}
 
 {% block dialogue_popup %}
@@ -43,7 +43,7 @@
 							<label for="purchase_return_date">Date</label>
 						</div>
 						<div class="forminput">
-							<input type="text" name="purchase_return_date" ng-model="purchase.purchase_return_date" id="purchase_return_date"/>
+							<input type="text" name="purchase_return_date" ng-model="purchase_return.purchase_return_date" id="purchase_return_date"/>
 						</div>
 					</div>
 					<div class="formrow_purchase">
@@ -75,7 +75,7 @@
 								<span>[[item.item_code]]</span>
 								<span>[[item.item_name]]</span>
 								<span>[[item.barcode]] </span>
-								<span> <input type="checkbox" ng-click="addReturnItems(item)" /></span>
+								<span> <input type="checkbox" ng-click="addReturnItems(item)" checked=false /></span>
 							</div>
 							<div class="clear"></div>
 						</div>
@@ -127,7 +127,7 @@
 			<div  align="Center">
 				<div class="buttons">
 					<p class="error_message"> [[validation_error]] </p>
-					<input type="button" value="Submit" ng-click="save_purchase();">
+					<input type="button" value="Submit" ng-click="save_purchase_return();">
 					<a href="{% url 'home' %}"><input type="button" value="Cancel"></a>
 				</div>
 			</div>			

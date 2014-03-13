@@ -1008,7 +1008,7 @@ function SalesController($scope, $element, $http, $timeout, share, $location) {
                     'Content-Type' : 'application/x-www-form-urlencoded'
                 }
             }).success(function(data, status) {
-                //document.location.href = '/sales/entry/';
+                document.location.href = '/sales/entry/';
                
             }).error(function(data, success){
                 
@@ -1796,7 +1796,7 @@ function SalesReportController($scope, $element, $http, $timeout, $location){
 
 function PurchaseReturnController($scope, $element, $http, $timeout, share, $location) {
     $scope.purchase_return = {
-        'date': '',
+        'purchase_return_date': '',
         'invoice_number': '',
         'purchase_items': []
 
@@ -1895,6 +1895,7 @@ function PurchaseReturnController($scope, $element, $http, $timeout, share, $loc
         $scope.purchase_return.net_return_total = amount;
     }
     $scope.save_purchase_return = function() {
+        $scope.purchase_return.purchase_return_date = $$('#purchase_return_date')[0].get('value');
         $scope.purchase_return.purchase_invoice_number = $scope.purchase.purchase_invoice_number;
         params = {
             "csrfmiddlewaretoken" : $scope.csrf_token,
@@ -1912,6 +1913,38 @@ function PurchaseReturnController($scope, $element, $http, $timeout, share, $loc
            
         }).error(function(data, success){
             
+        });
+    }
+}
+
+function SalesReturnController($scope, $element, $http, $timeout, share, $location) {
+    $scope.sales_return = {
+        'return_invoice_number': '',
+        'return_date': '',
+        'net_amount': ''
+    }
+    $scope.init = function(csrf_token, invoice_number){
+        $scope.csrf_token = csrf_token;
+        $scope.sales_return.return_invoice_number = invoice_number;
+        new Picker.Date($$('#return_date'), {
+            timePicker: false,
+            positionOffset: {x: 5, y: 0},
+            pickerClass: 'datepicker_bootstrap',
+            useFadeInOut: !Browser.ie,
+            format:'%d/%m/%Y', 
+        });
+    }
+    $scope.getSalesDetails = function(){
+        var invoice = $scope.sales.sales_invoice_number;
+        $http.get('/sales/?invoice_no='+$scope.sales.sales_invoice_number).success(function(data)
+        {
+            $scope.selecting_item = true;
+            $scope.item_selected = false;
+            $scope.sales = data.sales;
+            $scope.sales.sales_invoice_number = invoice;
+        }).error(function(data, status)
+        {
+            console.log(data || "Request failed");
         });
     }
 }

@@ -56,8 +56,8 @@ class UserList(View):
         ctx_customers = []
         ctx_salesman = []
         if user_type == 'staff':
-            users = UserProfile.objects.filter(user_type='staff')
-
+            users = Staff.objects.all()
+            print "staffs -----", users
             if request.is_ajax():
                 if len(users) > 0:
                     for usr in users:
@@ -73,7 +73,7 @@ class UserList(View):
                 status_code = 200
                 return HttpResponse(response, status = status_code, mimetype="application/json")
         elif user_type == 'vendor':
-            users = UserProfile.objects.filter(user_type='vendor')
+            users = Vendor.objects.all()
             if request.is_ajax():
                 if len(users) > 0:
                     for usr in users:
@@ -89,7 +89,7 @@ class UserList(View):
                 status_code = 200
                 return HttpResponse(response, status = status_code, mimetype="application/json")
         elif user_type == 'customer':
-            users = UserProfile.objects.filter(user_type='customer')
+            users = Customer.objects.all()
 
             
             if request.is_ajax():
