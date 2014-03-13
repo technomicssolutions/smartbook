@@ -227,33 +227,33 @@ class VendorAccounts(View):
 
 class VendorAccountDetails(View):
     def get(self, request, *args, **kwargs):
-        #try:
-        vendor = get_object_or_404(Vendor, user__first_name=kwargs['vendor'])
-        vendor_account =  VendorAccount.objects.get(vendor=vendor)
-        res = {
-            'result': 'Ok',
-            'vendor_account': {
-                'vendor_account_date' : vendor_account.date.strftime('%d/%m/%Y') if vendor_account.date else '',
-                'payment_mode': vendor_account.payment_mode,
-                'narration': vendor_account.narration,
-                'total_amount': vendor_account.total_amount,
-                'amount_paid': vendor_account.paid_amount,
-                'balance_amount': vendor_account.balance,
-                'cheque_date': vendor_account.cheque_date.strftime('%d/%m/%Y') if vendor_account.cheque_date else '',
-                'cheque_no': vendor_account.cheque_no,
-                'bank_name': vendor_account.bank_name,
-                'branch_name': vendor_account.branch_name,
-                'vendor': vendor_account.vendor.user.first_name
-            }
-        } 
+        try:
+            vendor = get_object_or_404(Vendor, user__first_name=kwargs['vendor'])
+            vendor_account =  VendorAccount.objects.get(vendor=vendor)
+            res = {
+                'result': 'Ok',
+                'vendor_account': {
+                    'vendor_account_date' : vendor_account.date.strftime('%d/%m/%Y') if vendor_account.date else '',
+                    'payment_mode': vendor_account.payment_mode,
+                    'narration': vendor_account.narration,
+                    'total_amount': vendor_account.total_amount,
+                    'amount_paid': vendor_account.paid_amount,
+                    'balance_amount': vendor_account.balance,
+                    'cheque_date': vendor_account.cheque_date.strftime('%d/%m/%Y') if vendor_account.cheque_date else '',
+                    'cheque_no': vendor_account.cheque_no,
+                    'bank_name': vendor_account.bank_name,
+                    'branch_name': vendor_account.branch_name,
+                    'vendor': vendor_account.vendor.user.first_name
+                }
+            } 
 
-        response = simplejson.dumps(res)
-        status_code = 200
-        # except:
-        #     response = {
-        #         'result': 'Vendor or VendorAccount does not exists',
-        #     }
-        #     status_code = 201
+            response = simplejson.dumps(res)
+            status_code = 200
+        except:
+            response = {
+                'result': 'Vendor or VendorAccount does not exists',
+            }
+            status_code = 201
         return HttpResponse(response, status = status_code, mimetype="application/json")
 
     def post(self, request, *args, **kwargs):
@@ -283,3 +283,17 @@ class VendorAccountDetails(View):
 class PurchaseReturn(View):
 
     def get(self, request, *args, **kwargs):
+
+        return render(request, 'purchase/vendor_accounts.html', {
+            'vendor_accounts' : vendor_accounts,
+            'vendors': vendors
+        })
+
+class PurchaseReturnEdit(View):
+
+    def get(self, request, *args, **kwargs):
+        
+        return render(request, 'purchase/vendor_accounts.html', {
+            'vendor_accounts' : vendor_accounts,
+            'vendors': vendors
+        })
