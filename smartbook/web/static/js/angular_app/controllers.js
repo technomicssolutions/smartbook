@@ -670,7 +670,7 @@ function SalesController($scope, $element, $http, $timeout, share, $location) {
         'customer':'',
         'staff': '',
         'net_total': 0,
-        'discount': 0,
+        'net_discount': 0,
         'roundoff': 0,
         'grant_total': 0,
         'paid': 0,
@@ -884,6 +884,7 @@ function SalesController($scope, $element, $http, $timeout, share, $location) {
         $scope.calculate_tax_amount_sale(selected_item);
         $scope.calculate_discount_amount_sale(selected_item);
         $scope.calculate_unit_cost_sale(selected_item);
+       
         $scope.sales_items.push(selected_item);
     }
     
@@ -891,7 +892,7 @@ function SalesController($scope, $element, $http, $timeout, share, $location) {
     $scope.calculate_net_amount_sale = function(item) {
         if(item.qty_sold != '' && item.unit_price != ''){
             item.net_amount = ((parseFloat(item.qty_sold)*parseFloat(item.unit_price))+parseFloat(item.tax_amount)-parseFloat(item.disc_given)).toFixed(2);
-            
+            $scope.calculate_net_discount_sale();
         }
         $scope.calculate_net_total_sale();
     }
@@ -903,6 +904,7 @@ function SalesController($scope, $element, $http, $timeout, share, $location) {
     $scope.calculate_discount_amount_sale = function(item) {
         if(item.discount_permit != '' && item.unit_price != ''){
             item.discount_permit_amount = (parseFloat(item.unit_price)*parseFloat(item.discount_permit))/100;
+            
         }
     }
     $scope.calculate_unit_cost_sale = function(item) {
@@ -919,14 +921,49 @@ function SalesController($scope, $element, $http, $timeout, share, $location) {
         }
         $scope.sales.net_total = net_total;
         $scope.calculate_grant_total_sale();
+        
+    }
+    $scope.calculate_net_discount_sale = function(){
+        
+        var net_discount = 0;
+        for(i=0; i<$scope.sales_items.length; i++){
+           
+            net_discount = net_discount + parseFloat($scope.sales_items[i].disc_given);
+
+        }
+        $scope.sales.net_discount = net_discount;
+        
     }
 
 
     $scope.calculate_grant_total_sale = function(){
-        $scope.sales.grant_total = $scope.sales.net_total - $scope.sales.discount - $scope.sales.roundoff;
+        $scope.sales.grant_total = $scope.sales.net_total   - $scope.sales.roundoff;
     }
     $scope.calculate_balance_sale = function () {
         $scope.sales.balance = $scope.sales.grant_total - $scope.sales.paid;
+    }
+    $scope.save_sales = function() {
+        if($scope.validate_sales) {
+            $scope.sales.sales_invoice_date = $$('#sales_invoice_date')[0].get('value');
+            
+            params = { 
+                'sales': angular.toJson($scope.sales),
+                "csrfmiddlewaretoken" : $scope.csrf_token
+            }
+            $http({
+                method : 'post',
+                url : "/sales/entry/",
+                data : $.param(params),
+                headers : {
+                    'Content-Type' : 'application/x-www-form-urlencoded'
+                }
+            }).success(function(data, status) {
+                document.location.href = '/sales/entry/';
+               
+            }).error(function(data, success){
+                
+            });
+        }
     }
 
 }

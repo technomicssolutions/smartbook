@@ -172,14 +172,14 @@
 							<label for="net_total">Net Total</label>
 						</div>
 						<div class="forminput_sales">
-							<input type="text" name="net_total"ng-model="sales.net_total" >
+							<input type="text" name="net_total"ng-model="sales.net_total" readonly/ >
 						</div>
 					
 						<div class="formtext_sales">
 							<label for="discount">Discount</label>
 						</div>
 						<div class="forminput_sales">
-							<input type="text" name="discount" ng-model="sales.discount"ng-change="calculate_grant_total_sale()">
+							<input type="text" name="net_discount" ng-model="sales.net_discount"ng-change="calculate_grant_total_sale()" readonly/>
 						</div>
 
 						<div class="formtext_sales">
@@ -193,7 +193,7 @@
 							<label for="Grant Total">Grant Total</label>
 						</div>
 						<div class="forminput_sales">
-							<input type="text" name="grant_total" ng-model="sales.grant_total">
+							<input type="text" name="grant_total" ng-model="sales.grant_total" readonly/>
 						</div>
 
 						<div class="formtext_sales">
@@ -214,7 +214,7 @@
 			</div>
 			<div  align="Center">
 				<div class="buttons">
-					<input type="submit" value="Submit">
+					<input type="submit" value="Submit"ng-click="save_sales();>
 					<a href="{% url 'home' %}"><input type="button" value="Cancel"></a>
 				</div>
 			</div>			
