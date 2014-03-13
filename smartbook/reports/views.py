@@ -17,6 +17,8 @@ from django.conf import settings
 
 from sales.models import Sales, SalesItem
 from expenses.models import Expense
+from inventory.models import *
+from purchase.models import PurchaseItem
 from web.models import Vendor
 
 
@@ -86,7 +88,183 @@ class Reports(View):
 
 class SalesReports(View):
     def get(self, request, *args, **kwarg):
-        return render(request, 'reports/sales_reports.html', {})
+
+        if request.is_ajax():
+            status_code = 200
+            sales_report = []
+            total_sales_report = []
+            round_off = 0
+            grant_total = 0
+            total_profit = 0
+            total_discount = 0
+            total_cp = 0
+            total_sp = 0
+            cost_price = 0
+            i = 0 
+
+            print request.GET['report_name']
+
+            if request.GET['report_name'] == 'date':
+                start = request.GET['start_date']
+                end = request.GET['end_date']            
+                start_date = datetime.strptime(start, '%d/%m/%Y')
+                end_date = datetime.strptime(end, '%d/%m/%Y')
+                sales = Sales.objects.filter(sales_invoice_date__gte=start_date,sales_invoice_date__lte=end_date)
+                if sales.count()>0:
+                    for sale in sales:
+                        round_off = round_off + sale.round_off
+                        items = sale.salesitem_set.all()
+                        for item in items:   
+                            discount = item.discount_given                         
+                            dates = item.sales.sales_invoice_date
+                            invoice_no = item.sales.sales_invoice_number
+                            qty = item.quantity_sold
+                            item_name = item.item.name
+                            inventorys = item.item.inventory_set.all()[0]                            
+                            selling_price = inventorys.selling_price                            
+
+                            purchases = item.item.purchaseitem_set.all()
+                            for purchase in purchases:
+                                cost_price = cost_price + purchase.cost_price
+                                i = i + 1
+                            avg_cp = cost_price/i
+                            total = selling_price * qty
+                            profit = (selling_price - avg_cp)*qty
+
+                            grant_total = grant_total + total
+                            total_profit = total_profit + profit
+                            total_discount = total_discount + discount
+
+                            sales_report.append({
+                                'dates' : dates,
+                                'invoice_no' : invoice_no,
+                                'item_name' : item_name,
+                                'qty' : qty,
+                                'discount' : discount,
+                                'selling_price' : selling_price,
+                                'total' : total,
+                                'profit' : profit,
+                            })
+                    total_sales_report.append({
+                        'round_off' : round_off,
+                        'grant_total' : grant_total,
+                        'total_profit' : total_profit,
+                        'total_discount' : total_discount,
+                    })
+
+                elif request.GET['report_name'] == 'item':
+                    start = request.GET['start_date']
+                    end = request.GET['end_date']            
+                    start_date = datetime.strptime(start, '%d/%m/%Y')
+                    end_date = datetime.strptime(end, '%d/%m/%Y')
+                    sales = Sales.objects.filter(sales_invoice_date__gte=start_date,sales_invoice_date__lte=end_date)
+                    for sale in sales:
+                        items = sale.salesitem_set.all()
+                        for item in items:
+                            discount = item.discount_given                         
+                            total_qty = item.quantity_sold
+                            item_name = item.item.name
+                            item_code = item.item.code
+                            inventorys = item.item.inventory_set.all()[0]
+                            selling_price = inventorys.selling_price
+
+                            purchases = item.item.purchaseitem_set.all()
+                            for purchase in purchases:
+                                cost_price = cost_price + purchase.cost_price
+                                i = i + 1
+                            avg_cp = cost_price/i
+                            profit = (selling_price - avg_cp)*total_qty
+
+                            total_profit = total_profit + profit
+                            total_discount = total_discount + discount
+                            total_cp = total_cp + avg_cp
+                            total_sp = total_sp + selling_price
+
+                            sales_report.append({
+                                'item_code' : item_code,
+                                'item_name' : item_name,
+                                'total_qty' : total_qty,
+                                'discount' : discount,
+                                'cost_price' : avg_cp,
+                                'selling_price' : selling_price,
+                                'profit' : profit,
+                            })
+                    total_sales_report.append({
+                        'total_cp' : total_cp,
+                        'total_sp' : total_sp,
+                        'total_profit' : total_profit,
+                        'total_discount' : total_discount,
+                    })
+                elif request.GET['report_name'] == 'customer':
+                    start = request.GET['start_date']
+                    end = request.GET['end_date']            
+                    start_date = datetime.strptime(start, '%d/%m/%Y')
+                    end_date = datetime.strptime(end, '%d/%m/%Y')
+
+                    customer_name = request.GET['customer_name']
+                    customer = Customer.objects.get(user__first_name = customer_name)
+                    sales = Sales.objects.filter(sales_invoice_date__gte=start_date,sales_invoice_date__lte=end_date,customer=customer)
+                    for sale in sales:
+                        items = sale.salesitem_set.all()
+                        for item in items:
+                            dates = item.sales.sales_invoice_date
+                            invoice_no = item.sales.sales_invoice_number
+                            item_name = item.item.name
+                            qty = item.quantity_sold
+                            discount = item.discount_given
+                            inventorys = item.item.inventory_set.all()[0]
+                            selling_price = inventorys.selling_price
+                            total = selling_price * qty
+
+                            purchases = item.item.purchaseitem_set.all()
+                            for purchase in purchases:
+                                cost_price = cost_price + purchase.cost_price
+                                i = i + 1
+                            avg_cp = cost_price/i
+                            profit = (selling_price - avg_cp)*total_qty
+
+                            total_profit = total_profit + profit
+                            total_discount = total_discount + discount                            
+                            total_sp = total_sp + selling_price
+                            grant_total = grant_total + total
+
+                            sales_report.append({
+                                'dates' : dates,
+                                'invoice_no' : invoice_no,
+                                'item_name' : item_name,
+                                'qty' : qty,
+                                'discount' : discount,
+                                'selling_price' : selling_price,
+                                'total' : total,
+                                'profit' : profit,
+                            })
+                    total_sales_report.append({
+                        'grant_total' : grant_total,
+                        'total_sp' : total_sp,
+                        'total_profit' : total_profit,
+                        'total_discount' : total_discount,
+                    })
+
+                elif request.GET['report_name'] == 'salesman':
+                    pass
+                elif request.GET['report_name'] == 'area':
+                    pass
+
+
+            try:                
+                res = {
+                    'result': 'ok',
+                    'sales_report' : sales_report,
+                    'total_sales_report' : total_sales_report,
+                }    
+                response = simplejson.dumps(res)
+            except Exception as ex:
+                response = simplejson.dumps({'result': 'error', 'error': str(ex)})
+                status_code = 500
+            return HttpResponse(response, status = status_code, mimetype = 'application/json')
+        
+        else:
+            return render(request, 'reports/sales_reports.html', {})
 
 class PurchaseReportsDate(View):
     def get(self, request, *args, **kwargs):
@@ -216,8 +394,8 @@ class DailyReport(View):
                 'total_expense' : total_expense,
                 'difference' : difference,
                 })         
-            try:
-                
+            
+            try:                
                 res = {
                     'result': 'ok',    
                     'daily_report' : daily_report, 
