@@ -49,6 +49,7 @@ class UserList(View):
     def get(self, request, *args, **kwargs):
         user_type = kwargs['user_type']
         ctx_vendors = []
+        ctx_customers = []
         if user_type == 'staff':
             users = UserProfile.objects.filter(user_type='staff')
         elif user_type == 'vendor':
@@ -62,11 +63,25 @@ class UserList(View):
                 res = {
                     'vendors': ctx_vendors,
                 } 
+                
                 response = simplejson.dumps(res)
                 status_code = 200
                 return HttpResponse(response, status = status_code, mimetype="application/json")
         elif user_type == 'customer':
             users = UserProfile.objects.filter(user_type='customer')
+            if request.is_ajax():
+                if len(users)>0:
+                    for usr in users:
+                        ctx_customers.append({
+                            'customer_name' : usr.user.first_name,
+                        })
+                res = {
+                    'customers' : ctx_customers,
+                }
+
+                response = simplejson.dumps(res)
+                status_code = 200
+                return HttpResponse(response, status = status_code, mimetype="application/json")
 
         return render(request, 'user_list.html',{
             'users': users,
