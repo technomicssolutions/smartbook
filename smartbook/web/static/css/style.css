@@ -592,6 +592,10 @@ th {
     padding-right: 6px;
 }
 
+#last_row {
+	font-weight: bold;
+}
+
 /************************ Report Module End *************************/
 
 /************* Vendor account start ********************/
@@ -599,4 +603,5 @@ th {
 .form_contents_vendor_account {
 	width: 80%;
 	margin: auto;
+	padding: 20px;
 }

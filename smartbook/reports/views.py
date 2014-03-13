@@ -1,5 +1,7 @@
 # Create your views here.
 import sys
+import os
+import os.path
 
 from django.db import IntegrityError
 import simplejson
@@ -11,8 +13,11 @@ from django.http import Http404, HttpResponse, HttpResponseRedirect
 from django.contrib.auth import authenticate, login, logout
 from django.core.urlresolvers import reverse
 from django.contrib.auth.models import User
+from django.conf import settings
+
 from sales.models import Sales, SalesItem
 from expenses.models import Expense
+from web.models import Vendor
 
 
 from purchase.models import Purchase
@@ -38,8 +43,8 @@ def createPDF(purchases):
     buffer=StringIO()
     p=canvas.Canvas(buffer,pagesize=letter)
     #p = canvas.Canvas("myreport.pdf")
-    path = settings.PROJECT_PATH + '/../web/static/img/logo.png'
-    p.drawImage(path, 3*cm, 25*cm, width=5*cm, preserveAspectRatio=True)
+    # path = settings.PROJECT_PATH + '/../web/static/img/logo.png'
+    # p.drawImage(path, 3*cm, 25*cm, width=5*cm, preserveAspectRatio=True)
     p.drawString(x, y, "Sportivore Pty. Ltd.")
     y = 680
     p.drawString(x, y, "ACN  166 877 818")
@@ -47,7 +52,7 @@ def createPDF(purchases):
     p.drawString(x, y, "Phone   +61 424 367 235")
     y = 640
     p.drawString(x, y, "Email   admin@sportivore.com.au")
-    data=[['Receipt'],['Date invoiced', str(datetime.now().date())], ['Payment Id', str(response.transaction_response.trans_id)], ['User name', player.user.first_name+' '+player.user.last_name]]
+    data=[['Receipt'],['Date invoiced', str(datetime.now().date())], ['Payment Id', 'tset'], ['User name', 'test'+' '+'test']]
     table = Table(data, colWidths=[100, 215], rowHeights=30)
     table.setStyle(TableStyle([
                                ('INNERGRID', (0,0), (0,0), 0.25, colors.black),
@@ -57,8 +62,8 @@ def createPDF(purchases):
                                ]))
     table.wrapOn(p, 200, 400)
     table.drawOn(p,85,500)
-    game_detail = game.date.strftime('%A, %dth of %B')+ " - " +game.start_time.strftime('%I %p')+' - '+ game.sport.title+ ' at '+ game.court.venue.venue_name
-    data=[['Game Details', 'Amount'],[game_detail, game.cost], ['Amount Paid', game.cost]]
+    # game_detail = game.date.strftime('%A, %dth of %B')+ " - " +"game.start_time.strftime('%I %p')"+' - '+ game.sport.title+ ' at '+ game.court.venue.venue_name
+    data=[['Game Details', 'Amount'],['game_detail, game.cost'], ['Amount Paid', 'game.cost']]
     table = Table(data, colWidths=[300, 100], rowHeights=[30, 70, 30])
     table.setStyle(TableStyle([
                                ('INNERGRID', (0,0), (-1,-1), 0.25, colors.black),
@@ -81,35 +86,17 @@ class Reports(View):
 
 class SalesReports(View):
     def get(self, request, *args, **kwarg):
-        return render(request, 'reports/sales_reports_date.html', {})
-
-class SalesReportsDate(View):
-    def get(self, request, *args, **kwargs):
-        return render(request, 'reports/sales_reports_date.html',{})        
-
-class SalesReportsItem(View):
-    def get(self, request, *args, **kwargs):
-        return render(request, 'reports/sales_reports_item.html',{})    
-
-class SalesReportsSalesman(View):
-    def get(self, request, *args, **kwargs):
-        return render(request, 'reports/sales_reports_salesman.html',{})
-
-class SalesReportsCustomer(View):
-    def get(self, request, *args, **kwargs):
-        return render(request, 'reports/sales_reports_customer.html',{})	
-
-class SalesReportsArea(View):
-    def get(self, request, *args, **kwargs):
-        return render(request, 'reports/sales_reports_area.html',{})
+        return render(request, 'reports/sales_reports.html', {})
 
 class PurchaseReportsDate(View):
     def get(self, request, *args, **kwargs):
 
         if request.is_ajax():
+            ctx_purchase_report = []
+            status_code = 200
             if request.GET['report_name'] == 'date':
-                ctx_purchase_report = []
-                status_code = 200
+                
+                
                 start_date = request.GET['start_date']
                 end_date = request.GET['end_date']
                 start_date = datetime.strptime(start_date, '%d/%m/%Y')
@@ -127,18 +114,40 @@ class PurchaseReportsDate(View):
                         'quantity': purchase.purchaseitem_set.all()[0].quantity_purchased,
                         'amount': purchase.purchaseitem_set.all()[0].net_amount,
                     })
-                pdf = createPDF(purchases)
-                print pdf
-                try:    
-                    res = {
-                        'purchases': ctx_purchase_report,                    
-                    }    
-                    response = simplejson.dumps(res)
-                except Exception as ex:
-                    # remember to change exception
-                    response = simplejson.dumps({'result': 'error', 'error': str(ex)})
-                    status_code = 500
-                return HttpResponse(response, status = status_code, mimetype = 'application/json')
+                # fileobj = createPDF(purchases)
+                # file_extension = 'pdf'
+                # path = settings.PROJECT_ROOT
+                # print path
+                # print 'root === ',settings.PROJECT_ROOT
+                # pdf_file_name = 'purchase_report_date_wise'+"."+file_extension
+                # pdf_name = path+'/media/uploads/reports/%s'%(pdf_file_name)
+                # file_name = '%s'%(pdf_name)
+                # print file_name
+                # with open(file_name, 'w') as destination:
+                #     for chunk in fileobj.chunks():
+                #         destination.write(chunk)
+                # file_path = "uploads/reports/"+pdf_file_name
+            else:
+                vendor_name = request.GET['vendor_name']
+                vendor = Vendor.objects.get(user__first_name = vendor_name)
+                purchases = Purchase.objects.filter(vendor = vendor)
+                for purchase in purchases:
+                    ctx_purchase_report.append({
+                        'date': purchase.purchase_invoice_date.strftime('%d/%m/%Y'),
+                        'invoice_no': purchase.purchase_invoice_number,
+                        'vendor_invoice_no': purchase.vendor_invoice_number,
+                        'amount': purchase.purchaseitem_set.all()[0].net_amount,
+                    })
+            try:    
+                res = {
+                    'purchases': ctx_purchase_report,                 
+                }    
+                response = simplejson.dumps(res)
+            except Exception as ex:
+                # remember to change exception
+                response = simplejson.dumps({'result': 'error', 'error': str(ex)})
+                status_code = 500
+            return HttpResponse(response, status = status_code, mimetype = 'application/json')
         else:
             return render(request, 'reports/purchase_reports.html',{})
 
@@ -225,8 +234,31 @@ class PurchaseReturn(View):
         return render(request, 'reports/purchase_return.html',{})
 
 class ExpenseReport(View):
+
     def get(self, request, *args, **kwargs):
-        return render(request, 'reports/expense_report.html',{})
+        
+        if request.is_ajax():
+            ctx_purchase_report = []
+            status_code = 200
+            start_date = request.GET['start_date']
+            end_date = request.GET['end_date']
+            start_date = datetime.strptime(start_date, '%d/%m/%Y')
+            end_date = datetime.strptime(end_date, '%d/%m/%Y')
+            purchases = Purchase.objects.filter(purchase_invoice_date__gte=start_date, purchase_invoice_date__lte=end_date).order_by('purchase_invoice_date')
+            for purchase in purchases:
+                ctx_purchase_report.append({
+                    'date': purchase.purchase_invoice_date.strftime('%d/%m/%Y'),
+                    'invoice_no': purchase.purchase_invoice_number,
+                    'vendor_invoice_no': purchase.vendor_invoice_number,
+                    'item_code': purchase.purchaseitem_set.all()[0].item.code,
+                    'item_name': purchase.purchaseitem_set.all()[0].item.name,
+                    'uom': purchase.purchaseitem_set.all()[0].item.uom.uom,
+                    'unit_cost_price': purchase.purchaseitem_set.all()[0].cost_price,
+                    'quantity': purchase.purchaseitem_set.all()[0].quantity_purchased,
+                    'amount': purchase.purchaseitem_set.all()[0].net_amount,
+                })
+        else:
+            return render(request, 'reports/expense_report.html',{})
 
 class PurchaseAccountsDate(View):
     def get(self, request, *args, **kwargs):
