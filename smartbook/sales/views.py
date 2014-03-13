@@ -44,11 +44,15 @@ class SalesEntry(View):
         sales.sales_invoice_number = sales_dict['sales_invoice_number']
         sales.sales_invoice_date = datetime.strptime(sales_dict['sales_invoice_date'], '%d/%m/%Y')
         customer = Customer.objects.get(user__first_name=sales_dict['customer'])
-        salesman = Staff.objects.get(user__first_name=sales_dict['staff'])      
+        
+        salesman = Staff.objects.get(user__first_name=sales_dict['staff']) 
+        
         sales.discount = sales_dict['net_discount']
         sales.round_off = sales_dict['roundoff']
         sales.net_amount = sales_dict['net_total']
         sales.grant_total = sales_dict['grant_total']
+        sales.customer = customer
+        sales.salesman = salesman
         
         sales.save()
         sales_items = sales_dict['sales_items']

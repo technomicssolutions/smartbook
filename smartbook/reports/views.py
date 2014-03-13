@@ -101,8 +101,7 @@ class SalesReports(View):
             total_sp = 0
             cost_price = 0
             i = 0 
-
-            print request.GET['report_name']
+            
 
             if request.GET['report_name'] == 'date':
                 start = request.GET['start_date']
@@ -258,9 +257,9 @@ class SalesReports(View):
                 
                 salesman_name = request.GET['salesman_name']
                 desig = Designation.objects.get(title = 'Salesman')                
-                salesmen = Staff.objects.filter(designation = desig, user__first_name=salesman_name)
-                
+                salesmen = Staff.objects.filter(designation = desig, user__first_name=salesman_name)                
                 sales = Sales.objects.filter(sales_invoice_date__gte=start_date,sales_invoice_date__lte=end_date,salesman=salesmen)
+                
                 if sales.count()>0:                    
                     for sale in sales:
                         items = sale.salesitem_set.all()
@@ -302,8 +301,7 @@ class SalesReports(View):
                     'total_sp' : total_sp,
                     'total_profit' : total_profit,
                     'total_discount' : total_discount,
-                })
-
+                })            
 
             try:                
                 res = {
