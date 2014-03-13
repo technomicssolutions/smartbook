@@ -54,9 +54,58 @@
 						</div>
 					</div>
 								
-				</div>	
+				</div>
 
-				<div class="section_3_purchase">
+
+				<div class="section_3_sales">
+					<div class="search_sales">
+						<div class="control">
+							<label> Item Code </label>
+   							<input type='text' id="item_code" ng-model="item_code" ng-change="getItems('item_code')"/>
+   						</div>
+   						<div class="control">
+   							<label> Item name </label>
+   							<input type="text" id='item_name' ng-model="item_name" ng-change="getItems('item_name')"/>
+   						</div>
+   						<div class="control">
+   							<label> Barcode </label>
+   							<input type="text" id='barcode' ng-model="barcode" ng-change="getItems('barcode')"/>
+   						</div>
+   						<div class="clear"></div>
+	   					<div class="item_list" ng-show='selecting_item' ng-hide="item_selected">
+							<div class="item_list_row header">
+								<span> Item Code </span>
+								<span> Item name </span>
+								<span> Barcode </span>
+							</div>
+							<div ng-repeat="item in items" ng-click="addSalesItem(item)" class="item_list_row">
+								<span>[[item.item_code]]</span>
+								<span>[[item.item_name]]</span>
+								<span>[[item.barcode]] </span>
+							</div>
+							<div class="clear"></div>
+						</div>
+    				</div>
+    				<div class="clear"></div>
+   				</div>
+
+				<div class="purchase_items_list" ng-show="purchase.purchase_items.length > 0">
+   					<div class="purchase_item_list">
+   						<div class="item_list_row header">
+   							<span>Item Code </span>
+						  <span>Item Name</span>
+						  <span>Stock</span>
+						  <span>Unit Price</span>
+						  <span>UOM</span>
+						  <span>Quantity</span>
+						  <span>Quantity</span>
+						  <span>Return Quantity</span>
+						  <span>Discount (%)</span>
+						  <span>Amount</span>
+						</div>
+
+
+				<!-- <div class="section_3_sales">
 					<table id="list" class="table table-hover" style="margin-top: 55px">
 						<tr class="success" style="font-size: 12px"style="width:auto">
 						  <th>Item Code </th>
@@ -69,9 +118,29 @@
 						  <th>Discount (%)</th>
 						  <th>Amount</th>			 
 						</tr>
-					</table>
+					</table> -->
 					</div>
-				</div>
+				
+
+					<div ng-repeat="item in sales_items" class="item_list_row">
+							<span class="small_column">[[item.item_code]] </span>
+							<span>[[item.item_code]] </span>
+							<span>[[item.name]] </span>
+							<span>[[item.current_stock]] </span>
+							<span>[[item.uom]] </span>
+							<span>[[item.quantity] </span>
+							<span> [[item.discount]] </span> 
+							<span>[[item.net_amount]] </span>
+							 
+							
+						</div>
+						
+						<div class="clear"></div>
+   					</div>
+   					<div class="clear"></div>
+   				</div>
+   				
+   				<div class="clear"></div>
 
 
 				<div class="section_2_sales">
@@ -82,10 +151,10 @@
 						<div class="forminput">
 							<input type="text" name="salesman">
 						</div>
-					</div>
+					<!--</div>
 
 					<div class="formrow_sales">
-						<div class="formtext_sales">
+						 --><div class="formtext_sales">
 							<label for="sales_man">Salesman Code</label>
 						</div>
 						<div class="forminput">
@@ -102,39 +171,41 @@
 						<div class="forminput">
 							<input type="text" name="total">
 						</div>
-					</div>
+					<!-- </div>
 
 					<div class="formrow_sales">
-						<div class="formtext_sales">
+					 -->	<div class="formtext_sales">
 							<label for="discount">Discount</label>
 						</div>
 						<div class="forminput">
 							<input type="text" name="discount">
 						</div>
-					</div>
+					<!-- </div>
 					<div class="formrow_sales">
-						<div class="formtext_sales">
+					 -->	<div class="formtext_sales">
 							<label for="round_off">Round Off</label>
 						</div>
 						<div class="forminput">
 							<input type="text" name="round_off">
 						</div>
-					</div>
+					<!-- </div>
 					<div class="formrow_sales">
-						<div class="formtext_sales">
+					 -->	<div class="formtext_sales">
 							<label for="grand_total">Grand Total</label>
 						</div>
 						<div class="forminput">
 							<input type="text" name="grand_total">
 						</div>
 					</div>
+					
 					<br><br><br>
-					<div>
-						<input style="background-color:#cce6ff" type="submit" value="Print">
-						<input style="background-color:#cce6ff" type="submit" value="New Invoice">
-						<input style="background-color:#cce6ff" type="submit" value="Submit">
-						<input style="background-color:#cce6ff" type="submit" value="Reset">
-						<input style="background-color:#cce6ff" type="submit" value="Cancel">
+					<div class="section_3_sales">
+						<!-- <input type="submit" value="Print">
+						<input type="submit" value="New Invoice"> -->
+						<input type="submit" value="Submit">
+						<input type="submit" value="Reset">
+						<input type="submit" value="Cancel">
+					
 					</div>
 				</div>
 
