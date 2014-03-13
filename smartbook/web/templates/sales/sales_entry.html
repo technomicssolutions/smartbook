@@ -4,6 +4,10 @@
 
 {% block title %}Sales Entry{% endblock title %}
 {% block controller %}ng-controller="SalesController" ng-init="init('{{csrf_token}}', '{{sales_invoice_number}}')"{% endblock controller %}
+{% block dialogue_popup %}
+	{% include 'add_new_customer.html' %} 
+	              	
+{% endblock %}
 
 {% block content %}
 
@@ -17,11 +21,12 @@
 				<div class="section_1_sales">
 					<div class="formrow_sales">
 						<div class="formtext_sales	">
-							<label for="Date ">Date & Time</label>
+							<label for="Date ">Date </label>
 						</div>
 
 						<div class="forminput_sales">
-							<input type="text" name="sales_invoice_date" ng-model="sales.sales_invoice" id="sales_invoice_date">
+							
+							<input type="text" name="sales_invoice_date"  id="sales_invoice_date" value="{{current_date}}" ng-readonly="payment_mode_selection">
 						</div>
 					</div>
 
@@ -30,11 +35,13 @@
 							<label for="customer">Customer Name</label>
 						</div>
 						<div class="forminput_sales">
-							<select name="customer" >
-								
-								
+							<select name="customer" ng-model="sales.customer" ng-change="add_customer()" >
+								<option value="select">Select</option>
+								<option ng-repeat="customer in customers" value="[[customer.customer_name]]" ng-selected="customer.customer_name == sales.customer">[[customer.customer_name]]
+								</option>
+								<option value="other">Other</option>
 							</select>
-							<input type="submit" value="Add">
+							
 						</div>
 					</div>
 
@@ -49,15 +56,7 @@
 					</div>
 
 
-					<div class="formrow_sales">
-						<div class="formtext_sales">
-							<label for="contact">Contact </label>
-						</div>
-						<div class="forminput_sales">
-							<label for="contact_display"> </label>
-						</div>
-
-					</div>
+					
 
 				</div>	
 		
@@ -93,8 +92,8 @@
     				<div class="clear"></div>
    				</div>
 
-   				
-   				<div class="purchase_items_list" ng-show="sales_items.length > 0">
+
+   				<div class="purchase_items_list" ng-show="sales.sales_items.length > 0">
    					<div class="purchase_item_list">
    						
    						<div class="item_list_row header">
@@ -113,7 +112,7 @@
 							<span> Unit Cost </span>		
 							<span> Net Amount </span>
 						</div>
-						<div ng-repeat="item in sales_items" class="item_list_row">
+						<div ng-repeat="item in sales.sales_items" class="item_list_row">
 							<span class="small_column">[[item.item_code]] </span>
 							<span>[[item.item_name]] </span>
 							<span>[[item.barcode]] </span>
@@ -145,8 +144,12 @@
 							<label for="salesman_code">Salesman Code</label>
 						</div>
 						<div class="forminput_sales">
-							<select name="salesman_code" >
+							<select name="staff" ng-model="sales.staff" ng-change="add_staff()" >
+								<option value="select">Select</option>
+								<option ng-repeat="staff in staffs" value="[[staff.staff_name]]" ng-selected="staff.staff_name == sales.staff">[[staff.staff_name]]
+								</option>
 								
+							</select>
 								
 							</select>
 						</div>
@@ -155,8 +158,8 @@
 							<label for="payment_mode">Payment Mode</label>
 						</div>
 						<div class="forminput_sales" id="radio_input">
-							<input type="radio" name="payment_mode" ng-model="payment_mode" value="true" ng-change=""><label>Cash</label>
-							<input type="radio" name="payment_mode" ng-model="payment_mode" value="false" ng-change=""><label>Cheque</label>
+							<input type="radio" name="payment_mode" ng-model="payment_mode" value="cash" ng-change="payment_mode_change_sales('cash')"><label>Cash</label>
+							<input type="radio" name="payment_mode" ng-model="payment_mode" value="cheque" ng-change="payment_mode_change_sales('cheque')"><label>Cheque</label>
 						</div>
 					</div>
 					
@@ -166,14 +169,14 @@
 							<label for="net_total">Net Total</label>
 						</div>
 						<div class="forminput_sales">
-							<input type="text" name="net_total"ng-model="sales.net_total" >
+							<input type="text" name="net_total"ng-model="sales.net_total" readonly/ >
 						</div>
 					
 						<div class="formtext_sales">
 							<label for="discount">Discount</label>
 						</div>
 						<div class="forminput_sales">
-							<input type="text" name="discount" ng-model="sales.discount"ng-change="calculate_grant_total_sale()">
+							<input type="text" name="net_discount" ng-model="sales.net_discount"ng-change="calculate_grant_total_sale()" readonly/>
 						</div>
 
 						<div class="formtext_sales">
@@ -187,7 +190,7 @@
 							<label for="Grant Total">Grand Total</label>
 						</div>
 						<div class="forminput_sales">
-							<input type="text" name="grant_total" ng-model="sales.grant_total">
+							<input type="text" name="grant_total" ng-model="sales.grant_total" readonly/>
 						</div>
 
 						<div class="formtext_sales">
@@ -208,7 +211,8 @@
 			</div>
 			<div  align="Center">
 				<div class="buttons">
-					<input type="submit" value="Submit">
+					<p class="error_message"> [[validation_error]] </p>
+					<input type="button" value="Submit" ng-click="save_sales();">
 					<a href="{% url 'home' %}"><input type="button" value="Cancel"></a>
 				</div>
 			</div>			

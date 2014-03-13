@@ -49,9 +49,29 @@ class UserList(View):
     def get(self, request, *args, **kwargs):
         user_type = kwargs['user_type']
         ctx_vendors = []
+
+        ctx_staffs = []
+
+
         ctx_customers = []
+        ctx_salesman = []
         if user_type == 'staff':
             users = UserProfile.objects.filter(user_type='staff')
+
+            if request.is_ajax():
+                if len(users) > 0:
+                    for usr in users:
+                        ctx_staffs.append({
+                            'staff_name': usr.user.first_name,
+                        })
+                res = {
+                    'staffs': ctx_staffs,
+                    
+                } 
+
+                response = simplejson.dumps(res)
+                status_code = 200
+                return HttpResponse(response, status = status_code, mimetype="application/json")
         elif user_type == 'vendor':
             users = UserProfile.objects.filter(user_type='vendor')
             if request.is_ajax():
@@ -62,6 +82,7 @@ class UserList(View):
                         })
                 res = {
                     'vendors': ctx_vendors,
+                    
                 } 
                 
                 response = simplejson.dumps(res)
@@ -69,14 +90,35 @@ class UserList(View):
                 return HttpResponse(response, status = status_code, mimetype="application/json")
         elif user_type == 'customer':
             users = UserProfile.objects.filter(user_type='customer')
+
+            
             if request.is_ajax():
-                if len(users)>0:
+                if len(users) > 0:
                     for usr in users:
                         ctx_customers.append({
-                            'customer_name' : usr.user.first_name,
+                            'customer_name': usr.user.first_name,
                         })
                 res = {
-                    'customers' : ctx_customers,
+                    'customers': ctx_customers,
+                    
+                } 
+
+
+                response = simplejson.dumps(res)
+                status_code = 200
+                return HttpResponse(response, status = status_code, mimetype="application/json")
+        elif user_type == 'salesman': 
+            desig = Designation.objects.get(title = 'Salesman')
+            salesmen = Staff.objects.filter(designation = desig)
+
+            if request.is_ajax():
+                if len(salesmen)>0:
+                    for salesman in salesmen:
+                        ctx_salesman.append({
+                            'salesman_name' : salesman.user.first_name,
+                        })
+                res = {
+                    'salesmen' : ctx_salesman,
                 }
 
                 response = simplejson.dumps(res)
@@ -123,6 +165,7 @@ class RegisterUser(View):
             elif user_type == 'staff':
                 message = 'Staff with this name already exists'
             elif user_type == 'customer':
+
                 message = 'Customer with this name already exists'
             context = {
                 'error_message': message,
@@ -144,6 +187,7 @@ class RegisterUser(View):
         userprofile.land_line = request.POST['phone']
         userprofile.email_id = request.POST['email']
         userprofile.save()
+
         if user_type == 'vendor':
             vendor = Vendor()  
             vendor.contact_person= request.POST['contact_person']
@@ -183,17 +227,27 @@ class RegisterUser(View):
             }
             return render(request, 'register_user.html',context)
         elif user_type == 'customer':
+
             customer = Customer()
             user.is_active = False
             user.save()
             customer.user = user
             customer.save()
+            
+            if request.is_ajax():
+                res = {
+                    'result': 'ok',
+                    'customer_name': user.first_name
+                }
+                response = simplejson.dumps(res)
+                return HttpResponse(response, status = 200, mimetype="application/json")
             context = {
-                'message' : 'Customer Added Successfully',
+                'message' : 'Customer added correctly',
                 'user_type': user_type
             }
-            return render(request, 'register_user.html', context)
-    
+            return render(request, 'register_user.html',context)
+
+            
         
 class EditUser(View):
 
