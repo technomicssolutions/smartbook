@@ -3,6 +3,8 @@ from django.contrib.auth.models import User
 
 # Create your models here.
 
+from web.models import *
+
 class UnitOfMeasure(models.Model):
 
 	uom = models.CharField('Unit Of Measure', max_length=50, unique=True)
@@ -36,7 +38,8 @@ class Item(models.Model):
 
 class Inventory(models.Model):
 
-	item = models.ForeignKey(Item, unique=True)
+	item = models.ForeignKey(Item)
+	vendor = models.ForeignKey(Vendor)
 	quantity = models.IntegerField('Quantity', default=0)
 	unit_price = models.DecimalField('Unit Price',max_digits=14, decimal_places=2, default=0)
 	selling_price = models.DecimalField('Selling Price',max_digits=14, decimal_places=2, default=0)
@@ -48,3 +51,4 @@ class Inventory(models.Model):
 
 	class Meta:
 		verbose_name_plural = 'Inventory'
+		unique_together = ('item', 'vendor')

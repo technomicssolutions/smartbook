@@ -325,10 +325,22 @@ function PurchaseController($scope, $element, $http, $timeout, share, $location)
                 $scope.error_flag=true;
                 $scope.message = data.message;
             } else {
-                $scope.popup.hide_popup();
+                $scope.popup.hide_popup();                             
                 $scope.get_vendors();
                 $scope.purchase.vendor = $scope.vendor_name;
                 $scope.purchase.vendor = data.vendor_name;
+                $scope.vendor_name = '';
+                $scope.contact_person = '';
+                $scope.house_name = '';
+                $scope.street = '';
+                $scope.city = '';
+                $scope.district = '';
+                $scope.pin = '';
+                $scope.mobile = '';
+                $scope.land_line = '';
+                $scope.email_id = '';
+
+
             }
         }).error(function(data, success){
             
@@ -357,6 +369,7 @@ function PurchaseController($scope, $element, $http, $timeout, share, $location)
             var height = $(document).height();
             $scope.popup.set_overlay_height(height);
             $scope.popup.show_content();
+
         }
     }
 
@@ -433,6 +446,8 @@ function PurchaseController($scope, $element, $http, $timeout, share, $location)
                 $scope.popup.hide_popup();
                 $scope.get_companies();
                 $scope.purchase.transport = $scope.company_name;
+                $scope.company_name = '';
+
                 
             }
         }).error(function(data, success){
@@ -658,43 +673,211 @@ function SalesController($scope, $element, $http, $timeout, share, $location) {
 
     $scope.items = [];
     $scope.selected_item = '';
-    $scope.customer_name = '';
-    $scope.salesman_code = '';
+    $scope.customer = '';
+    $scope.staff = '';
     $scope.selecting_item = false;
     $scope.item_selected = false;
+    $scope.payment_mode = 'cash';
+    $scope.payment_mode_selection = true;
     $scope.sales = {
         'sales_items': [],
         'sales_invoice_number': '',
         'date_sales': '',
-        'salesman_code': '',
+        'customer':'',
+        'staff': '',
         'net_total': 0,
-        'discount': 0,
+        'net_discount': 0,
         'roundoff': 0,
         'grant_total': 0,
         'paid': 0,
         'balance': 0,
         
     }
-    
-  
+    $scope.sales.staff = 'select';
+    $scope.sales.customer = 'select';
     $scope.init = function(csrf_token, sales_invoice_number)
     {
         $scope.csrf_token = csrf_token;
         $scope.sales.sales_invoice_number = sales_invoice_number;
         $scope.popup = '';
-        var date_picker = new Picker.Date($$('#sales_invoice_date'), {
+        
+        
+        $scope.get_staff();
+        $scope.get_customers();
+            
+        console.log("$scope.sales.sales_invoice_number ", $scope.sales.sales_invoice_number );
+    }
+    $scope.payment_mode_change_sales = function(payment_mode) {
+        if(payment_mode == 'cheque') {
+            $scope.payment_mode_selection = false;
+            
+            var date_picker = new Picker.Date($$('#sales_invoice_date'), {
             timePicker: false,
             positionOffset: {x: 5, y: 0},
             pickerClass: 'datepicker_bootstrap',
             useFadeInOut: !Browser.ie,
             format:'%d/%m/%Y',
         });
-        
-
             
-        console.log("$scope.sales.sales_invoice_number ", $scope.sales.sales_invoice_number );
+        } else {
+            $scope.payment_mode_selection = true;
+        }
+    }
+    $scope.validate_sales = function() {
+        if($scope.sales.sales_invoice_date == '') {
+            $scope.validation_error = "Enter Sales invoice Date" ;
+            return false;
+        } else if($scope.sales.customer =='select'){
+            $scope.validation_error = "Enter Customer Name";
+            return false;
+        } else if($scope.sales.staff =='select') {
+            $scope.validation_error = "Enter Salesman Name";
+            return false;
+        } else if($scope.sales.sales_items.length == 0){
+            $scope.validation_error = "Choose Item";
+            return false;
+        } 
+        else {
+            return true;
+        }        
     }
 
+
+    $scope.get_staff = function() {
+        $http.get('/staff/list/').success(function(data)
+        {
+            $scope.staffs = data.staffs;
+
+        }).error(function(data, status)
+        {
+            console.log(data || "Request failed");
+        });
+    }
+        $scope.add_staff = function() {
+
+        if($scope.sales.staff == 'other') {
+
+            $scope.popup = new DialogueModelWindow({
+                'dialogue_popup_width': '384px',
+                'message_padding': '0px',
+                'left': '28%',
+                'top': '40px',
+                'height': '702px',
+                'content_div': '#'
+            });
+            var height = $(document).height();
+            $scope.popup.set_overlay_height(height);
+            $scope.popup.show_content();
+        }
+    }
+
+    $scope.add_new_staff = function() {
+        params = { 
+            'name':$scope.staff_name,
+            'contact_person': $scope.contact_person,
+            'house': $scope.house_name,
+            'street': $scope.street,
+            'city': $scope.city,
+            'district':$scope.district,
+            'pin': $scope.pin,
+            'mobile': $scope.mobile,
+            'phone': $scope.land_line,
+            'email': $scope.email_id,
+            "csrfmiddlewaretoken" : $scope.csrf_token
+        }
+        $http({
+            method : 'post',
+            url : "/register/staff/",
+            data : $.param(params),
+            headers : {
+                'Content-Type' : 'application/x-www-form-urlencoded'
+            }
+        }).success(function(data, status) {
+            
+            if (data.result == 'error'){
+                $scope.error_flag=true;
+                $scope.message = data.message;
+            } else {
+                $scope.popup.hide_popup();
+                $scope.get_staff();
+                $scope.sales.staff = $scope.staff_name;
+                $scope.sales.staff = data.staff_name;
+            }
+        }).error(function(data, success){
+            
+        });
+    }
+
+    $scope.get_customers = function() {
+        $http.get('/customer/list/').success(function(data)
+        {   
+            
+            $scope.customers = data.customers;
+
+        }).error(function(data, status)
+        {
+            console.log(data || "Request failed");
+        });
+    }
+        $scope.add_customer = function() {
+
+        if($scope.sales.customer == 'other') {
+
+
+            $scope.popup = new DialogueModelWindow({
+                'dialogue_popup_width': '36%',
+                'message_padding': '0px',
+                'left': '28%',
+                'top': '40px',
+                'height': 'auto',
+                'content_div': '#add_customer'
+            });
+            var height = $(document).height();
+            $scope.popup.set_overlay_height(height);
+            $scope.popup.show_content();
+        }
+    }
+    $scope.close_popup = function(){
+        $scope.popup.hide_popup();
+    }
+
+    $scope.add_new_customer = function() { 
+        params = { 
+            'name':$scope.customer_name,
+            'contact_person': $scope.contact_person,
+            'house': $scope.house_name,
+            'street': $scope.street,
+            'city': $scope.city,
+            'district':$scope.district,
+            'pin': $scope.pin,
+            'mobile': $scope.mobile,
+            'phone': $scope.land_line,
+            'email': $scope.email_id,
+            "csrfmiddlewaretoken" : $scope.csrf_token
+        }
+        $http({
+            method : 'post',
+            url : "/register/customer/",
+            data : $.param(params),
+            headers : {
+                'Content-Type' : 'application/x-www-form-urlencoded'
+            }
+        }).success(function(data, status) {
+            
+            if (data.result == 'error'){
+                $scope.error_flag=true;
+                $scope.message = data.message;
+            } else {
+                $scope.popup.hide_popup();
+                $scope.get_customers();
+
+                $scope.sales.customer = $scope.customer_name;
+                $scope.sales.customer = data.customer_name;
+            }
+        }).error(function(data, success){
+            
+        });
+    }
 
     $scope.items = [];
     $scope.selected_item = '';
@@ -750,14 +933,15 @@ function SalesController($scope, $element, $http, $timeout, share, $location) {
         $scope.calculate_tax_amount_sale(selected_item);
         $scope.calculate_discount_amount_sale(selected_item);
         $scope.calculate_unit_cost_sale(selected_item);
-        $scope.sales_items.push(selected_item);
+       
+        $scope.sales.sales_items.push(selected_item);
     }
     
     
     $scope.calculate_net_amount_sale = function(item) {
         if(item.qty_sold != '' && item.unit_price != ''){
             item.net_amount = ((parseFloat(item.qty_sold)*parseFloat(item.unit_price))+parseFloat(item.tax_amount)-parseFloat(item.disc_given)).toFixed(2);
-            
+            $scope.calculate_net_discount_sale();
         }
         $scope.calculate_net_total_sale();
     }
@@ -769,6 +953,7 @@ function SalesController($scope, $element, $http, $timeout, share, $location) {
     $scope.calculate_discount_amount_sale = function(item) {
         if(item.discount_permit != '' && item.unit_price != ''){
             item.discount_permit_amount = (parseFloat(item.unit_price)*parseFloat(item.discount_permit))/100;
+            
         }
     }
     $scope.calculate_unit_cost_sale = function(item) {
@@ -780,17 +965,55 @@ function SalesController($scope, $element, $http, $timeout, share, $location) {
 
     $scope.calculate_net_total_sale = function(){
         var net_total = 0;
-        for(i=0; i<$scope.sales_items.length; i++){
-            net_total = net_total + parseFloat($scope.sales_items[i].net_amount);
+        for(i=0; i<$scope.sales.sales_items.length; i++){
+            net_total = net_total + parseFloat($scope.sales.sales_items[i].net_amount);
         }
         $scope.sales.net_total = net_total;
         $scope.calculate_grant_total_sale();
+        
     }
+    $scope.calculate_net_discount_sale = function(){
+        
+        var net_discount = 0;
+        for(i=0; i<$scope.sales.sales_items.length; i++){
+           
+            net_discount = net_discount + parseFloat($scope.sales.sales_items[i].disc_given);
+
+        }
+        $scope.sales.net_discount = net_discount;
+        
+    }
+
+
     $scope.calculate_grant_total_sale = function(){
-        $scope.sales.grant_total = $scope.sales.net_total - $scope.sales.discount - $scope.sales.roundoff;
+        $scope.sales.grant_total = $scope.sales.net_total   - $scope.sales.roundoff;
     }
     $scope.calculate_balance_sale = function () {
         $scope.sales.balance = $scope.sales.grant_total - $scope.sales.paid;
+    }
+    $scope.save_sales = function() {
+        if($scope.validate_sales()) {
+
+            $scope.sales.sales_invoice_date = $$('#sales_invoice_date')[0].get('value');
+            
+            params = { 
+                'sales': angular.toJson($scope.sales),
+                "csrfmiddlewaretoken" : $scope.csrf_token
+            }
+            $http({
+                method : 'post',
+                url : "/sales/entry/",
+                data : $.param(params),
+                headers : {
+                    'Content-Type' : 'application/x-www-form-urlencoded'
+                }
+            }).success(function(data, status) {
+                //document.location.href = '/sales/entry/';
+               
+            }).error(function(data, success){
+                
+            });
+        }
     }
 
 }
@@ -1205,7 +1428,7 @@ function PurchaseAccountReportController($scope, $element, $http, $location) {
                 $scope.error_flag = true;
                 $scope.messages = 'Please choose End date';
             } else {
-               $http.get('/reports/purchase_accounts_report/?report_name=date&start_date='+$scope.start_date+'&end_date='+$scope.end_date).success(function(data){
+               $http.get('/reports/purchase_accounts/?report_name=date&start_date='+$scope.start_date+'&end_date='+$scope.end_date).success(function(data){
                     for (i=0; i < data.purchase_accounts.length; i++) {
                         data.purchase_accounts[i].total_amount = data.purchase_accounts[i].total_amount.toFixed(2);
                         data.purchase_accounts[i].paid_amount = data.purchase_accounts[i].paid_amount.toFixed(2);
@@ -1219,7 +1442,7 @@ function PurchaseAccountReportController($scope, $element, $http, $location) {
                 $scope.error_flag = true;
                 $scope.messages = 'Please choose Vendor';
             } else {
-                $http.get('/reports/purchase_accounts_report/?report_name=vendor&vendor_name='+$scope.vendor_name).success(function(data){
+                $http.get('/reports/purchase_accounts/?report_name=vendor&vendor_name='+$scope.vendor_name).success(function(data){
                     
                     for (i=0; i < data.purchase_accounts.length; i++) {
                         data.purchase_accounts[i].total_amount = data.purchase_accounts[i].total_amount.toFixed(2);
@@ -1299,7 +1522,7 @@ function PurchaseReturnReportController($scope, $element, $http, $location) {
                 $scope.error_flag = true;
                 $scope.messages = 'Please choose End date';
             } else {
-               $http.get('/reports/purchase_return_report/?report_name=date&start_date='+$scope.start_date+'&end_date='+$scope.end_date).success(function(data){
+               $http.get('/reports/purchase_return/?report_name=date&start_date='+$scope.start_date+'&end_date='+$scope.end_date).success(function(data){
                     var total_amount = 0;
                     if (data.purchase_returns.length > 0) {
                         $scope.date_total_amount_flag = true;
@@ -1319,7 +1542,7 @@ function PurchaseReturnReportController($scope, $element, $http, $location) {
                 $scope.error_flag = true;
                 $scope.messages = 'Please choose Vendor';
             } else {
-                $http.get('/reports/purchase_return_report/?report_name=vendor&vendor_name='+$scope.vendor_name).success(function(data){
+                $http.get('/reports/purchase_return/?report_name=vendor&vendor_name='+$scope.vendor_name).success(function(data){
                     if (data.purchase_returns.length > 0) {
                         $scope.date_total_amount_flag = false;
                         $scope.vendor_total_amount_flag = true;

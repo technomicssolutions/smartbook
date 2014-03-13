@@ -62,8 +62,18 @@ class PurchaseReturn(models.Model):
 	purchase = models.ForeignKey(Purchase)
 	return_invoice_number = models.IntegerField('Purchase Return invoice number', unique=True)
 	date = models.DateField('Date')
-	amount = models.DecimalField('Amount', max_digits=14, decimal_places=3, default=0)
+	net_amount = models.DecimalField('Amount', max_digits=14, decimal_places=3, default=0)
 
+	def __unicode__(self):
+		return self.purchase
+
+class PurchaseReturnItems(models.Model):
+	purchase_return = models.ForeignKey(PurchaseReturn)
+	item = models.ForeignKey(Item)
+	date = models.DateField('Date')
+	amount = models.DecimalField('Amount', max_digits=14, decimal_places=3, default=0)
+	quantity = models.IntegerField('Quantity', default=0)
+	
 	def __unicode__(self):
 		return self.purchase
 
