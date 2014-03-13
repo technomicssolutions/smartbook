@@ -943,7 +943,8 @@ function SalesController($scope, $element, $http, $timeout, share, $location) {
         $scope.sales.balance = $scope.sales.grant_total - $scope.sales.paid;
     }
     $scope.save_sales = function() {
-        if($scope.validate_sales) {
+       // if($scope.validate_sales) {
+            
             $scope.sales.sales_invoice_date = $$('#sales_invoice_date')[0].get('value');
             
             params = { 
@@ -963,7 +964,7 @@ function SalesController($scope, $element, $http, $timeout, share, $location) {
             }).error(function(data, success){
                 
             });
-        }
+       // }
     }
 
 }

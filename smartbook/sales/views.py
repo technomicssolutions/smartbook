@@ -1,5 +1,9 @@
 # Create your views here.
 import sys
+import ast
+import simplejson
+import datetime as dt
+from datetime import datetime
 
 from django.db import IntegrityError
 from django.db.models import Max
@@ -11,7 +15,8 @@ from django.contrib.auth import authenticate, login, logout
 from django.core.urlresolvers import reverse
 from django.contrib.auth.models import User
 from sales.models import Sales
-
+from sales.models import Customer
+from sales.models import Staff
 #from sales.models import *
 
 class SalesEntry(View):
@@ -25,14 +30,15 @@ class SalesEntry(View):
 
     def post(self, request, *args, **kwargs):
 
+        print "wkjahlfkjwhkljewk"
         sales_dict = ast.literal_eval(request.POST['sales'])
-        sales, sales_created = sales.objects.get_or_create(sales_invoice_number=1)
+        sales,sales_created = Sales.objects.get_or_create(sales_invoice_number=1)
         sales.sales_invoice_number = sales_dict['sales_invoice_number']
         sales.sales_invoice_date = datetime.strptime(sales_dict['sales_invoice_date'], '%d/%m/%Y')
         customer = Customer.objects.get(user__first_name=sales_dict['customer'])
-        salesman = Staff.objects.get(user__first_name=sales_dict['Staff'])      
+        salesman = Staff.objects.get(user__first_name=sales_dict['staff'])      
         sales.discount = sales_dict['net_discount']
-        sales.round_off = sales_dict['round_off']
+        sales.round_off = sales_dict['roundoff']
         sales.net_total = sales_dict['net_total']
         sales.grant_total = sales_dict['grant_total']
         

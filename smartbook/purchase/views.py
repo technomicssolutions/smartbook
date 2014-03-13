@@ -100,7 +100,7 @@ class PurchaseEntry(View):
     	})
 
     def post(self, request, *args, **kwargs):
-
+        
         purchase_dict = ast.literal_eval(request.POST['purchase'])
         purchase, purchase_created = Purchase.objects.get_or_create(purchase_invoice_number=1)
         purchase.purchase_invoice_number = purchase_dict['purchase_invoice_number']
