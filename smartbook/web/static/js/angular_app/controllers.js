@@ -984,7 +984,6 @@ function PurchaseReportController($scope, $element, $http, $location) {
         $scope.end_date = $$('#end_date')[0].get('value');
         if ($scope.report_type == 'date') {
            $http.get('/reports/purchase/?report_name=date&start_date='+$scope.start_date+'&end_date='+$scope.end_date).success(function(data){
-                $scope.purchases = data.purchases;
                 var total_amount = 0;
                 if (data.purchases.length > 0) {
                     $scope.date_total_amount_flag = true;
@@ -992,12 +991,14 @@ function PurchaseReportController($scope, $element, $http, $location) {
                 }
                 for (i=0; i < data.purchases.length; i++) {
                     total_amount = parseFloat(total_amount) + parseFloat(data.purchases[i].amount);
+                    data.purchases[i].amount = data.purchases[i].amount.toFixed(2);
                 }
-                $scope.purchase_amount_total = total_amount;
+                $scope.purchases = data.purchases;
+                
+                $scope.purchase_amount_total = total_amount.toFixed(2);
             }); 
        } else {
             $http.get('/reports/purchase/?report_name=vendor&vendor_name='+$scope.vendor_name).success(function(data){
-                $scope.purchases = data.purchases;
                 if (data.purchases.length > 0) {
                     $scope.date_total_amount_flag = false;
                     $scope.vendor_total_amount_flag = true;
@@ -1005,20 +1006,23 @@ function PurchaseReportController($scope, $element, $http, $location) {
                 var total_amount = 0;
                 for (i=0; i < data.purchases.length; i++) {
                     total_amount = parseFloat(total_amount) + parseFloat(data.purchases[i].amount);
+                    data.purchases[i].amount = data.purchases[i].amount.toFixed(2);
                 }
-                $scope.purchase_amount_total = total_amount;
+                $scope.purchases = data.purchases;
+                
+                $scope.purchase_amount_total = total_amount.toFixed(2);
             });
        }
         
     } 
 }
 
-function ExpenseController($scope, $element, $timeout, $location){
+function ExpenseReportController($scope, $http, $element, $timeout, $location){
 
     $scope.start_date = '';
     $scope.end_date = '';
 
-    $scope.date_total_amount_flag = false;
+    $scope.expense_total_amount_flag = false;
 
     $scope.init = function(csrf_token) {
         $scope.csrf_token = csrf_token;
@@ -1037,20 +1041,22 @@ function ExpenseController($scope, $element, $timeout, $location){
             format:'%d/%m/%Y', 
         });
     }
-    $scope.view_report = function(report_type) {
+    $scope.view_report = function() {
         $scope.start_date = $$('#start_date')[0].get('value');
         $scope.end_date = $$('#end_date')[0].get('value');
         $http.get('/reports/expenses/?start_date='+$scope.start_date+'&end_date='+$scope.end_date).success(function(data){
-            $scope.expenses = data.expenses;
             var total_amount = 0;
             if (data.expenses.length > 0) {
-                $scope.date_total_amount_flag = true;
-                $scope.vendor_total_amount_flag = false;
+                $scope.expense_total_amount_flag = true;
             }
             for (i=0; i < data.expenses.length; i++) {
+
                 total_amount = parseFloat(total_amount) + parseFloat(data.expenses[i].amount);
+                data.expenses[i].amount =  data.expenses[i].amount.toFixed(2) ;
             }
-            $scope.purchase_amount_total = total_amount;
+            $scope.expenses = data.expenses;
+            
+            $scope.expense_total_amount = total_amount.toFixed(2);
         });       
     } 
 }

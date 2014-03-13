@@ -102,18 +102,19 @@ class PurchaseReportsDate(View):
                 start_date = datetime.strptime(start_date, '%d/%m/%Y')
                 end_date = datetime.strptime(end_date, '%d/%m/%Y')
                 purchases = Purchase.objects.filter(purchase_invoice_date__gte=start_date, purchase_invoice_date__lte=end_date).order_by('purchase_invoice_date')
-                for purchase in purchases:
-                    ctx_purchase_report.append({
-                        'date': purchase.purchase_invoice_date.strftime('%d/%m/%Y'),
-                        'invoice_no': purchase.purchase_invoice_number,
-                        'vendor_invoice_no': purchase.vendor_invoice_number,
-                        'item_code': purchase.purchaseitem_set.all()[0].item.code,
-                        'item_name': purchase.purchaseitem_set.all()[0].item.name,
-                        'uom': purchase.purchaseitem_set.all()[0].item.uom.uom,
-                        'unit_cost_price': purchase.purchaseitem_set.all()[0].cost_price,
-                        'quantity': purchase.purchaseitem_set.all()[0].quantity_purchased,
-                        'amount': purchase.purchaseitem_set.all()[0].net_amount,
-                    })
+                if len(purchases) > 0:
+                    for purchase in purchases:
+                        ctx_purchase_report.append({
+                            'date': purchase.purchase_invoice_date.strftime('%d/%m/%Y'),
+                            'invoice_no': purchase.purchase_invoice_number,
+                            'vendor_invoice_no': purchase.vendor_invoice_number,
+                            'item_code': purchase.purchaseitem_set.all()[0].item.code,
+                            'item_name': purchase.purchaseitem_set.all()[0].item.name,
+                            'uom': purchase.purchaseitem_set.all()[0].item.uom.uom,
+                            'unit_cost_price': purchase.purchaseitem_set.all()[0].cost_price,
+                            'quantity': purchase.purchaseitem_set.all()[0].quantity_purchased,
+                            'amount': float(purchase.purchaseitem_set.all()[0].net_amount),
+                        })
                 # fileobj = createPDF(purchases)
                 # file_extension = 'pdf'
                 # path = settings.PROJECT_ROOT
@@ -131,13 +132,14 @@ class PurchaseReportsDate(View):
                 vendor_name = request.GET['vendor_name']
                 vendor = Vendor.objects.get(user__first_name = vendor_name)
                 purchases = Purchase.objects.filter(vendor = vendor)
-                for purchase in purchases:
-                    ctx_purchase_report.append({
-                        'date': purchase.purchase_invoice_date.strftime('%d/%m/%Y'),
-                        'invoice_no': purchase.purchase_invoice_number,
-                        'vendor_invoice_no': purchase.vendor_invoice_number,
-                        'amount': purchase.purchaseitem_set.all()[0].net_amount,
-                    })
+                if len(purchases) > 0:
+                    for purchase in purchases:
+                        ctx_purchase_report.append({
+                            'date': purchase.purchase_invoice_date.strftime('%d/%m/%Y'),
+                            'invoice_no': purchase.purchase_invoice_number,
+                            'vendor_invoice_no': purchase.vendor_invoice_number,
+                            'amount': float(purchase.purchaseitem_set.all()[0].net_amount),
+                        })
             try:    
                 res = {
                     'purchases': ctx_purchase_report,                 
@@ -238,25 +240,26 @@ class ExpenseReport(View):
     def get(self, request, *args, **kwargs):
         
         if request.is_ajax():
-            ctx_purchase_report = []
+            ctx_expense_report = []
             status_code = 200
             start_date = request.GET['start_date']
             end_date = request.GET['end_date']
             start_date = datetime.strptime(start_date, '%d/%m/%Y')
             end_date = datetime.strptime(end_date, '%d/%m/%Y')
-            purchases = Purchase.objects.filter(purchase_invoice_date__gte=start_date, purchase_invoice_date__lte=end_date).order_by('purchase_invoice_date')
-            for purchase in purchases:
-                ctx_purchase_report.append({
-                    'date': purchase.purchase_invoice_date.strftime('%d/%m/%Y'),
-                    'invoice_no': purchase.purchase_invoice_number,
-                    'vendor_invoice_no': purchase.vendor_invoice_number,
-                    'item_code': purchase.purchaseitem_set.all()[0].item.code,
-                    'item_name': purchase.purchaseitem_set.all()[0].item.name,
-                    'uom': purchase.purchaseitem_set.all()[0].item.uom.uom,
-                    'unit_cost_price': purchase.purchaseitem_set.all()[0].cost_price,
-                    'quantity': purchase.purchaseitem_set.all()[0].quantity_purchased,
-                    'amount': purchase.purchaseitem_set.all()[0].net_amount,
-                })
+            expenses = Expense.objects.filter(date__gte=start_date, date__lte=end_date).order_by('date')
+            if len(expenses) > 0: 
+                for expense in expenses:
+                    ctx_expense_report.append({
+                        'date': expense.date.strftime('%d/%m/%Y'),
+                        'particulars': expense.expense_head.expense_head,
+                        'narration': expense.narration,
+                        'amount': expense.amount,
+                    })
+            res = {
+                'expenses': ctx_expense_report,
+            }
+            response = simplejson.dumps(res)
+            return HttpResponse(response, status=status_code, mimetype='application/json')
         else:
             return render(request, 'reports/expense_report.html',{})
 

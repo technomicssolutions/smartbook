@@ -586,6 +586,10 @@ th {
 
 
 /************************ Report Module *****************************/
+.report_container {
+	width: 65%;
+	margin: auto;
+}
 
 .report_button {
 	padding-left: 6px;
@@ -593,7 +597,21 @@ th {
 }
 
 #last_row {
-	font-weight: bold;
+	font-weight: bold ! important;
+}
+#amount_alignment{
+	text-align: right ! important;
+}
+
+#list {
+	float: left;
+}
+
+.list .odd{
+    background-color: #F9F9F9;
+}
+.list .even{
+    background-color: #FFFFFF;
 }
 
 /************************ Report Module End *************************/
