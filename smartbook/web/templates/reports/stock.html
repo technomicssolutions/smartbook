@@ -2,6 +2,10 @@
 {% block title %}Stock{% endblock title %}
 {% block body_id %}stock{% endblock %}
 
+{% block controller %}
+	ng-controller="StockReportController" ng-init="init('{{csrf_token}}')"
+{% endblock controller %}
+
 {% block content %}
 	<div class="main-title">
 		
@@ -11,21 +15,25 @@
 
 	</div>
 
-	<div>
-		<p>Search Item<input type="search" name="search"> </p>
-		<br>
-		<div class="reporttext">
-			<input type="radio" name="name"> Item Name
+	<div class="section_3_purchase">
+		<div class="search_purchase">
+			<div class="control">
+				<label> Item Code </label>
+					<input type='text' id="item_code" ng-model="item_code" ng-change="getItems('item_code')"/>
+				</div>
+				<div class="control">
+					<label> Item name </label>
+					<input type="text" id='item_name' ng-model="item_name" ng-change="getItems('item_name')"/>
+				</div>
+				<div class="control">
+					<label> Barcode </label>
+					<input type="text" id='barcode' ng-model="barcode" ng-change="getItems('barcode')"/>
+				</div>
+				<div class="clear"></div>
 		</div>
-		
-		<div class="reporttext">
-			<input type="radio" name="code"> Item Code
+		<div class="clear"></div>
+		<p class="error_message"> [[item_select_error]] </p>
 		</div>
-		<div class="reporttext">
-			<input type="radio" name="barcode"> Bar Code 
-		</div>
-		<br><br>
-     </div>
 
 		<table id="list" class="table table-hover" >
 			<tr class="success" style="font-size: 12px"style="width:auto">
@@ -43,6 +51,22 @@
 			  <th>Discount(%)</th>
 			  <th>Stock By Value</th>
 			  <th>Profit</th>
+			</tr>
+			<tr ng-repeat="stock in stocks">
+				<td>[[stock.item_code]]</td>
+				<td>[[stock.item_name]]</td>
+				<td>[[stock.bar_code]]</td>
+				<td>[[stock.description]]</td>
+				<td>[[stock.brand_name]]</td>
+				<td>[[stock.vendor_name]]</td>
+				<td>[[stock.stock]]</td>
+				<td>[[stock.uom]]</td>
+				<td>[[stock.cost_price]]</td>
+				<td>[[stock.selling_price]]</td>
+				<td>[[stock.tax]]</td>
+				<td>[[stock.discount]]</td>
+				<td>[[stock.stock_by_value]]</td>
+				<td>[[stock.profit]]</td>
 			</tr>
 
 		</table> 

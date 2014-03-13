@@ -86,6 +86,6 @@ class VendorAccount(models.Model):
 	branch_name = models.CharField('Branch Name', max_length=200, null=True, blank=True)
 
 	def __unicode__(self):
-		return self.vendor
+		return self.vendor.user.first_name
 	
 	
