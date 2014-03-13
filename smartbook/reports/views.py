@@ -559,6 +559,7 @@ class PurchaseAccountsVendor(View):
 class StockReports(View):
     def get(self, request, *args, **kwargs):
         if request.is_ajax():
+            status_code = 200
             stocks = Inventory.objects.all()
             print stocks
             ctx_stock = []
@@ -571,7 +572,7 @@ class StockReports(View):
                        'bar_code': stock.item.barcode,
                        'description': stock.item.description,
                        'brand_name': stock.item.brand.brand,
-                       'vendor_name': stock.item.purchaseitem_set.all()[0].purchase.vendor.user.first_name,
+                       # 'vendor_name': stock.item.purchaseitem_set.all()[0].purchase.vendor.user.first_name,
                        'stock': stock.quantity,
                        'uom': stock.item.uom.uom,
                        'cost_price': stock.item.purchaseitem_set.all()[0].cost_price,

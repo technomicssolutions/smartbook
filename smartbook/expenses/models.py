@@ -19,7 +19,7 @@ class  Expense(models.Model):
 	expense_head = models.ForeignKey(ExpenseHead, null=True, blank=True)
 	voucher_no = models.IntegerField('Voucher No', unique=True)
 	date = models.DateField('Date', null=True, blank=True)
-	amount = models.IntegerField('Amount', null=True, blank=True)
+	amount = models.DecimalField('Amount',max_digits=14, decimal_places=3, default=0)
 	payment_mode = models.CharField('Payment Mode', null=True, blank=True, max_length=25)
 	narration = models.TextField('Narration', max_length=300, null=True, blank=True)
 	
