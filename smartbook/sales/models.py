@@ -48,22 +48,20 @@ class SalesItem(models.Model):
 
 class SalesReturn(models.Model):
 	sales = models.ForeignKey(Sales)
+	return_invoice_number = models.IntegerField('Purchase Return invoice number', unique=True)
 	date = models.DateField('Date', null=True, blank=True)
-	total = models.IntegerField('Total', null=True, blank=True)
-	discount = models.IntegerField('Discount', null=True, blank=True)
-	round_off = models.IntegerField('Round Off', null=True, blank=True)
-	grand_total = models.IntegerField('Grand Total', null=True, blank=True)
+	net_amount = models.IntegerField('Total', null=True, blank=True)
+	
 
 	def __unicode__(self):
 
 		return str(self.sales.sales_invoice_number)
 
 class SalesReturnItem(models.Model):
-	sales = models.ForeignKey(Sales, null=True, blank=True)
+	sales_return = models.ForeignKey(SalesReturn, null=True, blank=True)
 	item = models.ForeignKey(SalesItem, null=True, blank=True)
 	return_quantity = models.IntegerField('Return Quantity', null=True, blank=True)
-	discount_amount = models.IntegerField('Discount Amount', null=True, blank=True)
-	net_amount = models.IntegerField('Amount', null=True, blank=True)
+	amount = models.IntegerField('Amount', null=True, blank=True)
 
 	def __unicode__(self):
 

@@ -3,7 +3,7 @@
 {% block body_id %}purchase_return{% endblock %}
 
 {% block title %}Purchase Return{% endblock title %}
-{% block controller %}ng-controller="PurchaseReturn" ng-init="init('{{csrf_token}}', '{{invoice_number}}')"{% endblock controller %}
+{% block controller %}ng-controller="PurchaseReturnController" ng-init="init('{{csrf_token}}', '{{invoice_number}}')"{% endblock controller %}
 
 {% block dialogue_popup %}
 	{% include 'add_new_vendor.html' %} 
@@ -35,13 +35,9 @@
 							<label for="purchase_return_invoice_number">Purchase Return Invoice Number</label>
 						</div>
 						<div class="forminput">
-							<input type="text" name="purchase_return_invoice_number" ng-model="purchase_return.invoice_number" /> 
+							<input type="text" name="purchase_return_invoice_number" ng-model="purchase_return.invoice_number"  readonly /> 
 						</div>
 					</div>
-
-					
-				
-
 					<div class="formrow_purchase">
 						<div class="formtext_purchase">
 							<label for="purchase_return_date">Date</label>
@@ -50,8 +46,6 @@
 							<input type="text" name="purchase_return_date" ng-model="purchase.purchase_return_date" id="purchase_return_date"/>
 						</div>
 					</div>
-
-
 					<div class="formrow_purchase">
 						<div class="formtext_purchase">
 							<label for="vendor">Vendor</label>
@@ -65,29 +59,23 @@
 		
 				<div class="section_3_purchase">
 					<div class="search_purchase">
-						<div class="control">
-							<label> Item Code </label>
-   							<input type='text' id="item_code" ng-model="item_code" ng-change="getItems('item_code')"/>
-   						</div>
-   						<div class="control">
-   							<label> Item name </label>
-   							<input type="text" id='item_name' ng-model="item_name" ng-change="getItems('item_name')"/>
-   						</div>
-   						<div class="control">
-   							<label> Barcode </label>
-   							<input type="text" id='barcode' ng-model="barcode" ng-change="getItems('barcode')"/>
-   						</div>
+ 						
    						<div class="clear"></div>
-	   					<div class="item_list" ng-show='selecting_item' ng-hide="item_selected">
+
+   						<h5 ng-show='purchase.purchase_items.length > 0'>Please select items to be returned </h5> <br />
+
+	   					<div class="item_list return" ng-show='purchase.purchase_items.length > 0'>
+	   						
 							<div class="item_list_row header">
 								<span> Item Code </span>
 								<span> Item name </span>
 								<span> Barcode </span>
 							</div>
-							<div ng-repeat="item in items" ng-click="addPurchaseItem(item)" class="item_list_row">
+							<div ng-repeat="item in purchase.purchase_items" ng-click="addPurchaseItem(item)" class="item_list_row">
 								<span>[[item.item_code]]</span>
 								<span>[[item.item_name]]</span>
 								<span>[[item.barcode]] </span>
+								<span> <input type="checkbox" ng-click="addReturnItems(item)" /></span>
 							</div>
 							<div class="clear"></div>
 						</div>
@@ -96,7 +84,7 @@
     				<p class="error_message"> [[item_select_error]] </p>
    				</div>
 
-   				<div class="purchase_items_list" ng-show="purchase.purchase_items.length > 0">
+   				<div class="purchase_items_list return_items" ng-show="purchase_return.purchase_items.length > 0">
    					<div class="purchase_item_list">
    						<div class="item_list_row header">
 							<span class="small_column"> Item Code </span>
@@ -116,9 +104,9 @@
 							
 							<span> [[item.cost_price]] </span>
 							<span> [[item.cost_price]] </span>
-									
-							<span> [[item.amount]] </span>
-							<a class="delete_anch" href="" ng-click="delete_purchase_item(item);"> <img src="/static/images/delete.png" /> </a> 
+							<span> <input type="text" ng-model="item.returned_quantity" ng-change="calculate_return_amount(item)" />	</span>	
+							<span> [[item.returned_amount]] </span>
+							 
 						</div>
 						<div class="clear"></div>
    					</div>
@@ -131,7 +119,7 @@
 							<label for="net_total">Net Total</label>
 						</div>
 						<div class="forminput">
-							<input type="text" name="net_total" ng-model="purchase.net_total" ng-change="calculate_grant_total()" readonly />
+							<input type="text" name="net_return_total" ng-model="purchase_return.net_return_total" readonly />
 						</div>
 					</div>
 				</div>
