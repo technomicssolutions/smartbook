@@ -663,6 +663,8 @@ function SalesController($scope, $element, $http, $timeout, share, $location) {
     $scope.staff = '';
     $scope.selecting_item = false;
     $scope.item_selected = false;
+    $scope.payment_mode = 'cash';
+    $scope.payment_mode_selection = true;
     $scope.sales = {
         'sales_items': [],
         'sales_invoice_number': '',
@@ -684,19 +686,49 @@ function SalesController($scope, $element, $http, $timeout, share, $location) {
         $scope.csrf_token = csrf_token;
         $scope.sales.sales_invoice_number = sales_invoice_number;
         $scope.popup = '';
-        var date_picker = new Picker.Date($$('#sales_invoice_date'), {
-            timePicker: false,
-            positionOffset: {x: 5, y: 0},
-            pickerClass: 'datepicker_bootstrap',
-            useFadeInOut: !Browser.ie,
-            format:'%d/%m/%Y',
-        });
+        
         
         $scope.get_staff();
         $scope.get_customers();
             
         console.log("$scope.sales.sales_invoice_number ", $scope.sales.sales_invoice_number );
     }
+    $scope.payment_mode_change_sales = function(payment_mode) {
+        if(payment_mode == 'cheque') {
+            $scope.payment_mode_selection = false;
+            
+            var date_picker = new Picker.Date($$('#sales_invoice_date'), {
+            timePicker: false,
+            positionOffset: {x: 5, y: 0},
+            pickerClass: 'datepicker_bootstrap',
+            useFadeInOut: !Browser.ie,
+            format:'%d/%m/%Y',
+        });
+            
+        } else {
+            $scope.payment_mode_selection = true;
+        }
+    }
+    $scope.validate_sales = function() {
+        if($scope.sales.sales_invoice_date == '') {
+            $scope.validation_error = "Enter Sales invoice Date" ;
+            return false;
+        } else if($scope.sales.customer =='select'){
+            $scope.validation_error = "Enter Customer Name";
+            return false;
+        } else if($scope.sales.staff =='select') {
+            $scope.validation_error = "Enter Salesman Name";
+            return false;
+        } else if($scope.sales.sales_items.length == 0){
+            $scope.validation_error = "Choose Item";
+            return false;
+        } 
+        else {
+            return true;
+        }        
+    }
+
+
     $scope.get_staff = function() {
         $http.get('/staff/list/').success(function(data)
         {
@@ -885,7 +917,7 @@ function SalesController($scope, $element, $http, $timeout, share, $location) {
         $scope.calculate_discount_amount_sale(selected_item);
         $scope.calculate_unit_cost_sale(selected_item);
        
-        $scope.sales_items.push(selected_item);
+        $scope.sales.sales_items.push(selected_item);
     }
     
     
@@ -916,8 +948,8 @@ function SalesController($scope, $element, $http, $timeout, share, $location) {
 
     $scope.calculate_net_total_sale = function(){
         var net_total = 0;
-        for(i=0; i<$scope.sales_items.length; i++){
-            net_total = net_total + parseFloat($scope.sales_items[i].net_amount);
+        for(i=0; i<$scope.sales.sales_items.length; i++){
+            net_total = net_total + parseFloat($scope.sales.sales_items[i].net_amount);
         }
         $scope.sales.net_total = net_total;
         $scope.calculate_grant_total_sale();
@@ -926,9 +958,9 @@ function SalesController($scope, $element, $http, $timeout, share, $location) {
     $scope.calculate_net_discount_sale = function(){
         
         var net_discount = 0;
-        for(i=0; i<$scope.sales_items.length; i++){
+        for(i=0; i<$scope.sales.sales_items.length; i++){
            
-            net_discount = net_discount + parseFloat($scope.sales_items[i].disc_given);
+            net_discount = net_discount + parseFloat($scope.sales.sales_items[i].disc_given);
 
         }
         $scope.sales.net_discount = net_discount;
@@ -943,8 +975,8 @@ function SalesController($scope, $element, $http, $timeout, share, $location) {
         $scope.sales.balance = $scope.sales.grant_total - $scope.sales.paid;
     }
     $scope.save_sales = function() {
-       // if($scope.validate_sales) {
-            
+        if($scope.validate_sales()) {
+
             $scope.sales.sales_invoice_date = $$('#sales_invoice_date')[0].get('value');
             
             params = { 
@@ -959,12 +991,12 @@ function SalesController($scope, $element, $http, $timeout, share, $location) {
                     'Content-Type' : 'application/x-www-form-urlencoded'
                 }
             }).success(function(data, status) {
-                document.location.href = '/sales/entry/';
+                //document.location.href = '/sales/entry/';
                
             }).error(function(data, success){
                 
             });
-       // }
+        }
     }
 
 }
