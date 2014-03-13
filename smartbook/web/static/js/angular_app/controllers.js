@@ -637,7 +637,6 @@ function PurchaseController($scope, $element, $http, $timeout, share, $location)
     }
 
     $scope.load_purchase = function() {
-        console.log('$scope.purchase.purchase_invoice_number', $scope.purchase.purchase_invoice_number);
         $http.get('/purchase/?invoice_no='+$scope.purchase.purchase_invoice_number).success(function(data)
         {
             $scope.selecting_item = true;
@@ -836,7 +835,11 @@ function DailyReportController($scope, $element, $http, $timeout, $location){
 
 }
 
-function VendorAccountController($scope, $element, $http, $timeout, $location){    
+function VendorAccountController($scope, $element, $http, $timeout, $location){  
+    $scope.actual_total_amount = 0;
+    $scope.actual_amount_paid = 0;
+    $scope.actual_balance_amount = 0; 
+    $scope.cash = true; 
     $scope.init = function(csrf_token) 
     {
         $scope.csrf_token = csrf_token;
@@ -846,28 +849,39 @@ function VendorAccountController($scope, $element, $http, $timeout, $location){
             'balance_amount': 0,
             'amount_paid': 0,
         }
-        var date_picker = new Picker.Date($$('#vendor_account_date'), {
+        $scope.date_picker = new Picker.Date($$('#vendor_account_date'), {
             timePicker: false,
             positionOffset: {x: 5, y: 0},
             pickerClass: 'datepicker_bootstrap',
             useFadeInOut: !Browser.ie,
-            format:'%d/%m/%Y',
+            format: '%d/%m/%Y',
+        });
+        $scope.date_picker_cheque = new Picker.Date($$('#cheque_date'), {
+            timePicker: false,
+            positionOffset: {x: 5, y: 0},
+            pickerClass: 'datepicker_bootstrap',
+            useFadeInOut: !Browser.ie,
+            format: '%d/%m/%Y',
         });
     }
     $scope.select_payment_mode = function(){
         console.log('payment mode', $scope.vendor_account.payment_mode);
         if($scope.vendor_account.payment_mode == 'cheque') {
-            $scope.cheque = true;
+            $scope.cash = false;
         } else {
-            $scope.cheque = false;
+            $scope.cash = true;
         }
     }
     $scope.get_vendor_account_details = function(){
         var vendor = $scope.vendor_account.vendor;
         $http.get('/purchase/vendor_account/'+$scope.vendor_account.vendor+'/').success(function(data, status)
         {
-            if (status==200) {
+            if (status==200) {             
                 $scope.vendor_account = data.vendor_account;
+                $scope.actual_total_amount = data.vendor_account.total_amount;
+                $scope.actual_amount_paid = data.vendor_account.amount_paid;
+                $scope.actual_balance_amount = data.vendor_account.balance_amount;
+                $scope.select_payment_mode();               
             }
             
         }).error(function(data, status)
@@ -882,9 +896,39 @@ function VendorAccountController($scope, $element, $http, $timeout, $location){
         } else if($scope.vendor_account.amount == ''){
             $scope.validation_error = "Please enter amount";            
             return false;
-        } else if($scope.vendor_account.vendor_account_date == '') {
+        } else if($$('#vendor_account_date')[0].get('value') == '') {
             $scope.validation_error = "Please select date";
             return false;
+        }
+        if(!$scope.vendor_account.narration){
+            $scope.vendor_account.narration = "null";
+        }
+        if($scope.vendor_account.payment_mode == 'cash') {
+            if(!$scope.vendor_account.branch_name)
+                $scope.vendor_account.branch_name = "null";
+            if(!$scope.vendor_account.bank_name)
+                $scope.vendor_account.bank_name = "null";
+            if(!$scope.vendor_account.cheque_no)
+                $scope.vendor_account.cheque_no = "null";
+            if(!$scope.vendor_account.cheque_date)
+                $scope.vendor_account.cheque_date = "null";
+        } else {
+            if(!$scope.vendor_account.branch_name){
+                $scope.validation_error = "Please enter branch name";
+                return false;
+            } else if(!$scope.vendor_account.bank_name){
+                $scope.validation_error = "Please enter bank name";
+                return false;
+            }else if(!$scope.vendor_account.cheque_no){
+                $scope.validation_error = "Please enter cheque no";
+                return false;
+            }else if($$('#cheque_date')[0].get('value') == ''){
+                $scope.validation_error = "Please enter cheque date";
+                return false;
+            }
+            if($$('#cheque_date')[0].get('value') != '') {
+                $scope.vendor_account.cheque_date = $$('#cheque_date')[0].get('value');
+            }
         }
         return true;
     }
@@ -892,37 +936,48 @@ function VendorAccountController($scope, $element, $http, $timeout, $location){
         $scope.vendor_account.vendor = '';
     }
     $scope.calculate_vendor_account_amounts = function(){
-        var total_amount = $scope.vendor_account.total_amount;
-        var balance_amount = $scope.vendor_account.balance_amount;
-        var amount_paid = $scope.vendor_account.amount_paid;
-        var amount = $scope.vendor_account.amount
-        $scope.vendor_account.total_amount = parseInt(amount) + parseInt(total_amount);
-        $scope.vendor_account.amount_paid = parseInt(amount) + parseInt(amount_paid);
-        if(parseInt(balance_amount) > parseInt(amount) ) {
-            $scope.vendor_account.balance_amount = parseInt(balance_amount) - parseInt(amount);
-        } else {
-            $scope.vendor_account.balance_amount = 0
+        if($scope.actual_total_amount != 0 && $scope.actual_balance_amount != 0) {
+            var total_amount = $scope.actual_total_amount;
+            var balance_amount = $scope.actual_balance_amount;
+            var amount_paid = $scope.actual_amount_paid;
+            var amount = $scope.vendor_account.amount
+            $scope.vendor_account.amount_paid = parseInt(amount) + parseInt(amount_paid);
+            if(parseInt(balance_amount) > parseInt(amount) ) {
+                $scope.vendor_account.balance_amount = parseInt(balance_amount) - parseInt(amount);
+            } else {
+                $scope.vendor_account.balance_amount = 0
+            } 
         }
+        
          
     }
     $scope.save_vendor_account = function(){
-        params = { 
-            'vendor_account': angular.toJson($scope.vendor_account),
-            "csrfmiddlewaretoken" : $scope.csrf_token
-        }
-        $http({
-            method : 'post',
-            url : '/purchase/vendor_account/'+$scope.vendor_account.vendor+'/',
-            data : $.param(params),
-            headers : {
-                'Content-Type' : 'application/x-www-form-urlencoded'
+        $scope.vendor_account.vendor_account_date = $$('#vendor_account_date')[0].get('value');
+        
+        if($scope.validate_vendor_account()) {
+            params = { 
+                'vendor_account': angular.toJson($scope.vendor_account),
+                "csrfmiddlewaretoken" : $scope.csrf_token
             }
-        }).success(function(data, status) {
-            document.location.href = '/purchase/entry/';
-           
-        }).error(function(data, success){
-            
-        });
+            $http({
+                method : 'post',
+                url : '/purchase/vendor_account/'+$scope.vendor_account.vendor+'/',
+                data : $.param(params),
+                headers : {
+                    'Content-Type' : 'application/x-www-form-urlencoded'
+                }
+            }).success(function(data, status) {
+                document.location.href = '/purchase/entry/';
+               
+            }).error(function(data, success){
+                
+            });
+        }
+        /*$scope.vendor_account.vendor_account_date = $$('#vendor_account_date')[0].get('value');
+        $scope.vendor_account.total_amount = $scope.vendor_account.total_amount.toString();
+        $scope.vendor_account.balance_amount = $scope.vendor_account.balance_amount.toString();
+        $scope.vendor_account.amount_paid = $scope.vendor_account.amount_paid.toString();
+*/       
     }
 }
 
@@ -984,7 +1039,6 @@ function PurchaseReportController($scope, $element, $http, $location) {
         $scope.end_date = $$('#end_date')[0].get('value');
         if ($scope.report_type == 'date') {
            $http.get('/reports/purchase/?report_name=date&start_date='+$scope.start_date+'&end_date='+$scope.end_date).success(function(data){
-                $scope.purchases = data.purchases;
                 var total_amount = 0;
                 if (data.purchases.length > 0) {
                     $scope.date_total_amount_flag = true;
@@ -992,12 +1046,14 @@ function PurchaseReportController($scope, $element, $http, $location) {
                 }
                 for (i=0; i < data.purchases.length; i++) {
                     total_amount = parseFloat(total_amount) + parseFloat(data.purchases[i].amount);
+                    data.purchases[i].amount = data.purchases[i].amount.toFixed(2);
                 }
-                $scope.purchase_amount_total = total_amount;
+                $scope.purchases = data.purchases;
+                
+                $scope.purchase_amount_total = total_amount.toFixed(2);
             }); 
        } else {
             $http.get('/reports/purchase/?report_name=vendor&vendor_name='+$scope.vendor_name).success(function(data){
-                $scope.purchases = data.purchases;
                 if (data.purchases.length > 0) {
                     $scope.date_total_amount_flag = false;
                     $scope.vendor_total_amount_flag = true;
@@ -1005,20 +1061,23 @@ function PurchaseReportController($scope, $element, $http, $location) {
                 var total_amount = 0;
                 for (i=0; i < data.purchases.length; i++) {
                     total_amount = parseFloat(total_amount) + parseFloat(data.purchases[i].amount);
+                    data.purchases[i].amount = data.purchases[i].amount.toFixed(2);
                 }
-                $scope.purchase_amount_total = total_amount;
+                $scope.purchases = data.purchases;
+                
+                $scope.purchase_amount_total = total_amount.toFixed(2);
             });
        }
         
     } 
 }
 
-function ExpenseController($scope, $element, $timeout, $location){
+function ExpenseReportController($scope, $http, $element, $timeout, $location){
 
     $scope.start_date = '';
     $scope.end_date = '';
 
-    $scope.date_total_amount_flag = false;
+    $scope.expense_total_amount_flag = false;
 
     $scope.init = function(csrf_token) {
         $scope.csrf_token = csrf_token;
@@ -1037,20 +1096,22 @@ function ExpenseController($scope, $element, $timeout, $location){
             format:'%d/%m/%Y', 
         });
     }
-    $scope.view_report = function(report_type) {
+    $scope.view_report = function() {
         $scope.start_date = $$('#start_date')[0].get('value');
         $scope.end_date = $$('#end_date')[0].get('value');
         $http.get('/reports/expenses/?start_date='+$scope.start_date+'&end_date='+$scope.end_date).success(function(data){
-            $scope.expenses = data.expenses;
             var total_amount = 0;
             if (data.expenses.length > 0) {
-                $scope.date_total_amount_flag = true;
-                $scope.vendor_total_amount_flag = false;
+                $scope.expense_total_amount_flag = true;
             }
             for (i=0; i < data.expenses.length; i++) {
+
                 total_amount = parseFloat(total_amount) + parseFloat(data.expenses[i].amount);
+                data.expenses[i].amount =  data.expenses[i].amount.toFixed(2) ;
             }
-            $scope.purchase_amount_total = total_amount;
+            $scope.expenses = data.expenses;
+            
+            $scope.expense_total_amount = total_amount.toFixed(2);
         });       
     } 
 }

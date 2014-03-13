@@ -6,4 +6,5 @@ from purchase.models import *
 admin.site.register(Purchase)
 admin.site.register(PurchaseReturn)
 admin.site.register(PurchaseItem)
+admin.site.register(VendorAccount)
 

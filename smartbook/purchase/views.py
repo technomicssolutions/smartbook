@@ -102,7 +102,7 @@ class PurchaseEntry(View):
     def post(self, request, *args, **kwargs):
 
         purchase_dict = ast.literal_eval(request.POST['purchase'])
-        purchase, purchase_created = Purchase.objects.get_or_create(purchase_invoice_number=1)
+        purchase, purchase_created = Purchase.objects.get_or_create(purchase_invoice_number=purchase_dict['purchase_invoice_number'])
         purchase.purchase_invoice_number = purchase_dict['purchase_invoice_number']
         purchase.vendor_invoice_number = purchase_dict['vendor_invoice_number']
         purchase.vendor_do_number = purchase_dict['vendor_do_number']
@@ -114,15 +114,18 @@ class PurchaseEntry(View):
         transport = TransportationCompany.objects.get(company_name=purchase_dict['transport'])
         purchase.vendor = vendor
         purchase.transportation_company = transport
-        purchase.discount = purchase_dict['discount']
+        if purchase_dict['discount']:
+            purchase.discount = purchase_dict['discount']
+        else:
+            purchase.discount = 0
         purchase.net_total = purchase_dict['net_total']
         purchase.purchase_expense = purchase_dict['purchase_expense']
         purchase.grant_total = purchase_dict['grant_total']
 
         vendor_account, vendor_account_created = VendorAccount.objects.get_or_create(vendor=vendor)
         if vendor_account_created:
-            vendor_account.total_amount = purchase.vendor_amount
-            vendor_account.balance = purchase.vendor_amount
+            vendor_account.total_amount = purchase_dict['vendor_amount']
+            vendor_account.balance = purchase_dict['vendor_amount']
         else:
             if purchase_created:
                 vendor_account.total_amount = vendor_account.total_amount + purchase_dict['vendor_amount']
@@ -224,37 +227,59 @@ class VendorAccounts(View):
 
 class VendorAccountDetails(View):
     def get(self, request, *args, **kwargs):
-        try:
-            vendor = get_object_or_404(Vendor, user__first_name=kwargs['vendor'])
-            vendor_account =  VendorAccount.objects.get(vendor=vendor)
-            res = {
-                'result': 'Ok',
-                'vendor_account': {
-                    'date' : vendor_account.date.strftime('%d/%m/%Y'),
-                    'payment_mode': vendor_account.payment_mode,
-                    'narration': vendor_account.narration,
-                    'total_amount': vendor_account.total_amount,
-                    'paid_amount': vendor_account.paid_amount,
-                    'balance': vendor_account.balance,
-                }
-            } 
-
-            response = simplejson.dumps(res)
-            status_code = 200
-        except:
-            response = {
-                'result': 'Vendor or VendorAccount does not exists',
+        #try:
+        vendor = get_object_or_404(Vendor, user__first_name=kwargs['vendor'])
+        vendor_account =  VendorAccount.objects.get(vendor=vendor)
+        res = {
+            'result': 'Ok',
+            'vendor_account': {
+                'vendor_account_date' : vendor_account.date.strftime('%d/%m/%Y') if vendor_account.date else '',
+                'payment_mode': vendor_account.payment_mode,
+                'narration': vendor_account.narration,
+                'total_amount': vendor_account.total_amount,
+                'amount_paid': vendor_account.paid_amount,
+                'balance_amount': vendor_account.balance,
+                'cheque_date': vendor_account.cheque_date.strftime('%d/%m/%Y') if vendor_account.cheque_date else '',
+                'cheque_no': vendor_account.cheque_no,
+                'bank_name': vendor_account.bank_name,
+                'branch_name': vendor_account.branch_name,
+                'vendor': vendor_account.vendor.user.first_name
             }
-            status_code = 201
+        } 
+
+        response = simplejson.dumps(res)
+        status_code = 200
+        # except:
+        #     response = {
+        #         'result': 'Vendor or VendorAccount does not exists',
+        #     }
+        #     status_code = 201
         return HttpResponse(response, status = status_code, mimetype="application/json")
 
     def post(self, request, *args, **kwargs):
 
         vendor_account_dict = ast.literal_eval(request.POST['vendor_account'])
         vendor = get_object_or_404(Vendor, user__first_name=kwargs['vendor'])
-        vendor_account =  VendorAccount.objects.get_or_create(vendor=vendor) 
+        vendor_account, created =  VendorAccount.objects.get_or_create(vendor=vendor) 
+        vendor_account.date = datetime.strptime(vendor_account_dict['vendor_account_date'], '%d/%m/%Y')
+        vendor_account.payment_mode = vendor_account_dict['payment_mode']
+        if vendor_account_dict['cheque_date'] != "null" :
+            vendor_account.narration = vendor_account_dict['narration']
+        vendor_account.total_amount = int(vendor_account_dict['total_amount'])
+        vendor_account.paid_amount = int(vendor_account_dict['amount_paid'])
+        vendor_account.balance = int(vendor_account_dict['balance_amount'])        
+        if vendor_account_dict['cheque_date'] != "null" :
+            vendor_account.cheque_no = int(vendor_account_dict['cheque_no'])
+            vendor_account.cheque_date = datetime.strptime(vendor_account_dict['cheque_date'], '%d/%m/%Y') 
+            vendor_account.bank_name = vendor_account_dict['bank_name']
+            vendor_account.branch_name = vendor_account_dict['branch_name']
+        vendor_account.save()
         response = {
                 'result': 'Ok',
             }
         status_code = 200
         return HttpResponse(response, status = status_code, mimetype="application/json")
+
+class PurchaseReturn(View):
+
+    def get(self, request, *args, **kwargs):
