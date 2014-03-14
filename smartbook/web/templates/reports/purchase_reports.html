@@ -5,10 +5,10 @@
 	ng-controller="PurchaseReportController" ng-init="init('{{csrf_token}}')"   
 {% endblock controller %}
 {% block content %}
-	<div ng-show="report_date_wise_flag">
+	<div>
 	
 		<div class="main-title">				
-			<div class="alert alert-info" align="Center">Date Wise Purchase Report
+			<div class="alert alert-info" align="Center"> Purchase Report
 									
 			</div>
 		</div>
@@ -17,7 +17,16 @@
 			<p>[[messages]]</p>
 		</div>
 		<form name="purchase_form" method="get" action="{% url 'purchase_reports' %}">
-			<div ng-show="report_date_wise_flag">
+			<div class="reporttext">
+					<label for="e_date">Report type: </label>
+			</div>
+			<div class="reportinput">
+				<select name="report_type" ng-change="set_report_type()" ng-model="report_name">
+					<option value="date" >Date Wise Report</option>
+					<option value="vendor" >Vendor Wise Report</option>
+				</select>
+			</div>
+			<div ng-show="report_date_wise">
 				<div class="reporttext">
 						<label for="s_date">Start Date</label>
 				</div>
@@ -34,7 +43,7 @@
 					<input type="text" name="end_date" id="end_date">
 				</div>
 			</div>
-			<div ng-show="report_vendor_wise_flag">
+			<div ng-show="report_vendor_wise">
 				<div class="reporttext">
 					<label for="e_date">Vendor: </label>
 				</div>
@@ -47,15 +56,7 @@
 					</select>
 				</div>
 			</div>
-			<div class="reporttext">
-					<label for="e_date">Report type: </label>
-			</div>
-			<div class="reportinput">
-				<select name="report_type" ng-change="set_report_type()" ng-model="report_name">
-					<option value="date" >Date Wise Report</option>
-					<option value="vendor" >Vendor Wise Report</option>
-				</select>
-			</div>
+			
 			<div class="reporttext">
 				<input type="submit" value="View Report" class="btn btn-info " style="border-top-width: 0px; margin-top: 3px;" />
 			</div>

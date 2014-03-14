@@ -283,20 +283,20 @@ class PurchaseReportsDate(View):
         status_code = 200
         response = HttpResponse(content_type='application/pdf')
         p = canvas.Canvas(response, pagesize=(1000, 1000))
+        p.setFontSize(15)
         report_type = request.GET.get('report_type', '')
 
         if not report_type:
             return render(request, 'reports/purchase_reports.html',{})
 
         if report_type == 'date':               
-            p.drawString(300, 900, 'Purchase Report Date wise')
+            p.drawCentredString(300, 900, 'Purchase Report Date wise')
             start_date = request.GET['start_date']
             end_date = request.GET['end_date']
             start_date = datetime.strptime(start_date, '%d/%m/%Y')
             end_date = datetime.strptime(end_date, '%d/%m/%Y')
             purchases = Purchase.objects.filter(purchase_invoice_date__gte=start_date, purchase_invoice_date__lte=end_date).order_by('purchase_invoice_date')
-            p.drawString(300, 900, 'Purchase Report Date wise')
-
+            p.setFontSize(13)
             p.drawString(50, 875, "Date")
             p.drawString(150, 875, "Invoice No")
             p.drawString(250, 875, "Vendor Invoice")
@@ -307,6 +307,7 @@ class PurchaseReportsDate(View):
             p.drawString(750, 875, "Amount")
 
             y = 850
+            p.setFontSize(12)
             for purchase in purchases:
                 purchase_items = purchase.purchaseitem_set.all()
                 for purchase_item in purchase_items:                    
@@ -326,21 +327,22 @@ class PurchaseReportsDate(View):
             vendor_name = request.GET['vendor']
             vendor = Vendor.objects.get(user__first_name = vendor_name)
             purchases = Purchase.objects.filter(vendor = vendor)
-            p.drawString(300, 900, 'Purchase Report Date wise')
-
+            
+            p.drawCentredString(300, 900, 'Purchase Report Vendor wise')
+            p.setFontSize(13)
             p.drawString(50, 875, "Date")
             p.drawString(150, 875, "Invoice No")
             p.drawString(250, 875, "Vendor Invoice")
             p.drawString(750, 875, "Amount")
-
+            p.setFontSize(12)  
             y = 850
             for purchase in purchases:
-                              
+                            
                 y = y - 30
                 p.drawString(50, y, purchase.purchase_invoice_date.strftime('%d/%m/%y'))
                 p.drawString(150, y, str(purchase.purchase_invoice_number))
                 p.drawString(250, y, str(purchase.vendor_invoice_number))
-                p.drawString(750, y, str(purchase.vendor_amount))
+                p.drawString(350, y, str(purchase.vendor_amount))
             p.showPage()
             p.save()
                   
@@ -417,65 +419,101 @@ class SalesReturnReport(View):
 
 class DailyReport(View):
     def get(self, request, *args, **kwargs):
-        if request.is_ajax():
-            status_code = 200
+
+        status_code = 200
+        response = HttpResponse(content_type='application/pdf')
+        p = canvas.Canvas(response, pagesize=(1000, 1000))
+        start_date = request.GET.get('start_date')
+        end_date = request.GET.get('end_date')
+        if start_date is None:
+            return render(request, 'reports/daily_report.html', {})
+        if not start_date:            
+            ctx = {
+                'msg' : 'Please Select Start Date and End Date'
+            }
+            return render(request, 'reports/daily_report.html', ctx)
+        elif not end_date:
+            ctx = {
+                'msg' : 'Please Select Start Date and End Date'
+            }
+            return render(request, 'reports/daily_report.html', ctx)
+
+        else:        
             start = request.GET['start_date']
             end = request.GET['end_date']            
             start_date = datetime.strptime(start, '%d/%m/%Y')
             end_date = datetime.strptime(end, '%d/%m/%Y')
-            daily_report = []
+
+            p.drawString(300, 900, 'Daily Reports')
+
+            p.drawString(50, 870, "Date")
+            p.drawString(150, 870, "Particulars/Narration")
+            p.drawString(550, 870, "Income")
+            p.drawString(650, 870, "Expense")           
+
+            y = 850
+            
             round_off = 0
             discount = 0
             total_income = 0
             total_expense = 0
-            daily_report_sales = []
+            
             sales = Sales.objects.filter(sales_invoice_date__gte=start_date,sales_invoice_date__lte=end_date)
             if sales.count()>0:
                 for sale in sales:
-                    daily_report.append({
-                        'income' : sale.grant_total,
-                        'invoice_no' : sale.sales_invoice_number,
-                        'date' : (sale.sales_invoice_date).strftime('%d-%m-%Y'),
-                        'type' :True,
-                    })
+                    y = y - 30
+
+                    p.drawString(50, y, (sale.sales_invoice_date).strftime('%d-%m-%Y'))
+                    p.drawString(150, y, 'By Sales '+str(sale.sales_invoice_number))
+                    p.drawString(550, y, str(sale.grant_total))
+                    p.drawString(650, y, '') 
+
                     round_off = round_off+sale.round_off
                     discount = discount+sale.discount
                     total_income = total_income + sale.grant_total            
             
             expenses = Expense.objects.filter(date__gte=start_date, date__lte=end_date)
             if expenses.count()>0:
-                for expense in expenses:     
-                    daily_report.append({
-                        'voucher_no' : expense.voucher_no,
-                        'date' : (expense.date).strftime('%d-%m-%Y'),
-                        'expense' : expense.amount,
-                        'narration' : expense.narration,
-                        'type' : False,
-                        }) 
+                for expense in expenses:   
+                    y = y - 30
+                    
+                    p.drawString(50, y, (expense.date).strftime('%d-%m-%Y'))
+                    p.drawString(150, y, 'By Voucher '+str(expense.voucher_no)+','+expense.narration)
+                    p.drawString(550, y, '')
+                    p.drawString(650, y, str( expense.amount))    
+                    
                     total_expense = total_expense + expense.amount 
             total_expense = total_expense + round_off + discount
             difference = total_income - total_expense
-            daily_report_sales.append({
-                'round_off' : round_off,
-                'discount' : discount,
-                'total_income' : total_income,
-                'total_expense' : total_expense,
-                'difference' : difference,
-                })         
+
+            y = y-30
+            p.drawString(50, y, '')
+            p.drawString(150, y, 'TotalRoundOff-Sales')
+            p.drawString(550, y, '')
+            p.drawString(650, y, str(round_off))
+
+            y = y-30
+            p.drawString(50, y, '')
+            p.drawString(150, y, 'TotalDiscount-Sales')
+            p.drawString(550, y, '')
+            p.drawString(650, y, str(discount))            
+
             
-            try:                
-                res = {
-                    'result': 'ok',    
-                    'daily_report' : daily_report, 
-                    'daily_report_sales' : daily_report_sales,               
-                }    
-                response = simplejson.dumps(res)
-            except Exception as ex:
-                response = simplejson.dumps({'result': 'error', 'error': str(ex)})
-                status_code = 500
-            return HttpResponse(response, status = status_code, mimetype = 'application/json')
-        else:
-            return render(request, 'reports/daily_report.html',{})
+            y = y-30
+            p.drawString(50, y, '')
+            p.drawString(150, y, 'Total')
+            p.drawString(550, y, str(total_income))
+            p.drawString(650, y, str(total_expense))
+
+            y = y-30
+            p.drawString(50, y, '')
+            p.drawString(150, y, '')
+            p.drawString(550, y, 'Difference')
+            p.drawString(650, y, str(difference))
+
+            p.showPage()
+            p.save()
+        return response
 
 class PurchaseReturn(View):
 
