@@ -9,5 +9,5 @@ urlpatterns = patterns('',
 	url(r'^return/$', PurchaseReturnView.as_view(), name='purchase_return'),
 	url(r'^return_edit/$', PurchaseReturnEdit.as_view(), name='edit_purchase_return'),
 	url(r'^vendor_accounts/$', VendorAccounts.as_view(), name='vendor_accounts'),
-	url(r'^vendor_account/(?P<vendor>\w+)/$', VendorAccountDetails.as_view(), name='vendor_account_details'),
+	url(r'^vendor_account/$', VendorAccountDetails.as_view(), name='vendor_account_details'),
 )

@@ -230,7 +230,7 @@ class VendorAccounts(View):
 class VendorAccountDetails(View):
     def get(self, request, *args, **kwargs):
         try:
-            vendor = get_object_or_404(Vendor, user__first_name=kwargs['vendor'])
+            vendor = get_object_or_404(Vendor, user__first_name=request.GET['vendor'])
             vendor_account =  VendorAccount.objects.get(vendor=vendor)
             res = {
                 'result': 'Ok',
