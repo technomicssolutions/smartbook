@@ -50,6 +50,11 @@
 		{% endif %}
 		{% if user_type == 'staff' %}
 			<div class="control">
+				<label>Username</label>
+				<input name="username" type="text" value="{{profile.user.username}}" />
+			</div>
+
+			<div class="control">
 				<label>Designation</label>
 				<input type="text" name="old_designation"value="{{profile.user.staff_set.all.0.designation.title}}" ng-click="show_designation_list()" id="designation_val">
 				<select name="new_designation" ng-model="designation" ng-show="designation_flag" ng-change="add_designation()">

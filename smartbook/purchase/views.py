@@ -18,7 +18,7 @@ from inventory.models import UnitOfMeasure
 from inventory.models import Brand
 
 from web.models import (UserProfile, Vendor, Customer, Staff, TransportationCompany)
-from purchase.models import Purchase, PurchaseItem, VendorAccount, PurchaseReturn
+from purchase.models import Purchase, PurchaseItem, VendorAccount, PurchaseReturn, PurchaseReturnItem
 from inventory.models import Inventory
 from expenses.models import Expense, ExpenseHead
 
@@ -285,7 +285,7 @@ class PurchaseReturnView(View):
 
     def get(self, request, *args, **kwargs):
         if PurchaseReturn.objects.exists():
-            invoice_number = int(PurchaseReturn.objects.aggregate(Max('purchase_invoice_number'))['purchase_invoice_number__max']) + 1
+            invoice_number = int(PurchaseReturn.objects.aggregate(Max('return_invoice_number'))['return_invoice_number__max']) + 1
         else:
             invoice_number = 1
         if not invoice_number:
@@ -293,18 +293,43 @@ class PurchaseReturnView(View):
         return render(request, 'purchase/purchase_return.html', {
             'invoice_number' : invoice_number,
         })
+
     def post(self, request, *args, **kwargs):
         post_dict = request.POST['purchase_return']
         post_dict = ast.literal_eval(post_dict)
         purchase = Purchase.objects.get(purchase_invoice_number=post_dict['purchase_invoice_number'])
-        purchase_return = PurchaseReturn.objects.get_or_create(purchase=purchase, return_invoice_number = post_dict['invoice_number'])
-        purchase_return.date = post_dict['purchase_return_date']
+        purchase_return, created = PurchaseReturn.objects.get_or_create(purchase=purchase, return_invoice_number = post_dict['invoice_number'])
+        purchase_return.date = datetime.strptime(post_dict['purchase_return_date'], '%d/%m/%Y')
+        purchase_return.net_amount = post_dict['net_return_total']
         purchase_return.save()
+        
+        vendor_account = VendorAccount.objects.get(vendor=purchase.vendor)
+        vendor_account.total_amount = vendor_account.total_amount - int(post_dict['net_return_total'])
+        vendor_account.save()
+
+        return_items = post_dict['purchase_items']
+
+        for item in return_items:
+            return_item = Item.objects.get(code=item['item_code'])
+            p_return_item, created = PurchaseReturnItem.objects.get_or_create(item=return_item, purchase_return=purchase_return)
+            p_return_item.amount = item['returned_amount']
+            p_return_item.quantity = item['returned_quantity']
+            p_return_item.save()
+
+            inventory = Inventory.objects.get(item=return_item)
+            inventory.quantity = inventory.quantity - int(item['returned_quantity'])
+            inventory.save()
+        response = {
+                'result': 'Ok',
+            }
+        status_code = 200
+        return HttpResponse(response, status = status_code, mimetype="application/json")
+
+
 class PurchaseReturnEdit(View):
 
     def get(self, request, *args, **kwargs):
         
         return render(request, 'purchase/vendor_accounts.html', {
-            'vendor_accounts' : vendor_accounts,
-            'vendors': vendors
+            
         })

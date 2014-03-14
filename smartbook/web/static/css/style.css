@@ -242,7 +242,7 @@ form {
 }
 .buttons {
 	margin: auto;
-    width: 25%;
+    width: 35%;
 }
 
 .buttons a {
@@ -346,6 +346,7 @@ form {
 
 .return {
 	position: relative !important;
+	z-index: 0 !important;
 }
 
 .return span {

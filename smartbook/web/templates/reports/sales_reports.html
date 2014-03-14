@@ -12,6 +12,10 @@
 	<div class="main-title">		
 		<div class="alert alert-info" align="Center">Date Wise Sales Report</div>
 	</div>	
+
+	<div class="message" ng-show="error_flag">
+		<p>[[messages]]</p>
+	</div>
 		
 	<div class="reporttext">
 		<label for="s_date">Start Date</label>
@@ -87,6 +91,11 @@
 	<div class="main-title">		
 		<div class="alert alert-info" align="Center">Item Wise Sales Report</div>
 	</div>
+
+	<div class="message" ng-show="error_flag">
+		<p>[[messages]]</p>
+	</div>
+
 	<div class="reporttext">
 		<label for="s_date">Start Date</label>
 	</div>
@@ -155,6 +164,10 @@
 <div ng-show="report_customer_wise">
 	<div class="main-title">		
 		<div class="alert alert-info" align="Center">Customer Wise Sales Report</div>
+	</div>
+
+	<div class="message" ng-show="error_flag">
+		<p>[[messages]]</p>
 	</div>
 
 	<div class="reporttext">
@@ -240,6 +253,11 @@
 	<div class="main-title">		
 		<div class="alert alert-info" align="Center">Salesman Wise Sales Report</div>
 	</div>
+
+	<div class="message" ng-show="error_flag">
+		<p>[[messages]]</p>
+	</div>
+	
 	<div class="reporttext">
 		<label> Salesman</label> 
 	</div>
