@@ -20,9 +20,11 @@ from expenses.models import Expense
 from inventory.models import *
 from purchase.models import PurchaseItem
 from web.models import Vendor
+from django.core.files import File
 
 
 from purchase.models import Purchase, VendorAccount
+from reports.models import ReportTest
 
 from reportlab.lib.units import cm
 from reportlab.pdfgen.canvas import Canvas
@@ -36,13 +38,33 @@ except ImportError:
 from reportlab.pdfgen import canvas
 from reportlab.lib.pagesizes import letter, A4
 from reportlab.lib.units import inch
+from reportlab.platypus import SimpleDocTemplate
 
 
-def createPDF(purchases):
+from reportlab.pdfgen import canvas
+from django.http import HttpResponse
 
+
+def generate(request):
+    # Create the HttpResponse object with the appropriate PDF headers.
+    response = HttpResponse(content_type='application/pdf')
+    response['Content-Disposition'] = 'attachment; filename="somefilename.pdf"'
+
+    # # Create the PDF object, using the response object as its "file."
+    # p = canvas.Canvas(response)
+
+    # # Draw things on the PDF. Here's where the PDF generation happens.
+    # # See the ReportLab documentation for the full list of functionality.
+    # p.drawString(100, 100, "Hello world.")
+
+    # # Close the PDF object cleanly, and we're done.
+    # p.showPage()
+    # p.save()
+    # return response
     x=85
     y=700
     buffer=StringIO()
+    doc = SimpleDocTemplate(buffer) 
     p=canvas.Canvas(buffer,pagesize=letter)
     #p = canvas.Canvas("myreport.pdf")
     # path = settings.PROJECT_PATH + '/../web/static/img/logo.png'
@@ -79,7 +101,21 @@ def createPDF(purchases):
     p.showPage()
     p.save() 
     pdf=buffer.getvalue()
-    buffer.close() 
+    buffer.close()
+    doc.build(document)  
+    myfile = ContentFile(pdf) 
+
+    m = ReportTest()
+    m.file_name.save('test.pdf', myfile) 
+
+    response.write(pdf)
+    print response.FILES
+    return response
+
+
+def createPDF(purchases):
+
+    
     return pdf
 
 class Reports(View):
@@ -280,6 +316,40 @@ class PurchaseReportsDate(View):
                 start_date = datetime.strptime(start_date, '%d/%m/%Y')
                 end_date = datetime.strptime(end_date, '%d/%m/%Y')
                 purchases = Purchase.objects.filter(purchase_invoice_date__gte=start_date, purchase_invoice_date__lte=end_date).order_by('purchase_invoice_date')
+
+                # response = HttpResponse(content_type='application/pdf')
+                # response = HttpResponse(content_type='application/pdf')
+
+                # response['Content-Disposition'] = 'attachment; filename="somefilename.pdf"'
+
+                # # Create the PDF object, using the response object as its "file."
+                # temp = StringIO()
+                # p = canvas.Canvas(temp)
+
+                # # Draw things on the PDF. Here's where the PDF generation happens.
+                # # See the ReportLab documentation for the full list of functionality.
+                # p.drawString(100, 100, "Hello world.")
+
+                # # Close the PDF object cleanly, and we're done.
+                # p.showPage()
+                # p.save()
+                # response.write(temp.getvalue())
+                # fileobj = File(p)
+                # print type(fileobj)
+
+                # file_extension = 'pdf'
+                # path = settings.PROJECT_ROOT
+                # print path
+                # print 'root === ',settings.PROJECT_ROOT
+                # pdf_file_name = 'purchase_report_date_wise'+"."+file_extension
+                # pdf_name = path+'/media/uploads/reports/%s'%(pdf_file_name)
+                # file_name = '%s'%(pdf_name)
+                # print file_name
+                # with open(file_name, 'w') as destination:
+                #     for chunk in fileobj.chunks():
+                #         destination.write(chunk)
+                # file_path = "uploads/reports/"+pdf_file_name
+
                 if len(purchases) > 0:
                     for purchase in purchases:
                         ctx_purchase_report.append({
@@ -293,19 +363,8 @@ class PurchaseReportsDate(View):
                             'quantity': purchase.purchaseitem_set.all()[0].quantity_purchased,
                             'amount': float(purchase.purchaseitem_set.all()[0].net_amount),
                         })
-                # fileobj = createPDF(purchases)
-                # file_extension = 'pdf'
-                # path = settings.PROJECT_ROOT
-                # print path
-                # print 'root === ',settings.PROJECT_ROOT
-                # pdf_file_name = 'purchase_report_date_wise'+"."+file_extension
-                # pdf_name = path+'/media/uploads/reports/%s'%(pdf_file_name)
-                # file_name = '%s'%(pdf_name)
-                # print file_name
-                # with open(file_name, 'w') as destination:
-                #     for chunk in fileobj.chunks():
-                #         destination.write(chunk)
-                # file_path = "uploads/reports/"+pdf_file_name
+
+                        
             else:
                 vendor_name = request.GET['vendor_name']
                 vendor = Vendor.objects.get(user__first_name = vendor_name)
@@ -582,6 +641,7 @@ class StockReports(View):
                        'stock_by_value': float(stock.quantity * stock.selling_price),
                        'profit': stock.selling_price - stock.item.purchaseitem_set.all()[0].cost_price,
                     })
+
             try:
                 res = {
                     'stocks': ctx_stock,
