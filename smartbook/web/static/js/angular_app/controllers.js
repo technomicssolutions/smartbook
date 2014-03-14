@@ -2157,13 +2157,13 @@ function AddItemController($scope, $http, $element, $location, $timeout) {
         });
     }
     $scope.form_validation = function(){
-        if ($scope.item_name == '' || $scope.item_name == undefined) {
-            $scope.error_flag=true;
-            $scope.message = 'Item name cannot be null';
-            return false;
-        } else if($scope.item_code == '' || $scope.item_code == undefined) {
+        if ($scope.item_code == '' || $scope.item_code == undefined) {
             $scope.error_flag=true;
             $scope.message = 'Item code cannot be null';
+            return false;
+        } else if($scope.item_name == '' || $scope.item_name == undefined) {
+            $scope.error_flag=true;
+            $scope.message = 'Item name cannot be null';
             return false;
         } else if($scope.uom_value == '' || $scope.uom_value == undefined || $scope.uom_value == 'select' || $scope.uom_value == 'other') {
             $scope.error_flag=true;
@@ -2214,7 +2214,7 @@ function AddItemController($scope, $http, $element, $location, $timeout) {
                 } else {
                     $scope.error_flag=false;
                     $scope.message = '';
-                    document.location.href = '/';
+                    document.location.href = '/inventory/add_item/';
                 }
             }).error(function(data, status){
                 $scope.error_flag=true;
