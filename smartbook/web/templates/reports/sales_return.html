@@ -9,70 +9,31 @@
 {% block content %}
 
 <div class="main-title">		
-	<div class="alert alert-info" align="Center"> Sales Return</div>
+	<div class="alert alert-info" align="Center"> Sales Return Reports</div>
 </div>
 
-<div class="message" ng-show="error_flag">
-	<p>[[messages]]</p>
+<div class="message">
+	<p>{{msg}}</p>
 </div>	
-					
-<div class="reporttext">
-	<label for="s_date">Start Date</label>
-</div>
-<div class="reportinput">
-	<input type="text" name="start_date" id="start_date">
-</div>
+<form name="salesreturn_form" method="get" action="{% url 'sales_return_report' %}">					
+	<div class="reporttext">
+		<label for="s_date">Start Date</label>
+	</div>
+	<div class="reportinput">
+		<input type="text" name="start_date" id="start_date" value="{{start_date}}">
+	</div>
 
-<div class="reporttext">
-	<label for="e_date">End Date</label>
-</div>
-<div class="reportinput">
-	<input type="text" name="end_date" id="end_date">
-</div>
+	<div class="reporttext">
+		<label for="e_date">End Date</label>
+	</div>
+	<div class="reportinput">
+		<input type="text" name="end_date" id="end_date" value="{{end_date}}">
+	</div>
 
-<div class="reporttext">
-	<input type="submit" value="View Report" class="btn btn-info report_button " style="border-top-width: 0px; margin-top: 3px;" ng-click="view_report()">
-</div>
-<div class="reporttext">
-	<a href=""><img src="/static/images/print.png" height='25px' width='25px'/></a>
-</div>
-
-		
-<table id="list" class="table table-hover" ng-show ="salesreturn_report.length > 0" >
-	<thead class="success" style="font-size: 12px"style="width:auto">
-	  <th>Date</th>
-	  <th>Invoice Number</th>
-	  <th>Item Code</th>
-	  <th>Item Name</th>
-	  <th>Quantity</th>
-	  <th>Unit Price</th>			 
-	  <th>Total</th>			 
-	</thead>
-	<tbody>
-		<tr ng-repeat="report in salesreturn_report">
-			<td>[[report.dates]]</td>
-			<td>[[report.invoice_no]]</td>
-			<td>[[report.item_code]]</td>
-			<td>[[report.item_name]]</td>			
-			<td>[[report.qty]]</td>
-			<td>[[report.unitprice]]</td>
-			<td>[[report.total]]</td>
-		</tr>
-	</tbody>
-	<tfoot>
-		<td></td>
-		<td></td>
-		<td></td>
-		<td></td>
-		<td></td>
-		<td>Total</td>
-		<td>[[salesreturn_report_total.grant_total]]</td>
-
-	</tfoot>	
-</table> 
-
-
-	
+	<div class="reporttext">
+		<input type="submit" value="View Report" class="btn btn-info report_button " style="border-top-width: 0px; margin-top: 3px;" >
+	</div>
+</form>
 
 
 {% endblock content %}

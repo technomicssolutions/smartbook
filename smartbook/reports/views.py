@@ -65,285 +65,400 @@ class SalesReports(View):
         if not report_type:
             return render(request, 'reports/sales_reports.html', {})
 
-        if report_type == 'date':            
+        if report_type == 'date': 
+
             start = request.GET['start_date']
-            end = request.GET['end_date']      
-            print "start", start      
-            start_date = datetime.strptime(start, '%d/%m/%Y')
-            end_date = datetime.strptime(end, '%d/%m/%Y')
+            end = request.GET['end_date']
 
-            p.drawString(350, 900, 'Date Wise Sales Report')
-            p.setFontSize(13)
-            p.drawString(50, 875, "Date")
-            p.drawString(150, 875, "Invoice Number")
-            p.drawString(250, 875, "Item Name")
-            p.drawString(350, 875, "Quantity")
-            p.drawString(450, 875, "Discount")
-            p.drawString(550, 875, "Selling Price")
-            p.drawString(650, 875, "Total")
-            p.drawString(750, 875, "Profit")
+            if start is None:
+                return render(request, 'reports/sales_reports.html', {})
+            if not start:            
+                ctx = {
+                    'msg' : 'Please Select Start Date',
+                    'start_date' : start,
+                    'end_date' : end,
+                    'report_type' : 'date',
+                }
+                return render(request, 'reports/sales_reports.html', ctx)
+            elif not end:
+                ctx = {
+                    'msg' : 'Please Select End Date',
+                    'start_date' : start,
+                    'end_date' : end,
+                    'report_type' : 'date',
+                }
+                return render(request, 'reports/sales_reports.html', ctx) 
 
-            y = 850
+                 
+            else:
 
-            sales = Sales.objects.filter(sales_invoice_date__gte=start_date,sales_invoice_date__lte=end_date)
-            if sales.count()>0:
-                for sale in sales:
-                    round_off = round_off + sale.round_off
-                    items = sale.salesitem_set.all()
-                    for item in items:
-                        discount = item.discount_given                         
-                        dates = item.sales.sales_invoice_date
-                        invoice_no = item.sales.sales_invoice_number
-                        qty = item.quantity_sold
-                        item_name = item.item.name
-                        inventorys = item.item.inventory_set.all()[0]                            
-                        selling_price = inventorys.selling_price
+                start_date = datetime.strptime(start, '%d/%m/%Y')
+                end_date = datetime.strptime(end, '%d/%m/%Y')
 
-                        purchases = item.item.purchaseitem_set.all()
-                        if purchases.count()>0:                                
-                            for purchase in purchases:                                
-                                cost_price = cost_price + purchase.cost_price
-                                i = i + 1
-                            avg_cp = cost_price/i
-                        total = selling_price * qty
-                        profit = (selling_price - avg_cp)*qty
+                p.drawString(350, 900, 'Date Wise Sales Report')
+                p.setFontSize(13)
+                p.drawString(50, 875, "Date")
+                p.drawString(150, 875, "Invoice Number")
+                p.drawString(250, 875, "Item Name")
+                p.drawString(350, 875, "Quantity")
+                p.drawString(450, 875, "Discount")
+                p.drawString(550, 875, "Selling Price")
+                p.drawString(650, 875, "Total")
+                p.drawString(750, 875, "Profit")
 
-                        grant_total = grant_total + total
-                        total_profit = total_profit + profit
-                        total_discount = total_discount + discount
+                y = 850
 
-                        y = y - 30
-                        p.drawString(50, y, dates.strftime('%d/%m/%y'))
-                        p.drawString(150, y, str(invoice_no))
-                        p.drawString(250, y, item_name)
-                        p.drawString(350, y, str(qty))
-                        p.drawString(450, y, str(discount))
-                        p.drawString(550, y, str(selling_price))
-                        p.drawString(650, y, str(total))
-                        p.drawString(750, y, str(profit))
-            y = y - 30
-            p.drawString(50, y, 'Round Off : '+str(round_off))
-            p.drawString(150, y, '')
-            p.drawString(250, y, '')
-            p.drawString(350, y, '')
-            p.drawString(450, y, str(total_discount))
-            p.drawString(550, y, '')
-            p.drawString(650, y, str(grant_total))
-            p.drawString(750, y, str(total_profit))
+                sales = Sales.objects.filter(sales_invoice_date__gte=start_date,sales_invoice_date__lte=end_date)
+                if sales.count()>0:
+                    for sale in sales:
+                        round_off = round_off + sale.round_off
+                        items = sale.salesitem_set.all()
+                        for item in items:
+                            discount = item.discount_given                         
+                            dates = item.sales.sales_invoice_date
+                            invoice_no = item.sales.sales_invoice_number
+                            qty = item.quantity_sold
+                            item_name = item.item.name
+                            inventorys = item.item.inventory_set.all()[0]                            
+                            selling_price = inventorys.selling_price
 
-            p.showPage()
-            p.save()
+                            purchases = item.item.purchaseitem_set.all()
+                            if purchases.count()>0:                                
+                                for purchase in purchases:                                
+                                    cost_price = cost_price + purchase.cost_price
+                                    i = i + 1
+                                avg_cp = cost_price/i
+                            total = selling_price * qty
+                            profit = (selling_price - avg_cp)*qty
+
+                            grant_total = grant_total + total
+                            total_profit = total_profit + profit
+                            total_discount = total_discount + discount
+
+                            y = y - 30
+                            p.drawString(50, y, dates.strftime('%d/%m/%y'))
+                            p.drawString(150, y, str(invoice_no))
+                            p.drawString(250, y, item_name)
+                            p.drawString(350, y, str(qty))
+                            p.drawString(450, y, str(discount))
+                            p.drawString(550, y, str(selling_price))
+                            p.drawString(650, y, str(total))
+                            p.drawString(750, y, str(profit))
+                y = y - 30
+                p.drawString(50, y, 'Round Off : '+str(round_off))
+                p.drawString(150, y, '')
+                p.drawString(250, y, '')
+                p.drawString(350, y, '')
+                p.drawString(450, y, str(total_discount))
+                p.drawString(550, y, '')
+                p.drawString(650, y, str(grant_total))
+                p.drawString(750, y, str(total_profit))
+
+                p.showPage()
+                p.save()
 
 
         elif report_type == 'item':
+
             start = request.GET['start_date']
-            end = request.GET['end_date']            
-            start_date = datetime.strptime(start, '%d/%m/%Y')
-            end_date = datetime.strptime(end, '%d/%m/%Y')
+            end = request.GET['end_date']
 
-            p.drawString(325, 900, 'Item Wise Sales Report')
-            p.setFontSize(13)
-            p.drawString(50, 875, "Item Code")
-            p.drawString(150, 875, "Item Name")
-            p.drawString(250, 875, "Total Quantity")
-            p.drawString(350, 875, "Discount")
-            p.drawString(450, 875, "Cost Price")
-            p.drawString(550, 875, "Selling Price")
-            p.drawString(650, 875, "Profit")     
 
-            y = 850       
+            if start is None:
+                return render(request, 'reports/sales_reports.html', {})
+            if not start:            
+                ctx = {
+                    'msg' : 'Please Select Start Date ',
+                    'start_date' : start,
+                    'end_date' : end,
+                    'report_type' : 'item',
+                }
+                return render(request, 'reports/sales_reports.html', ctx)
+            elif not end:
+                ctx = {
+                    'msg' : 'Please Select End Date',
+                    'start_date' : start,
+                    'end_date' : end,
+                    'report_type' : 'item',
+                }
+                return render(request, 'reports/sales_reports.html', ctx) 
+            else:
 
-            sales = Sales.objects.filter(sales_invoice_date__gte=start_date,sales_invoice_date__lte=end_date)
-            if sales.count()>0:
-                for sale in sales:
-                    items = sale.salesitem_set.all()
-                    for item in items:
-                        discount = item.discount_given                         
-                        total_qty = item.quantity_sold
-                        item_name = item.item.name
-                        item_code = item.item.code
-                        inventorys = item.item.inventory_set.all()[0]
-                        selling_price = inventorys.selling_price
+                start_date = datetime.strptime(start, '%d/%m/%Y')
+                end_date = datetime.strptime(end, '%d/%m/%Y')
 
-                        purchases = item.item.purchaseitem_set.all()
-                        if purchases.count()>0:
-                            for purchase in purchases:
-                                cost_price = cost_price + purchase.cost_price
-                                i = i + 1
-                            avg_cp = cost_price/i
-                        profit = (selling_price - avg_cp)*total_qty
+                p.drawString(325, 900, 'Item Wise Sales Report')
+                p.setFontSize(13)
+                p.drawString(50, 875, "Item Code")
+                p.drawString(150, 875, "Item Name")
+                p.drawString(250, 875, "Total Quantity")
+                p.drawString(350, 875, "Discount")
+                p.drawString(450, 875, "Cost Price")
+                p.drawString(550, 875, "Selling Price")
+                p.drawString(650, 875, "Profit")     
 
-                        total_profit = total_profit + profit
-                        total_discount = total_discount + discount
-                        total_cp = total_cp + avg_cp
-                        total_sp = total_sp + selling_price
+                y = 850       
 
-                        y = y - 30
-                        p.drawString(50, y, str(item_code))
-                        p.drawString(150, y, item_name)
-                        p.drawString(250, y, str(total_qty))
-                        p.drawString(350, y, str(discount))
-                        p.drawString(450, y, str(avg_cp))
-                        p.drawString(550, y, str(selling_price))
-                        p.drawString(650, y, str(profit)) 
+                sales = Sales.objects.filter(sales_invoice_date__gte=start_date,sales_invoice_date__lte=end_date)
+                if sales.count()>0:
+                    for sale in sales:
+                        items = sale.salesitem_set.all()
+                        for item in items:
+                            discount = item.discount_given                         
+                            total_qty = item.quantity_sold
+                            item_name = item.item.name
+                            item_code = item.item.code
+                            inventorys = item.item.inventory_set.all()[0]
+                            selling_price = inventorys.selling_price
 
-            y = y - 30
-            p.drawString(50, y, '')
-            p.drawString(150, y, '')
-            p.drawString(250, y, '')
-            p.drawString(350, y, str(total_discount))
-            p.drawString(450, y, str(total_cp))
-            p.drawString(550, y, str(total_sp))
-            p.drawString(650, y, str(total_profit)) 
+                            purchases = item.item.purchaseitem_set.all()
+                            if purchases.count()>0:
+                                for purchase in purchases:
+                                    cost_price = cost_price + purchase.cost_price
+                                    i = i + 1
+                                avg_cp = cost_price/i
+                            profit = (selling_price - avg_cp)*total_qty
 
-            p.showPage()
-            p.save()
+                            total_profit = total_profit + profit
+                            total_discount = total_discount + discount
+                            total_cp = total_cp + avg_cp
+                            total_sp = total_sp + selling_price
+
+                            y = y - 30
+                            p.drawString(50, y, str(item_code))
+                            p.drawString(150, y, item_name)
+                            p.drawString(250, y, str(total_qty))
+                            p.drawString(350, y, str(discount))
+                            p.drawString(450, y, str(avg_cp))
+                            p.drawString(550, y, str(selling_price))
+                            p.drawString(650, y, str(profit)) 
+
+                y = y - 30
+                p.drawString(50, y, '')
+                p.drawString(150, y, '')
+                p.drawString(250, y, '')
+                p.drawString(350, y, str(total_discount))
+                p.drawString(450, y, str(total_cp))
+                p.drawString(550, y, str(total_sp))
+                p.drawString(650, y, str(total_profit)) 
+
+                p.showPage()
+                p.save()
 
             
         elif report_type == 'customer':
             start = request.GET['start_date']
-            end = request.GET['end_date']            
-            start_date = datetime.strptime(start, '%d/%m/%Y')
-            end_date = datetime.strptime(end, '%d/%m/%Y')
-
-            p.drawString(350, 900, 'Customer Wise Sales Report')
-            p.setFontSize(13)
-            p.drawString(50, 875, "Date")
-            p.drawString(150, 875, "Invoice Number")
-            p.drawString(250, 875, "Item Name")
-            p.drawString(350, 875, "Quantity")
-            p.drawString(450, 875, "Discount")
-            p.drawString(550, 875, "Selling Price")
-            p.drawString(650, 875, "Total") 
-            p.drawString(750, 875, "Profit")
-            
-            y = 850
-
+            end = request.GET['end_date']       
             customer_name = request.GET['customer_name']
-            customer = Customer.objects.get(user__first_name = customer_name)
-            sales = Sales.objects.filter(sales_invoice_date__gte=start_date,sales_invoice_date__lte=end_date,customer=customer)
-            if sales.count()>0:
-                for sale in sales:
-                    items = sale.salesitem_set.all()
-                    for item in items:
-                        dates = item.sales.sales_invoice_date
-                        invoice_no = item.sales.sales_invoice_number
-                        item_name = item.item.name
-                        qty = item.quantity_sold
-                        discount = item.discount_given
-                        inventorys = item.item.inventory_set.all()[0]
-                        selling_price = inventorys.selling_price
-                        total = selling_price * qty
 
-                        purchases = item.item.purchaseitem_set.all()
-                        if purchases.count()>0:                                
-                            for purchase in purchases:
-                                cost_price = cost_price + purchase.cost_price
-                                i = i + 1
-                            avg_cp = cost_price/i
-                        profit = (selling_price - avg_cp)*qty
-
-                        total_profit = total_profit + profit
-                        total_discount = total_discount + discount                            
-                        total_sp = total_sp + selling_price
-                        grant_total = grant_total + total
-
-                        y = y - 30
-                        p.drawString(50, y, dates.strftime('%d-%m-%Y'))
-                        p.drawString(150, y, str(invoice_no))
-                        p.drawString(250, y, item_name)
-                        p.drawString(350, y, str(qty))
-                        p.drawString(450, y, str(discount))
-                        p.drawString(550, y, str(selling_price))
-                        p.drawString(650, y, str(total)) 
-                        p.drawString(750, y, str(profit))
-            y = y - 30
-            p.drawString(50, y, '')
-            p.drawString(150, y, '')
-            p.drawString(250, y, '')
-            p.drawString(350, y, '')
-            p.drawString(450, y, str(total_discount))
-            p.drawString(550, y, str(total_sp))
-            p.drawString(650, y, str(grant_total)) 
-            p.drawString(750, y, str(total_profit))
+            if start is None:
+                return render(request, 'reports/sales_reports.html', {})
+            if not start:            
+                ctx = {
+                    'msg' : 'Please Select Start Date',
+                    'start_date' : start,
+                    'end_date' : end,
+                    'customer' : customer_name,
+                    'report_type' : 'customer',
+                }
+                return render(request, 'reports/sales_reports.html', ctx)
+            elif not end:
+                ctx = {
+                    'msg' : 'Please Select End Date',
+                    'start_date' : start,
+                    'end_date' : end,
+                    'customer' : customer_name,
+                    'report_type' : 'customer',
+                }
+                return render(request, 'reports/sales_reports.html', ctx) 
+            elif customer_name == 'select':
+                ctx = {
+                    'msg' : 'Please Select Customer Name',
+                    'start_date' : start,
+                    'end_date' : end,
+                    'customer' : customer_name,
+                    'report_type' : 'customer',
+                }
+                return render(request, 'reports/sales_reports.html', ctx)
+            else:
 
 
-            p.showPage()
-            p.save()
+                start_date = datetime.strptime(start, '%d/%m/%Y')
+                end_date = datetime.strptime(end, '%d/%m/%Y')
+
+                p.drawString(350, 900, 'Customer Wise Sales Report')
+                p.setFontSize(13)
+                p.drawString(50, 875, "Date")
+                p.drawString(150, 875, "Invoice Number")
+                p.drawString(250, 875, "Item Name")
+                p.drawString(350, 875, "Quantity")
+                p.drawString(450, 875, "Discount")
+                p.drawString(550, 875, "Selling Price")
+                p.drawString(650, 875, "Total") 
+                p.drawString(750, 875, "Profit")
+                
+                y = 850
+
+                
+                customer = Customer.objects.get(user__first_name = customer_name)
+                sales = Sales.objects.filter(sales_invoice_date__gte=start_date,sales_invoice_date__lte=end_date,customer=customer)
+                if sales.count()>0:
+                    for sale in sales:
+                        items = sale.salesitem_set.all()
+                        for item in items:
+                            dates = item.sales.sales_invoice_date
+                            invoice_no = item.sales.sales_invoice_number
+                            item_name = item.item.name
+                            qty = item.quantity_sold
+                            discount = item.discount_given
+                            inventorys = item.item.inventory_set.all()[0]
+                            selling_price = inventorys.selling_price
+                            total = selling_price * qty
+
+                            purchases = item.item.purchaseitem_set.all()
+                            if purchases.count()>0:                                
+                                for purchase in purchases:
+                                    cost_price = cost_price + purchase.cost_price
+                                    i = i + 1
+                                avg_cp = cost_price/i
+                            profit = (selling_price - avg_cp)*qty
+
+                            total_profit = total_profit + profit
+                            total_discount = total_discount + discount                            
+                            total_sp = total_sp + selling_price
+                            grant_total = grant_total + total
+
+                            y = y - 30
+                            p.drawString(50, y, dates.strftime('%d-%m-%Y'))
+                            p.drawString(150, y, str(invoice_no))
+                            p.drawString(250, y, item_name)
+                            p.drawString(350, y, str(qty))
+                            p.drawString(450, y, str(discount))
+                            p.drawString(550, y, str(selling_price))
+                            p.drawString(650, y, str(total)) 
+                            p.drawString(750, y, str(profit))
+                y = y - 30
+                p.drawString(50, y, '')
+                p.drawString(150, y, '')
+                p.drawString(250, y, '')
+                p.drawString(350, y, '')
+                p.drawString(450, y, str(total_discount))
+                p.drawString(550, y, str(total_sp))
+                p.drawString(650, y, str(grant_total)) 
+                p.drawString(750, y, str(total_profit))
+
+
+                p.showPage()
+                p.save()
 
             
         elif report_type == 'salesman':
             start = request.GET['start_date']
-            end = request.GET['end_date']            
-            start_date = datetime.strptime(start, '%d/%m/%Y')
-            end_date = datetime.strptime(end, '%d/%m/%Y')
-
-            p.drawString(425, 900, 'Salesman Wise Sales Report')
-            p.setFontSize(13)
-            p.drawString(50, 875, "Date")
-            p.drawString(150, 875, "Invoice Number")
-            p.drawString(250, 875, "Item Name")
-            p.drawString(350, 875, "Quantity")
-            p.drawString(450, 875, "Discount")
-            p.drawString(550, 875, "Selling Price")
-            p.drawString(650, 875, "Total") 
-            p.drawString(750, 875, "Profit")
-
-            y = 850
-            
+            end = request.GET['end_date']
             salesman_name = request.GET['salesman_name']
-            desig = Designation.objects.get(title = 'salesman')                
-            salesmen = Staff.objects.filter(designation = desig, user__first_name=salesman_name)                
-            sales = Sales.objects.filter(sales_invoice_date__gte=start_date,sales_invoice_date__lte=end_date,salesman=salesmen)
-            
-            if sales.count()>0:                    
-                for sale in sales:
-                    items = sale.salesitem_set.all()
-                    for item in items:
-                        dates = item.sales.sales_invoice_date
-                        invoice_no = item.sales.sales_invoice_number
-                        item_name = item.item.name
-                        qty = item.quantity_sold
-                        discount = item.discount_given
-                        inventorys = item.item.inventory_set.all()[0]
-                        selling_price = inventorys.selling_price
-                        total = selling_price * qty
 
-                        purchases = item.item.purchaseitem_set.all()
-                        if purchases.count()>0:                                
-                            for purchase in purchases:
-                                cost_price = cost_price + purchase.cost_price
-                                i = i + 1
-                            avg_cp = cost_price/i
-                        profit = (selling_price - avg_cp)*qty
+            if start is None:
+                return render(request, 'reports/sales_reports.html', {})
+            if not start:            
+                ctx = {
+                    'msg' : 'Please Select Start Date',
+                    'start_date' : start,
+                    'end_date' : end,
+                    'salesman' : salesman_name,
+                    'report_type' : 'salesman',
+                }
+                return render(request, 'reports/sales_reports.html', ctx)
+            elif not end:
+                ctx = {
+                    'msg' : 'Please Select End Date',
+                    'start_date' : start,
+                    'end_date' : end,
+                    'salesman' : salesman_name,
+                    'report_type' : 'salesman',
 
-                        total_profit = total_profit + profit
-                        total_discount = total_discount + discount                            
-                        total_sp = total_sp + selling_price
-                        grant_total = grant_total + total
+                }
+                return render(request, 'reports/sales_reports.html', ctx) 
+            elif salesman_name == 'select':
+                ctx = {
+                    'msg' : 'Please Select Salesman Name',
+                    'start_date' : start,
+                    'end_date' : end,
+                    'salesman' : salesman_name,
+                    'report_type' : 'salesman',
+                    
+                }
+                return render(request, 'reports/sales_reports.html', ctx)
+            else:
 
-                        y = y - 30
-                        p.drawString(50, y, dates.strftime('%d-%m-%Y'))
-                        p.drawString(150, y, str(invoice_no))
-                        p.drawString(250, y, item_name)
-                        p.drawString(350, y, str(qty))
-                        p.drawString(450, y, str(discount))
-                        p.drawString(550, y, str(selling_price))
-                        p.drawString(650, y, str(total)) 
-                        p.drawString(750, y, str(profit))
-            y = y - 30
-            p.drawString(50, y, '')
-            p.drawString(150, y, '')
-            p.drawString(250, y, '')
-            p.drawString(350, y, '')
-            p.drawString(450, y, str(total_discount))
-            p.drawString(550, y, str(total_sp))
-            p.drawString(650, y, str(grant_total)) 
-            p.drawString(750, y, str(total_profit))
+                start_date = datetime.strptime(start, '%d/%m/%Y')
+                end_date = datetime.strptime(end, '%d/%m/%Y')
+
+                p.drawString(425, 900, 'Salesman Wise Sales Report')
+                p.setFontSize(13)
+                p.drawString(50, 875, "Date")
+                p.drawString(150, 875, "Invoice Number")
+                p.drawString(250, 875, "Item Name")
+                p.drawString(350, 875, "Quantity")
+                p.drawString(450, 875, "Discount")
+                p.drawString(550, 875, "Selling Price")
+                p.drawString(650, 875, "Total") 
+                p.drawString(750, 875, "Profit")
+
+                y = 850
+                
+                
+                desig = Designation.objects.get(title = 'salesman')                
+                salesmen = Staff.objects.filter(designation = desig, user__first_name=salesman_name)                
+                sales = Sales.objects.filter(sales_invoice_date__gte=start_date,sales_invoice_date__lte=end_date,salesman=salesmen)
+                
+                if sales.count()>0:                    
+                    for sale in sales:
+                        items = sale.salesitem_set.all()
+                        for item in items:
+                            dates = item.sales.sales_invoice_date
+                            invoice_no = item.sales.sales_invoice_number
+                            item_name = item.item.name
+                            qty = item.quantity_sold
+                            discount = item.discount_given
+                            inventorys = item.item.inventory_set.all()[0]
+                            selling_price = inventorys.selling_price
+                            total = selling_price * qty
+
+                            purchases = item.item.purchaseitem_set.all()
+                            if purchases.count()>0:                                
+                                for purchase in purchases:
+                                    cost_price = cost_price + purchase.cost_price
+                                    i = i + 1
+                                avg_cp = cost_price/i
+                            profit = (selling_price - avg_cp)*qty
+
+                            total_profit = total_profit + profit
+                            total_discount = total_discount + discount                            
+                            total_sp = total_sp + selling_price
+                            grant_total = grant_total + total
+
+                            y = y - 30
+                            p.drawString(50, y, dates.strftime('%d-%m-%Y'))
+                            p.drawString(150, y, str(invoice_no))
+                            p.drawString(250, y, item_name)
+                            p.drawString(350, y, str(qty))
+                            p.drawString(450, y, str(discount))
+                            p.drawString(550, y, str(selling_price))
+                            p.drawString(650, y, str(total)) 
+                            p.drawString(750, y, str(profit))
+                y = y - 30
+                p.drawString(50, y, '')
+                p.drawString(150, y, '')
+                p.drawString(250, y, '')
+                p.drawString(350, y, '')
+                p.drawString(450, y, str(total_discount))
+                p.drawString(550, y, str(total_sp))
+                p.drawString(650, y, str(grant_total)) 
+                p.drawString(750, y, str(total_profit))
 
 
-            p.showPage()
-            p.save()
+                p.showPage()
+                p.save()
 
             
         return response
@@ -433,60 +548,95 @@ class StockReportsDate(View):
 
 class SalesReturnReport(View):
     def get(self, request, *args, **kwargs):
-        if request.is_ajax():
-            status_code = 200
+        
+        status_code = 200
+        response = HttpResponse(content_type='application/pdf')
+        p = canvas.Canvas(response, pagesize=(1000, 1000))
+        start_date = request.GET.get('start_date')
+        end_date = request.GET.get('end_date')
+        if start_date is None:
+            return render(request, 'reports/sales_return.html', {})
+        if not start_date:            
+            ctx = {
+                'msg' : 'Please Select Start Date ',
+                'start_date' : start_date,
+                'end_date' : end_date,
+            }
+            return render(request, 'reports/sales_return.html', ctx)
+        elif not end_date:
+            ctx = {
+                'msg' : 'Please Select End Date',
+                'start_date' : start_date,
+                'end_date' : end_date,
+            }
+            return render(request, 'reports/sales_return.html', ctx)
+        else:
             start = request.GET['start_date']
-            end = request.GET['end_date']            
+            end = request.GET['end_date']                    
             start_date = datetime.strptime(start, '%d/%m/%Y')
             end_date = datetime.strptime(end, '%d/%m/%Y')
-            salesreturn_report = []
-            salesreturn_report_total = []
+
+            p.drawString(370, 900, 'Sales Return Reports')
+    
+
+            p.drawString(50, 875, "Date")
+            p.drawString(150, 875, "Invoice Number")
+            p.drawString(250, 875, "Item Code")
+            p.drawString(350, 875, "Item Name")
+            p.drawString(450, 875, "Quantity")
+            p.drawString(550, 875, "Unit Price")
+            p.drawString(650, 875, "Total")
+                
+
+            y = 850       
+      
+            
             grant_total = 0
 
             salesreturn = SalesReturn.objects.filter(date__gte=start_date,date__lte=end_date)
             
             if salesreturn.count()>0:
                 for sale in salesreturn:
-                    salesreturn_items = sale.salesreturnitem_set.all()
+                    salesreturn_items = sale.salesreturnitem_set.all()                    
                     if salesreturn_items.count()>0:
                         for salesreturn_item in salesreturn_items:
                             dates = salesreturn_item.sales_return.date
                             invoice_no = salesreturn_item.sales_return.return_invoice_number
                             qty = salesreturn_item.return_quantity
                             total = salesreturn_item.amount
-                            item_name = salesreturn_item.item.item.name
-                            item_code = salesreturn_item.item.item.code
-                            inventorys = salesreturn_item.item.item.inventory_set.all()[0]
+                            item_name = salesreturn_item.item.name
+                            item_code = salesreturn_item.item.code
+                            inventorys = salesreturn_item.item.inventory_set.all()[0]
                             unitprice = inventorys.unit_price
 
                             grant_total = grant_total + total
 
-                            salesreturn_report.append({                        
-                                'dates' : dates.strftime('%d-%m-%Y'),
-                                'invoice_no' : invoice_no,
-                                'qty' : qty,
-                                'total' : total,
-                                'item_name' : item_name,
-                                'item_code' : item_code,                        
-                                'unitprice' : unitprice,
-                            })
-            salesreturn_report_total.append({
-                'grant_total' :grant_total,
-            })
+                            y = y - 30
 
-            try:                
-                res = {
-                    'result': 'ok',    
-                    'salesreturn_report' : salesreturn_report, 
-                    'salesreturn_report_total' : salesreturn_report_total,               
-                }    
-                response = simplejson.dumps(res)
-            except Exception as ex:
-                response = simplejson.dumps({'result': 'error', 'error': str(ex)})
-                status_code = 500
-            return HttpResponse(response, status = status_code, mimetype = 'application/json')
-        else:
-            return render(request, 'reports/sales_return.html',{})
+                            p.drawString(50, y, dates.strftime('%d-%m-%Y'))
+                            p.drawString(150, y, str(invoice_no))
+                            p.drawString(250, y, str(item_code))
+                            p.drawString(350, y, item_name)
+                            p.drawString(450, y, str(qty))
+                            p.drawString(550, y, str(unitprice))
+                            p.drawString(650, y, str(total))
+            
+            y= y - 30
+            p.drawString(50, y, '')
+            p.drawString(150, y, '')
+            p.drawString(250, y, '')
+            p.drawString(350, y, '')
+            p.drawString(450, y, '')
+            p.drawString(550, y, '')
+            p.drawString(650, y, str(grant_total))
+
+            p.showPage()
+            p.save()
+        return response
+
+            
+
+       
 
 class DailyReport(View):
     def get(self, request, *args, **kwargs):
@@ -500,12 +650,16 @@ class DailyReport(View):
             return render(request, 'reports/daily_report.html', {})
         if not start_date:            
             ctx = {
-                'msg' : 'Please Select Start Date and End Date'
+                'msg' : 'Please Select Start Date ',
+                'start_date' : start_date,
+                'end_date' : end_date,
             }
             return render(request, 'reports/daily_report.html', ctx)
         elif not end_date:
             ctx = {
-                'msg' : 'Please Select Start Date and End Date'
+                'msg' : 'Please Select End Date',
+                'start_date' : start_date,
+                'end_date' : end_date,
             }
             return render(request, 'reports/daily_report.html', ctx)
 
@@ -732,7 +886,7 @@ class StockReports(View):
         if request.is_ajax():
             status_code = 200
             stocks = Inventory.objects.all()
-            print stocks
+            
             ctx_stock = []
             if len(stocks) > 0:
                 for stock in stocks:
