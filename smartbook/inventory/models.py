@@ -25,7 +25,7 @@ class Brand(models.Model):
 class Item(models.Model):
 
 	code = models.CharField('Item Code', max_length=10, unique=True)
-	name = models.CharField('Name', max_length=50, unique=True)
+	name = models.CharField('Name', max_length=5)
 	description = models.TextField('Description', max_length=50,null=True, blank=True)
 	uom = models.ForeignKey(UnitOfMeasure)
 	brand = models.ForeignKey(Brand)
