@@ -257,7 +257,7 @@ class EditUser(View):
     def get(self, request, *args, **kwargs):
 
         user_type = kwargs['user_type']
-        userprofile = UserProfile.objects.get(id=kwargs['profile_id'])
+        userprofile = UserProfile.objects.get(user_id=kwargs['user_id'])
         if user_type == 'vendor':
             return render(request, 'edit_user.html',{'user_type': user_type, 'profile': userprofile})
         elif user_type == 'staff':
@@ -272,13 +272,13 @@ class EditUser(View):
     def post(self, request, *args, **kwargs):
 
         user_type = kwargs['user_type']
-        userprofile = UserProfile.objects.get(id=kwargs['profile_id'])
         post_dict = request.POST
-        user = userprofile.user
+        user = User.objects.get(id= kwargs['user_id'])
         user.first_name = post_dict['name']
         user.username= post_dict['name']+user_type
         user.email = post_dict['email']
         user.save()
+        userprofile, created = UserProfile.objects.get_or_create(user = user)
         userprofile.user_type=user_type
         userprofile.user = user
         userprofile.house_name =request.POST['house']
@@ -378,8 +378,7 @@ class DeleteUser(View):
     def get(self, request, *args, **kwargs):
 
         user_type = kwargs['user_type']
-        profile = UserProfile.objects.get(id=kwargs['profile_id'])
-        user = profile.user
+        user = User.objects.get(id=kwargs['user_id'])
         if request.user.is_superuser:
             user.delete()
             context = {
