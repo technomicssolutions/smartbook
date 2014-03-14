@@ -2218,7 +2218,7 @@ function AddItemController($scope, $http, $element, $location, $timeout) {
                 } else {
                     $scope.error_flag=false;
                     $scope.message = '';
-                    document.location.href = '/';
+                    document.location.href = '/inventory/add_item/';
                 }
             }).error(function(data, status){
                 $scope.error_flag=true;
