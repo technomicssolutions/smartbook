@@ -31,23 +31,24 @@ class PurchaseDetail(View):
             purchase_items = PurchaseItem.objects.filter(purchase=purchase)
             items_list = []
             for item in purchase_items:
+                inventory = Inventory.objects.get(item=item.item, vendor=purchase.vendor)
                 items_list.append({
                     'item_code': item.item.code,
                     'item_name': item.item.name,
                     'barcode': item.item.barcode,
                     'uom': item.item.uom.uom,
-                    'current_stock': item.item.inventory_set.all()[0].quantity,
+                    'current_stock': inventory.quantity,
                     'frieght': item.item_frieght,
                     'frieght_unit': item.frieght_per_unit,
                     'handling': item.item_handling,
                     'handling_unit': item.handling_per_unit,                
-                    'selling_price': item.item.inventory_set.all()[0].selling_price,
+                    'selling_price': inventory.selling_price,
                     'qty_purchased': item.quantity_purchased,
                     'cost_price': item.cost_price,
-                    'permit_disc_amt': item.item.inventory_set.all()[0].discount_permit_amount,
-                    'permit_disc_percent': item.item.inventory_set.all()[0].discount_permit_percentage,
+                    'permit_disc_amt': inventory.discount_permit_amount,
+                    'permit_disc_percent': inventory.discount_permit_percentage,
                     'net_amount': item.net_amount,
-                    'unit_price': item.item.inventory_set.all()[0].unit_price,
+                    'unit_price': inventory.unit_price,
                     'expense': item.expense,
                     'expense_unit': item.expense_per_unit,
                 })
@@ -164,7 +165,7 @@ class PurchaseEntry(View):
         for p_item in deleted_items:
             item = Item.objects.get(code = p_item['item_code']) 
             ps_item = PurchaseItem.objects.get(item=item)           
-            inventory = Inventory.objects.get(item=item)
+            inventory = Inventory.objects.get(item=item, vendor=vendor)
             inventory.quantity = inventory.quantity + ps_item.quantity_purchased
             inventory.save()
             ps_item.delete()
@@ -316,7 +317,7 @@ class PurchaseReturnView(View):
             p_return_item.quantity = item['returned_quantity']
             p_return_item.save()
 
-            inventory = Inventory.objects.get(item=return_item)
+            inventory = Inventory.objects.get(item=return_item, vendor=purchase.vendor)
             inventory.quantity = inventory.quantity - int(item['returned_quantity'])
             inventory.save()
         response = {
