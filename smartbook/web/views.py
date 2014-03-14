@@ -429,6 +429,31 @@ class AddTransportationCompany(View):
         return HttpResponse(response, status=200, mimetype='application/json')
 
 
+class ResetPassword(View):
+
+    def get(self, request, *args, **kwargs):
+
+        user = User.objects.get(id=kwargs['user_id'])
+        context = {
+            'user_id': user.id
+        }
+        return render(request, 'reset_password.html', context)
+
+    def post(self, request, *args, **kwargs):
+
+        context = {}
+        user = User.objects.get(id=kwargs['user_id'])
+        user.set_password(request.POST['password'])
+        user.save()
+        if user == request.user:
+            logout(request)
+            return HttpResponseRedirect(reverse('home'))  
+        else:
+            user_type = user.userprofile_set.all()[0].user_type 
+            return HttpResponseRedirect(reverse('users', kwargs={'user_type': user_type}))
+
+
+
 
 
 
