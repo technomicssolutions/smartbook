@@ -22,7 +22,6 @@ from purchase.models import PurchaseItem
 from django.core.files import File
 
 from purchase.models import Purchase, VendorAccount
-from reports.models import ReportTest
 
 from reportlab.lib.units import cm
 from reportlab.pdfgen.canvas import Canvas
