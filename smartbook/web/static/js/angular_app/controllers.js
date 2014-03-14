@@ -603,6 +603,9 @@ function PurchaseController($scope, $element, $http, $timeout, share, $location)
         $scope.purchase.grant_total = $scope.purchase.net_total - $scope.purchase.discount;
     }
     $scope.validate_purchase = function() {
+        $scope.purchase.purchase_invoice_date = $$('#purchase_invoice_date')[0].get('value');
+        $scope.purchase.vendor_invoice_date = $$('#vendor_invoice_date')[0].get('value');
+            
         if($scope.purchase.vendor_invoice_number == '') {
             $scope.validation_error = "Please Enter Vendor invoice number" ;
             return false;
@@ -627,16 +630,16 @@ function PurchaseController($scope, $element, $http, $timeout, share, $location)
         } else if($scope.purchase.purchase_items.length == 0){
             $scope.validation_error = "Please Choose Item";
             return false;
-        } else if(typeOf($scope.purchase.vendor_invoice_number) != 'number') {
-            $scope.validation_error = "Please enter a number as invoice number";
+        } else if(!(Number($scope.purchase.vendor_invoice_number) == $scope.purchase.vendor_invoice_number)) {
+            $scope.validation_error = "Please enter a number as vendor invoice number";
             return false;
-        } else if(typeOf($scope.purchase.sales_invoice_number) != 'number') {
-            $scope.validation_error = "Please enter a number as invoice number";
+        } else if(!(Number($scope.purchase.purchase_invoice_number) == $scope.purchase.purchase_invoice_number)) {
+            $scope.validation_error = "Please enter a number as purchase invoice number";
             return false;
-        } else if(typeOf($scope.purchase.vendor_do_number) != 'number') {
+        } else if(!(Number($scope.purchase.vendor_do_number) == $scope.purchase.vendor_do_number)) {
             $scope.validation_error = "Please enter a number as vendor do number";
             return false;
-        } else if(typeOf($scope.purchase.discount) != 'number') {
+        } else if(!(Number($scope.purchase.discount) == $scope.purchase.discount)) {
             $scope.validation_error = "Please enter a number as discount";
         }
         else {
@@ -646,8 +649,6 @@ function PurchaseController($scope, $element, $http, $timeout, share, $location)
 
     $scope.save_purchase = function() {
         if($scope.validate_purchase()) {
-            $scope.purchase.purchase_invoice_date = $$('#purchase_invoice_date')[0].get('value');
-            $scope.purchase.vendor_invoice_date = $$('#vendor_invoice_date')[0].get('value');
             params = { 
                 'purchase': angular.toJson($scope.purchase),
                 "csrfmiddlewaretoken" : $scope.csrf_token
@@ -928,6 +929,17 @@ function SalesController($scope, $element, $http, $timeout, share, $location) {
         $scope.item_code = '';
         $scope.item_name = '';
         $scope.barcode = '';
+
+        $scope.item_select_error = '';
+        
+        if($scope.sales.sales_items.length > 0) {
+            for(var i=0; i< $scope.sales.sales_items.length; i++) {
+                if($scope.sales.sales_items[i].item_code == item.item_code) {
+                    $scope.item_select_error = "Item already selected";
+                    return false;
+                }
+            }
+        } 
         var selected_item = {
 
             'item_code': item.item_code,
@@ -957,7 +969,7 @@ function SalesController($scope, $element, $http, $timeout, share, $location) {
     
     $scope.calculate_net_amount_sale = function(item) {
         if(item.qty_sold != '' && item.unit_price != ''){
-            item.net_amount = ((parseFloat(item.qty_sold)*parseFloat(item.unit_price))+parseFloat(item.tax_amount)-parseFloat(item.disc_given)).toFixed(2);
+            item.net_amount = ((parseFloat(item.qty_sold)*parseFloat(item.unit_price))+(parseFloat(item.tax_amount)*parseFloat(item.qty_sold))-parseFloat(item.disc_given)).toFixed(2);
             $scope.calculate_net_discount_sale();
         }
         $scope.calculate_net_total_sale();
@@ -1009,7 +1021,6 @@ function SalesController($scope, $element, $http, $timeout, share, $location) {
         $scope.sales.balance = $scope.sales.grant_total - $scope.sales.paid;
     }
     $scope.save_sales = function() {
-        if($scope.validate_sales()) {
 
             $scope.sales.sales_invoice_date = $$('#sales_invoice_date')[0].get('value');
             
@@ -1030,7 +1041,7 @@ function SalesController($scope, $element, $http, $timeout, share, $location) {
             }).error(function(data, success){
                 
             });
-        }
+        
     }
 
 }
@@ -1111,7 +1122,6 @@ function VendorAccountController($scope, $element, $http, $timeout, $location){
         });
     }
     $scope.select_payment_mode = function(){
-        console.log('payment mode', $scope.vendor_account.payment_mode);
         if($scope.vendor_account.payment_mode == 'cheque') {
             $scope.cash = false;
         } else {
@@ -1120,7 +1130,7 @@ function VendorAccountController($scope, $element, $http, $timeout, $location){
     }
     $scope.get_vendor_account_details = function(){
         var vendor = $scope.vendor_account.vendor;
-        $http.get('/purchase/vendor_account/'+$scope.vendor_account.vendor+'/').success(function(data, status)
+        $http.get('/purchase/vendor_account/?vendor='+$scope.vendor_account.vendor).success(function(data, status)
         {
             if (status==200) {             
                 $scope.vendor_account = data.vendor_account;
@@ -1208,7 +1218,7 @@ function VendorAccountController($scope, $element, $http, $timeout, $location){
             }
             $http({
                 method : 'post',
-                url : '/purchase/vendor_account/'+$scope.vendor_account.vendor+'/',
+                url : '/purchase/vendor_account/',
                 data : $.param(params),
                 headers : {
                     'Content-Type' : 'application/x-www-form-urlencoded'
@@ -1220,11 +1230,7 @@ function VendorAccountController($scope, $element, $http, $timeout, $location){
                 
             });
         }
-        /*$scope.vendor_account.vendor_account_date = $$('#vendor_account_date')[0].get('value');
-        $scope.vendor_account.total_amount = $scope.vendor_account.total_amount.toString();
-        $scope.vendor_account.balance_amount = $scope.vendor_account.balance_amount.toString();
-        $scope.vendor_account.amount_paid = $scope.vendor_account.amount_paid.toString();
-*/       
+          
     }
 }
 
@@ -1875,7 +1881,7 @@ function PurchaseReturnController($scope, $element, $http, $timeout, share, $loc
         }
         $scope.purchase_return.net_return_total = amount;
     }
-    $scope.save_purchase_return = function() {
+     $scope.save_purchase_return = function() {
         $scope.purchase_return.purchase_invoice_number = $scope.purchase.purchase_invoice_number;
         for(var i=0; i< $scope.purchase_return.purchase_items.length; i++){
             $scope.purchase_return.purchase_items[i].selected = "selected";
@@ -1969,6 +1975,19 @@ function SalesReturnController($scope, $element, $http, $timeout, share, $locati
             format:'%d/%m/%Y', 
         });
     }
+    $scope.validate_salesreturn = function() {
+        
+        if($scope.sales.sales_invoice_number == '') {
+            $scope.validation_error = "Please Choose an invoice number" ;
+            return false;
+        } else if($scope.sales.sales_invoice_date == ''){
+            $scope.validation_error = "Please enter a Date";
+            return false;
+        } 
+        else {
+            return true;
+        }        
+    }
     $scope.getItems = function(parameter) {
         $scope.items = [];
         $scope.selecting_item = true;
@@ -2026,13 +2045,60 @@ function SalesReturnController($scope, $element, $http, $timeout, share, $locati
             $scope.sales = data.sales;
             $scope.sales.deleted_items = [];
             $scope.sales.sales_invoice_number = invoice;
+            console.log($scope.sale);
         }).error(function(data, status)
         {
             console.log(data || "Request failed");
         });
     }
+
+    $scope.addSalesReturnItems = function(item) {
+        var ind = $scope.sales_return.sales_items.indexOf(item)
+        if(ind >= 0){
+            $scope.sales_return.sales_items.splice(ind, 1);
+        } else {
+            $scope.sales_return.sales_items.push(item);
+        }
+        
+    }
+    $scope.calculate_return_amount = function(item){
+        item.returned_amount = parseFloat(item.returned_quantity) * parseFloat(item.unit_price);
+        $scope.calculate_net_return_amount();
+    }
+    $scope.calculate_net_return_amount = function() {
+        var amount = 0;
+        for(var i=0;i<$scope.sales_return.sales_items.length;i++) {
+            amount = amount + $scope.sales_return.sales_items[i].returned_amount;
+        }
+        $scope.sales_return.net_return_total = amount;
+    }
+    $scope.save_sales_return = function() {
+        if($scope.validate_salesreturn()) {
+            $scope.sales_return.sales_return_date = $$('#sales_return_date')[0].get('value');
+            $scope.sales_return.sales_invoice_number = $scope.sales.sales_invoice_number;
+            params = {
+                "csrfmiddlewaretoken" : $scope.csrf_token,
+                'sales_return': angular.toJson($scope.sales_return),
+            }
+            $http({
+                method : 'post',
+                url : "/sales/return/",
+                data : $.param(params),
+                headers : {
+                    'Content-Type' : 'application/x-www-form-urlencoded'
+                }
+            }).success(function(data, status) {
+                document.location.href = '/sales/return/';
+               
+            }).error(function(data, success){
+                
+            });
+        }
+    }
+
     
 }
+
 
 function AddItemController($scope, $http, $element, $location, $timeout) {
     
@@ -2230,5 +2296,6 @@ function AddItemController($scope, $http, $element, $location, $timeout) {
         $scope.popup.hide_popup();
     }
 }
+
 
 

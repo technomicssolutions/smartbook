@@ -119,7 +119,7 @@
 							<label for="net_total">Net Total</label>
 						</div>
 						<div class="forminput">
-							<input type="text" name="net_return_total" ng-model="purchase_return.net_return_total" readonly />
+							<input type="text" name="net_return_total" ng-model="sales_return.net_return_total" readonly />
 						</div>
 					</div>
 				</div>
@@ -127,7 +127,7 @@
 			<div  align="Center">
 				<div class="buttons">
 					<p class="error_message"> [[validation_error]] </p>
-					<input type="button" value="Submit" ng-click="save_purchase_return();">
+					<input type="button" value="Submit" ng-click="save_sales_return();">
 					<a href="{% url 'home' %}"><input type="button" value="Cancel"></a>
 				</div>
 			</div>			
