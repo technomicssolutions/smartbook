@@ -126,6 +126,7 @@ function ExpenseController($scope, $element, $http, $timeout, $location) {
                     $scope.error_flag=false;
                     $scope.message = '';
                     console.log('success');
+                    document.location.href ='/';
                 }
             }).error(function(data, status){
                 console.log(data);
