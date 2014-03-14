@@ -15,7 +15,7 @@ from django.core.urlresolvers import reverse
 from django.contrib.auth.models import User
 from django.conf import settings
 
-from sales.models import Sales, SalesItem
+from sales.models import *
 from expenses.models import Expense
 from inventory.models import *
 from purchase.models import PurchaseItem
@@ -213,7 +213,7 @@ class SalesReports(View):
                 end_date = datetime.strptime(end, '%d/%m/%Y')
                 
                 salesman_name = request.GET['salesman_name']
-                desig = Designation.objects.get(title = 'Salesman')                
+                desig = Designation.objects.get(title = 'salesman')                
                 salesmen = Staff.objects.filter(designation = desig, user__first_name=salesman_name)                
                 sales = Sales.objects.filter(sales_invoice_date__gte=start_date,sales_invoice_date__lte=end_date,salesman=salesmen)
                 
@@ -375,9 +375,62 @@ class StockReportsDate(View):
     def get(self, request, *args, **kwargs):
         return render(request, 'reports/stock_reports_date.html',{})
 
-class SalesReturn(View):
+class SalesReturnReport(View):
     def get(self, request, *args, **kwargs):
-        return render(request, 'reports/sales_return.html',{})
+        if request.is_ajax():
+            status_code = 200
+            start = request.GET['start_date']
+            end = request.GET['end_date']            
+            start_date = datetime.strptime(start, '%d/%m/%Y')
+            end_date = datetime.strptime(end, '%d/%m/%Y')
+            salesreturn_report = []
+            salesreturn_report_total = []
+            grant_total = 0
+
+            salesreturn = SalesReturn.objects.filter(date__gte=start_date,date__lte=end_date)
+            
+            if salesreturn.count()>0:
+                for sale in salesreturn:
+                    salesreturn_items = sale.salesreturnitem_set.all()
+                    if salesreturn_items.count()>0:
+                        for salesreturn_item in salesreturn_items:
+                            dates = salesreturn_item.sales_return.date
+                            invoice_no = salesreturn_item.sales_return.return_invoice_number
+                            qty = salesreturn_item.return_quantity
+                            total = salesreturn_item.amount
+                            item_name = salesreturn_item.item.item.name
+                            item_code = salesreturn_item.item.item.code
+                            inventorys = salesreturn_item.item.item.inventory_set.all()[0]
+                            unitprice = inventorys.unit_price
+
+                            grant_total = grant_total + total
+
+                            salesreturn_report.append({                        
+                                'dates' : dates.strftime('%d-%m-%Y'),
+                                'invoice_no' : invoice_no,
+                                'qty' : qty,
+                                'total' : total,
+                                'item_name' : item_name,
+                                'item_code' : item_code,                        
+                                'unitprice' : unitprice,
+                            })
+            salesreturn_report_total.append({
+                'grant_total' :grant_total,
+            })
+
+            try:                
+                res = {
+                    'result': 'ok',    
+                    'salesreturn_report' : salesreturn_report, 
+                    'salesreturn_report_total' : salesreturn_report_total,               
+                }    
+                response = simplejson.dumps(res)
+            except Exception as ex:
+                response = simplejson.dumps({'result': 'error', 'error': str(ex)})
+                status_code = 500
+            return HttpResponse(response, status = status_code, mimetype = 'application/json')
+        else:
+            return render(request, 'reports/sales_return.html',{})
 
 class DailyReport(View):
     def get(self, request, *args, **kwargs):

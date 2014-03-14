@@ -54,7 +54,6 @@ class SalesReturn(models.Model):
 	
 
 	def __unicode__(self):
-
 		return str(self.sales.sales_invoice_number)
 
 class SalesReturnItem(models.Model):
@@ -65,7 +64,7 @@ class SalesReturnItem(models.Model):
 
 	def __unicode__(self):
 
-		return str(self.sales.sales_invoice_number)
+		return str(self.sales_return.return_invoice_number)
 		
 
 
