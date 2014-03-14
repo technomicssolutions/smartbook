@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
-{% block title %}List-Customer
+{% block title %}List-{{user_type}}
 {% endblock title %}
-{% block body_id %}list-customer{% endblock %}
+{% block body_id %}list-{{user_type}}{% endblock %}
 
 {% block content %}
 
@@ -38,24 +38,27 @@
 			{% for usr in users %}
 				<tr class="{% cycle 'odd' 'even' %}">
 					<td> {{ usr.user.first_name }} </td>
-					<td> {{ usr.house_name }} </td>
-					<td> {{ usr.street }}</td>
-					<td> {{ usr.city }} </td>
-					<td> {{ usr.district }} </td>
-					<td> {{ usr.pin }} </td>
-					<td> {{ usr.mobile }} </td>
-					<td> {{ usr.land_line }} </td>
-					<td> {{ usr.email_id }} </td>
+					<td> {{ usr.user.userprofile_set.all.0.house_name }} </td>
+					<td> {{ usr.user.userprofile_set.all.0.street }}</td>
+					<td> {{ usr.user.userprofile_set.all.0.city }} </td>
+					<td> {{ usr.user.userprofile_set.all.0.district }} </td>
+					<td> {{ usr.user.userprofile_set.all.0.pin }} </td>
+					<td> {{ usr.user.userprofile_set.all.0.mobile }} </td>
+					<td> {{ usr.user.userprofile_set.all.0.land_line }} </td>
+					<td> {{ usr.user.userprofile_set.all.0.email_id }} </td>
 					{% if user_type == 'staff' %}
 						<td> {{ usr.user.staff_set.all.0.designation.title}} </td>	
 					{% endif %}
-					<td><a href="{% url 'edit_user' user_type=user_type profile_id=usr.id%}">
+					<td><a href="{% url 'edit_user' user_type=user_type profile_id=usr.user.userprofile_set.all.0.id%}">
 						<img src="/static/images/edit.png">
 						</a>
 					</td>
 					{% if user.is_superuser %}
 						<td>
-							<a href="{% url 'delete_user' user_type=user_type profile_id=usr.id%}"><img src="/static/images/delete.png"></a>
+							<a href="{% url 'delete_user' user_type=user_type profile_id=usr.user.userprofile_set.all.0.id%}"><img src="/static/images/delete.png"></a>
+						</td>
+						<td>
+							<a href="{% url 'reset_password' user_id=usr.user.id %}">Reset password</a>
 						</td>
 					{% endif %}	
 				</tr>

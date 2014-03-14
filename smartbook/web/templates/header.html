@@ -23,7 +23,7 @@
 						<li> <a href="{% url 'users' user_type='staff' %}"> Staff </a> </li>
 						<li> <a href="{% url 'users' user_type='customer'  %}"> Customers </a> </li>
 						<li> <a href="{% url 'logout' %}"> Logout </a> </li>
-						<li> <a href=""> Reset password </a> </li>
+						<li> <a href="{% url 'reset_password' user_id=user.id %}"> Reset password </a> </li>
 					</ul>
 				</li>
 				<li class="menu"> <a href=""> Inventory </a> 
@@ -61,7 +61,7 @@
 					<ul>
 						<li><a href="{% url 'daily_report' %}"> Daily Reports </a> </li>
 						<li><a href="{% url 'sales_reports' %}"> Sales </a> </li>
-						<li><a href="{% url 'sales_return' %}"> Sales Return</a> </li>
+						<li><a href="{% url 'sales_return_report' %}"> Sales Return</a> </li>
 						<li><a href="{% url 'stock_reports' %}"> Stock </a> </li>
 						<li><a href="{% url 'purchase_reports' %}"> Purchase </a> </li>
 						<li><a href="{% url 'purchase_return_report' %}"> Purchase Return </a> </li>

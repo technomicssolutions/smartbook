@@ -10,82 +10,77 @@
 <div class="main-title">		
 	<div class="alert alert-info" align="Center" >Daily Reports</div>
 </div>
-	<div class="message" ng-show="error_flag">
-		<p>[[messages]]</p>
-	</div>
+<div class="message" ng-show="error_flag">
+	<p>[[messages]]</p>
+</div>
 			
-		<div class="reporttext">
-			<label for="s_date">Start Date</label>
-		</div>
+<div class="reporttext">
+	<label for="s_date">Start Date</label>
+</div>
+<div class="reportinput">			
+	<input type="text" name="start_date" id="start_date">
+</div>					
 
-		<div class="reportinput">			
-			<input type="text" name="start_date" id="start_date">
-		</div>					
+<div class="reporttext">
+	<label for="e_date">End Date</label>
+</div>
+<div class="reportinput">
+	<input type="text" name="end_date" id="end_date">
+</div>
 
-		<div class="reporttext">
-			<label for="e_date">End Date</label>
-		</div>
+<div class="reporttext">
+	<input type="submit" value="View Report" class="btn btn-info report_button " style="border-top-width: 0px; margin-top: 3px;" ng-click="view_report('daily_report')">
+</div>
 
-		<div class="reportinput">
-			<input type="text" name="end_date" id="end_date">
-		</div>
-		<div class="reporttext">
-			<input type="submit" value="View Report" class="btn btn-info report_button " style="border-top-width: 0px; margin-top: 3px;" ng-click="view_report('daily_report')">
-		</div>
+<div class="reporttext">
+	<a href=""><img src="/static/images/print.png" height='25px' width='25px'/></a>
+</div>
 
-
-		<div class="reporttext">
-			<a href=""><img src="/static/images/print.png" height='25px' width='25px'/></a>
-		</div>
-
-		<table id="list" class="table table-hover" ng-show ="daily_reports.length > 0">
-			<thead class="success" style="font-size: 12px"style="width:auto">
-			  <th>Date</th>
-			  <th>Particulars/Narration</th>
-			  <th>Income</th>
-			  <th>Expense</th>
-			</thead>
-			<tbody>
-				<tr ng-repeat="report in daily_reports">
-					<td>[[report.date]]</td>
-					<td>
-						<span ng-show="report.type">By sales, Invoice No:[[report.invoice_no]]</span> 
-						<span ng-hide="report.type">By Voucher, No:[[report.voucher_no]] [[report.narration]]</span>
-					</td>
-					<td>[[report.income]]</td>
-					<td>[[report.expense]]</td>					
-				</tr>
-				<tr>
-					<td></td>
-					<td>Total Round Off - Sales</td>
-					<td></td>
-					<td>[[daily_report_sales.round_off]]</td>
-				</tr>				
-				<tr>
-					<td></td>
-					<td>Total Discount - Sales</td>
-					<td></td>
-					<td>[[daily_report_sales.discount]]</td>
-				</tr>
-				<tfoot>
-					<tr>
-						<td></td>
-						<td>Total</td>
-						<td>[[daily_report_sales.total_income]]</td>
-						<td>[[daily_report_sales.total_expense]]</td>
-					</tr>
-					<tr>
-						<td></td>
-						<td></td>
-						<td>Difference</td>
-						<td>[[daily_report_sales.difference]]</td>
-					</tr>
-				</tfoot>
-			</tbody>
-		</table> 
-		
-
-	
+<table id="list" class="table table-hover" ng-show ="daily_reports.length > 0">
+	<thead class="success" style="font-size: 12px"style="width:auto">
+	  <th>Date</th>
+	  <th>Particulars/Narration</th>
+	  <th>Income</th>
+	  <th>Expense</th>
+	</thead>
+	<tbody>
+		<tr ng-repeat="report in daily_reports">
+			<td>[[report.date]]</td>
+			<td>
+				<span ng-show="report.type">By sales, Invoice No:[[report.invoice_no]]</span> 
+				<span ng-hide="report.type">By Voucher, No:[[report.voucher_no]] [[report.narration]]</span>
+			</td>
+			<td>[[report.income]]</td>
+			<td>[[report.expense]]</td>					
+		</tr>
+		<tr>
+			<td></td>
+			<td>Total Round Off - Sales</td>
+			<td></td>
+			<td>[[daily_report_sales.round_off]]</td>
+		</tr>				
+		<tr>
+			<td></td>
+			<td>Total Discount - Sales</td>
+			<td></td>
+			<td>[[daily_report_sales.discount]]</td>
+		</tr>
+		<tfoot>
+			<tr>
+				<td></td>
+				<td>Total</td>
+				<td>[[daily_report_sales.total_income]]</td>
+				<td>[[daily_report_sales.total_expense]]</td>
+			</tr>
+			<tr>
+				<td></td>
+				<td></td>
+				<td>Difference</td>
+				<td>[[daily_report_sales.difference]]</td>
+			</tr>
+		</tfoot>
+	</tbody>
+</table> 	
 
 
 {% endblock content %}

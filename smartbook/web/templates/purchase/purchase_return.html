@@ -75,7 +75,7 @@
 								<span>[[item.item_code]]</span>
 								<span>[[item.item_name]]</span>
 								<span>[[item.barcode]] </span>
-								<span> <input type="checkbox" ng-click="addReturnItems(item)" checked=false /></span>
+								<span> <input type="checkbox" ng-click="addReturnItems(item)" ng-model="item.selected" /></span>
 							</div>
 							<div class="clear"></div>
 						</div>

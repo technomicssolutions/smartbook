@@ -14,4 +14,5 @@ urlpatterns = patterns('',
 	url(r'^add_designation/$', AddDesignation.as_view(), name="add_designation"),	
 	url(r'^company_list/$', TransportationCompanyList.as_view(), name="designation_list"),
 	url(r'^add_company/$', AddTransportationCompany.as_view(), name="add_designation"),
+	url(r'^reset_password/(?P<user_id>\d+)/$', ResetPassword.as_view(), name="reset_password"),
 )
