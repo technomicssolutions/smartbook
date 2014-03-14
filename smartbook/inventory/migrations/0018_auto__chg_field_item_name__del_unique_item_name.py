@@ -11,7 +11,13 @@ class Migration(SchemaMigration):
         # Removing unique constraint on 'Item', fields ['name']
         db.delete_unique(u'inventory_item', ['name'])
 
+
+        # Changing field 'Item.name'
+        db.alter_column(u'inventory_item', 'name', self.gf('django.db.models.fields.CharField')(max_length=50))
     def backwards(self, orm):
+
+        # Changing field 'Item.name'
+        db.alter_column(u'inventory_item', 'name', self.gf('django.db.models.fields.CharField')(max_length=5, unique=True))
         # Adding unique constraint on 'Item', fields ['name']
         db.create_unique(u'inventory_item', ['name'])
 
@@ -75,7 +81,7 @@ class Migration(SchemaMigration):
             'code': ('django.db.models.fields.CharField', [], {'unique': 'True', 'max_length': '10'}),
             'description': ('django.db.models.fields.TextField', [], {'max_length': '50', 'null': 'True', 'blank': 'True'}),
             u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'name': ('django.db.models.fields.CharField', [], {'max_length': '5'}),
+            'name': ('django.db.models.fields.CharField', [], {'max_length': '50'}),
             'tax': ('django.db.models.fields.DecimalField', [], {'default': '0', 'max_digits': '14', 'decimal_places': '2'}),
             'uom': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['inventory.UnitOfMeasure']"})
         },

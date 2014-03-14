@@ -9,12 +9,12 @@ class Migration(SchemaMigration):
 
     def forwards(self, orm):
 
-        # Changing field 'Item.name'
-        db.alter_column(u'inventory_item', 'name', self.gf('django.db.models.fields.CharField')(max_length=50))
+        # Changing field 'SalesReturnItem.item'
+        db.alter_column(u'sales_salesreturnitem', 'item_id', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['inventory.Item'], null=True))
     def backwards(self, orm):
 
-        # Changing field 'Item.name'
-        db.alter_column(u'inventory_item', 'name', self.gf('django.db.models.fields.CharField')(max_length=5))
+        # Changing field 'SalesReturnItem.item'
+        db.alter_column(u'sales_salesreturnitem', 'item_id', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['sales.SalesItem'], null=True))
     models = {
         u'auth.group': {
             'Meta': {'object_name': 'Group'},
@@ -57,17 +57,6 @@ class Migration(SchemaMigration):
             'brand': ('django.db.models.fields.CharField', [], {'unique': 'True', 'max_length': '51'}),
             u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'})
         },
-        u'inventory.inventory': {
-            'Meta': {'unique_together': "(('item', 'vendor'),)", 'object_name': 'Inventory'},
-            'discount_permit_amount': ('django.db.models.fields.DecimalField', [], {'default': '0', 'null': 'True', 'max_digits': '14', 'decimal_places': '3', 'blank': 'True'}),
-            'discount_permit_percentage': ('django.db.models.fields.DecimalField', [], {'default': '0', 'null': 'True', 'max_digits': '14', 'decimal_places': '3', 'blank': 'True'}),
-            u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'item': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['inventory.Item']"}),
-            'quantity': ('django.db.models.fields.IntegerField', [], {'default': '0'}),
-            'selling_price': ('django.db.models.fields.DecimalField', [], {'default': '0', 'max_digits': '14', 'decimal_places': '2'}),
-            'unit_price': ('django.db.models.fields.DecimalField', [], {'default': '0', 'max_digits': '14', 'decimal_places': '2'}),
-            'vendor': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['web.Vendor']"})
-        },
         u'inventory.item': {
             'Meta': {'object_name': 'Item'},
             'barcode': ('django.db.models.fields.CharField', [], {'max_length': '50', 'null': 'True', 'blank': 'True'}),
@@ -75,7 +64,7 @@ class Migration(SchemaMigration):
             'code': ('django.db.models.fields.CharField', [], {'unique': 'True', 'max_length': '10'}),
             'description': ('django.db.models.fields.TextField', [], {'max_length': '50', 'null': 'True', 'blank': 'True'}),
             u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'name': ('django.db.models.fields.CharField', [], {'max_length': '50'}),
+            'name': ('django.db.models.fields.CharField', [], {'unique': 'True', 'max_length': '50'}),
             'tax': ('django.db.models.fields.DecimalField', [], {'default': '0', 'max_digits': '14', 'decimal_places': '2'}),
             'uom': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['inventory.UnitOfMeasure']"})
         },
@@ -84,12 +73,59 @@ class Migration(SchemaMigration):
             u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'uom': ('django.db.models.fields.CharField', [], {'unique': 'True', 'max_length': '50'})
         },
-        u'web.vendor': {
-            'Meta': {'object_name': 'Vendor'},
-            'contact_person': ('django.db.models.fields.CharField', [], {'max_length': '50'}),
+        u'sales.sales': {
+            'Meta': {'object_name': 'Sales'},
+            'customer': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['web.Customer']", 'null': 'True', 'blank': 'True'}),
+            'discount': ('django.db.models.fields.DecimalField', [], {'default': '0', 'max_digits': '14', 'decimal_places': '3'}),
+            'grant_total': ('django.db.models.fields.DecimalField', [], {'default': '0', 'max_digits': '14', 'decimal_places': '3'}),
+            u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
+            'net_amount': ('django.db.models.fields.DecimalField', [], {'default': '0', 'max_digits': '14', 'decimal_places': '3'}),
+            'round_off': ('django.db.models.fields.DecimalField', [], {'default': '0', 'max_digits': '14', 'decimal_places': '3'}),
+            'sales_invoice_date': ('django.db.models.fields.DateField', [], {'null': 'True', 'blank': 'True'}),
+            'sales_invoice_number': ('django.db.models.fields.IntegerField', [], {'default': '0'}),
+            'salesman': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['web.Staff']", 'null': 'True', 'blank': 'True'})
+        },
+        u'sales.salesitem': {
+            'Meta': {'object_name': 'SalesItem'},
+            'discount_given': ('django.db.models.fields.DecimalField', [], {'default': '0', 'max_digits': '14', 'decimal_places': '3'}),
+            u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
+            'item': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['inventory.Item']"}),
+            'quantity_sold': ('django.db.models.fields.IntegerField', [], {'default': '0'}),
+            'sales': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['sales.Sales']"})
+        },
+        u'sales.salesreturn': {
+            'Meta': {'object_name': 'SalesReturn'},
+            'date': ('django.db.models.fields.DateField', [], {'null': 'True', 'blank': 'True'}),
+            u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
+            'net_amount': ('django.db.models.fields.IntegerField', [], {'null': 'True', 'blank': 'True'}),
+            'return_invoice_number': ('django.db.models.fields.IntegerField', [], {'unique': 'True'}),
+            'sales': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['sales.Sales']"})
+        },
+        u'sales.salesreturnitem': {
+            'Meta': {'object_name': 'SalesReturnItem'},
+            'amount': ('django.db.models.fields.IntegerField', [], {'null': 'True', 'blank': 'True'}),
+            u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
+            'item': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['inventory.Item']", 'null': 'True', 'blank': 'True'}),
+            'return_quantity': ('django.db.models.fields.IntegerField', [], {'null': 'True', 'blank': 'True'}),
+            'sales_return': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['sales.SalesReturn']", 'null': 'True', 'blank': 'True'})
+        },
+        u'web.customer': {
+            'Meta': {'object_name': 'Customer'},
+            u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
+            'user': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['auth.User']"})
+        },
+        u'web.designation': {
+            'Meta': {'object_name': 'Designation'},
+            'description': ('django.db.models.fields.CharField', [], {'max_length': '100', 'null': 'True', 'blank': 'True'}),
+            u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
+            'title': ('django.db.models.fields.CharField', [], {'unique': 'True', 'max_length': '50'})
+        },
+        u'web.staff': {
+            'Meta': {'object_name': 'Staff'},
+            'designation': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['web.Designation']", 'null': 'True', 'blank': 'True'}),
             u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'user': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['auth.User']"})
         }
     }
 
-    complete_apps = ['inventory']
+    complete_apps = ['sales']

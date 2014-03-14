@@ -929,6 +929,17 @@ function SalesController($scope, $element, $http, $timeout, share, $location) {
         $scope.item_code = '';
         $scope.item_name = '';
         $scope.barcode = '';
+
+        $scope.item_select_error = '';
+        
+        if($scope.sales.sales_items.length > 0) {
+            for(var i=0; i< $scope.sales.sales_items.length; i++) {
+                if($scope.sales.sales_items[i].item_code == item.item_code) {
+                    $scope.item_select_error = "Item already selected";
+                    return false;
+                }
+            }
+        } 
         var selected_item = {
 
             'item_code': item.item_code,
@@ -958,7 +969,7 @@ function SalesController($scope, $element, $http, $timeout, share, $location) {
     
     $scope.calculate_net_amount_sale = function(item) {
         if(item.qty_sold != '' && item.unit_price != ''){
-            item.net_amount = ((parseFloat(item.qty_sold)*parseFloat(item.unit_price))+parseFloat(item.tax_amount)-parseFloat(item.disc_given)).toFixed(2);
+            item.net_amount = ((parseFloat(item.qty_sold)*parseFloat(item.unit_price))+(parseFloat(item.tax_amount)*parseFloat(item.qty_sold))-parseFloat(item.disc_given)).toFixed(2);
             $scope.calculate_net_discount_sale();
         }
         $scope.calculate_net_total_sale();
@@ -1010,7 +1021,6 @@ function SalesController($scope, $element, $http, $timeout, share, $location) {
         $scope.sales.balance = $scope.sales.grant_total - $scope.sales.paid;
     }
     $scope.save_sales = function() {
-        if($scope.validate_sales()) {
 
             $scope.sales.sales_invoice_date = $$('#sales_invoice_date')[0].get('value');
             
@@ -1031,16 +1041,12 @@ function SalesController($scope, $element, $http, $timeout, share, $location) {
             }).error(function(data, success){
                 
             });
-        }
+        
     }
 
 }
 
-function DailyReportController($scope, $element, $http, $timeout, $location){    
-
-    $scope.start_date = '';
-    $scope.end_date = '';
-    $scope.error_flag = false;
+function DailyReportController($scope, $element, $http, $timeout, $location){ 
 
     $scope.init = function(){ 
         $scope.error_flag = false;      
@@ -1058,27 +1064,7 @@ function DailyReportController($scope, $element, $http, $timeout, $location){
             useFadeInOut: !Browser.ie,
             format:'%d/%m/%Y', 
         });
-    }
-    $scope.view_report = function(report_type){
-        $scope.error_flag = false;
-        $scope.start_date = $$('#start_date')[0].get('value');
-        $scope.end_date = $$('#end_date')[0].get('value');
-        if ($scope.start_date == '' || $scope.start_date == undefined ){
-            $scope.error_flag = true;
-            $scope.messages = 'Please choose Start date';
-        } else if($scope.end_date == '' || $scope.end_date == undefined ){
-            $scope.error_flag = true;
-            $scope.messages = 'Please choose End date';
-        } else {
-    
-            $http.get('/reports/daily_report/?start_date='+$scope.start_date+'&end_date='+$scope.end_date).success(function(data){
-                          
-                $scope.daily_reports = data['daily_report'];
-                $scope.daily_report_sales = data['daily_report_sales'][0];
-                
-            });
-        }
-    }
+    }   
 
 }
 
@@ -1688,30 +1674,24 @@ function SalesReportController($scope, $element, $http, $timeout, $location){
             $scope.report_date_wise = true;
             $scope.report_item_wise = false;
             $scope.report_customer_wise = false;
-            $scope.report_salesman_wise = false;
+            $scope.report_salesman_wise = false;            
             
-            $scope.sales_report = '';
-            $scope.total_sales_report = '';
         }
         else if($scope.report_type == 'item'){
             $scope.error_flag = false;
             $scope.report_date_wise = false;
             $scope.report_item_wise = true;
             $scope.report_customer_wise = false;
-            $scope.report_salesman_wise = false;
+            $scope.report_salesman_wise = false;            
             
-            $scope.sales_report = '';
-            $scope.total_sales_report = '';
         }
         else if($scope.report_type == 'customer'){
             $scope.error_flag = false;
             $scope.report_date_wise = false;
             $scope.report_item_wise = false;
             $scope.report_customer_wise = true;
-            $scope.report_salesman_wise = false;
-            
-            $scope.sales_report = '';
-            $scope.total_sales_report = '';            
+            $scope.report_salesman_wise = false;            
+                       
         }
         else if($scope.report_type == 'salesman'){
             $scope.error_flag = false;
@@ -1719,9 +1699,7 @@ function SalesReportController($scope, $element, $http, $timeout, $location){
             $scope.report_item_wise = false;
             $scope.report_customer_wise = false;
             $scope.report_salesman_wise = true;
-            
-            $scope.sales_report = '';
-            $scope.total_sales_report = '';            
+                       
         }        
     }
     $scope.get_customers = function() {
@@ -1741,80 +1719,80 @@ function SalesReportController($scope, $element, $http, $timeout, $location){
             $scope.salesman_name = 'select';
         })
     }
-    $scope.view_report = function(report_type){
-        $scope.error_flag = false;
-        if(report_type == 'date'){
-            $scope.start_date = $$('#start_date')[0].get('value');
-            $scope.end_date = $$('#end_date')[0].get('value');
-            if ($scope.start_date == '' || $scope.start_date == undefined ){
-                $scope.error_flag = true;
-                $scope.messages = 'Please choose Start date';
-            } else if($scope.end_date == '' || $scope.end_date == undefined ){
-                $scope.error_flag = true;
-                $scope.messages = 'Please choose End date';
-            } else{
-                $http.get('/reports/sales_reports/?report_name=date&start_date='+$scope.start_date+'&end_date='+$scope.end_date).success(function(data){
-                    $scope.sales_report = data['sales_report'];
-                    $scope.total_sales_report = data['total_sales_report'][0];
-                });
-            }
-        }
-        else if(report_type == 'item'){
-            $scope.start_date = $$('#item_start_date')[0].get('value');
-            $scope.end_date = $$('#item_end_date')[0].get('value');
-            if ($scope.start_date == '' || $scope.start_date == undefined ){
-                $scope.error_flag = true;
-                $scope.messages = 'Please choose Start date';
-            } else if($scope.end_date == '' || $scope.end_date == undefined ){
-                $scope.error_flag = true;
-                $scope.messages = 'Please choose End date';
-            } else{
-                $http.get('/reports/sales_reports/?report_name=item&start_date='+$scope.start_date+'&end_date='+$scope.end_date).success(function(data){
-                    $scope.sales_report = data['sales_report'];
-                    $scope.total_sales_report = data['total_sales_report'][0];
-                });
-            }
-        }
-        else if(report_type == 'customer'){
-            $scope.start_date = $$('#customer_start_date')[0].get('value');
-            $scope.end_date = $$('#customer_end_date')[0].get('value'); 
-            if ($scope.start_date == '' || $scope.start_date == undefined ){
-                $scope.error_flag = true;
-                $scope.messages = 'Please choose Start date';
-            } else if($scope.end_date == '' || $scope.end_date == undefined ){
-                $scope.error_flag = true;
-                $scope.messages = 'Please choose End date';
-            } else if($scope.customer_name == '' || $scope.customer_name == 'select'){
-                $scope.error_flag = true;
-                $scope.messages = 'Please choose Customer';
-            } else{           
-                $http.get('/reports/sales_reports/?report_name=customer&customer_name='+$scope.customer_name+'&start_date='+$scope.start_date+'&end_date='+$scope.end_date).success(function(data){
-                    $scope.sales_report = data['sales_report'];
-                    $scope.total_sales_report = data['total_sales_report'][0];
-                });
-            }
-        }
-        else if(report_type == 'salesman'){
-            $scope.start_date = $$('#salesman_start_date')[0].get('value');
-            $scope.end_date = $$('#salesman_end_date')[0].get('value');
-            if ($scope.start_date == '' || $scope.start_date == undefined ){
-                $scope.error_flag = true;
-                $scope.messages = 'Please choose Start date';
-            } else if($scope.end_date == '' || $scope.end_date == undefined ){
-                $scope.error_flag = true;
-                $scope.messages = 'Please choose End date';
-            } else if($scope.salesman_name == '' || $scope.salesman_name == 'select'){
-                $scope.error_flag = true;
-                $scope.messages = 'Please choose Salesman';
-            } else{
+    // $scope.view_report = function(report_type){
+    //     $scope.error_flag = false;
+    //     if(report_type == 'date'){
+    //         $scope.start_date = $$('#start_date')[0].get('value');
+    //         $scope.end_date = $$('#end_date')[0].get('value');
+    //         if ($scope.start_date == '' || $scope.start_date == undefined ){
+    //             $scope.error_flag = true;
+    //             $scope.messages = 'Please choose Start date';
+    //         } else if($scope.end_date == '' || $scope.end_date == undefined ){
+    //             $scope.error_flag = true;
+    //             $scope.messages = 'Please choose End date';
+    //         } else{
+    //             $http.get('/reports/sales_reports/?report_name=date&start_date='+$scope.start_date+'&end_date='+$scope.end_date).success(function(data){
+    //                 $scope.sales_report = data['sales_report'];
+    //                 $scope.total_sales_report = data['total_sales_report'][0];
+    //             });
+    //         }
+    //     }
+    //     else if(report_type == 'item'){
+    //         $scope.start_date = $$('#item_start_date')[0].get('value');
+    //         $scope.end_date = $$('#item_end_date')[0].get('value');
+    //         if ($scope.start_date == '' || $scope.start_date == undefined ){
+    //             $scope.error_flag = true;
+    //             $scope.messages = 'Please choose Start date';
+    //         } else if($scope.end_date == '' || $scope.end_date == undefined ){
+    //             $scope.error_flag = true;
+    //             $scope.messages = 'Please choose End date';
+    //         } else{
+    //             $http.get('/reports/sales_reports/?report_name=item&start_date='+$scope.start_date+'&end_date='+$scope.end_date).success(function(data){
+    //                 $scope.sales_report = data['sales_report'];
+    //                 $scope.total_sales_report = data['total_sales_report'][0];
+    //             });
+    //         }
+    //     }
+    //     else if(report_type == 'customer'){
+    //         $scope.start_date = $$('#customer_start_date')[0].get('value');
+    //         $scope.end_date = $$('#customer_end_date')[0].get('value'); 
+    //         if ($scope.start_date == '' || $scope.start_date == undefined ){
+    //             $scope.error_flag = true;
+    //             $scope.messages = 'Please choose Start date';
+    //         } else if($scope.end_date == '' || $scope.end_date == undefined ){
+    //             $scope.error_flag = true;
+    //             $scope.messages = 'Please choose End date';
+    //         } else if($scope.customer_name == '' || $scope.customer_name == 'select'){
+    //             $scope.error_flag = true;
+    //             $scope.messages = 'Please choose Customer';
+    //         } else{           
+    //             $http.get('/reports/sales_reports/?report_name=customer&customer_name='+$scope.customer_name+'&start_date='+$scope.start_date+'&end_date='+$scope.end_date).success(function(data){
+    //                 $scope.sales_report = data['sales_report'];
+    //                 $scope.total_sales_report = data['total_sales_report'][0];
+    //             });
+    //         }
+    //     }
+    //     else if(report_type == 'salesman'){
+    //         $scope.start_date = $$('#salesman_start_date')[0].get('value');
+    //         $scope.end_date = $$('#salesman_end_date')[0].get('value');
+    //         if ($scope.start_date == '' || $scope.start_date == undefined ){
+    //             $scope.error_flag = true;
+    //             $scope.messages = 'Please choose Start date';
+    //         } else if($scope.end_date == '' || $scope.end_date == undefined ){
+    //             $scope.error_flag = true;
+    //             $scope.messages = 'Please choose End date';
+    //         } else if($scope.salesman_name == '' || $scope.salesman_name == 'select'){
+    //             $scope.error_flag = true;
+    //             $scope.messages = 'Please choose Salesman';
+    //         } else{
 
-                $http.get('/reports/sales_reports/?report_name=salesman&salesman_name='+$scope.salesman_name+'&start_date='+$scope.start_date+'&end_date='+$scope.end_date).success(function(data){
-                    $scope.sales_report = data['sales_report'];
-                    $scope.total_sales_report = data['total_sales_report'][0];
-                });
-            }
-        }        
-    }
+    //             $http.get('/reports/sales_reports/?report_name=salesman&salesman_name='+$scope.salesman_name+'&start_date='+$scope.start_date+'&end_date='+$scope.end_date).success(function(data){
+    //                 $scope.sales_report = data['sales_report'];
+    //                 $scope.total_sales_report = data['total_sales_report'][0];
+    //             });
+    //         }
+    //     }        
+    // }
 }
 
 function PurchaseReturnController($scope, $element, $http, $timeout, share, $location) {
@@ -1871,7 +1849,7 @@ function PurchaseReturnController($scope, $element, $http, $timeout, share, $loc
         }
         $scope.purchase_return.net_return_total = amount;
     }
-    $scope.save_purchase_return = function() {
+     $scope.save_purchase_return = function() {
         $scope.purchase_return.purchase_invoice_number = $scope.purchase.purchase_invoice_number;
         for(var i=0; i< $scope.purchase_return.purchase_items.length; i++){
             $scope.purchase_return.purchase_items[i].selected = "selected";
@@ -1965,6 +1943,19 @@ function SalesReturnController($scope, $element, $http, $timeout, share, $locati
             format:'%d/%m/%Y', 
         });
     }
+    $scope.validate_salesreturn = function() {
+        
+        if($scope.sales.sales_invoice_number == '') {
+            $scope.validation_error = "Please Choose an invoice number" ;
+            return false;
+        } else if($scope.sales.sales_invoice_date == ''){
+            $scope.validation_error = "Please enter a Date";
+            return false;
+        } 
+        else {
+            return true;
+        }        
+    }
     $scope.getItems = function(parameter) {
         $scope.items = [];
         $scope.selecting_item = true;
@@ -2022,13 +2013,60 @@ function SalesReturnController($scope, $element, $http, $timeout, share, $locati
             $scope.sales = data.sales;
             $scope.sales.deleted_items = [];
             $scope.sales.sales_invoice_number = invoice;
+            console.log($scope.sale);
         }).error(function(data, status)
         {
             console.log(data || "Request failed");
         });
     }
+
+    $scope.addSalesReturnItems = function(item) {
+        var ind = $scope.sales_return.sales_items.indexOf(item)
+        if(ind >= 0){
+            $scope.sales_return.sales_items.splice(ind, 1);
+        } else {
+            $scope.sales_return.sales_items.push(item);
+        }
+        
+    }
+    $scope.calculate_return_amount = function(item){
+        item.returned_amount = parseFloat(item.returned_quantity) * parseFloat(item.unit_price);
+        $scope.calculate_net_return_amount();
+    }
+    $scope.calculate_net_return_amount = function() {
+        var amount = 0;
+        for(var i=0;i<$scope.sales_return.sales_items.length;i++) {
+            amount = amount + $scope.sales_return.sales_items[i].returned_amount;
+        }
+        $scope.sales_return.net_return_total = amount;
+    }
+    $scope.save_sales_return = function() {
+        if($scope.validate_salesreturn()) {
+            $scope.sales_return.sales_return_date = $$('#sales_return_date')[0].get('value');
+            $scope.sales_return.sales_invoice_number = $scope.sales.sales_invoice_number;
+            params = {
+                "csrfmiddlewaretoken" : $scope.csrf_token,
+                'sales_return': angular.toJson($scope.sales_return),
+            }
+            $http({
+                method : 'post',
+                url : "/sales/return/",
+                data : $.param(params),
+                headers : {
+                    'Content-Type' : 'application/x-www-form-urlencoded'
+                }
+            }).success(function(data, status) {
+                document.location.href = '/sales/return/';
+               
+            }).error(function(data, success){
+                
+            });
+        }
+    }
+
     
 }
+
 
 function AddItemController($scope, $http, $element, $location, $timeout) {
     
@@ -2226,5 +2264,6 @@ function AddItemController($scope, $http, $element, $location, $timeout) {
         $scope.popup.hide_popup();
     }
 }
+
 
 
