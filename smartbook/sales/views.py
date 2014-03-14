@@ -86,27 +86,44 @@ class SalesEntry(View):
 
 class SalesReturnView(View):
     def get(self, request, *args, **kwargs):
-        return_invoice_number = SalesReturn.objects.aggregate(Max('return_invoice_number'))['return_invoice_number__max']
-        
-        if not return_invoice_number:
-            return_invoice_number = 1
+        if SalesReturn.objects.exists():
+            invoice_number = int(SalesReturn.objects.aggregate(Max('return_invoice_number'))['return_invoice_number__max']) + 1
         else:
-            return_invoice_number = return_invoice_number + 1
-        return render(request, 'sales/return_entry.html',{
-            'return_invoice_number': return_invoice_number
+            invoice_number = 1
+        if not invoice_number:
+            invoice_number = 1
+        return render(request, 'sales/return_entry.html', {
+            'invoice_number' : invoice_number,
         })
 
     def post(self, request, *args, **kwargs):
-    	# salesreturn = SalesReturn()
-    	# salesreturn.sales =sales_created request.POST['sales']
-    	# salesreturn.date = request.POST['date']
-    	# salesreturn.total = request.POST['total']
-    	# salesreturn.discount = request.POST['discount']
-    	# salesreturn.round_off = request.POST['round_off']
-    	# salesreturn.grand_total = request.POST['grand_total']
-    	# salesreturn.save()
+        post_dict = request.POST['sales_return']
+        post_dict = ast.literal_eval(post_dict)
+        sales = Sales.objects.get(sales_invoice_number=post_dict['sales_invoice_number'])
+        sales_return, created = SalesReturn.objects.get_or_create(sales=sales, return_invoice_number = post_dict['invoice_number'])
+        sales_return.date = datetime.strptime(post_dict['sales_return_date'], '%d/%m/%Y')
+        sales_return.net_amount = post_dict['net_return_total']
+        sales_return.save()
+        
+        
 
-    	return render(request, 'sales/return_entry.html',{})
+        return_items = post_dict['sales_items']
+
+        for item in return_items:
+            return_item = Item.objects.get(code=item['item_code'])
+            s_return_item, created = SalesReturnItem.objects.get_or_create(item=return_item, sales_return=sales_return)
+            s_return_item.amount = item['returned_amount']
+            s_return_item.quantity = item['returned_quantity']
+            s_return_item.save()
+
+            inventory = Inventory.objects.get(item=return_item)
+            inventory.quantity = inventory.quantity + int(item['returned_quantity'])
+            inventory.save()
+        response = {
+                'result': 'Ok',
+            }
+        status_code = 200
+        return HttpResponse(response, status = status_code, mimetype="application/json")
 
   	
 class ViewSales(View):
@@ -129,7 +146,7 @@ class SalesDetails(View):
                     'barcode': item.item.barcode,
                     'stock': item.item.inventory_set.all()[0].quantity,
                     'unit_price': item.item.inventory_set.all()[0].selling_price,
-                    'uom': item.item.uom,
+                    'uom': item.item.uom.uom,
                     'quantity_sold': item.quantity_sold,
                     'discount_given': item.discount_given
 
@@ -142,7 +159,8 @@ class SalesDetails(View):
                 'net_amount': sales.net_amount,
                 'round_off': sales.round_off,
                 'grant_total': sales.grant_total,
-                'discount': sales.discount
+                'discount': sales.discount,
+                'sales_items': sl_items
             }
             res = {
                 'result': 'Ok',
