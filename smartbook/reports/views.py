@@ -364,24 +364,37 @@ class PurchaseReports(View):
             return render(request, 'reports/purchase_reports.html',{})
 
         if report_type == 'date':               
+<<<<<<< HEAD
+            p.drawCentredString(400, 900, 'Purchase Report Date wise')
+=======
             p.drawString(425, 900, 'Purchase Report Date wise')
+>>>>>>> fca612fb067f6906482d67bd846e54497fea7430
             start_date = request.GET['start_date']
             end_date = request.GET['end_date']
+            if not start_date:
+                return render(request, 'reports/purchase_reports.html',{
+                    'validation_error': 'Please Enter start date and end date'
+                })
+            if not end_date:
+                return render(request, 'reports/purchase_reports.html',{
+                    'validation_error': 'Please Enter satrt date and end date'
+                })
             start_date = datetime.strptime(start_date, '%d/%m/%Y')
             end_date = datetime.strptime(end_date, '%d/%m/%Y')
             purchases = Purchase.objects.filter(purchase_invoice_date__gte=start_date, purchase_invoice_date__lte=end_date).order_by('purchase_invoice_date')
             p.setFontSize(13)
-            p.drawString(50, 875, "Date")
-            p.drawString(150, 875, "Invoice No")
-            p.drawString(250, 875, "Vendor Invoice")
-            p.drawString(350, 875, "Item code")
-            p.drawString(450, 875, "Item name")
-            p.drawString(550, 875, "Unit Cost price")
-            p.drawString(650, 875, "Quantity")
-            p.drawString(750, 875, "Amount")
+            p.drawString(50, 850, "Date")
+            p.drawString(150, 850, "Invoice No")
+            p.drawString(250, 850, "Vendor Invoice")
+            p.drawString(350, 850, "Item code")
+            p.drawString(450, 850, "Item name")
+            p.drawString(550, 850, "Unit Cost price")
+            p.drawString(650, 850, "Quantity")
+            p.drawString(750, 850, "Amount")
 
-            y = 850
+            y = 820
             p.setFontSize(12)
+            total_amount = 0
             for purchase in purchases:
                 purchase_items = purchase.purchaseitem_set.all()
                 for purchase_item in purchase_items:                    
@@ -394,7 +407,10 @@ class PurchaseReports(View):
                     p.drawString(550, y, str(purchase_item.cost_price))
                     p.drawString(650, y, str(purchase_item.quantity_purchased))
                     p.drawString(750, y, str(purchase_item.net_amount))
-
+                    total_amount = total_amount + purchase_item.net_amount
+            y = y - 30
+            p.drawString(650, y, 'Total:')
+            p.drawString(750, y, str(purchase_item.net_amount))
             p.showPage()
             p.save()
         elif report_type == 'vendor':
@@ -402,7 +418,11 @@ class PurchaseReports(View):
             vendor = Vendor.objects.get(user__first_name = vendor_name)
             purchases = Purchase.objects.filter(vendor = vendor)
             
+<<<<<<< HEAD
+            p.drawCentredString(400, 900, 'Purchase Report Vendor wise')
+=======
             p.drawString(225, 900, 'Purchase Report Vendor wise')
+>>>>>>> fca612fb067f6906482d67bd846e54497fea7430
             p.setFontSize(13)
             p.drawString(50, 875, "Date")
             p.drawString(150, 875, "Invoice No")
@@ -410,13 +430,22 @@ class PurchaseReports(View):
             p.drawString(370, 875, "Amount")
             p.setFontSize(12)  
             y = 850
+            total_amount = 0
             for purchase in purchases:
                             
                 y = y - 30
                 p.drawString(50, y, purchase.purchase_invoice_date.strftime('%d/%m/%y'))
                 p.drawString(150, y, str(purchase.purchase_invoice_number))
                 p.drawString(250, y, str(purchase.vendor_invoice_number))
+<<<<<<< HEAD
+                p.drawString(350, y, str(purchase.vendor_amount))
+                total_amount = total_amount + purchase.vendor_amount
+            y = y - 30
+            p.drawString(250, y, 'Total:')
+            p.drawString(350, y, str(total_amount))    
+=======
                 p.drawString(370, y, str(purchase.vendor_amount))
+>>>>>>> fca612fb067f6906482d67bd846e54497fea7430
             p.showPage()
             p.save()
                   
@@ -729,46 +758,54 @@ class PurchaseAccountsVendor(View):
 
 class StockReports(View):
     def get(self, request, *args, **kwargs):
-        if request.is_ajax():
-            status_code = 200
-            stocks = Inventory.objects.all()
-            print stocks
-            ctx_stock = []
-            if len(stocks) > 0:
-                for stock in stocks:
-                    print stock.item.purchaseitem_set.all()
-                    ctx_stock.append({
-                       'item_code': stock.item.code,
-                       'item_name': stock.item.name,
-                       'bar_code': stock.item.barcode,
-                       'description': stock.item.description,
-                       'brand_name': stock.item.brand.brand,
-                       # 'vendor_name': stock.item.purchaseitem_set.all()[0].purchase.vendor.user.first_name,
-                       'stock': stock.quantity,
-                       'uom': stock.item.uom.uom,
-                       'cost_price': stock.item.purchaseitem_set.all()[0].cost_price,
-                       'selling_price': stock.selling_price,
-                       'tax': stock.item.tax,
-                       'discount': stock.discount_permit_percentage,
-                       'stock_by_value': float(stock.quantity * stock.selling_price),
-                       'profit': stock.selling_price - stock.item.purchaseitem_set.all()[0].cost_price,
-                    })
+        response = HttpResponse(content_type='application/pdf')
+        p = canvas.Canvas(response, pagesize=(1000, 1000))
 
-            try:
-                res = {
-                    'stocks': ctx_stock,
-                }
-                response = simplejson.dumps(res)
-            except Exception as ex:
-                # remember to change exception
-                response = simplejson.dumps({'result': 'error', 'error': str(ex)})
-                status_code = 500
-            return HttpResponse(response, status = status_code, mimetype = 'application/json')
+        status_code = 200
+        stocks = Inventory.objects.all()
+        
+        p.drawString(400, 900, 'Stock Report')
 
-        else:
-            return render(request, 'reports/stock.html',{})
+        y = 850
+        p.drawString(900, y, 'Item Code')
+        p.drawString(800, y, 'Item Name')
+        p.drawString(700, y, 'Barcode')
+        p.drawString(600, y, 'Brand Name')
+        p.drawString(500, y, 'Vendor Name')
+        p.drawString(400, y, 'Stock')
+        p.drawString(300, y, 'UOM')
+        p.drawString(200, y, 'Selling Price')
+        p.drawString(100, y, 'Selling Price')
+        
+        if len(stocks) > 0:
+            for stock in stocks:
+                print stock.item.purchaseitem_set.all()
+                ctx_stock.append({
+                   'item_code': stock.item.code,
+                   'item_name': stock.item.name,
+                   'bar_code': stock.item.barcode,
+                   'brand_name': stock.item.brand.brand,
+                   'vendor_name': stock.item.purchaseitem_set.all()[0].purchase.vendor.user.first_name,
+                   'stock': stock.quantity,
+                   'uom': stock.item.uom.uom,
+                   'selling_price': stock.selling_price,
+                   'tax': stock.item.tax,
+                   'discount': stock.discount_permit_percentage,
+                   'stock_by_value': float(stock.quantity * stock.selling_price),
+                })
 
+        try:
+            res = {
+                'stocks': ctx_stock,
+            }
+            response = simplejson.dumps(res)
+        except Exception as ex:
+            # remember to change exception
+            response = simplejson.dumps({'result': 'error', 'error': str(ex)})
+            status_code = 500
+        return HttpResponse(response, status = status_code, mimetype = 'application/json')
 
+        
 
 
 
