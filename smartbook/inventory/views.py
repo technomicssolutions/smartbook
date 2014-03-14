@@ -22,30 +22,35 @@ class ItemAdd(View):
     def post(self, request, *args, **kwargs):
 
         if request.is_ajax():
-            uom = UnitOfMeasure.objects.get(uom = request.POST['uom'])
-            brand = Brand.objects.get(brand = request.POST['brand'])
-            item, created = Item.objects.get_or_create(code=request.POST['code'])
-            if not created:
+            try:
+                uom = UnitOfMeasure.objects.get(uom = request.POST['uom'])
+                brand = Brand.objects.get(brand = request.POST['brand'])
+                item, created = Item.objects.get_or_create(code=request.POST['code'], brand=brand, uom=uom)
+                if not created:
+                    res = {
+                        'result': 'error',
+                        'message': 'Item with this item code already existing'
+                    }
+                    status_code = 500
+                else:
+                    item.name=request.POST['name']
+                    item.description=request.POST['description']
+                    item.barcode=request.POST['barcode']
+                    item.tax=request.POST['tax']
+                    item.save()
+                    res = {
+                        'result': 'ok',
+                    }  
+                    status_code = 200 
+                
+            except IntegrityError:
                 res = {
-                    'result': 'error',
-                    'message': 'Item with this item code already existing'
-                }
+                        'result': 'error',
+                        'message': 'Item with this item code already existing'
+                    }
                 status_code = 500
-            else:
-                item.name=request.POST['name']
-                item.description=request.POST['description']
-                item.uom=uom
-                item.brand=brand
-                item.barcode=request.POST['barcode']
-                item.tax=request.POST['tax']
-                item.save()
-                res = {
-                    'result': 'ok',
-                }  
-                status_code = 200 
-            
+
             response = simplejson.dumps(res)
-            
             return HttpResponse(response, status = status_code, mimetype="application/json")
 
 
@@ -95,7 +100,7 @@ class ItemList(View):
                     'inventory': inventory
                 }
                 return render(request, 'inventory/stock.html',ctx)
-                
+
 class BrandList(View):
 
     def get(self, request, *args, **kwargs):

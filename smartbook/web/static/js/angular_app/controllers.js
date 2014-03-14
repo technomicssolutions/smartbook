@@ -2244,6 +2244,7 @@ function AddItemController($scope, $http, $element, $location, $timeout) {
                 } else {
                     $scope.error_flag=false;
                     $scope.message = '';
+                    document.location.href = '/';
                 }
             }).error(function(data, status){
                 $scope.error_flag=true;
