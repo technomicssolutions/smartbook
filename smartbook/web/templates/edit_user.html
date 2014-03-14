@@ -35,7 +35,7 @@
 </div>
 
 <div class="form_container">
-	<form name="staffadd" method="post" action="{% url 'edit_user' user_type=user_type profile_id=profile.id%}">
+	<form name="staffadd" method="post" action="{% url 'edit_user' user_type=user_type user_id=profile.user.id%}">
 		{% csrf_token %}
 		{{ message }}
 		<div class="control">

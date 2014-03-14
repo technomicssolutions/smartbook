@@ -129,7 +129,8 @@ class SalesReports(View):
                                     i = i + 1
                                 avg_cp = cost_price/i
                             total = selling_price * qty
-                            profit = (selling_price - avg_cp)*qty
+                            # profit = (selling_price - avg_cp)*qty
+                            profit = round(((selling_price - discount - avg_cp)*qty),0)
 
                             grant_total = grant_total + total
                             total_profit = total_profit + profit
@@ -217,7 +218,8 @@ class SalesReports(View):
                                     cost_price = cost_price + purchase.cost_price
                                     i = i + 1
                                 avg_cp = cost_price/i
-                            profit = (selling_price - avg_cp)*total_qty
+                            # profit = (selling_price - avg_cp)*total_qty
+                            profit = round(((selling_price - discount - avg_cp)*qty),0)
 
                             total_profit = total_profit + profit
                             total_discount = total_discount + discount
@@ -321,7 +323,9 @@ class SalesReports(View):
                                     cost_price = cost_price + purchase.cost_price
                                     i = i + 1
                                 avg_cp = cost_price/i
-                            profit = (selling_price - avg_cp)*qty
+                            # profit = (selling_price - avg_cp)*qty
+
+                            profit = round(((selling_price - discount - avg_cp)*qty),0)
 
                             total_profit = total_profit + profit
                             total_discount = total_discount + discount                            
@@ -430,7 +434,8 @@ class SalesReports(View):
                                     cost_price = cost_price + purchase.cost_price
                                     i = i + 1
                                 avg_cp = cost_price/i
-                            profit = (selling_price - avg_cp)*qty
+                            # profit = (selling_price - avg_cp)*qty
+                            profit = round(((selling_price - discount - avg_cp)*qty),0)
 
                             total_profit = total_profit + profit
                             total_discount = total_discount + discount                            

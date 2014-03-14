@@ -762,9 +762,10 @@ function SalesController($scope, $element, $http, $timeout, share, $location) {
 
 
     $scope.get_staff = function() {
-        $http.get('/staff/list/').success(function(data)
-        {
-            $scope.staffs = data.staffs;
+        $http.get('/salesman/list/').success(function(data)
+        {           
+
+            $scope.staffs = data.salesmen;
 
         }).error(function(data, status)
         {
@@ -1180,9 +1181,7 @@ function VendorAccountController($scope, $element, $http, $timeout, $location){
             } else {
                 $scope.vendor_account.balance_amount = 0
             } 
-        }
-        
-         
+        }        
     }
     $scope.save_vendor_account = function(){
         $scope.vendor_account.vendor_account_date = $$('#vendor_account_date')[0].get('value');
@@ -1264,15 +1263,6 @@ function PurchaseReportController($scope, $element, $http, $location) {
         }
     }
 
-    $scope.get_report = function(){
-        if($scope.report_name == 'date') {
-            $scope.report_date_wise_flag = true;
-            $scope.report_vendor_wise_flag = false;
-        } else if ($scope.report_name == 'vendor') {
-            $scope.report_date_wise_flag = false;
-            $scope.report_vendor_wise_flag = true;
-        }
-    }
     $scope.view_report = function(report_type) {
         $scope.report_type = report_type;
         $scope.start_date = $$('#start_date')[0].get('value');
@@ -1478,8 +1468,8 @@ function PurchaseReturnReportController($scope, $element, $http, $location) {
     $scope.end_date = '';
     $scope.report_type = '';
     $scope.vendor_name = 'select';
-    $scope.report_date_wise_flag = true;
-    $scope.report_vendor_wise_flag = false;
+    $scope.report_date_wise = true;
+    $scope.report_vendor_wise = false;
     $scope.date_total_amount_flag = false;
     $scope.vendor_total_amount_flag = false;
     $scope.error_flag = false;
@@ -1518,11 +1508,11 @@ function PurchaseReturnReportController($scope, $element, $http, $location) {
 
     $scope.get_report = function(){
         if($scope.report_name == 'date') {
-            $scope.report_date_wise_flag = true;
-            $scope.report_vendor_wise_flag = false;
+            $scope.report_date_wise = true;
+            $scope.report_vendor_wise = false;
         } else if ($scope.report_name == 'vendor') {
-            $scope.report_date_wise_flag = false;
-            $scope.report_vendor_wise_flag = true;
+            $scope.report_date_wise = false;
+            $scope.report_vendor_wise = true;
         }
     }
     $scope.view_report = function(report_type) {
@@ -1710,20 +1700,22 @@ function PurchaseReturnController($scope, $element, $http, $timeout, share, $loc
             $scope.purchase = data.purchase;
             $scope.purchase.deleted_items = [];
             $scope.purchase.purchase_invoice_number = invoice;
+            $scope.purchase_return.purchase_items = [];
         }).error(function(data, status)
         {
             console.log(data || "Request failed");
         });
     }
     $scope.addReturnItems = function(item) {
-        var ind = $scope.purchase_return.purchase_items.indexOf(item)
-        if(ind >= 0 && !item.selected){
+        var ind = $scope.purchase_return.purchase_items.indexOf(item);
+        console.log($scope.purchase_return.purchase_items);
+        if(ind >= 0){
             $scope.purchase_return.purchase_items.splice(ind, 1);
-        } else if(item.selected) {
+        } else {
             $scope.purchase_return.purchase_items.push(item);
             var i = $scope.purchase_return.purchase_items.indexOf(item);
-        }
-        
+        }    
+        console.log($scope.purchase_return.purchase_items);    
     }
     $scope.calculate_return_amount = function(item){
         item.returned_amount = parseFloat(item.returned_quantity) * parseFloat(item.cost_price);
@@ -1738,9 +1730,9 @@ function PurchaseReturnController($scope, $element, $http, $timeout, share, $loc
     }
      $scope.save_purchase_return = function() {
         $scope.purchase_return.purchase_invoice_number = $scope.purchase.purchase_invoice_number;
-        for(var i=0; i< $scope.purchase_return.purchase_items.length; i++){
-            $scope.purchase_return.purchase_items[i].selected = "selected";
-        }
+        // for(var i=0; i< $scope.purchase_return.purchase_items.length; i++){
+        //     $scope.purchase_return.purchase_items[i].selected = "selected";
+        // }
         if($$('#purchase_return_date')[0].get('value') == '') {
             $scope.validation_error = "Please select date";
             return false;
@@ -1810,19 +1802,20 @@ function SalesReturnController($scope, $element, $http, $timeout, share, $locati
             format:'%d/%m/%Y', 
         });
     }
-    $scope.validate_salesreturn = function() {
-        
-        if($scope.sales.sales_invoice_number == '') {
+  /*  $scope.validate_salesreturn = function() {
+            
+        if($scope.sales_return.invoice_number == '') {
+            
             $scope.validation_error = "Please Choose an invoice number" ;
             return false;
-        } else if($scope.sales.sales_invoice_date == ''){
+        } else if($scope.sales_return.sales_return_date == '') {
             $scope.validation_error = "Please enter a Date";
             return false;
         } 
         else {
             return true;
         }        
-    }
+    }*/
     $scope.getItems = function(parameter) {
         $scope.items = [];
         $scope.selecting_item = true;
@@ -1908,7 +1901,7 @@ function SalesReturnController($scope, $element, $http, $timeout, share, $locati
         $scope.sales_return.net_return_total = amount;
     }
     $scope.save_sales_return = function() {
-        if($scope.validate_salesreturn()) {
+       // if($scope.validate_salesreturn()) {
             $scope.sales_return.sales_return_date = $$('#sales_return_date')[0].get('value');
             $scope.sales_return.sales_invoice_number = $scope.sales.sales_invoice_number;
             params = {
@@ -1928,7 +1921,7 @@ function SalesReturnController($scope, $element, $http, $timeout, share, $locati
             }).error(function(data, success){
                 
             });
-        }
+       // }
     }
 
     
