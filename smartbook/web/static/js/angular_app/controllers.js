@@ -629,16 +629,16 @@ function PurchaseController($scope, $element, $http, $timeout, share, $location)
             $scope.validation_error = "Please Choose Item";
             return false;
         } else if(typeOf($scope.purchase.vendor_invoice_number) != 'number') {
-            $scop.validation_error = "Please enter a number as invoice number";
+            $scope.validation_error = "Please enter a number as invoice number";
             return false;
         } else if(typeOf($scope.purchase.sales_invoice_number) != 'number') {
-            $scop.validation_error = "Please enter a number as invoice number";
+            $scope.validation_error = "Please enter a number as invoice number";
             return false;
         } else if(typeOf($scope.purchase.vendor_do_number) != 'number') {
-            $scop.validation_error = "Please enter a number as vendor do number";
+            $scope.validation_error = "Please enter a number as vendor do number";
             return false;
         } else if(typeOf($scope.purchase.discount) != 'number') {
-            $scop.validation_error = "Please enter a number as discount";
+            $scope.validation_error = "Please enter a number as discount";
         }
         else {
             return true;
