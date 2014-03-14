@@ -283,20 +283,20 @@ class PurchaseReportsDate(View):
         status_code = 200
         response = HttpResponse(content_type='application/pdf')
         p = canvas.Canvas(response, pagesize=(1000, 1000))
+        p.setFontSize(15)
         report_type = request.GET.get('report_type', '')
 
         if not report_type:
             return render(request, 'reports/purchase_reports.html',{})
 
         if report_type == 'date':               
-            p.drawString(300, 900, 'Purchase Report Date wise')
+            p.drawCentredString(300, 900, 'Purchase Report Date wise')
             start_date = request.GET['start_date']
             end_date = request.GET['end_date']
             start_date = datetime.strptime(start_date, '%d/%m/%Y')
             end_date = datetime.strptime(end_date, '%d/%m/%Y')
             purchases = Purchase.objects.filter(purchase_invoice_date__gte=start_date, purchase_invoice_date__lte=end_date).order_by('purchase_invoice_date')
-            p.drawString(300, 900, 'Purchase Report Date wise')
-
+            p.setFontSize(13)
             p.drawString(50, 875, "Date")
             p.drawString(150, 875, "Invoice No")
             p.drawString(250, 875, "Vendor Invoice")
@@ -307,6 +307,7 @@ class PurchaseReportsDate(View):
             p.drawString(750, 875, "Amount")
 
             y = 850
+            p.setFontSize(12)
             for purchase in purchases:
                 purchase_items = purchase.purchaseitem_set.all()
                 for purchase_item in purchase_items:                    
@@ -326,21 +327,22 @@ class PurchaseReportsDate(View):
             vendor_name = request.GET['vendor']
             vendor = Vendor.objects.get(user__first_name = vendor_name)
             purchases = Purchase.objects.filter(vendor = vendor)
-            p.drawString(300, 900, 'Purchase Report Date wise')
-
+            
+            p.drawCentredString(300, 900, 'Purchase Report Vendor wise')
+            p.setFontSize(13)
             p.drawString(50, 875, "Date")
             p.drawString(150, 875, "Invoice No")
             p.drawString(250, 875, "Vendor Invoice")
             p.drawString(750, 875, "Amount")
-
+            p.setFontSize(12)  
             y = 850
             for purchase in purchases:
-                              
+                            
                 y = y - 30
                 p.drawString(50, y, purchase.purchase_invoice_date.strftime('%d/%m/%y'))
                 p.drawString(150, y, str(purchase.purchase_invoice_number))
                 p.drawString(250, y, str(purchase.vendor_invoice_number))
-                p.drawString(750, y, str(purchase.vendor_amount))
+                p.drawString(350, y, str(purchase.vendor_amount))
             p.showPage()
             p.save()
                   
