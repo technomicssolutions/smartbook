@@ -126,6 +126,7 @@ function ExpenseController($scope, $element, $http, $timeout, $location) {
                     $scope.error_flag=false;
                     $scope.message = '';
                     console.log('success');
+                    document.location.href ='/';
                 }
             }).error(function(data, status){
                 console.log(data);
@@ -2244,6 +2245,7 @@ function AddItemController($scope, $http, $element, $location, $timeout) {
                 } else {
                     $scope.error_flag=false;
                     $scope.message = '';
+                    document.location.href = '/';
                 }
             }).error(function(data, status){
                 $scope.error_flag=true;
