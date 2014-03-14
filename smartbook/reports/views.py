@@ -678,67 +678,64 @@ class ExpenseReport(View):
 
 class PurchaseAccountsReport(View):
     def get(self, request, *args, **kwargs):
-        if request.is_ajax():
-            ctx_purchase_accounts_report = []
-            status_code = 200
-            if request.GET['report_name'] == 'date':
-                                
-                start_date = request.GET['start_date']
-                end_date = request.GET['end_date']
-                start_date = datetime.strptime(start_date, '%d/%m/%Y')
-                end_date = datetime.strptime(end_date, '%d/%m/%Y')
-                purchase_accounts = VendorAccount.objects.filter(date__gte=start_date, date__lte=end_date).order_by('date')
-                if len(purchase_accounts) > 0:
-                    for purchase_account in purchase_accounts:
-                        ctx_purchase_accounts_report.append({
-                            'date': purchase_account.date.strftime('%d/%m/%Y'),
-                            'vendor_name': purchase_account.vendor.user.first_name,
-                            'payment_mode': purchase_account.payment_mode,
-                            'narration': purchase_account.narration,
-                            'total_amount': purchase_account.total_amount,
-                            'paid_amount': purchase_account.paid_amount,
-                            'balance': purchase_account.balance,
-                        })
-                # fileobj = createPDF(purchases)
-                # file_extension = 'pdf'
-                # path = settings.PROJECT_ROOT
-                # print path
-                # print 'root === ',settings.PROJECT_ROOT
-                # pdf_file_name = 'purchase_report_date_wise'+"."+file_extension
-                # pdf_name = path+'/media/uploads/reports/%s'%(pdf_file_name)
-                # file_name = '%s'%(pdf_name)
-                # print file_name
-                # with open(file_name, 'w') as destination:
-                #     for chunk in fileobj.chunks():
-                #         destination.write(chunk)
-                # file_path = "uploads/reports/"+pdf_file_name
-            else:
-                vendor_name = request.GET['vendor_name']
-                vendor = Vendor.objects.get(user__first_name = vendor_name)
-                purchase_accounts = VendorAccount.objects.filter(vendor = vendor)
-                if len(purchase_accounts) > 0:
-                    for purchase_account in purchase_accounts:
-                        ctx_purchase_accounts_report.append({
-                            'date': purchase_account.date.strftime('%d/%m/%Y'),
-                            'payment_mode': purchase_account.payment_mode,
-                            'narration': purchase_account.narration,
-                            'total_amount': purchase_account.total_amount,
-                            'paid_amount': purchase_account.paid_amount,
-                            'balance': purchase_account.balance,
-                        })
-            try:    
-                res = {
-                    'purchase_accounts': ctx_purchase_accounts_report,                 
-                }    
-                response = simplejson.dumps(res)
-            except Exception as ex:
-                # remember to change exception
-                response = simplejson.dumps({'result': 'error', 'error': str(ex)})
-                status_code = 500
-            return HttpResponse(response, status = status_code, mimetype = 'application/json')
-
+  
+        ctx_purchase_accounts_report = []
+        status_code = 200
+        if request.GET['report_name'] == 'date':
+                            
+            start_date = request.GET['start_date']
+            end_date = request.GET['end_date']
+            start_date = datetime.strptime(start_date, '%d/%m/%Y')
+            end_date = datetime.strptime(end_date, '%d/%m/%Y')
+            purchase_accounts = VendorAccount.objects.filter(date__gte=start_date, date__lte=end_date).order_by('date')
+            if len(purchase_accounts) > 0:
+                for purchase_account in purchase_accounts:
+                    ctx_purchase_accounts_report.append({
+                        'date': purchase_account.date.strftime('%d/%m/%Y'),
+                        'vendor_name': purchase_account.vendor.user.first_name,
+                        'payment_mode': purchase_account.payment_mode,
+                        'narration': purchase_account.narration,
+                        'total_amount': purchase_account.total_amount,
+                        'paid_amount': purchase_account.paid_amount,
+                        'balance': purchase_account.balance,
+                    })
+            # fileobj = createPDF(purchases)
+            # file_extension = 'pdf'
+            # path = settings.PROJECT_ROOT
+            # print path
+            # print 'root === ',settings.PROJECT_ROOT
+            # pdf_file_name = 'purchase_report_date_wise'+"."+file_extension
+            # pdf_name = path+'/media/uploads/reports/%s'%(pdf_file_name)
+            # file_name = '%s'%(pdf_name)
+            # print file_name
+            # with open(file_name, 'w') as destination:
+            #     for chunk in fileobj.chunks():
+            #         destination.write(chunk)
+            # file_path = "uploads/reports/"+pdf_file_name
         else:
-            return render(request, 'reports/purchase_accounts_report.html',{})
+            vendor_name = request.GET['vendor_name']
+            vendor = Vendor.objects.get(user__first_name = vendor_name)
+            purchase_accounts = VendorAccount.objects.filter(vendor = vendor)
+            if len(purchase_accounts) > 0:
+                for purchase_account in purchase_accounts:
+                    ctx_purchase_accounts_report.append({
+                        'date': purchase_account.date.strftime('%d/%m/%Y'),
+                        'payment_mode': purchase_account.payment_mode,
+                        'narration': purchase_account.narration,
+                        'total_amount': purchase_account.total_amount,
+                        'paid_amount': purchase_account.paid_amount,
+                        'balance': purchase_account.balance,
+                    })
+        try:    
+            res = {
+                'purchase_accounts': ctx_purchase_accounts_report,                 
+            }    
+            response = simplejson.dumps(res)
+        except Exception as ex:
+            # remember to change exception
+            response = simplejson.dumps({'result': 'error', 'error': str(ex)})
+            status_code = 500
+        return HttpResponse(response, status = status_code, mimetype = 'application/json')
 
 class PurchaseAccountsVendor(View):
     def get(self, request, *args, **kwargs):

@@ -75,7 +75,7 @@
 								<span>[[item.item_code]]</span>
 								<span>[[item.item_name]]</span>
 								<span>[[item.barcode]] </span>
-								<span> <input type="checkbox" ng-click="addReturnItems(item)" ng-model="item.selected" /></span>
+								<span> <input type="checkbox" ng-click="addReturnItems(item)" /></span>
 							</div>
 							<div class="clear"></div>
 						</div>
@@ -96,7 +96,7 @@
 							<span> Quantity </span>
 							<span> Amount </span>
 						</div>
-						<div ng-repeat="item in purchase.purchase_items" class="item_list_row">
+						<div ng-repeat="item in purchase_return.purchase_items" class="item_list_row">
 							<span class="small_column">[[item.item_code]] </span>
 							<span>[[item.item_name]] </span>
 							<span>[[item.barcode]] </span>
@@ -119,7 +119,7 @@
 							<label for="net_total">Net Total</label>
 						</div>
 						<div class="forminput">
-							<input type="text" name="net_return_total" ng-model="sales_return.net_return_total" readonly />
+							<input type="text" name="net_return_total" ng-model="purchase_return.net_return_total" readonly />
 						</div>
 					</div>
 				</div>

@@ -1181,9 +1181,7 @@ function VendorAccountController($scope, $element, $http, $timeout, $location){
             } else {
                 $scope.vendor_account.balance_amount = 0
             } 
-        }
-        
-         
+        }        
     }
     $scope.save_vendor_account = function(){
         $scope.vendor_account.vendor_account_date = $$('#vendor_account_date')[0].get('value');
@@ -1824,20 +1822,22 @@ function PurchaseReturnController($scope, $element, $http, $timeout, share, $loc
             $scope.purchase = data.purchase;
             $scope.purchase.deleted_items = [];
             $scope.purchase.purchase_invoice_number = invoice;
+            $scope.purchase_return.purchase_items = [];
         }).error(function(data, status)
         {
             console.log(data || "Request failed");
         });
     }
     $scope.addReturnItems = function(item) {
-        var ind = $scope.purchase_return.purchase_items.indexOf(item)
-        if(ind >= 0 && !item.selected){
+        var ind = $scope.purchase_return.purchase_items.indexOf(item);
+        console.log($scope.purchase_return.purchase_items);
+        if(ind >= 0){
             $scope.purchase_return.purchase_items.splice(ind, 1);
-        } else if(item.selected) {
+        } else {
             $scope.purchase_return.purchase_items.push(item);
             var i = $scope.purchase_return.purchase_items.indexOf(item);
-        }
-        
+        }    
+        console.log($scope.purchase_return.purchase_items);    
     }
     $scope.calculate_return_amount = function(item){
         item.returned_amount = parseFloat(item.returned_quantity) * parseFloat(item.cost_price);
@@ -1852,9 +1852,9 @@ function PurchaseReturnController($scope, $element, $http, $timeout, share, $loc
     }
      $scope.save_purchase_return = function() {
         $scope.purchase_return.purchase_invoice_number = $scope.purchase.purchase_invoice_number;
-        for(var i=0; i< $scope.purchase_return.purchase_items.length; i++){
-            $scope.purchase_return.purchase_items[i].selected = "selected";
-        }
+        // for(var i=0; i< $scope.purchase_return.purchase_items.length; i++){
+        //     $scope.purchase_return.purchase_items[i].selected = "selected";
+        // }
         if($$('#purchase_return_date')[0].get('value') == '') {
             $scope.validation_error = "Please select date";
             return false;
