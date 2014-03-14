@@ -48,7 +48,7 @@ class SalesItem(models.Model):
 
 class SalesReturn(models.Model):
 	sales = models.ForeignKey(Sales)
-	return_invoice_number = models.IntegerField('Purchase Return invoice number', unique=True)
+	return_invoice_number = models.IntegerField('Sales Return invoice number', unique=True)
 	date = models.DateField('Date', null=True, blank=True)
 	net_amount = models.IntegerField('Total', null=True, blank=True)
 	
@@ -58,7 +58,7 @@ class SalesReturn(models.Model):
 
 class SalesReturnItem(models.Model):
 	sales_return = models.ForeignKey(SalesReturn, null=True, blank=True)
-	item = models.ForeignKey(SalesItem, null=True, blank=True)
+	item = models.ForeignKey(Item, null=True, blank=True)
 	return_quantity = models.IntegerField('Return Quantity', null=True, blank=True)
 	amount = models.IntegerField('Amount', null=True, blank=True)
 

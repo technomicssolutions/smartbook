@@ -13,9 +13,6 @@ from django.contrib.auth import authenticate, login, logout
 from django.core.urlresolvers import reverse
 from django.contrib.auth.models import User
 
-
-from django.db import IntegrityError
-
 from web.models import (UserProfile, Vendor, Customer, Staff, Designation, TransportationCompany)
 
 

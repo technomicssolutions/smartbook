@@ -230,7 +230,7 @@ class VendorAccounts(View):
 class VendorAccountDetails(View):
     def get(self, request, *args, **kwargs):
         try:
-            vendor = get_object_or_404(Vendor, user__first_name=kwargs['vendor'])
+            vendor = get_object_or_404(Vendor, user__first_name=request.GET['vendor'])
             vendor_account =  VendorAccount.objects.get(vendor=vendor)
             res = {
                 'result': 'Ok',
@@ -261,7 +261,7 @@ class VendorAccountDetails(View):
     def post(self, request, *args, **kwargs):
 
         vendor_account_dict = ast.literal_eval(request.POST['vendor_account'])
-        vendor = get_object_or_404(Vendor, user__first_name=kwargs['vendor'])
+        vendor = get_object_or_404(Vendor, user__first_name=vendor_account_dict['vendor'])
         vendor_account, created =  VendorAccount.objects.get_or_create(vendor=vendor) 
         vendor_account.date = datetime.strptime(vendor_account_dict['vendor_account_date'], '%d/%m/%Y')
         vendor_account.payment_mode = vendor_account_dict['payment_mode']
