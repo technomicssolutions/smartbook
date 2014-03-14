@@ -125,8 +125,7 @@ function ExpenseController($scope, $element, $http, $timeout, $location) {
                 } else {
                     $scope.error_flag=false;
                     $scope.message = '';
-                    console.log('success');
-                    document.location.href ='/';
+                    document.location.href ='/expenses/new_expense/';
                 }
             }).error(function(data, status){
                 console.log(data);
