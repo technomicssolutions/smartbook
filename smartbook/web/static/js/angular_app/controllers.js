@@ -762,9 +762,10 @@ function SalesController($scope, $element, $http, $timeout, share, $location) {
 
 
     $scope.get_staff = function() {
-        $http.get('/staff/list/').success(function(data)
-        {
-            $scope.staffs = data.staffs;
+        $http.get('/salesman/list/').success(function(data)
+        {           
+
+            $scope.staffs = data.salesmen;
 
         }).error(function(data, status)
         {
@@ -1975,19 +1976,20 @@ function SalesReturnController($scope, $element, $http, $timeout, share, $locati
             format:'%d/%m/%Y', 
         });
     }
-    $scope.validate_salesreturn = function() {
-        
-        if($scope.sales.sales_invoice_number == '') {
+  /*  $scope.validate_salesreturn = function() {
+            
+        if($scope.sales_return.invoice_number == '') {
+            
             $scope.validation_error = "Please Choose an invoice number" ;
             return false;
-        } else if($scope.sales.sales_invoice_date == ''){
+        } else if($scope.sales_return.sales_return_date == '') {
             $scope.validation_error = "Please enter a Date";
             return false;
         } 
         else {
             return true;
         }        
-    }
+    }*/
     $scope.getItems = function(parameter) {
         $scope.items = [];
         $scope.selecting_item = true;
@@ -2073,7 +2075,7 @@ function SalesReturnController($scope, $element, $http, $timeout, share, $locati
         $scope.sales_return.net_return_total = amount;
     }
     $scope.save_sales_return = function() {
-        if($scope.validate_salesreturn()) {
+       // if($scope.validate_salesreturn()) {
             $scope.sales_return.sales_return_date = $$('#sales_return_date')[0].get('value');
             $scope.sales_return.sales_invoice_number = $scope.sales.sales_invoice_number;
             params = {
@@ -2093,7 +2095,7 @@ function SalesReturnController($scope, $element, $http, $timeout, share, $locati
             }).error(function(data, success){
                 
             });
-        }
+       // }
     }
 
     
