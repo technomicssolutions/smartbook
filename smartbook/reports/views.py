@@ -22,7 +22,6 @@ from purchase.models import PurchaseItem
 from django.core.files import File
 
 from purchase.models import Purchase, VendorAccount
-from reports.models import ReportTest
 
 from reportlab.lib.units import cm
 from reportlab.pdfgen.canvas import Canvas
@@ -36,87 +35,9 @@ except ImportError:
 from reportlab.pdfgen import canvas
 from reportlab.lib.pagesizes import letter, A4
 from reportlab.lib.units import inch
-from reportlab.platypus import SimpleDocTemplate
-
 
 from reportlab.pdfgen import canvas
 from django.http import HttpResponse
-
-
-# def generate(request):
-    # # Create the HttpResponse object with the appropriate PDF headers.
-    # response = HttpResponse(content_type='application/pdf')
-    # response['Content-Disposition'] = 'attachment; filename="somefilename.pdf"'
-
-    # # # Create the PDF object, using the response object as its "file."
-    # # p = canvas.Canvas(response)
-
-    # # # Draw things on the PDF. Here's where the PDF generation happens.
-    # # # See the ReportLab documentation for the full list of functionality.
-    # # p.drawString(100, 100, "Hello world.")
-
-    # # # Close the PDF object cleanly, and we're done.
-    # # p.showPage()
-    # # p.save()
-    # # return response
-    # document = []
-    # x=85
-    # y=700
-    # buffer=StringIO()
-    # doc = SimpleDocTemplate(buffer) 
-    # p=canvas.Canvas(buffer,pagesize=letter)
-    # #p = canvas.Canvas("myreport.pdf")
-    # # path = settings.PROJECT_PATH + '/../web/static/img/logo.png'
-    # # p.drawImage(path, 3*cm, 25*cm, width=5*cm, preserveAspectRatio=True)
-    # p.drawString(x, y, "Sportivore Pty. Ltd.")
-    # y = 680
-    # p.drawString(x, y, "ACN  166 877 818")
-    # y = 660
-    # p.drawString(x, y, "Phone   +61 424 367 235")
-    # y = 640
-    # p.drawString(x, y, "Email   admin@sportivore.com.au")
-    # data=[['Receipt'],['Date invoiced', str(datetime.now().date())], ['Payment Id', 'tset'], ['User name', 'test'+' '+'test']]
-    # table = Table(data, colWidths=[100, 215], rowHeights=30)
-    # table.setStyle(TableStyle([
-    #                            ('INNERGRID', (0,0), (0,0), 0.25, colors.black),
-    #                            ('INNERGRID', (0,1), (-1,-1), 0.25, colors.black),
-    #                            ('BOX', (0,0), (-1,-1), 0.25, colors.black),
-    #                            ('BACKGROUND',(0,0),(1,0),colors.lightgrey)
-    #                            ]))
-    # table.wrapOn(p, 200, 400)
-    # table.drawOn(p,85,500)
-    # # game_detail = game.date.strftime('%A, %dth of %B')+ " - " +"game.start_time.strftime('%I %p')"+' - '+ game.sport.title+ ' at '+ game.court.venue.venue_name
-    # data=[['Game Details', 'Amount'],['game_detail, game.cost'], ['Amount Paid', 'game.cost']]
-    # table = Table(data, colWidths=[300, 100], rowHeights=[30, 70, 30])
-    # table.setStyle(TableStyle([
-    #                            ('INNERGRID', (0,0), (-1,-1), 0.25, colors.black),
-    #                            ('BOX', (0,0), (-1,-1), 0.25, colors.black),
-    #                            ('BACKGROUND',(0,0),(1,0),colors.lightgrey),
-    #                            ('VALIGN',(0, 1),(-1,-1),'TOP'),
-    #                            ('ALIGN',(0, 2),(-1,-1),'RIGHT')
-    #                            ]))
-    # table.wrapOn(p, 200, 450)
-    # table.drawOn(p,85,350)
-    # p.showPage()
-    # p.save() 
-    # pdf=buffer.getvalue()
-    # buffer.close()
-    # document.append(p)
-    # doc.build(document)  
-    # myfile = ContentFile(pdf) 
-
-    # m = ReportTest()
-    # m.file_name.save('test.pdf', myfile) 
-
-    # response.write(pdf)
-    # print response.FILES
-    # return response
-
-
-def createPDF(purchases):
-
-    
-    return pdf
 
 class Reports(View):
 	def get(self, request, *args, **kwarg):
