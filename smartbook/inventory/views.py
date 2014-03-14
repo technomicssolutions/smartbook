@@ -11,7 +11,7 @@ from django.contrib.auth import authenticate, login, logout
 from django.core.urlresolvers import reverse
 from django.contrib.auth.models import User
 
-from inventory.models import Item
+from inventory.models import Item, Inventory
 from inventory.models import UnitOfMeasure
 from inventory.models import Brand
 
@@ -32,15 +32,15 @@ class ItemAdd(View):
         
         context={}
                     
-        item_add.code =request.POST['code']
-        item_add.name =request.POST['name']
-        item_add.description =request.POST['description']
-        uom =UnitOfMeasure.objects.get(uom=request.POST['uom'])
-        brand =Brand.objects.get(brand=request.POST['brand'])
-        item_add.barcode =request.POST['barcode']
-        item_add.tax =request.POST['tax']
-        item_add.brand=brand
-        item_add.uom=uom
+        item_add.code = request.POST['code']
+        item_add.name = request.POST['name']
+        item_add.description = request.POST['description']
+        uom, created = UnitOfMeasure.objects.get_or_create(uom = request.POST['uom'])
+        brand, created = Brand.objects.get_or_create(brand = request.POST['brand'])
+        item_add.barcode = request.POST['barcode']
+        item_add.tax = request.POST['tax']
+        item_add.brand = brand
+        item_add.uom = uom
         item_add.save()
         brand = Brand.objects.all()
         uom = UnitOfMeasure.objects.all()
@@ -53,41 +53,50 @@ class ItemAdd(View):
 class ItemList(View):
     
     def get(self, request, *args, **kwargs):
-        #try:
-        item_code = request.GET.get('item_code', '')
-        item_name = request.GET.get('item_name', '')
-        barcode = request.GET.get('barcode', '')
-        items = []
-        if item_code:
-            items = Item.objects.filter(code__istartswith=item_code)
-        elif item_name:
-            items = Item.objects.filter(name__istartswith=item_name)
-        elif barcode:
-            items = Item.objects.filter(barcode__istartswith=barcode)
-        item_list = []
-        for item in items:
-            item_list.append({
-                'item_code': item.code,
-                'item_name': item.name,
-                'barcode': item.barcode,
-                'brand': item.brand.brand,
-                'tax': item.tax,
-                'uom': item.uom.uom,
-                'current_stock': item.inventory_set.all()[0].quantity if item.inventory_set.count() > 0  else 0 ,
-                'selling_price': item.inventory_set.all()[0].selling_price if item.inventory_set.count() > 0 else 0 ,
-                'discount_permit': item.inventory_set.all()[0].discount_permit_amount if item.inventory_set.count() > 0 else 0,
-            })
+        
+            if request.is_ajax():
+                try:
+                    item_code = request.GET.get('item_code', '')
+                    item_name = request.GET.get('item_name', '')
+                    barcode = request.GET.get('barcode', '')
+                    items = []
+                    if item_code:
+                        items = Item.objects.filter(code__istartswith=item_code)
+                    elif item_name:
+                        items = Item.objects.filter(name__istartswith=item_name)
+                    elif barcode:
+                        items = Item.objects.filter(barcode__istartswith=barcode)
+                    item_list = []
+                    for item in items:
+                        item_list.append({
+                            'item_code': item.code,
+                            'item_name': item.name,
+                            'barcode': item.barcode,
+                            'brand': item.brand.brand,
+                            'tax': item.tax,
+                            'uom': item.uom.uom,
+                            'current_stock': item.inventory_set.all()[0].quantity if item.inventory_set.count() > 0  else 0 ,
+                            'selling_price': item.inventory_set.all()[0].selling_price if item.inventory_set.count() > 0 else 0 ,
+                            'discount_permit': item.inventory_set.all()[0].discount_permit_amount if item.inventory_set.count() > 0 else 0,
+                        })
 
-        res = {
-            'items': item_list,
-        }
-        response = simplejson.dumps(res)
+                    res = {
+                        'items': item_list,
+                    }
+                    response = simplejson.dumps(res)
 
-        # except Exception as ex:
-        #     response = simplejson.dumps({'result': 'error', 'error': str(ex)})
-        #     status_code = 500
-        status_code = 200
-        return HttpResponse(response, status = status_code, mimetype = 'application/json')
+                except Exception as ex:
+                    response = simplejson.dumps({'result': 'error', 'error': str(ex)})
+                    status_code = 500
+                status_code = 200
+                return HttpResponse(response, status = status_code, mimetype = 'application/json')
+            else:
+                inventory = Inventory.objects.all()
+                ctx = {
+                    'inventory': inventory
+                }
+                return render(request, 'inventory/stock.html',ctx)
+
 
 
 class ItemEdit(View):
