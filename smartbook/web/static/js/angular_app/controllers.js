@@ -603,6 +603,9 @@ function PurchaseController($scope, $element, $http, $timeout, share, $location)
         $scope.purchase.grant_total = $scope.purchase.net_total - $scope.purchase.discount;
     }
     $scope.validate_purchase = function() {
+        $scope.purchase.purchase_invoice_date = $$('#purchase_invoice_date')[0].get('value');
+        $scope.purchase.vendor_invoice_date = $$('#vendor_invoice_date')[0].get('value');
+            
         if($scope.purchase.vendor_invoice_number == '') {
             $scope.validation_error = "Please Enter Vendor invoice number" ;
             return false;
@@ -627,16 +630,16 @@ function PurchaseController($scope, $element, $http, $timeout, share, $location)
         } else if($scope.purchase.purchase_items.length == 0){
             $scope.validation_error = "Please Choose Item";
             return false;
-        } else if(typeOf($scope.purchase.vendor_invoice_number) != 'number') {
-            $scope.validation_error = "Please enter a number as invoice number";
+        } else if(!(Number($scope.purchase.vendor_invoice_number) == $scope.purchase.vendor_invoice_number)) {
+            $scope.validation_error = "Please enter a number as vendor invoice number";
             return false;
-        } else if(typeOf($scope.purchase.sales_invoice_number) != 'number') {
-            $scope.validation_error = "Please enter a number as invoice number";
+        } else if(!(Number($scope.purchase.purchase_invoice_number) == $scope.purchase.purchase_invoice_number)) {
+            $scope.validation_error = "Please enter a number as purchase invoice number";
             return false;
-        } else if(typeOf($scope.purchase.vendor_do_number) != 'number') {
+        } else if(!(Number($scope.purchase.vendor_do_number) == $scope.purchase.vendor_do_number)) {
             $scope.validation_error = "Please enter a number as vendor do number";
             return false;
-        } else if(typeOf($scope.purchase.discount) != 'number') {
+        } else if(!(Number($scope.purchase.discount) == $scope.purchase.discount)) {
             $scope.validation_error = "Please enter a number as discount";
         }
         else {
@@ -646,8 +649,6 @@ function PurchaseController($scope, $element, $http, $timeout, share, $location)
 
     $scope.save_purchase = function() {
         if($scope.validate_purchase()) {
-            $scope.purchase.purchase_invoice_date = $$('#purchase_invoice_date')[0].get('value');
-            $scope.purchase.vendor_invoice_date = $$('#vendor_invoice_date')[0].get('value');
             params = { 
                 'purchase': angular.toJson($scope.purchase),
                 "csrfmiddlewaretoken" : $scope.csrf_token
@@ -1121,7 +1122,6 @@ function VendorAccountController($scope, $element, $http, $timeout, $location){
         });
     }
     $scope.select_payment_mode = function(){
-        console.log('payment mode', $scope.vendor_account.payment_mode);
         if($scope.vendor_account.payment_mode == 'cheque') {
             $scope.cash = false;
         } else {
@@ -1130,7 +1130,7 @@ function VendorAccountController($scope, $element, $http, $timeout, $location){
     }
     $scope.get_vendor_account_details = function(){
         var vendor = $scope.vendor_account.vendor;
-        $http.get('/purchase/vendor_account/'+$scope.vendor_account.vendor+'/').success(function(data, status)
+        $http.get('/purchase/vendor_account/?vendor='+$scope.vendor_account.vendor).success(function(data, status)
         {
             if (status==200) {             
                 $scope.vendor_account = data.vendor_account;
@@ -1218,7 +1218,7 @@ function VendorAccountController($scope, $element, $http, $timeout, $location){
             }
             $http({
                 method : 'post',
-                url : '/purchase/vendor_account/'+$scope.vendor_account.vendor+'/',
+                url : '/purchase/vendor_account/',
                 data : $.param(params),
                 headers : {
                     'Content-Type' : 'application/x-www-form-urlencoded'
@@ -1230,11 +1230,7 @@ function VendorAccountController($scope, $element, $http, $timeout, $location){
                 
             });
         }
-        /*$scope.vendor_account.vendor_account_date = $$('#vendor_account_date')[0].get('value');
-        $scope.vendor_account.total_amount = $scope.vendor_account.total_amount.toString();
-        $scope.vendor_account.balance_amount = $scope.vendor_account.balance_amount.toString();
-        $scope.vendor_account.amount_paid = $scope.vendor_account.amount_paid.toString();
-*/       
+          
     }
 }
 
@@ -2231,13 +2227,13 @@ function AddItemController($scope, $http, $element, $location, $timeout) {
         });
     }
     $scope.form_validation = function(){
-        if ($scope.item_name == '' || $scope.item_name == undefined) {
-            $scope.error_flag=true;
-            $scope.message = 'Item name cannot be null';
-            return false;
-        } else if($scope.item_code == '' || $scope.item_code == undefined) {
+        if ($scope.item_code == '' || $scope.item_code == undefined) {
             $scope.error_flag=true;
             $scope.message = 'Item code cannot be null';
+            return false;
+        } else if($scope.item_name == '' || $scope.item_name == undefined) {
+            $scope.error_flag=true;
+            $scope.message = 'Item name cannot be null';
             return false;
         } else if($scope.uom_value == '' || $scope.uom_value == undefined || $scope.uom_value == 'select' || $scope.uom_value == 'other') {
             $scope.error_flag=true;
@@ -2288,7 +2284,7 @@ function AddItemController($scope, $http, $element, $location, $timeout) {
                 } else {
                     $scope.error_flag=false;
                     $scope.message = '';
-                    document.location.href = '/';
+                    document.location.href = '/inventory/add_item/';
                 }
             }).error(function(data, status){
                 $scope.error_flag=true;
