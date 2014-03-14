@@ -123,6 +123,8 @@ function ExpenseController($scope, $element, $http, $timeout, $location) {
                     $scope.error_flag=true;
                     $scope.message = data.message;
                 } else {
+                    $scope.error_flag=false;
+                    $scope.message = '';
                     console.log('success');
                 }
             }).error(function(data, status){
@@ -193,6 +195,8 @@ function AddEditUserController($scope, $element, $http, $timeout, $location) {
                 $scope.error_flag=true;
                 $scope.message = data.message;
             } else {
+                $scope.error_flag=false;
+                $scope.message = '';
                 $scope.popup.hide_popup();
                 $scope.get_designation_list();
                 $scope.designation = $scope.new_designation;
@@ -391,6 +395,8 @@ function PurchaseController($scope, $element, $http, $timeout, share, $location)
                 $scope.error_flag=true;
                 $scope.message = data.message;
             } else {
+                $scope.error_flag=false;
+                $scope.message = '';
                 $scope.popup.hide_popup();
                 $scope.get_brands();
                 $scope.purchase.brand = $scope.brand_name;                
@@ -447,8 +453,8 @@ function PurchaseController($scope, $element, $http, $timeout, share, $location)
                 $scope.get_companies();
                 $scope.purchase.transport = $scope.company_name;
                 $scope.company_name = '';
-
-                
+                $scope.error_flag=false;
+                $scope.message = '';
             }
         }).error(function(data, success){
             
@@ -2044,3 +2050,201 @@ function SalesReturnReportController($scope, $element, $http, $timeout, $locatio
     }
     
 }
+
+function AddItemController($scope, $http, $element, $location, $timeout) {
+    
+    $scope.brand_value = 'select';
+    $scope.brand_name = '';
+    $scope.uom_value = 'select';
+    $scope.uom_name = '';
+    $scope.error_flag = false;
+    $scope.is_valid = false;
+    $scope.message = '';
+
+    $scope.init = function(csrf_token){
+
+        $scope.csrf_token = csrf_token;
+        $scope.get_brands();
+        $scope.get_uoms();
+    }
+
+    $scope.get_brands = function() {
+        $http.get('/inventory/brand_list/').success(function(data)
+        {
+            $scope.brands = data.brands;
+        }).error(function(data, status)
+        {
+            console.log(data || "Request failed");
+        });
+    }
+    $scope.add_brand = function() {
+        if($scope.brand_value == 'other') {
+            $scope.error_flag = false;
+            $scope.message = '';
+            $scope.popup = new DialogueModelWindow({
+                'dialogue_popup_width': '27%',
+                'message_padding': '0px',
+                'left': '28%',
+                'top': '150px',
+                'height': '115px',
+                'content_div': '#add_brand'
+            });
+            var height = $(document).height();
+            $scope.popup.set_overlay_height(height);
+            $scope.popup.show_content();
+
+        }
+    }
+
+    $scope.add_new_brand = function() {
+        params = { 
+            'brand_name':$scope.brand_name,
+            "csrfmiddlewaretoken" : $scope.csrf_token
+        }
+        $http({
+            method : 'post',
+            url : "/inventory/add/brand/",
+            data : $.param(params),
+            headers : {
+                'Content-Type' : 'application/x-www-form-urlencoded'
+            }
+        }).success(function(data, status) {
+            
+            if (data.result == 'error'){
+                $scope.error_flag=true;
+                $scope.message = data.message;
+            } else {
+                $scope.popup.hide_popup();
+                $scope.get_brands();
+                $scope.brand_value = $scope.brand_name;              
+            }
+        }).error(function(data, success){
+            
+        });
+    }
+
+    $scope.get_uoms = function() {
+        $http.get('/inventory/uom_list/').success(function(data)
+        {
+            $scope.uoms = data.uoms;
+        }).error(function(data, status)
+        {
+            console.log(data || "Request failed");
+        });
+    }
+    $scope.add_uom = function() {
+        if($scope.uom_value == 'other') {
+            $scope.error_flag = false;
+            $scope.message = '';
+            $scope.popup = new DialogueModelWindow({
+                'dialogue_popup_width': '27%',
+                'message_padding': '0px',
+                'left': '28%',
+                'top': '150px',
+                'height': '115px',
+                'content_div': '#add_uom'
+            });
+            var height = $(document).height();
+            $scope.popup.set_overlay_height(height);
+            $scope.popup.show_content();
+
+        }
+    }
+
+    $scope.add_new_uom = function() {
+        params = { 
+            'uom_name':$scope.uom_name,
+            "csrfmiddlewaretoken" : $scope.csrf_token
+        }
+        $http({
+            method : 'post',
+            url : "/inventory/add/uom/",
+            data : $.param(params),
+            headers : {
+                'Content-Type' : 'application/x-www-form-urlencoded'
+            }
+        }).success(function(data, status) {
+            
+            if (data.result == 'error'){
+                $scope.error_flag=true;
+                $scope.message = data.message;
+            } else {
+                $scope.popup.hide_popup();
+                $scope.get_uoms();
+                $scope.uom_value = $scope.uom_name;              
+            }
+        }).error(function(data, success){
+            
+        });
+    }
+    $scope.form_validation = function(){
+        if ($scope.item_name == '' || $scope.item_name == undefined) {
+            $scope.error_flag=true;
+            $scope.message = 'Item name cannot be null';
+            return false;
+        } else if($scope.item_code == '' || $scope.item_code == undefined) {
+            $scope.error_flag=true;
+            $scope.message = 'Item code cannot be null';
+            return false;
+        } else if($scope.uom_value == '' || $scope.uom_value == undefined || $scope.uom_value == 'select' || $scope.uom_value == 'other') {
+            $scope.error_flag=true;
+            $scope.message = 'Please choose Uom';
+            return false;
+        } else if($scope.brand_value == '' || $scope.brand_value == undefined || $scope.brand_value == 'select' || $scope.brand_value == 'other') {
+            $scope.error_flag=true;
+            $scope.message = 'Please choose Brand';
+            return false;
+        }else if($scope.bar_code == '' || $scope.bar_code == undefined) {
+            $scope.error_flag=true;
+            $scope.message = 'Barcode cannot be null';
+            return false;
+        } else if($scope.tax == '' || $scope.tax == undefined) {
+            $scope.error_flag=true;
+            $scope.message = 'Tax cannot be null';
+            return false;
+        }
+        return true;
+    }
+    $scope.save_item = function() {
+        $scope.is_valid = $scope.form_validation();
+        if ($scope.is_valid) {
+            $scope.error_flag=false;
+            $scope.message = '';
+            params = { 
+                'name':$scope.item_name,
+                'code': $scope.item_code,
+                'brand': $scope.brand_value,
+                'barcode': $scope.bar_code,
+                'tax': $scope.tax,
+                'description': $scope.item_description,
+                'uom': $scope.uom_value,
+                "csrfmiddlewaretoken" : $scope.csrf_token
+            }
+            $http({
+                method : 'post',
+                url : "/inventory/add_item/",
+                data : $.param(params),
+                headers : {
+                    'Content-Type' : 'application/x-www-form-urlencoded'
+                }
+            }).success(function(data, status) {
+                
+                if (data.result == 'error'){
+                    $scope.error_flag=true;
+                    $scope.message = data.message;
+                } else {
+                    $scope.error_flag=false;
+                    $scope.message = '';
+                }
+            }).error(function(data, status){
+                $scope.error_flag=true;
+                $scope.message = data.message;
+            });
+        }
+    }
+    $scope.close_popup = function(){
+        $scope.popup.hide_popup();
+    }
+}
+
+

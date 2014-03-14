@@ -17,37 +17,36 @@ from inventory.models import Brand
 
 class ItemAdd(View):
     def get(self, request, *args, **kwargs):
-        uom = UnitOfMeasure.objects.all()
-        brand = Brand.objects.all()
-        return render(request, 'inventory/new_item.html',{
-            'uoms': uom,
-            'brands': brand ,
-        })# Create your views here.
+        return render(request, 'inventory/new_item.html',{})
 
     def post(self, request, *args, **kwargs):
-              
-        item_add= Item()
-        uom_add = UnitOfMeasure()
-        brand_add = Brand()
-        
-        context={}
-                    
-        item_add.code = request.POST['code']
-        item_add.name = request.POST['name']
-        item_add.description = request.POST['description']
-        uom, created = UnitOfMeasure.objects.get_or_create(uom = request.POST['uom'])
-        brand, created = Brand.objects.get_or_create(brand = request.POST['brand'])
-        item_add.barcode = request.POST['barcode']
-        item_add.tax = request.POST['tax']
-        item_add.brand = brand
-        item_add.uom = uom
-        item_add.save()
-        brand = Brand.objects.all()
-        uom = UnitOfMeasure.objects.all()
-        return render(request, 'inventory/new_item.html',{
-            'uoms': uom,
-            'brands': brand,
-        })
+
+        if request.is_ajax():
+            uom = UnitOfMeasure.objects.get(uom = request.POST['uom'])
+            brand = Brand.objects.get(brand = request.POST['brand'])
+            item, created = Item.objects.get_or_create(code=request.POST['code'])
+            if not created:
+                res = {
+                    'result': 'error',
+                    'message': 'Item with this item code already existing'
+                }
+                status_code = 500
+            else:
+                item.name=request.POST['name']
+                item.description=request.POST['description']
+                item.uom=uom
+                item.brand=brand
+                item.barcode=request.POST['barcode']
+                item.tax=request.POST['tax']
+                item.save()
+                res = {
+                    'result': 'ok',
+                }  
+                status_code = 200 
+            
+            response = simplejson.dumps(res)
+            
+            return HttpResponse(response, status = status_code, mimetype="application/json")
 
 
 class ItemList(View):
@@ -96,51 +95,7 @@ class ItemList(View):
                     'inventory': inventory
                 }
                 return render(request, 'inventory/stock.html',ctx)
-
-
-
-class ItemEdit(View):
-    def get(self, request, *args, **kwargs):
-        items = Item.objects.get(id = kwargs['item_id'])
-        brand = Brand.objects.all()
-        uom = UnitOfMeasure.objects.all()
-        ctx ={
-            'items':items,
-            'uoms': uom,
-            'brands': brand,
-        }
-        return render(request, 'inventory/edit_item.html',ctx)
-
-class Itemdelete(View):
-    def get(self, request, *args, **kwargs):
-        message =""
-        try:
-            items = Item.objects.get(id = kwargs['item_id']).delete()
-        except:
-            message = "already deleted"
-        items = Item.objects.all()
-        return render(request, 'inventory/item_list.html',{
-            'items':items,
-            'message':message,
-        })
-
-class UpdateItem(View):
-    def post(self, request, *args, **kwargs):
-        item = Item.objects.get(id = request.POST['id'])
-        item.code = request.POST['code']
-        item.name =request.POST['name']
-        item.description =request.POST['description']
-        item.tax =request.POST['tax']
-        brand =Brand.objects.get(brand=request.POST['brand'])
-        item.brand=brand
-        uom =UnitOfMeasure.objects.get(uom=request.POST['uom'])
-        item.uom=uom
-        item.save()
-        items = Item.objects.all()
-        return render(request, 'inventory/item_list.html',{
-            'items':items,
-        })
-
+                
 class BrandList(View):
 
     def get(self, request, *args, **kwargs):
@@ -178,6 +133,47 @@ class AddBrand(View):
             res = {
                  'result': 'error',
                  'message': 'Brand name Cannot be null'
+            }
+        response = simplejson.dumps(res)
+        return HttpResponse(response, status=200, mimetype='application/json')
+
+class UomList(View):
+
+    def get(self, request, *args, **kwargs):
+
+        ctx_uom = []
+        uoms = UnitOfMeasure.objects.all()
+        if len(uoms) > 0:
+            for uom in uoms:
+                ctx_uom.append({
+                    'uom_name': uom.uom,
+                })
+        res = {
+            'uoms': ctx_uom,
+        }
+        response = simplejson.dumps(res)
+        return HttpResponse(response, status = 200, mimetype="application/json")
+
+class AddUom(View):
+
+    def post(self, request, *args, **kwargs):
+
+        if len(request.POST['uom_name']) > 0 and not request.POST['uom_name'].isspace():
+            uom, created = UnitOfMeasure.objects.get_or_create(uom=request.POST['uom_name']) 
+            if not created:
+                res = {
+                    'result': 'error',
+                    'message': 'Uom Already exists'
+                }
+            else:
+                res = {
+                    'result': 'ok',
+                    'brand': uom.uom
+                }
+        else:
+            res = {
+                 'result': 'error',
+                 'message': 'Uom Cannot be null'
             }
         response = simplejson.dumps(res)
         return HttpResponse(response, status=200, mimetype='application/json')
