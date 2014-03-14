@@ -29,21 +29,29 @@
 		</div>
 		<div class="control">
 			<label> UOM</label>  
-					<select name="uom">
-						{% for uom in uoms %}
-  							<option value="{{uom.uom}}">{{uom.uom}}</option>
-						{% endfor %}
-						<option value="other">Other</option>
-					</select></p>
+			{% if not uoms %}
+				<input type="text" name="uom" />						
+			{% else %}
+				<select name="uom">
+					{% for uom in uoms %}
+							<option value="{{uom.uom}}">{{uom.uom}}</option>
+					{% endfor %}
+					<option value="other">Other</option>
+				</select>
+			{% endif %}
 		</div>
 		<div class="control">
 			<label> Brand</label>  
-					<select name="brand">
-						{% for brand in brands%}
-							<option value="{{brand.brand}}">{{brand.brand}}</option>
-						{% endfor %}
-						<option value="other">Other</option>
-					</select>
+			{% if not brands %}
+				<input type="text" name="brand" />
+			{% else %}
+				<select name="brand">
+					{% for brand in brands%}
+						<option value="{{brand.brand}}">{{brand.brand}}</option>
+					{% endfor %}
+					<option value="other">Other</option>
+				</select>
+			{% endif %}
 		</div>
 		<div class="control">
 			<label>Barcode</label>

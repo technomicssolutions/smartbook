@@ -1960,3 +1960,87 @@ function SalesReturnReportController($scope, $element, $http, $timeout, $locatio
 
 
 }
+
+ function SalesReturnController($scope, $element, $http, $timeout, share, $location) {
+    $scope.sales_return = {
+        'invoice_number': '',
+
+        'sales_return_date': '',
+        'net_amount': '',
+        'sales_items': [],
+    }
+    $scope.init = function(csrf_token, invoice_number){
+        $scope.csrf_token = csrf_token;
+        $scope.sales_return.invoice_number = invoice_number;
+        new Picker.Date($$('#sales_return_date'), {
+            timePicker: false,
+            positionOffset: {x: 5, y: 0},
+            pickerClass: 'datepicker_bootstrap',
+            useFadeInOut: !Browser.ie,
+            format:'%d/%m/%Y', 
+        });
+    }
+    $scope.getItems = function(parameter) {
+        $scope.items = [];
+        $scope.selecting_item = true;
+        $scope.item_selected = false;
+        console.log('in get items', parameter);
+        for(var i=0; i<$scope.sales.sales_items.length; i++){
+            if(parameter == 'item_code') {
+                if($scope.item_code == ''){
+                    $scope.items = [];
+                }
+                if($scope.sales.sales_items[i].item_code.indexOf($scope.item_code) == 0) {
+                    $scope.items.push($scope.sales.sales_items[i]);
+                } else {
+                    var ind = $scope.items.indexOf($scope.sales.sales_items[i]);
+                    if(ind > 0){
+                        $scope.items.splice($scope.sales.sales_items[i], 1);
+                    }
+                }
+            }
+            if(parameter == 'item_name') {
+                if($scope.item_name == ''){
+                    $scope.items = [];
+                }
+                if($scope.sales.sales_items[i].item_name.indexOf($scope.item_name) == 0) {
+                    $scope.items.push($scope.sales.sales_items[i]);
+                } else {
+                    var ind = $scope.items.indexOf($scope.sales.sales_items[i]);
+                    if(ind > 0){
+                        $scope.items.splice($scope.sales.sales_items[i], 1);
+                    }
+                }
+            }
+            if(parameter == 'barcode') {
+                if($scope.barcode == ''){
+                    $scope.items = [];
+                }
+                if($scope.sales.sales_items[i].barcode.indexOf($scope.barcode) == 0) {
+                    $scope.items.push($scope.sales.sales_items[i]);
+                } else {
+                    var ind = $scope.items.indexOf($scope.sales.sales_items[i]);
+                    if(ind > 0){
+                        $scope.items.splice($scope.sales.sales_items[i], 1);
+                    }
+                }
+            }
+        }
+
+    }
+    $scope.load_sales = function() {
+        var invoice = $scope.sales.sales_invoice_number;
+        $http.get('/sales/?invoice_no='+$scope.sales.sales_invoice_number).success(function(data)
+        {
+            $scope.selecting_item = true;
+            $scope.item_selected = false;
+            $scope.sales = data.sales;
+            $scope.sales.deleted_items = [];
+            $scope.sales.sales_invoice_number = invoice;
+        }).error(function(data, status)
+        {
+            console.log(data || "Request failed");
+        });
+    }
+    
+}

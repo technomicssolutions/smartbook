@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 {% block title %}Return Entry{% endblock title %}
 {% block body_id %}return_entry{% endblock %}
-
+{% block controller %}ng-controller="SalesReturnController" ng-init="init('{{csrf_token}}', '{{return_invoice_number}}')"{% endblock controller %}
 {% block content %}
 
 	<div id="main-title">
@@ -17,7 +17,7 @@
 							<label for="invoice_number">Invoice Number </label>
 						</div>
 						<div class="forminput">
-							<input type="text" name="invoice_number"  >
+							<input type="text" name="invoice_number" ng-model="sales.sales_invoice_number" ng-change="getSalesDetails()"  />
 						</div>
 					</div>
 					<div class="formrow_sales">
@@ -26,20 +26,15 @@
 						</div>
 
 						<div class="forminput">
-							<input type="text" name="return_invoice_no" >
+							<input type="text" name="return_invoice_no" ng-model="sales_return.return_invoice_number" readonly />
 						</div>
 					</div>
-				<!-- </div>
-
-					
-				<div class="section_2_sales">
- -->
 					<div class="formrow_sales">
 						<div class="formtext_sales">
 							<label for="customer_name">Customer Name</label>
 						</div>
 						<div class="forminput">
-							<input type="text" name="name">
+							<input type="text" name="name" ng-model="sales.customer" />
 						
 						</div>
 					</div>
@@ -50,7 +45,7 @@
 							<label for="date">Date</label>
 						</div>
 						<div class="forminput">
-							<input type="text" name="date">
+							<input type="text" name="date" ng-model="sales_return.date" id="return_date" />
 						</div>
 					</div>
 								
@@ -122,7 +117,7 @@
 					</div>
 				
 
-					<div ng-repeat="item in sales_items" class="item_list_row">
+					<div ng-repeat="item in sales.sales_items" class="item_list_row">
 							<span class="small_column">[[item.item_code]] </span>
 							<span>[[item.item_code]] </span>
 							<span>[[item.name]] </span>

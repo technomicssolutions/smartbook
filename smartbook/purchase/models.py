@@ -61,21 +61,20 @@ class PurchaseItem(models.Model):
 class PurchaseReturn(models.Model):
 	purchase = models.ForeignKey(Purchase)
 	return_invoice_number = models.IntegerField('Purchase Return invoice number', unique=True)
-	date = models.DateField('Date')
+	date = models.DateField('Date', null=True, blank=True)
 	net_amount = models.DecimalField('Amount', max_digits=14, decimal_places=3, default=0)
 
 	def __unicode__(self):
-		return self.purchase
+		return str(self.purchase.purchase_invoice_number)
 
-class PurchaseReturnItems(models.Model):
+class PurchaseReturnItem(models.Model):
 	purchase_return = models.ForeignKey(PurchaseReturn)
 	item = models.ForeignKey(Item)
-	date = models.DateField('Date')
 	amount = models.DecimalField('Amount', max_digits=14, decimal_places=3, default=0)
 	quantity = models.IntegerField('Quantity', default=0)
 	
 	def __unicode__(self):
-		return self.purchase
+		return str(self.purchase_return.return_invoice_number)
 
 PAYMENT_MODE = (
 	('cash', 'Cash'),
