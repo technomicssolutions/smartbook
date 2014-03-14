@@ -622,19 +622,30 @@ function PurchaseController($scope, $element, $http, $timeout, share, $location)
             $scope.validation_error == "Please select vendor";
             return false;
         } else if($scope.purchase.trasport == '') {
-            $scope.validation_error == "Please select Transportation company"
+            $scope.validation_error == "Please select Transportation company";
             return false;
         } else if($scope.purchase.purchase_items.length == 0){
             $scope.validation_error = "Please Choose Item";
             return false;
-        } 
+        } else if(typeOf($scope.purchase.vendor_invoice_number) != 'number') {
+            $scop.validation_error = "Please enter a number as invoice number";
+            return false;
+        } else if(typeOf($scope.purchase.sales_invoice_number) != 'number') {
+            $scop.validation_error = "Please enter a number as invoice number";
+            return false;
+        } else if(typeOf($scope.purchase.vendor_do_number) != 'number') {
+            $scop.validation_error = "Please enter a number as vendor do number";
+            return false;
+        } else if(typeOf($scope.purchase.discount) != 'number') {
+            $scop.validation_error = "Please enter a number as discount";
+        }
         else {
             return true;
         }        
     }
 
     $scope.save_purchase = function() {
-        if($scope.validate_purchase) {
+        if($scope.validate_purchase()) {
             $scope.purchase.purchase_invoice_date = $$('#purchase_invoice_date')[0].get('value');
             $scope.purchase.vendor_invoice_date = $$('#vendor_invoice_date')[0].get('value');
             params = { 
@@ -1169,6 +1180,7 @@ function VendorAccountController($scope, $element, $http, $timeout, $location){
     }
     $scope.reset_vendor_account = function(){
         $scope.vendor_account.vendor = '';
+        
     }
     $scope.calculate_vendor_account_amounts = function(){
         if($scope.actual_total_amount != 0 && $scope.actual_balance_amount != 0) {
@@ -1202,7 +1214,7 @@ function VendorAccountController($scope, $element, $http, $timeout, $location){
                     'Content-Type' : 'application/x-www-form-urlencoded'
                 }
             }).success(function(data, status) {
-                document.location.href = '/purchase/entry/';
+                document.location.href = '/purchase/vendor_accounts/';
                
             }).error(function(data, success){
                 
@@ -1811,7 +1823,7 @@ function SalesReportController($scope, $element, $http, $timeout, $location){
 
 function PurchaseReturnController($scope, $element, $http, $timeout, share, $location) {
     $scope.purchase_return = {
-        'date': '',
+        'purchase_return_date': '',
         'invoice_number': '',
         'purchase_items': []
 
@@ -1827,54 +1839,7 @@ function PurchaseReturnController($scope, $element, $http, $timeout, share, $loc
             format:'%d/%m/%Y', 
         });
     }
-    $scope.getItems = function(parameter) {
-        $scope.items = [];
-        $scope.selecting_item = true;
-        $scope.item_selected = false;
-        console.log('in get items', parameter);
-        for(var i=0; i<$scope.purchase.purchase_items.length; i++){
-            if(parameter == 'item_code') {
-                if($scope.item_code == ''){
-                    $scope.items = [];
-                }
-                if($scope.purchase.purchase_items[i].item_code.indexOf($scope.item_code) == 0) {
-                    $scope.items.push($scope.purchase.purchase_items[i]);
-                } else {
-                    var ind = $scope.items.indexOf($scope.purchase.purchase_items[i]);
-                    if(ind > 0){
-                        $scope.items.splice($scope.purchase.purchase_items[i], 1);
-                    }
-                }
-            }
-            if(parameter == 'item_name') {
-                if($scope.item_name == ''){
-                    $scope.items = [];
-                }
-                if($scope.purchase.purchase_items[i].item_name.indexOf($scope.item_name) == 0) {
-                    $scope.items.push($scope.purchase.purchase_items[i]);
-                } else {
-                    var ind = $scope.items.indexOf($scope.purchase.purchase_items[i]);
-                    if(ind > 0){
-                        $scope.items.splice($scope.purchase.purchase_items[i], 1);
-                    }
-                }
-            }
-            if(parameter == 'barcode') {
-                if($scope.barcode == ''){
-                    $scope.items = [];
-                }
-                if($scope.purchase.purchase_items[i].barcode.indexOf($scope.barcode) == 0) {
-                    $scope.items.push($scope.purchase.purchase_items[i]);
-                } else {
-                    var ind = $scope.items.indexOf($scope.purchase.purchase_items[i]);
-                    if(ind > 0){
-                        $scope.items.splice($scope.purchase.purchase_items[i], 1);
-                    }
-                }
-            }
-        }
-
-    }
+  
     $scope.load_purchase = function() {
         var invoice = $scope.purchase.purchase_invoice_number;
         $http.get('/purchase/?invoice_no='+$scope.purchase.purchase_invoice_number).success(function(data)
@@ -1891,10 +1856,11 @@ function PurchaseReturnController($scope, $element, $http, $timeout, share, $loc
     }
     $scope.addReturnItems = function(item) {
         var ind = $scope.purchase_return.purchase_items.indexOf(item)
-        if(ind >= 0){
+        if(ind >= 0 && !item.selected){
             $scope.purchase_return.purchase_items.splice(ind, 1);
-        } else {
+        } else if(item.selected) {
             $scope.purchase_return.purchase_items.push(item);
+            var i = $scope.purchase_return.purchase_items.indexOf(item);
         }
         
     }
@@ -1911,6 +1877,14 @@ function PurchaseReturnController($scope, $element, $http, $timeout, share, $loc
     }
     $scope.save_purchase_return = function() {
         $scope.purchase_return.purchase_invoice_number = $scope.purchase.purchase_invoice_number;
+        for(var i=0; i< $scope.purchase_return.purchase_items.length; i++){
+            $scope.purchase_return.purchase_items[i].selected = "selected";
+        }
+        if($$('#purchase_return_date')[0].get('value') == '') {
+            $scope.validation_error = "Please select date";
+            return false;
+        }
+        $scope.purchase_return.purchase_return_date = $$('#purchase_return_date')[0].get('value');
         params = {
             "csrfmiddlewaretoken" : $scope.csrf_token,
             'purchase_return': angular.toJson($scope.purchase_return),

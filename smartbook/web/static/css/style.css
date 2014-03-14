@@ -463,7 +463,6 @@ th {
     position: absolute;
     margin-top: -10px;
     width: 89%;
-    z-index: 1;
     border-top-color: #FFFFFF;
 }
 
@@ -502,7 +501,9 @@ th {
 .item_list .header, .purchase_item_list .header {
 	background-color: #ADD8E6;
 }
-
+a {
+	text-decoration : none !important;
+}
 .purchase_items_list {
 	width: 100%;
 	float: left;

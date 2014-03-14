@@ -124,8 +124,8 @@
    							<input type="text" id='barcode' ng-model="barcode" ng-change="getItems('barcode')"/>
    						</div>
    						<div class="clear"></div>
-	   					<div class="item_list" ng-show='selecting_item' ng-hide="item_selected">
-							<div class="item_list_row header">
+	   					<div class="item_list" ng-show='selecting_item && items.length > 0' ng-hide="item_selected">
+							<div class="item_list_row header" ng-show="items.length > 0">
 								<span> Item Code </span>
 								<span> Item name </span>
 								<span> Barcode </span>
