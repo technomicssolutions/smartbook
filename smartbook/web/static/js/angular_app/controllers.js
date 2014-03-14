@@ -1217,8 +1217,8 @@ function PurchaseReportController($scope, $element, $http, $location) {
     $scope.report_type = '';
     $scope.vendor_name = 'select';
     $scope.purchase_amount_total = '';
-    $scope.report_date_wise_flag = true;
-    $scope.report_vendor_wise_flag = false;
+    $scope.report_date_wise = true;
+    $scope.report_vendor_wise = false;
     $scope.date_total_amount_flag = false;
     $scope.vendor_total_amount_flag = false;
     $scope.error_flag = false;
@@ -1256,14 +1256,12 @@ function PurchaseReportController($scope, $element, $http, $location) {
     }
     $scope.set_report_type = function(){
         if($scope.report_name == 'date'){
-            $scope.report_date_wise_flag = true;
-            $scope.report_vendor_wise_flag = false;
+            $scope.report_date_wise = true;
+            $scope.report_vendor_wise = false;
         } else if($scope.report_name == 'vendor'){
-             $scope.report_date_wise_flag = false;
-             $scope.report_vendor_wise_flag = true;
+             $scope.report_date_wise = false;
+             $scope.report_vendor_wise = true;
         }
-
-
     }
 
     $scope.get_report = function(){
