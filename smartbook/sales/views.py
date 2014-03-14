@@ -15,13 +15,14 @@ from django.contrib.auth import authenticate, login, logout
 from django.core.urlresolvers import reverse
 from django.contrib.auth.models import User
 
-from sales.models import Sales, SalesItem, SalesReturn
+from sales.models import Sales, SalesItem, SalesReturn, SalesReturnItem
 from inventory.models import Item, Inventory
 from web.models import Customer, Staff
 
 class SalesEntry(View):
     def get(self, request, *args, **kwargs):
         current_date = dt.datetime.now().date()
+
         sales_invoice_number = Sales.objects.aggregate(Max('sales_invoice_number'))['sales_invoice_number__max']
         
         if not sales_invoice_number:
@@ -48,6 +49,7 @@ class SalesEntry(View):
         sales.round_off = sales_dict['roundoff']
         sales.net_amount = sales_dict['net_total']
         sales.grant_total = sales_dict['grant_total']
+
         sales.customer = customer
         sales.salesman = salesman
         
@@ -59,7 +61,7 @@ class SalesEntry(View):
             s_item, item_created = SalesItem.objects.get_or_create(item=item, sales=sales)
             inventory, created = Inventory.objects.get_or_create(item=item)
             if sales_created:
-                print "sadjohsjalfhls";
+
                 inventory.quantity = inventory.quantity - int(sales_item['qty_sold'])
             else:
                 inventory.quantity = inventory.quantity + s_item.quantity_sold - int(sales_item['qty_sold'])
@@ -97,7 +99,10 @@ class SalesReturnView(View):
         })
 
     def post(self, request, *args, **kwargs):
+
+
         post_dict = request.POST['sales_return']
+
         post_dict = ast.literal_eval(post_dict)
         sales = Sales.objects.get(sales_invoice_number=post_dict['sales_invoice_number'])
         sales_return, created = SalesReturn.objects.get_or_create(sales=sales, return_invoice_number = post_dict['invoice_number'])
@@ -113,7 +118,7 @@ class SalesReturnView(View):
             return_item = Item.objects.get(code=item['item_code'])
             s_return_item, created = SalesReturnItem.objects.get_or_create(item=return_item, sales_return=sales_return)
             s_return_item.amount = item['returned_amount']
-            s_return_item.quantity = item['returned_quantity']
+            s_return_item.return_quantity = item['returned_quantity']
             s_return_item.save()
 
             inventory = Inventory.objects.get(item=return_item)
