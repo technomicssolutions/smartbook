@@ -1120,7 +1120,7 @@ function VendorAccountController($scope, $element, $http, $timeout, $location){
     }
     $scope.get_vendor_account_details = function(){
         var vendor = $scope.vendor_account.vendor;
-        $http.get('/purchase/vendor_account/?vendor='+$scope.vendor_account.vendor+'/').success(function(data, status)
+        $http.get('/purchase/vendor_account/?vendor='+$scope.vendor_account.vendor).success(function(data, status)
         {
             if (status==200) {             
                 $scope.vendor_account = data.vendor_account;
@@ -1208,7 +1208,7 @@ function VendorAccountController($scope, $element, $http, $timeout, $location){
             }
             $http({
                 method : 'post',
-                url : '/purchase/vendor_account/'+$scope.vendor_account.vendor+'/',
+                url : '/purchase/vendor_account/',
                 data : $.param(params),
                 headers : {
                     'Content-Type' : 'application/x-www-form-urlencoded'
@@ -1220,11 +1220,7 @@ function VendorAccountController($scope, $element, $http, $timeout, $location){
                 
             });
         }
-        /*$scope.vendor_account.vendor_account_date = $$('#vendor_account_date')[0].get('value');
-        $scope.vendor_account.total_amount = $scope.vendor_account.total_amount.toString();
-        $scope.vendor_account.balance_amount = $scope.vendor_account.balance_amount.toString();
-        $scope.vendor_account.amount_paid = $scope.vendor_account.amount_paid.toString();
-*/       
+          
     }
 }
 
