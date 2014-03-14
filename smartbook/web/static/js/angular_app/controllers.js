@@ -762,7 +762,7 @@ function SalesController($scope, $element, $http, $timeout, share, $location) {
 
 
     $scope.get_staff = function() {
-        $http.get('/salesman/list/').success(function(data)
+        $http.get('/staff/list/').success(function(data)
         {
             $scope.staffs = data.staffs;
 
