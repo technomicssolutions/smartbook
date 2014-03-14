@@ -1264,6 +1264,17 @@ function PurchaseReportController($scope, $element, $http, $location) {
             console.log(data || "Request failed");
         });
     }
+    $scope.set_report_type = function(){
+        if($scope.report_name == 'date'){
+            $scope.report_date_wise_flag = true;
+            $scope.report_vendor_wise_flag = false;
+        } else if($scope.report_name == 'vendor'){
+             $scope.report_date_wise_flag = false;
+             $scope.report_vendor_wise_flag = true;
+        }
+
+
+    }
 
     $scope.get_report = function(){
         if($scope.report_name == 'date') {
@@ -1971,10 +1982,10 @@ function SalesReturnReportController($scope, $element, $http, $timeout, $locatio
 
 }
 
- function SalesReturnController($scope, $element, $http, $timeout, share, $location) {
+function SalesReturnController($scope, $element, $http, $timeout, share, $location) {
+    
     $scope.sales_return = {
         'invoice_number': '',
-
         'sales_return_date': '',
         'net_amount': '',
         'sales_items': [],
