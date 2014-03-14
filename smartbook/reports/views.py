@@ -364,11 +364,7 @@ class PurchaseReports(View):
             return render(request, 'reports/purchase_reports.html',{})
 
         if report_type == 'date':               
-<<<<<<< HEAD
             p.drawCentredString(400, 900, 'Purchase Report Date wise')
-=======
-            p.drawString(425, 900, 'Purchase Report Date wise')
->>>>>>> fca612fb067f6906482d67bd846e54497fea7430
             start_date = request.GET['start_date']
             end_date = request.GET['end_date']
             if not start_date:
@@ -418,11 +414,7 @@ class PurchaseReports(View):
             vendor = Vendor.objects.get(user__first_name = vendor_name)
             purchases = Purchase.objects.filter(vendor = vendor)
             
-<<<<<<< HEAD
             p.drawCentredString(400, 900, 'Purchase Report Vendor wise')
-=======
-            p.drawString(225, 900, 'Purchase Report Vendor wise')
->>>>>>> fca612fb067f6906482d67bd846e54497fea7430
             p.setFontSize(13)
             p.drawString(50, 875, "Date")
             p.drawString(150, 875, "Invoice No")
@@ -437,15 +429,11 @@ class PurchaseReports(View):
                 p.drawString(50, y, purchase.purchase_invoice_date.strftime('%d/%m/%y'))
                 p.drawString(150, y, str(purchase.purchase_invoice_number))
                 p.drawString(250, y, str(purchase.vendor_invoice_number))
-<<<<<<< HEAD
                 p.drawString(350, y, str(purchase.vendor_amount))
                 total_amount = total_amount + purchase.vendor_amount
             y = y - 30
             p.drawString(250, y, 'Total:')
             p.drawString(350, y, str(total_amount))    
-=======
-                p.drawString(370, y, str(purchase.vendor_amount))
->>>>>>> fca612fb067f6906482d67bd846e54497fea7430
             p.showPage()
             p.save()
                   
@@ -768,14 +756,16 @@ class StockReports(View):
 
         y = 850
         p.drawString(900, y, 'Item Code')
-        p.drawString(800, y, 'Item Name')
-        p.drawString(700, y, 'Barcode')
-        p.drawString(600, y, 'Brand Name')
-        p.drawString(500, y, 'Vendor Name')
-        p.drawString(400, y, 'Stock')
-        p.drawString(300, y, 'UOM')
-        p.drawString(200, y, 'Selling Price')
-        p.drawString(100, y, 'Selling Price')
+        p.drawString(850, y, 'Item Name')
+        p.drawString(800, y, 'Barcode')
+        p.drawString(750, y, 'Brand Name')
+        p.drawString(700, y, 'Vendor Name')
+        p.drawString(650, y, 'Stock')
+        p.drawString(600, y, 'UOM')
+        p.drawString(550, y, 'Selling Price')
+        p.drawString(500, y, 'Tax')
+        p.drawString(450, y, 'Discount')
+        p.drawString(400, y, 'Stock By value')
         
         if len(stocks) > 0:
             for stock in stocks:
