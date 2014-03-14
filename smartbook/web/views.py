@@ -104,7 +104,9 @@ class UserList(View):
                 status_code = 200
                 return HttpResponse(response, status = status_code, mimetype="application/json")
         elif user_type == 'salesman': 
+            
             desig = Designation.objects.get(title = 'salesman')
+        
             salesmen = Staff.objects.filter(designation = desig)
 
             if request.is_ajax():
@@ -115,7 +117,8 @@ class UserList(View):
                         })
                 res = {
                     'salesmen' : ctx_salesman,
-                }
+                } 
+                
 
                 response = simplejson.dumps(res)
                 status_code = 200

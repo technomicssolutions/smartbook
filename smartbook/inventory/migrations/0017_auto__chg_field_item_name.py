@@ -10,7 +10,7 @@ class Migration(SchemaMigration):
     def forwards(self, orm):
 
         # Changing field 'Item.name'
-        db.alter_column(u'inventory_item', 'name', self.gf('django.db.models.fields.CharField')(unique=True, max_length=5))
+        db.alter_column(u'inventory_item', 'name', self.gf('django.db.models.fields.CharField')(unique=True, max_length=50))
     def backwards(self, orm):
 
         # Changing field 'Item.name'
