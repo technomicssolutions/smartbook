@@ -15,12 +15,11 @@ from django.core.urlresolvers import reverse
 from django.contrib.auth.models import User
 from django.conf import settings
 
-from sales.models import Sales, SalesItem
+from sales.models import *
 from expenses.models import Expense
 from inventory.models import *
 from purchase.models import PurchaseItem
-from web.models import Vendor, Customer
-
+from django.core.files import File
 
 from purchase.models import Purchase, VendorAccount
 
@@ -34,57 +33,12 @@ try:
     from cStringIO import StringIO
 except ImportError:
     from StringIO import StringIO
+
 from reportlab.pdfgen import canvas
 from reportlab.lib.pagesizes import letter, A4
 from reportlab.lib.units import inch
-
-
-def createPDF(purchases):
-
-    x=85
-    y=700
-    buffer=StringIO()
-    p=canvas.Canvas(buffer,pagesize=letter)
-    #p = canvas.Canvas("myreport.pdf")
-    # path = settings.PROJECT_PATH + '/../web/static/img/logo.png'
-    # p.drawImage(path, 3*cm, 25*cm, width=5*cm, preserveAspectRatio=True)
-    p.drawString(x, y, "Sportivore Pty. Ltd.")
-    y = 680
-    p.drawString(x, y, "ACN  166 877 818")
-    y = 660
-    p.drawString(x, y, "Phone   +61 424 367 235")
-    y = 640
-    p.drawString(x, y, "Email   admin@sportivore.com.au")
-    data=[['Receipt'],['Date invoiced', str(datetime.now().date())], ['Payment Id', 'tset'], ['User name', 'test'+' '+'test']]
-    table = Table(data, colWidths=[100, 215], rowHeights=30)
-    table.setStyle(TableStyle([
-                               ('INNERGRID', (0,0), (0,0), 0.25, colors.black),
-                               ('INNERGRID', (0,1), (-1,-1), 0.25, colors.black),
-                               ('BOX', (0,0), (-1,-1), 0.25, colors.black),
-                               ('BACKGROUND',(0,0),(1,0),colors.lightgrey)
-                               ]))
-    table.wrapOn(p, 200, 400)
-    table.drawOn(p,85,500)
-    # game_detail = game.date.strftime('%A, %dth of %B')+ " - " +"game.start_time.strftime('%I %p')"+' - '+ game.sport.title+ ' at '+ game.court.venue.venue_name
-    data=[['Game Details', 'Amount'],['game_detail, game.cost'], ['Amount Paid', 'game.cost']]
-    table = Table(data, colWidths=[300, 100], rowHeights=[30, 70, 30])
-    table.setStyle(TableStyle([
-                               ('INNERGRID', (0,0), (-1,-1), 0.25, colors.black),
-                               ('BOX', (0,0), (-1,-1), 0.25, colors.black),
-                               ('BACKGROUND',(0,0),(1,0),colors.lightgrey),
-                               ('VALIGN',(0, 1),(-1,-1),'TOP'),
-                               ('ALIGN',(0, 2),(-1,-1),'RIGHT')
-                               ]))
-    table.wrapOn(p, 200, 450)
-    table.drawOn(p,85,350)
-    p.showPage()
-    p.save() 
-    pdf=buffer.getvalue()
-    buffer.close() 
-    f = open('purchase_entry.pdf', 'wb')
-    f.write(pdf)
-    f.close()
-    return pdf
+from reportlab.pdfgen import canvas
+from django.http import HttpResponse
 
 class Reports(View):
 	def get(self, request, *args, **kwarg):
@@ -260,7 +214,7 @@ class SalesReports(View):
                 end_date = datetime.strptime(end, '%d/%m/%Y')
                 
                 salesman_name = request.GET['salesman_name']
-                desig = Designation.objects.get(title = 'Salesman')                
+                desig = Designation.objects.get(title = 'salesman')                
                 salesmen = Staff.objects.filter(designation = desig, user__first_name=salesman_name)                
                 sales = Sales.objects.filter(sales_invoice_date__gte=start_date,sales_invoice_date__lte=end_date,salesman=salesmen)
                 
@@ -404,9 +358,62 @@ class StockReportsDate(View):
     def get(self, request, *args, **kwargs):
         return render(request, 'reports/stock_reports_date.html',{})
 
-class SalesReturn(View):
+class SalesReturnReport(View):
     def get(self, request, *args, **kwargs):
-        return render(request, 'reports/sales_return.html',{})
+        if request.is_ajax():
+            status_code = 200
+            start = request.GET['start_date']
+            end = request.GET['end_date']            
+            start_date = datetime.strptime(start, '%d/%m/%Y')
+            end_date = datetime.strptime(end, '%d/%m/%Y')
+            salesreturn_report = []
+            salesreturn_report_total = []
+            grant_total = 0
+
+            salesreturn = SalesReturn.objects.filter(date__gte=start_date,date__lte=end_date)
+            
+            if salesreturn.count()>0:
+                for sale in salesreturn:
+                    salesreturn_items = sale.salesreturnitem_set.all()
+                    if salesreturn_items.count()>0:
+                        for salesreturn_item in salesreturn_items:
+                            dates = salesreturn_item.sales_return.date
+                            invoice_no = salesreturn_item.sales_return.return_invoice_number
+                            qty = salesreturn_item.return_quantity
+                            total = salesreturn_item.amount
+                            item_name = salesreturn_item.item.item.name
+                            item_code = salesreturn_item.item.item.code
+                            inventorys = salesreturn_item.item.item.inventory_set.all()[0]
+                            unitprice = inventorys.unit_price
+
+                            grant_total = grant_total + total
+
+                            salesreturn_report.append({                        
+                                'dates' : dates.strftime('%d-%m-%Y'),
+                                'invoice_no' : invoice_no,
+                                'qty' : qty,
+                                'total' : total,
+                                'item_name' : item_name,
+                                'item_code' : item_code,                        
+                                'unitprice' : unitprice,
+                            })
+            salesreturn_report_total.append({
+                'grant_total' :grant_total,
+            })
+
+            try:                
+                res = {
+                    'result': 'ok',    
+                    'salesreturn_report' : salesreturn_report, 
+                    'salesreturn_report_total' : salesreturn_report_total,               
+                }    
+                response = simplejson.dumps(res)
+            except Exception as ex:
+                response = simplejson.dumps({'result': 'error', 'error': str(ex)})
+                status_code = 500
+            return HttpResponse(response, status = status_code, mimetype = 'application/json')
+        else:
+            return render(request, 'reports/sales_return.html',{})
 
 class DailyReport(View):
     def get(self, request, *args, **kwargs):
@@ -643,6 +650,7 @@ class StockReports(View):
                        'stock_by_value': float(stock.quantity * stock.selling_price),
                        'profit': stock.selling_price - stock.item.purchaseitem_set.all()[0].cost_price,
                     })
+
             try:
                 res = {
                     'stocks': ctx_stock,

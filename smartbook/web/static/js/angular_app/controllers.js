@@ -1008,7 +1008,7 @@ function SalesController($scope, $element, $http, $timeout, share, $location) {
                     'Content-Type' : 'application/x-www-form-urlencoded'
                 }
             }).success(function(data, status) {
-                document.location.href = '/sales/entry/';
+                //document.location.href = '/sales/entry/';
                
             }).error(function(data, success){
                 
@@ -1796,7 +1796,7 @@ function SalesReportController($scope, $element, $http, $timeout, $location){
 
 function PurchaseReturnController($scope, $element, $http, $timeout, share, $location) {
     $scope.purchase_return = {
-        'purchase_return_date': '',
+        'date': '',
         'invoice_number': '',
         'purchase_items': []
 
@@ -1816,6 +1816,7 @@ function PurchaseReturnController($scope, $element, $http, $timeout, share, $loc
         $scope.items = [];
         $scope.selecting_item = true;
         $scope.item_selected = false;
+        console.log('in get items', parameter);
         for(var i=0; i<$scope.purchase.purchase_items.length; i++){
             if(parameter == 'item_code') {
                 if($scope.item_code == ''){
@@ -1823,7 +1824,6 @@ function PurchaseReturnController($scope, $element, $http, $timeout, share, $loc
                 }
                 if($scope.purchase.purchase_items[i].item_code.indexOf($scope.item_code) == 0) {
                     $scope.items.push($scope.purchase.purchase_items[i]);
-                    $scope.items[i].selected = false;
                 } else {
                     var ind = $scope.items.indexOf($scope.purchase.purchase_items[i]);
                     if(ind > 0){
@@ -1880,7 +1880,6 @@ function PurchaseReturnController($scope, $element, $http, $timeout, share, $loc
             $scope.purchase_return.purchase_items.splice(ind, 1);
         } else {
             $scope.purchase_return.purchase_items.push(item);
-            item.selected = true;
         }
         
     }
@@ -1896,7 +1895,6 @@ function PurchaseReturnController($scope, $element, $http, $timeout, share, $loc
         $scope.purchase_return.net_return_total = amount;
     }
     $scope.save_purchase_return = function() {
-        $scope.purchase_return.purchase_return_date = $$('#purchase_return_date')[0].get('value');
         $scope.purchase_return.purchase_invoice_number = $scope.purchase.purchase_invoice_number;
         params = {
             "csrfmiddlewaretoken" : $scope.csrf_token,
@@ -1918,16 +1916,20 @@ function PurchaseReturnController($scope, $element, $http, $timeout, share, $loc
     }
 }
 
-function SalesReturnController($scope, $element, $http, $timeout, share, $location) {
-    $scope.sales_return = {
-        'return_invoice_number': '',
-        'return_date': '',
-        'net_amount': ''
-    }
-    $scope.init = function(csrf_token, invoice_number){
-        $scope.csrf_token = csrf_token;
-        $scope.sales_return.return_invoice_number = invoice_number;
-        new Picker.Date($$('#return_date'), {
+function SalesReturnReportController($scope, $element, $http, $timeout, $location){
+
+    $scope.error_flag = false;
+
+    $scope.init = function(){ 
+        $scope.error_flag = false;      
+        new Picker.Date($$('#start_date'), {
+            timePicker: false,
+            positionOffset: {x: 5, y: 0},
+            pickerClass: 'datepicker_bootstrap',
+            useFadeInOut: !Browser.ie,
+            format:'%d/%m/%Y', 
+        });
+        new Picker.Date($$('#end_date'), {
             timePicker: false,
             positionOffset: {x: 5, y: 0},
             pickerClass: 'datepicker_bootstrap',
@@ -1935,17 +1937,110 @@ function SalesReturnController($scope, $element, $http, $timeout, share, $locati
             format:'%d/%m/%Y', 
         });
     }
-    $scope.getSalesDetails = function(){
+    $scope.view_report = function(){
+        $scope.error_flag = false;
+        $scope.start_date = $$('#start_date')[0].get('value');
+        $scope.end_date = $$('#end_date')[0].get('value');
+        if ($scope.start_date == '' || $scope.start_date == undefined ){
+            $scope.error_flag = true;
+            $scope.messages = 'Please choose Start date';
+        } else if($scope.end_date == '' || $scope.end_date == undefined ){
+            $scope.error_flag = true;
+            $scope.messages = 'Please choose End date';
+        } else {
+    
+            $http.get('/reports/salesreturn_reports/?start_date='+$scope.start_date+'&end_date='+$scope.end_date).success(function(data){
+                          
+                $scope.salesreturn_report = data['salesreturn_report'];
+                $scope.salesreturn_report_total = data['salesreturn_report_total'][0];
+                
+            });
+        }
+    }
+
+
+}
+
+ function SalesReturnController($scope, $element, $http, $timeout, share, $location) {
+    $scope.sales_return = {
+        'invoice_number': '',
+
+        'sales_return_date': '',
+        'net_amount': '',
+        'sales_items': [],
+    }
+    $scope.init = function(csrf_token, invoice_number){
+        $scope.csrf_token = csrf_token;
+        $scope.sales_return.invoice_number = invoice_number;
+        new Picker.Date($$('#sales_return_date'), {
+            timePicker: false,
+            positionOffset: {x: 5, y: 0},
+            pickerClass: 'datepicker_bootstrap',
+            useFadeInOut: !Browser.ie,
+            format:'%d/%m/%Y', 
+        });
+    }
+    $scope.getItems = function(parameter) {
+        $scope.items = [];
+        $scope.selecting_item = true;
+        $scope.item_selected = false;
+        console.log('in get items', parameter);
+        for(var i=0; i<$scope.sales.sales_items.length; i++){
+            if(parameter == 'item_code') {
+                if($scope.item_code == ''){
+                    $scope.items = [];
+                }
+                if($scope.sales.sales_items[i].item_code.indexOf($scope.item_code) == 0) {
+                    $scope.items.push($scope.sales.sales_items[i]);
+                } else {
+                    var ind = $scope.items.indexOf($scope.sales.sales_items[i]);
+                    if(ind > 0){
+                        $scope.items.splice($scope.sales.sales_items[i], 1);
+                    }
+                }
+            }
+            if(parameter == 'item_name') {
+                if($scope.item_name == ''){
+                    $scope.items = [];
+                }
+                if($scope.sales.sales_items[i].item_name.indexOf($scope.item_name) == 0) {
+                    $scope.items.push($scope.sales.sales_items[i]);
+                } else {
+                    var ind = $scope.items.indexOf($scope.sales.sales_items[i]);
+                    if(ind > 0){
+                        $scope.items.splice($scope.sales.sales_items[i], 1);
+                    }
+                }
+            }
+            if(parameter == 'barcode') {
+                if($scope.barcode == ''){
+                    $scope.items = [];
+                }
+                if($scope.sales.sales_items[i].barcode.indexOf($scope.barcode) == 0) {
+                    $scope.items.push($scope.sales.sales_items[i]);
+                } else {
+                    var ind = $scope.items.indexOf($scope.sales.sales_items[i]);
+                    if(ind > 0){
+                        $scope.items.splice($scope.sales.sales_items[i], 1);
+                    }
+                }
+            }
+        }
+
+    }
+    $scope.load_sales = function() {
         var invoice = $scope.sales.sales_invoice_number;
         $http.get('/sales/?invoice_no='+$scope.sales.sales_invoice_number).success(function(data)
         {
             $scope.selecting_item = true;
             $scope.item_selected = false;
             $scope.sales = data.sales;
+            $scope.sales.deleted_items = [];
             $scope.sales.sales_invoice_number = invoice;
         }).error(function(data, status)
         {
             console.log(data || "Request failed");
         });
     }
+    
 }

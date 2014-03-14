@@ -57,7 +57,6 @@ class UserList(View):
         ctx_salesman = []
         if user_type == 'staff':
             users = Staff.objects.all()
-            print "staffs -----", users
             if request.is_ajax():
                 if len(users) > 0:
                     for usr in users:
@@ -108,7 +107,7 @@ class UserList(View):
                 status_code = 200
                 return HttpResponse(response, status = status_code, mimetype="application/json")
         elif user_type == 'salesman': 
-            desig = Designation.objects.get(title = 'Salesman')
+            desig = Designation.objects.get(title = 'salesman')
             salesmen = Staff.objects.filter(designation = desig)
 
             if request.is_ajax():
@@ -165,7 +164,6 @@ class RegisterUser(View):
             elif user_type == 'staff':
                 message = 'Staff with this name already exists'
             elif user_type == 'customer':
-
                 message = 'Customer with this name already exists'
             context = {
                 'error_message': message,
@@ -208,6 +206,11 @@ class RegisterUser(View):
             }
             return render(request, 'register_user.html',context)
         elif user_type == 'staff':
+            user.username = request.POST['username']
+            user.set_password(request.POST['password'])
+            user.save()
+            userprofile.user = user
+            userprofile.save()
             try:
                 designation = Designation.objects.get(title=request.POST['designation'])
             except Designation.DoesNotExist:
@@ -309,6 +312,10 @@ class EditUser(View):
             }
             return render(request, 'edit_user.html',context)
         elif user_type == 'staff':
+            user.username = request.POST['username']
+            user.save()
+            userprofile.user = user
+            userprofile.save()
             staff = user.staff_set.all()[0]
             staff.user = user
             if request.POST['old_designation'] != request.POST['new_designation']:
@@ -420,6 +427,31 @@ class AddTransportationCompany(View):
             }
         response = simplejson.dumps(res)
         return HttpResponse(response, status=200, mimetype='application/json')
+
+
+class ResetPassword(View):
+
+    def get(self, request, *args, **kwargs):
+
+        user = User.objects.get(id=kwargs['user_id'])
+        context = {
+            'user_id': user.id
+        }
+        return render(request, 'reset_password.html', context)
+
+    def post(self, request, *args, **kwargs):
+
+        context = {}
+        user = User.objects.get(id=kwargs['user_id'])
+        user.set_password(request.POST['password'])
+        user.save()
+        if user == request.user:
+            logout(request)
+            return HttpResponseRedirect(reverse('home'))  
+        else:
+            user_type = user.userprofile_set.all()[0].user_type 
+            return HttpResponseRedirect(reverse('users', kwargs={'user_type': user_type}))
+
 
 
 
