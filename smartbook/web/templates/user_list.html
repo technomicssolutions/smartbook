@@ -49,13 +49,13 @@
 					{% if user_type == 'staff' %}
 						<td> {{ usr.user.staff_set.all.0.designation.title}} </td>	
 					{% endif %}
-					<td><a href="{% url 'edit_user' user_type=user_type profile_id=usr.user.userprofile_set.all.0.id%}">
+					<td><a href="{% url 'edit_user' user_type=user_type user_id=usr.user.id%}">
 						<img src="/static/images/edit.png">
 						</a>
 					</td>
 					{% if user.is_superuser %}
 						<td>
-							<a href="{% url 'delete_user' user_type=user_type profile_id=usr.user.userprofile_set.all.0.id%}"><img src="/static/images/delete.png"></a>
+							<a href="{% url 'delete_user' user_type=user_type user_id=usr.user.id%}"><img src="/static/images/delete.png"></a>
 						</td>
 						<td>
 							<a href="{% url 'reset_password' user_id=usr.user.id %}">Reset password</a>
