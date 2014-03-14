@@ -1816,7 +1816,6 @@ function PurchaseReturnController($scope, $element, $http, $timeout, share, $loc
         $scope.items = [];
         $scope.selecting_item = true;
         $scope.item_selected = false;
-        console.log('in get items', parameter);
         for(var i=0; i<$scope.purchase.purchase_items.length; i++){
             if(parameter == 'item_code') {
                 if($scope.item_code == ''){
@@ -1824,6 +1823,7 @@ function PurchaseReturnController($scope, $element, $http, $timeout, share, $loc
                 }
                 if($scope.purchase.purchase_items[i].item_code.indexOf($scope.item_code) == 0) {
                     $scope.items.push($scope.purchase.purchase_items[i]);
+                    $scope.items[i].selected = false;
                 } else {
                     var ind = $scope.items.indexOf($scope.purchase.purchase_items[i]);
                     if(ind > 0){
@@ -1880,6 +1880,7 @@ function PurchaseReturnController($scope, $element, $http, $timeout, share, $loc
             $scope.purchase_return.purchase_items.splice(ind, 1);
         } else {
             $scope.purchase_return.purchase_items.push(item);
+            item.selected = true;
         }
         
     }
