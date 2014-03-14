@@ -8,13 +8,19 @@ from django.db import models
 class Migration(SchemaMigration):
 
     def forwards(self, orm):
+        # Removing unique constraint on 'Item', fields ['name']
+        db.delete_unique(u'inventory_item', ['name'])
+
 
         # Changing field 'Item.name'
         db.alter_column(u'inventory_item', 'name', self.gf('django.db.models.fields.CharField')(max_length=50))
     def backwards(self, orm):
 
         # Changing field 'Item.name'
-        db.alter_column(u'inventory_item', 'name', self.gf('django.db.models.fields.CharField')(max_length=5))
+        db.alter_column(u'inventory_item', 'name', self.gf('django.db.models.fields.CharField')(max_length=5, unique=True))
+        # Adding unique constraint on 'Item', fields ['name']
+        db.create_unique(u'inventory_item', ['name'])
+
     models = {
         u'auth.group': {
             'Meta': {'object_name': 'Group'},
