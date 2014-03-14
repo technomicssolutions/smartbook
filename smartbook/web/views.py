@@ -57,7 +57,6 @@ class UserList(View):
         ctx_salesman = []
         if user_type == 'staff':
             users = Staff.objects.all()
-            print "staffs -----", users
             if request.is_ajax():
                 if len(users) > 0:
                     for usr in users:
@@ -165,7 +164,6 @@ class RegisterUser(View):
             elif user_type == 'staff':
                 message = 'Staff with this name already exists'
             elif user_type == 'customer':
-
                 message = 'Customer with this name already exists'
             context = {
                 'error_message': message,
@@ -208,6 +206,11 @@ class RegisterUser(View):
             }
             return render(request, 'register_user.html',context)
         elif user_type == 'staff':
+            user.username = request.POST['username']
+            user.set_password(request.POST['password'])
+            user.save()
+            userprofile.user = user
+            userprofile.save()
             try:
                 designation = Designation.objects.get(title=request.POST['designation'])
             except Designation.DoesNotExist:
@@ -309,6 +312,10 @@ class EditUser(View):
             }
             return render(request, 'edit_user.html',context)
         elif user_type == 'staff':
+            user.username = request.POST['username']
+            user.save()
+            userprofile.user = user
+            userprofile.save()
             staff = user.staff_set.all()[0]
             staff.user = user
             if request.POST['old_designation'] != request.POST['new_designation']:
