@@ -1915,3 +1915,48 @@ function PurchaseReturnController($scope, $element, $http, $timeout, share, $loc
         });
     }
 }
+
+function SalesReturnReportController($scope, $element, $http, $timeout, $location){
+
+    $scope.error_flag = false;
+
+    $scope.init = function(){ 
+        $scope.error_flag = false;      
+        new Picker.Date($$('#start_date'), {
+            timePicker: false,
+            positionOffset: {x: 5, y: 0},
+            pickerClass: 'datepicker_bootstrap',
+            useFadeInOut: !Browser.ie,
+            format:'%d/%m/%Y', 
+        });
+        new Picker.Date($$('#end_date'), {
+            timePicker: false,
+            positionOffset: {x: 5, y: 0},
+            pickerClass: 'datepicker_bootstrap',
+            useFadeInOut: !Browser.ie,
+            format:'%d/%m/%Y', 
+        });
+    }
+    $scope.view_report = function(){
+        $scope.error_flag = false;
+        $scope.start_date = $$('#start_date')[0].get('value');
+        $scope.end_date = $$('#end_date')[0].get('value');
+        if ($scope.start_date == '' || $scope.start_date == undefined ){
+            $scope.error_flag = true;
+            $scope.messages = 'Please choose Start date';
+        } else if($scope.end_date == '' || $scope.end_date == undefined ){
+            $scope.error_flag = true;
+            $scope.messages = 'Please choose End date';
+        } else {
+    
+            $http.get('/reports/salesreturn_reports/?start_date='+$scope.start_date+'&end_date='+$scope.end_date).success(function(data){
+                          
+                $scope.salesreturn_report = data['salesreturn_report'];
+                $scope.salesreturn_report_total = data['salesreturn_report_total'][0];
+                
+            });
+        }
+    }
+
+
+}
