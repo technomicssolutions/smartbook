@@ -88,4 +88,17 @@ class TransportationCompany(models.Model):
 
 		verbose_name = 'Transportation Company'
 		verbose_name_plural = 'Transportation Company'
-			
+
+class OwnerCompany(models.Model):
+
+	company_name = models.CharField('Company Name', max_length=100)
+
+	def __unicode__(self):
+
+		return self.company_name
+
+	class Meta:
+
+		verbose_name = 'Owner Company'
+		verbose_name_plural = 'Owner Company'
+
