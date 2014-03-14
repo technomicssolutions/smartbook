@@ -755,46 +755,37 @@ class StockReports(View):
         p.drawString(400, 900, 'Stock Report')
 
         y = 850
-        p.drawString(900, y, 'Item Code')
-        p.drawString(850, y, 'Item Name')
-        p.drawString(800, y, 'Barcode')
-        p.drawString(750, y, 'Brand Name')
-        p.drawString(700, y, 'Vendor Name')
-        p.drawString(650, y, 'Stock')
-        p.drawString(600, y, 'UOM')
-        p.drawString(550, y, 'Selling Price')
-        p.drawString(500, y, 'Tax')
-        p.drawString(450, y, 'Discount')
-        p.drawString(400, y, 'Stock By value')
+        p.drawString(80, y, 'Item Code')
+        p.drawString(160, y, 'Item Name')
+        p.drawString(240, y, 'Barcode')
+        p.drawString(320, y, 'Brand Name')
+        p.drawString(400, y, 'Vendor Name')
+        p.drawString(480, y, 'Stock')
+        p.drawString(560, y, 'UOM')
+        p.drawString(640, y, 'Selling Price')
+        p.drawString(720, y, 'Tax')
+        p.drawString(800, y, 'Discount')
+        p.drawString(880, y, 'Stock By value')
         
+        y = y - 50 
         if len(stocks) > 0:
             for stock in stocks:
-                print stock.item.purchaseitem_set.all()
-                ctx_stock.append({
-                   'item_code': stock.item.code,
-                   'item_name': stock.item.name,
-                   'bar_code': stock.item.barcode,
-                   'brand_name': stock.item.brand.brand,
-                   'vendor_name': stock.item.purchaseitem_set.all()[0].purchase.vendor.user.first_name,
-                   'stock': stock.quantity,
-                   'uom': stock.item.uom.uom,
-                   'selling_price': stock.selling_price,
-                   'tax': stock.item.tax,
-                   'discount': stock.discount_permit_percentage,
-                   'stock_by_value': float(stock.quantity * stock.selling_price),
-                })
+                p.drawString(80, y, stock.item.code)
+                p.drawString(160, y, stock.item.name)
+                p.drawString(240, y, stock.item.barcode)
+                p.drawString(320, y, stock.item.brand.brand)
+                p.drawString(400, y, stock.vendor.user.first_name)
+                p.drawString(480, y, str(stock.quantity))
+                p.drawString(560, y, stock.item.uom.uom)
+                p.drawString(640, y, str(stock.selling_price))
+                p.drawString(720, y, str(stock.item.tax))
+                p.drawString(800, y, str(stock.discount_permit_percentage))
+                p.drawString(880, y, str(stock.quantity * stock.selling_price))
+                y = y - 30
 
-        try:
-            res = {
-                'stocks': ctx_stock,
-            }
-            response = simplejson.dumps(res)
-        except Exception as ex:
-            # remember to change exception
-            response = simplejson.dumps({'result': 'error', 'error': str(ex)})
-            status_code = 500
-        return HttpResponse(response, status = status_code, mimetype = 'application/json')
-
+        p.showPage()
+        p.save()
+        return response
         
 
 
