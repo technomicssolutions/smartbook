@@ -57,6 +57,9 @@
 						<td>
 							<a href="{% url 'delete_user' user_type=user_type profile_id=usr.user.userprofile_set.all.0.id%}"><img src="/static/images/delete.png"></a>
 						</td>
+						<td>
+							<a href="{% url 'reset_password' user_id=usr.user.id %}">Reset password</a>
+						</td>
 					{% endif %}	
 				</tr>
 			{% endfor %}
