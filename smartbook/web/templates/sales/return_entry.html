@@ -45,12 +45,10 @@
 							<input type="text"  name="customer" ng-model="sales.customer" readonly />							
 						</div>
 					</div>
-					
 				</div>	
 		
 				<div class="section_3_purchase">
 					<div class="search_purchase">
- 						
    						<div class="clear"></div>
 
    						<h5 ng-show='sales.sales_items.length > 0'>Please select items to be returned </h5> <br />
@@ -66,7 +64,7 @@
 								<span>[[item.item_code]]</span>
 								<span>[[item.item_name]]</span>
 								<span>[[item.barcode]] </span>
-								<span> <input type="checkbox" ng-click="addSalesReturnItems(item)" checked=false /></span>
+								<span> <input type="checkbox" ng-click="addSalesReturnItems(item)" ng-model="item.selected" /></span>
 							</div>
 							<div class="clear"></div>
 						</div>
@@ -89,10 +87,6 @@
 							<span> Amount </span>
 						</div>
 						<div ng-repeat="item in sales.sales_items" class="item_list_row">
-
-   							
-					<div ng-repeat="item in sales.sales_items" class="item_list_row">
-
 							<span class="small_column">[[item.item_code]] </span>
 							<span>[[item.item_name]] </span>
 							<span>[[item.barcode]] </span>
@@ -101,8 +95,7 @@
 							<span> [[item.unit_price]] </span>
 							<span> [[item.unit_price]] </span>
 							<span> <input type="text" ng-model="item.returned_quantity" ng-change="calculate_return_amount(item)" />	</span>	
-							<span> [[item.returned_amount]] </span>
-							 
+							<span> [[item.returned_amount]] </span>							 
 						</div>
 						<div class="clear"></div>
    					</div>
@@ -119,10 +112,6 @@
 							<input type="text" name="net_return_total" ng-model="sales_return.net_return_total" readonly />
 						</div>
 					</div>
-
-
-
-
 				</div>
 			</div>
 			<div  align="Center">

@@ -1022,7 +1022,7 @@ function SalesController($scope, $element, $http, $timeout, share, $location) {
         $scope.sales.balance = $scope.sales.grant_total - $scope.sales.paid;
     }
     $scope.save_sales = function() {
-
+        if($scope.validate_sales()) {
             $scope.sales.sales_invoice_date = $$('#sales_invoice_date')[0].get('value');
             
             params = { 
@@ -1037,14 +1037,12 @@ function SalesController($scope, $element, $http, $timeout, share, $location) {
                     'Content-Type' : 'application/x-www-form-urlencoded'
                 }
             }).success(function(data, status) {
-                //document.location.href = '/sales/entry/';
-               
+                document.location.href = '/sales/entry/';               
             }).error(function(data, success){
                 
             });
-        
+        }         
     }
-
 }
 
 function DailyReportController($scope, $element, $http, $timeout, $location){ 
@@ -1821,14 +1819,12 @@ function PurchaseReturnController($scope, $element, $http, $timeout, share, $loc
     }
     $scope.addReturnItems = function(item) {
         var ind = $scope.purchase_return.purchase_items.indexOf(item);
-        console.log($scope.purchase_return.purchase_items);
         if(ind >= 0){
             $scope.purchase_return.purchase_items.splice(ind, 1);
         } else {
             $scope.purchase_return.purchase_items.push(item);
             var i = $scope.purchase_return.purchase_items.indexOf(item);
         }    
-        console.log($scope.purchase_return.purchase_items);    
     }
     $scope.calculate_return_amount = function(item){
         item.returned_amount = parseFloat(item.returned_quantity) * parseFloat(item.cost_price);
@@ -1843,9 +1839,9 @@ function PurchaseReturnController($scope, $element, $http, $timeout, share, $loc
     }
      $scope.save_purchase_return = function() {
         $scope.purchase_return.purchase_invoice_number = $scope.purchase.purchase_invoice_number;
-        // for(var i=0; i< $scope.purchase_return.purchase_items.length; i++){
-        //     $scope.purchase_return.purchase_items[i].selected = "selected";
-        // }
+        for(var i=0; i< $scope.purchase_return.purchase_items.length; i++){
+            $scope.purchase_return.purchase_items[i].selected = "selected";
+        }
         if($$('#purchase_return_date')[0].get('value') == '') {
             $scope.validation_error = "Please select date";
             return false;
@@ -1935,25 +1931,24 @@ function SalesReturnController($scope, $element, $http, $timeout, share, $locati
             format:'%d/%m/%Y', 
         });
     }
-  /*  $scope.validate_salesreturn = function() {
+    $scope.validate_salesreturn = function() {
             
         if($scope.sales_return.invoice_number == '') {
             
             $scope.validation_error = "Please Choose an invoice number" ;
             return false;
-        } else if($scope.sales_return.sales_return_date == '') {
+        } else if($$('#sales_return_date')[0].get('value') == '') {
             $scope.validation_error = "Please enter a Date";
             return false;
         } 
         else {
             return true;
         }        
-    }*/
+    }
     $scope.getItems = function(parameter) {
         $scope.items = [];
         $scope.selecting_item = true;
         $scope.item_selected = false;
-        console.log('in get items', parameter);
         for(var i=0; i<$scope.sales.sales_items.length; i++){
             if(parameter == 'item_code') {
                 if($scope.item_code == ''){
@@ -2006,7 +2001,6 @@ function SalesReturnController($scope, $element, $http, $timeout, share, $locati
             $scope.sales = data.sales;
             $scope.sales.deleted_items = [];
             $scope.sales.sales_invoice_number = invoice;
-            console.log($scope.sale);
         }).error(function(data, status)
         {
             console.log(data || "Request failed");
@@ -2019,8 +2013,7 @@ function SalesReturnController($scope, $element, $http, $timeout, share, $locati
             $scope.sales_return.sales_items.splice(ind, 1);
         } else {
             $scope.sales_return.sales_items.push(item);
-        }
-        
+        }        
     }
     $scope.calculate_return_amount = function(item){
         item.returned_amount = parseFloat(item.returned_quantity) * parseFloat(item.unit_price);
@@ -2034,9 +2027,12 @@ function SalesReturnController($scope, $element, $http, $timeout, share, $locati
         $scope.sales_return.net_return_total = amount;
     }
     $scope.save_sales_return = function() {
-       // if($scope.validate_salesreturn()) {
+        if($scope.validate_salesreturn()) {
             $scope.sales_return.sales_return_date = $$('#sales_return_date')[0].get('value');
             $scope.sales_return.sales_invoice_number = $scope.sales.sales_invoice_number;
+            for(var i=0; i< $scope.sales_return.sales_items.length; i++){
+                $scope.sales_return.sales_items[i].selected = "selected";
+            }
             params = {
                 "csrfmiddlewaretoken" : $scope.csrf_token,
                 'sales_return': angular.toJson($scope.sales_return),
@@ -2054,10 +2050,8 @@ function SalesReturnController($scope, $element, $http, $timeout, share, $locati
             }).error(function(data, success){
                 
             });
-       // }
-    }
-
-    
+        }
+    }    
 }
 
 
