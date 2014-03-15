@@ -1,11 +1,15 @@
 # Django settings for smartbook project.
-
+import os 
 DEBUG = True
 TEMPLATE_DEBUG = DEBUG
+
+fillpath = lambda x: os.path.join(os.path.dirname(__file__), x)
 
 ADMINS = (
     # ('Your Name', 'your_email@example.com'),
 )
+
+PROJECT_ROOT = os.path.dirname(os.path.abspath(__file__))
 
 MANAGERS = ADMINS
 
@@ -90,6 +94,16 @@ TEMPLATE_LOADERS = (
     'django.template.loaders.filesystem.Loader',
     'django.template.loaders.app_directories.Loader',
 #     'django.template.loaders.eggs.Loader',
+)
+
+TEMPLATE_CONTEXT_PROCESSORS = (
+    'django.contrib.auth.context_processors.auth',
+    'django.core.context_processors.debug',
+    'django.core.context_processors.i18n',
+    'django.core.context_processors.media',
+    'django.core.context_processors.request',
+    'django.core.context_processors.static',
+    'smartbook.context_processors.site_variables',
 )
 
 MIDDLEWARE_CLASSES = (

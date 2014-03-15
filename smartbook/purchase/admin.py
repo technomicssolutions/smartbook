@@ -4,7 +4,7 @@ from purchase.models import *
 
 
 admin.site.register(Purchase)
-admin.site.register(Expense_type)
-admin.site.register(Purchase_expense)
-admin.site.register(Purchase_return)
+admin.site.register(PurchaseReturn)
+admin.site.register(PurchaseItem)
+admin.site.register(VendorAccount)
 

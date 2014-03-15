@@ -10,15 +10,16 @@
 			<div class="div_header">
 				Login
 			</div>
-			<div class="form_container">
+			<div class="login_form_container">
 				<form name="login" method="post" action="{% url 'login' %}">
 					{% csrf_token %}
 					<p> Username : <input type="text" name="username" /></p>
-					<p> Password : <input type="text" name="password" /></p>
+					<p> Password : <input type="password" name="password" /></p>
 					<p> {{message}} </p>
 					<p> <input type="submit" name="submit" value="Login" />
 				</form>
 			</div>
+			<div class="clear"></div>
 		</div>
 	{% endif %}
 {% endblock content %}

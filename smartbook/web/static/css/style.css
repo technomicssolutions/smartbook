@@ -1,3 +1,7 @@
+body {
+	width: 100%;
+	height: 100%;
+}
 .container {
 	width: 100% !important;
 	margin: auto;	
@@ -90,7 +94,7 @@ header {
     margin-top: 5%;
     border-radius: 3px;
 }
-.form_container {
+.login_form_container {
 	margin: 5%;
 	width: 100%;
 }
@@ -98,6 +102,7 @@ header {
 	float: left;
 	width: 100%;
 	min-height: 540px;
+	padding-bottom: 30px;
 }
 
 .welcome {
@@ -136,8 +141,496 @@ footer {
     font-weight: bold;
 }
 
-.item label
-{
-	padding:8px 0 8px 0;
+
+
+textarea{
+    height: 32px;
+    padding-left: 3px;
 }
 
+
+
+.form_container {
+	margin: auto;
+	width: 30%;
+	min-height: 100%
+}
+.form_container .control {
+	width: 100%;
+	height: 30px;
+	float: left;
+	padding: 10px;
+}
+.form_container label{
+	float: left;
+	display: block !important;
+}
+
+.form_container input{
+	float: right;
+	display: block;
+}
+
+.form_container select{
+	float: right;
+	display: block;
+}
+
+form {
+	display: block;
+	float: left;
+	min-height: 100%;
+	width: 100%;
+}
+
+.error_message {
+	text-align: center;
+	color: red;
+}
+
+/************************** Expense module start***********************/
+
+.expense_form_container {
+	margin: auto;
+    max-width: 1024px;
+    min-height: 500px;
+}
+.expense_form_container form {
+	width: 100% ! important;
+}
+.form_contents {
+	display: inline-block;
+    height: auto;
+    width: 100%;
+}
+.content_div {
+	width: 33%;
+	margin: auto;
+}
+#expense_head .formrow .buttons {
+	width: 48%;
+	height: 38px;
+}
+.section_1 {
+	float: left;
+	width: 50%;
+}
+.section_2 {
+	float: left;
+	width: 50%;
+}
+
+.formrow {
+	min-height: 40px;
+    width: 100%;
+}
+.formtext {
+	float: left;
+    width: 95px;
+}
+.forminput {
+	float: left;
+}
+.add_expense_head {
+	height: 100%;
+	margin: auto;
+    margin-top: 30px;
+    width: 38%;
+    float: none;
+}
+.required_field {
+	color: #FF0000;
+}
+.buttons {
+	margin: auto;
+    width: 35%;
+}
+
+.buttons a {
+	float: left;
+	margin-right: 10px;
+	font-size: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+}
+
+#cancel_butn {
+	font-size: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+    width: 46px;
+    height: 16px;
+}
+
+.message p{
+	color: #FF0000;
+	text-align: center;
+	font-size: 16px;
+}
+
+.btn:hover {
+	background-color: #2F96B4;
+	color: #FFFFFF;
+}
+
+#radio_text {
+	width: 100px;
+
+}
+#radio_input label, #radio_input input[type=radio] {
+	float: left;
+	margin-left: 4px;
+    margin-right: 4px;
+}
+#expense textarea {
+	height: auto ;
+    margin-left: 0px !important;
+    padding-left: 0px !important;
+}
+
+/************************** Expense module end ***********************/
+
+
+
+
+/******************************  Purchase module start *************/
+
+.purchase_form_container {
+	margin: auto;
+    width: 90%;
+}
+.form_contents_purchase {
+	margin: 10px 5px;
+}
+.section_1_purchase {
+	float: left;	
+	width: 100%;
+}
+.section_2_purchase {
+	float: left;	
+	width: 50%;
+}
+.section_3_purchase {
+	float: left;
+	width: 100%;
+}
+.formrow_purchase {
+	min-height: 40px;
+    width: 50%;
+    float: left;
+}
+.formtext_purchase {
+	float: left;
+    width: 200px;
+}
+.forminput_purchase {
+	float: left;
+}
+.search_purchase{
+	width: 100%;
+	height: 100%;
+	padding-bottom: 30px;
+}
+
+.search_purchase .control {
+	background-color: #ADD8E6;
+    float: left;
+    padding: 13px;
+    width: 31%;
+}
+
+.vendor_section_1 {
+	float: left;
+	width:100%;
+	border: 1px solid black;
+}
+
+.return {
+	position: relative !important;
+	z-index: 0 !important;
+}
+
+.return span {
+	width: 24% !important;
+}
+
+.return_items {
+	width: 89% !important;
+}
+.return_items span {
+	width: 11% !important;
+}
+
+/*sales module */
+.sales_form_container {
+	margin: auto;
+    width: 90%;
+}
+.form_contents_sales {
+	margin: 10px 5px;
+}
+.section_1_sales {
+	float: left;	
+	width: 100%;
+}
+.section_2_sales {
+	float: left;	
+	width: 50%;
+}
+.section_3_sales {
+	float: left;
+	width: 100%;
+}
+.formrow_sales {
+	min-height: 40px;
+    width: 50%;
+    float: left;
+}
+.formtext_sales {
+	float: left;
+    width: 200px;
+}
+.forminput_sales {
+	float: left;
+}
+.search_sales{
+	width: 100%;
+	height: 100%;
+	padding-bottom: 30px;
+}
+
+
+.search_sales .control {
+	background-color: #ADD8E6;
+    float: left;
+    padding: 13px;
+    width: 31%;
+}
+
+
+
+
+/*reports*/
+
+.reporttext {
+	float: left;
+	padding-left: 10px;
+    width: 90px;
+}
+.reportinput {
+	float: left;
+}
+
+
+.table_list td, th {
+    border-color: #E6E6E6;
+    /*padding: 7px;*/
+    padding: 11px;
+}
+th {
+    font-size: 13px;
+}
+
+.table_list {
+    border-color: #E6E6E6;
+    margin: auto;
+    text-align: left;
+    font-size: 14px;
+    margin-top: 30px;
+}
+.table_list th{
+    height: 30px;
+}
+
+.table_list .odd{
+    background-color: #F9F9F9;
+}
+.table_list .even{
+    background-color: #FFFFFF;
+}
+.top_section {
+	height: 50px;
+    width: 89%;
+    margin-top: 15px;
+}
+.clear {
+	clear: both;
+}
+
+.item_list {
+	background-color: #FFFFFF;
+    border: 1px solid #ADD8E6;
+    position: absolute;
+    margin-top: -10px;
+    width: 89%;
+    border-top-color: #FFFFFF;
+}
+
+.item_list .item_list_row, .purchase_item_list .item_list_row{
+	width: 100%;
+	text-align: center;
+	border-top: 1px solid #ADD8E6;
+	float: left;
+	height: 30px;
+}
+.purchase_item_list .header{
+	height: 75px !important;
+}
+.purchase_item_list .item_list_row {
+	height: 50px;
+	padding-top: 5px;
+}
+.item_list .item_list_row span, .purchase_item_list .item_list_row span {
+	padding: 5px;
+	display: block;
+	float: left;
+	width: 32%;
+}
+.purchase_item_list .item_list_row span {
+	width: 5%;
+}
+.purchase_item_list .item_list_row span input {
+	width: 70%;
+}
+.purchase_item_list .item_list_row span .large_input {
+	width: 100% !important;
+}
+.purchase_item_list .item_list_row span .small_input {
+	width: 100% !important;
+}
+.item_list .header, .purchase_item_list .header {
+	background-color: #ADD8E6;
+}
+a {
+	text-decoration : none !important;
+}
+.purchase_items_list {
+	width: 100%;
+	float: left;
+	min-height: 100px;
+	padding-bottom: 30px;
+}
+
+.purchase_items_list .purchase_item_list {
+	width: 100% !important;
+	border: 1px solid #ADD8E6;
+}
+
+.small_column{
+	width: 4% !important;
+}
+
+.delete_anch {
+	display: block;
+	margin-top: 4px;
+}
+/******************************  Purchase module end *************/
+
+/******************************  Popup box **********************/
+
+#overlay {
+  background-color: #000000;
+  background:url(../images/overlay.png) repeat 0 0;
+  opacity: 0.9;
+  z-index: 1;
+  position: absolute;
+  width: 100%;
+}
+
+
+#dialogue_popup_container {
+  z-index: 2;
+  position: absolute;
+  width: 100%;
+}
+#dialogue_popup {
+  height: auto;
+  border-radius: 15px 15px 15px 15px;
+  border: 2px solid #ADD8E6;
+  margin: auto;
+  z-index: 2;
+  position: relative;
+  margin: auto;
+  background-color: #FFFFFF;
+  display: none;
+  overflow: hidden;
+  padding-bottom: 20px;
+  width: 384px;
+  padding: 1%;
+}
+#dialogue_popup form {
+	width: 100%;
+}
+#dialogue_popup .control {
+	width: 100%;
+}
+#dialogue_popup label {
+	width: 50% !important;
+	float: left;
+}
+.close_pop {
+  width: 32px;
+  height: 32px;
+  background: url('../images/close_pop.png');
+  display: block;
+  float: right;
+  position: relative;
+  /*top: -15px;
+  right: -15px;*/
+}
+/******************************  Popup box end **********************/
+
+/************************ Userlist Module ***************************/
+
+.top_section a{
+	float: right;
+	margin-right: 10px;
+	font-size: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+}
+/************************ Userlist Module end************************/
+
+
+/************************ Report Module *****************************/
+.report_container {
+	width: 65%;
+	margin: auto;
+}
+
+.pull_left {
+	float: left;
+}
+
+.report_button {
+	padding-left: 6px;
+    padding-right: 6px;
+}
+
+#last_row {
+	font-weight: bold ! important;
+}
+#amount_alignment{
+	text-align: right ! important;
+}
+
+#list {
+	float: left;
+}
+
+.list .odd{
+    background-color: #F9F9F9;
+}
+.list .even{
+    background-color: #FFFFFF;
+}
+
+/************************ Report Module End *************************/
+
+/************* Vendor account start ********************/
+
+.form_contents_vendor_account {
+	width: 80%;
+	margin: auto;
+	padding: 20px;
+}
