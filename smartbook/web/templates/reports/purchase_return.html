@@ -14,10 +14,10 @@
 			</div>
 		</div>
 			
-		<div class="message" ng-show="error_flag">
-			<p>[[messages]]</p>
+		<div class="message">
+			<p>{{msg}}</p>
 		</div>
-		<form name="purchase_form" method="get" action="{% url 'purchase_return_report' %}">
+		<form name="purchasereturn_report_form" method="get" action="{% url 'purchase_return_report' %}">
 			<div class="reporttext">
 					<label for="e_date">Report type: </label>
 			</div>
@@ -32,28 +32,24 @@
 						<label for="s_date">Start Date</label>
 				</div>
 				<div class="reportinput">
-					<input type="text" name="start_date" id="start_date">
+					<input type="text" name="start_date" id="start_date" value="{{start_date}}">
 				</div>
-							
-
 				<div class="reporttext">
-						<label for="e_date">End Date</label>
+					<label for="e_date">End Date</label>
 				</div>
-
 				<div class="reportinput">
-					<input type="text" name="end_date" id="end_date">
+					<input type="text" name="end_date" id="end_date" value="{{end_date}}">
 				</div>
 			</div>
+
 			<div ng-show="report_vendor_wise">
 				<div class="reporttext">
 					<label for="e_date">Vendor: </label>
 				</div>
-
 				<div class="reportinput">
 					<select name="vendor" ng-model="vendor_name">
 						<option value="select">Select Vendor</option>
 						<option ng-repeat="vendor in vendors" value="[[vendor.vendor_name]]">[[vendor.vendor_name]]</option>
-
 					</select>
 				</div>
 			</div>
