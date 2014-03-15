@@ -31,7 +31,7 @@ class PurchaseDetail(View):
             purchase_items = PurchaseItem.objects.filter(purchase=purchase)
             items_list = []
             for item in purchase_items:
-                inventory = Inventory.objects.get(item=item.item, vendor=purchase.vendor)
+                inventory = Inventory.objects.get(item=item.item)
                 items_list.append({
                     'item_code': item.item.code,
                     'item_name': item.item.name,
@@ -113,22 +113,7 @@ class PurchaseEntry(View):
         purchase.brand = brand
         vendor = Vendor.objects.get(user__first_name=purchase_dict['vendor'])       
         transport = TransportationCompany.objects.get(company_name=purchase_dict['transport'])
-        if purchase_created:
-            purchase.vendor = vendor
-        elif purchase.vendor is not vendor:
-            old_vendor = purchase.vendor
-            old_vendor_amount = purchase.vendor_amount
-            old_vendor_account = VendorAccount.objects.get(vendor=old_vendor)
-            old_vendor_account.total_amount = old_vendor_account.total_amount - old_vendor_amount
-            old_vendor_account.balance = old_vendor_account.balance - old_vendor_amount
-            old_vendor_account.save()
-            old_purchase_items = PurchaseItem.objects.filter(purchase=purchase)
-            for item in old_purchase_items:
-                in_item = item.item
-                inventory = Inventory.objects.get(item=in_item, vendor=old_vendor)
-                inventory.quantity = inventory.quantity - item.quantity_purchased
-                inventory.save()
-
+        purchase.vendor = vendor
         purchase.transportation_company = transport
         if purchase_dict['discount']:
             purchase.discount = purchase_dict['discount']
@@ -180,7 +165,7 @@ class PurchaseEntry(View):
         for p_item in deleted_items:
             item = Item.objects.get(code = p_item['item_code']) 
             ps_item = PurchaseItem.objects.get(item=item)           
-            inventory = Inventory.objects.get(item=item, vendor=vendor)
+            inventory = Inventory.objects.get(item=item)
             inventory.quantity = inventory.quantity + ps_item.quantity_purchased
             inventory.save()
             ps_item.delete()
@@ -189,7 +174,7 @@ class PurchaseEntry(View):
 
             item = Item.objects.get(code=purchase_item['item_code'])
             p_item, item_created = PurchaseItem.objects.get_or_create(item=item, purchase=purchase)
-            inventory, created = Inventory.objects.get_or_create(item=item, vendor=vendor)
+            inventory, created = Inventory.objects.get_or_create(item=item)
             if created:
                 inventory.quantity = int(purchase_item['qty_purchased'])                
             else:
@@ -332,7 +317,7 @@ class PurchaseReturnView(View):
             p_return_item.quantity = item['returned_quantity']
             p_return_item.save()
 
-            inventory = Inventory.objects.get(item=return_item, vendor=purchase.vendor)
+            inventory = Inventory.objects.get(item=return_item)
             inventory.quantity = inventory.quantity - int(item['returned_quantity'])
             inventory.save()
         response = {

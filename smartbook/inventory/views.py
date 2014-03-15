@@ -183,5 +183,47 @@ class AddUom(View):
         response = simplejson.dumps(res)
         return HttpResponse(response, status=200, mimetype='application/json')
 
+class OpeningStockView(View):
+    def get(self, request, *args, **kwargs):
+        stock_items = OpeningStock.objects.all()
+        return render(request, 'inventory/opening_stock_view.html', {
+            'stock_items': stock_items
+        })
+class AddOpeningStock(View):
+
+    def get(self, request, *args, **kwargs):
+        items = Item.objects.all()
+        return render(request, 'inventory/opening_stock.html', {
+            'items': items
+        })
+
+    def post(self, request, *args, **kwargs):
+
+        item = Items.objects.get(code=request.POST['item'])
+        opening_stock = OpeningStock()
+        opening_stock.item = item
+        opening_stock.quantity = request.POST['quantity']
+        opening_stock.unit_price = request.POST['unit_price']
+        opening_stock.selling_price = request.POST['selling_price']
+        opening_stock.discount_permit_percentage = request.POST['discount_permit_percentage']
+        opening_stock.discount_permit_amount = request.POST['discount_permit_amount']
+        opening_stock.save()
+
+        inventory, created = Inventory.objects.get_or_create(item=item)
+        if created:
+            inventory.quantity = request.POST['quantity']
+        else:
+            inventory.quantity = inventory.quantity + request.POST['quantity']
+        inventory.unit_price = request.POST['unit_price']
+        inventory.selling_price = request.POST['selling_price']
+        inventory.discount_permit_amount = request.POST['discount_permit_amount']
+        inventory.discount_permit_percentage = request.POST['discount_permit_percentage']
+        inventory.save()
+
+        items = Item.objects.all()
+        return render(request, 'inventory/stock.html', {
+            'items': items
+        })
+
 
 
