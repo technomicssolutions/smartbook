@@ -12,7 +12,7 @@
 	<p class="error_message"> NO Items on stock </p>
 {% else %}
 	<table class="table table-striped">
-		<tr><th> Item code </th> <th> Item Name </th> <th> Barcode </th> <th> Quantity </th> <th> UOM </th> <th> Vendor </th> </tr>
+		<tr><th> Item code </th> <th> Item Name </th> <th> Barcode </th> <th> Quantity </th> <th> UOM </th> </tr>
 		{% for item in inventory %}
 		 	<tr>
 		 		<td> {{item.item.code}} </td>
@@ -20,7 +20,6 @@
 		 		<td> {{item.item.barcode}} </td>
 		 		<td> {{item.quantity}} </td>
 		 		<td> {{item.item.uom}} </td>
-		 		<td> {{item.vendor}} </td>
 		 	</tr>
 		{% endfor %}
 	</table>

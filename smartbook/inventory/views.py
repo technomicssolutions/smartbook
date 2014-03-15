@@ -11,9 +11,7 @@ from django.contrib.auth import authenticate, login, logout
 from django.core.urlresolvers import reverse
 from django.contrib.auth.models import User
 
-from inventory.models import Item, Inventory
-from inventory.models import UnitOfMeasure
-from inventory.models import Brand
+from inventory.models import *
 
 class ItemAdd(View):
     def get(self, request, *args, **kwargs):
@@ -70,6 +68,8 @@ class ItemList(View):
                         items = Item.objects.filter(name__istartswith=item_name)
                     elif barcode:
                         items = Item.objects.filter(barcode__istartswith=barcode)
+                    else:
+                        items = Item.objects.all()
                     item_list = []
                     for item in items:
                         item_list.append({
@@ -184,11 +184,13 @@ class AddUom(View):
         return HttpResponse(response, status=200, mimetype='application/json')
 
 class OpeningStockView(View):
+
     def get(self, request, *args, **kwargs):
         stock_items = OpeningStock.objects.all()
         return render(request, 'inventory/opening_stock_view.html', {
             'stock_items': stock_items
         })
+
 class AddOpeningStock(View):
 
     def get(self, request, *args, **kwargs):
@@ -199,13 +201,13 @@ class AddOpeningStock(View):
 
     def post(self, request, *args, **kwargs):
 
-        item = Items.objects.get(code=request.POST['item'])
+        item = Item.objects.get(code=request.POST['item'])
         opening_stock = OpeningStock()
         opening_stock.item = item
         opening_stock.quantity = request.POST['quantity']
         opening_stock.unit_price = request.POST['unit_price']
         opening_stock.selling_price = request.POST['selling_price']
-        opening_stock.discount_permit_percentage = request.POST['discount_permit_percentage']
+        opening_stock.discount_permit_percentage = request.POST['discount_permit_percent']
         opening_stock.discount_permit_amount = request.POST['discount_permit_amount']
         opening_stock.save()
 
@@ -213,15 +215,15 @@ class AddOpeningStock(View):
         if created:
             inventory.quantity = request.POST['quantity']
         else:
-            inventory.quantity = inventory.quantity + request.POST['quantity']
+            inventory.quantity = inventory.quantity + int(request.POST['quantity'])
         inventory.unit_price = request.POST['unit_price']
         inventory.selling_price = request.POST['selling_price']
         inventory.discount_permit_amount = request.POST['discount_permit_amount']
-        inventory.discount_permit_percentage = request.POST['discount_permit_percentage']
+        inventory.discount_permit_percentage = request.POST['discount_permit_percent']
         inventory.save()
 
         items = Item.objects.all()
-        return render(request, 'inventory/stock.html', {
+        return render(request, 'inventory/opening_stock.html', {
             'items': items
         })
 
