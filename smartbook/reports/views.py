@@ -169,15 +169,15 @@ class SalesReports(View):
 
             start = request.GET['start_date']
             end = request.GET['end_date']
+            item_code = request.GET['item']          
 
-
-            if start is None:
-                return render(request, 'reports/sales_reports.html', {})
+            
             if not start:            
                 ctx = {
                     'msg' : 'Please Select Start Date ',
                     'start_date' : start,
                     'end_date' : end,
+                    'item' : item_code,                    
                     'report_type' : 'item',
                 }
                 return render(request, 'reports/sales_reports.html', ctx)
@@ -186,6 +186,16 @@ class SalesReports(View):
                     'msg' : 'Please Select End Date',
                     'start_date' : start,
                     'end_date' : end,
+                    'item' : item_code,
+                    'report_type' : 'item',
+                }
+                return render(request, 'reports/sales_reports.html', ctx) 
+            elif item_code == 'select':
+                ctx = {
+                    'msg' : 'Please Select an Item',
+                    'start_date' : start,
+                    'end_date' : end,
+                    'item' : item_code,
                     'report_type' : 'item',
                 }
                 return render(request, 'reports/sales_reports.html', ctx) 
@@ -205,47 +215,50 @@ class SalesReports(View):
                 p.drawString(650, 875, "Profit")     
 
                 y = 850       
+                item = Item.objects.get(code=item_code)
+                salesitems = SalesItem.objects.filter(sales__sales_invoice_date__gte=start_date, sales__sales_invoice_date__lte=end_date,item=item)
+                # sales = Sales.objects.filter(sales_invoice_date__gte=start_date,sales_invoice_date__lte=end_date)
+                # if sales.count()>0:
+                #     for sale in sales:
+                #         items = sale.salesitem_set.all()
+                if salesitems.count()>0:
 
-                sales = Sales.objects.filter(sales_invoice_date__gte=start_date,sales_invoice_date__lte=end_date)
-                if sales.count()>0:
-                    for sale in sales:
-                        items = sale.salesitem_set.all()
-                        for item in items:
-                            discount = item.discount_given                         
-                            total_qty = item.quantity_sold
-                            item_name = item.item.name
-                            item_code = item.item.code
-                            inventorys = item.item.inventory_set.all()
-                            selling_price = 0                            
-                            if inventorys.count()>0:
-                            	inventory = inventorys[0]                            
-                            	selling_price = inventory.selling_price                            
+                    for salesitem in salesitems:
+                        discount = salesitem.discount_given                         
+                        total_qty = salesitem.quantity_sold
+                        item_name = salesitem.item.name
+                        item_code = salesitem.item.code
+                        inventorys = salesitem.item.inventory_set.all()
+                        selling_price = 0                            
+                        if inventorys.count()>0:
+                        	inventory = inventorys[0]                            
+                        	selling_price = inventory.selling_price                            
 
-                            purchases = item.item.purchaseitem_set.all()
-                            if purchases.count()>0:
-                                for purchase in purchases:
-                                    cost_price = cost_price + purchase.cost_price
-                                    i = i + 1
-                                avg_cp = cost_price/i
-                            # profit = (selling_price - avg_cp)*total_qty
-                            profit = round(((selling_price - discount - avg_cp)*total_qty),0)
+                        purchases = salesitem.item.purchaseitem_set.all()
+                        if purchases.count()>0:
+                            for purchase in purchases:
+                                cost_price = cost_price + purchase.cost_price
+                                i = i + 1
+                            avg_cp = cost_price/i
+                        # profit = (selling_price - avg_cp)*total_qty
+                        profit = round(((selling_price - discount - avg_cp)*total_qty),0)
 
-                            total_profit = total_profit + profit
-                            total_discount = total_discount + discount
-                            total_cp = total_cp + avg_cp
-                            total_sp = total_sp + selling_price
+                        total_profit = total_profit + profit
+                        total_discount = total_discount + discount
+                        total_cp = total_cp + avg_cp
+                        total_sp = total_sp + selling_price
 
-                            avg_cp = math.ceil(avg_cp*100)/100
-                            
+                        avg_cp = math.ceil(avg_cp*100)/100
+                        
 
-                            y = y - 30
-                            p.drawString(50, y, str(item_code))
-                            p.drawString(150, y, item_name)
-                            p.drawString(250, y, str(total_qty))
-                            p.drawString(350, y, str(discount))
-                            p.drawString(450, y, str(avg_cp))
-                            p.drawString(550, y, str(selling_price))
-                            p.drawString(650, y, str(profit))
+                        y = y - 30
+                        p.drawString(50, y, str(item_code))
+                        p.drawString(150, y, item_name)
+                        p.drawString(250, y, str(total_qty))
+                        p.drawString(350, y, str(discount))
+                        p.drawString(450, y, str(avg_cp))
+                        p.drawString(550, y, str(selling_price))
+                        p.drawString(650, y, str(profit))
 
                 total_cp = math.ceil(total_cp*100)/100 
 

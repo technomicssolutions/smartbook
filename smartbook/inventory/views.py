@@ -70,6 +70,8 @@ class ItemList(View):
                         items = Item.objects.filter(name__istartswith=item_name)
                     elif barcode:
                         items = Item.objects.filter(barcode__istartswith=barcode)
+                    else:
+                        items = Item.objects.all()
                     item_list = []
                     for item in items:
                         item_list.append({

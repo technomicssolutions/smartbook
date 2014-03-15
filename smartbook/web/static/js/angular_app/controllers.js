@@ -1473,6 +1473,7 @@ function SalesReportController($scope, $element, $http, $timeout, $location){
         
         $scope.get_customers();
         $scope.get_salesman();
+        $scope.get_items();
     }
     $scope.get_report_type =function() {
         if($scope.report_type == 'date'){
@@ -1523,6 +1524,13 @@ function SalesReportController($scope, $element, $http, $timeout, $location){
         {
             $scope.salesmen = data.salesmen;
             $scope.salesman_name = 'select';
+        })
+    }
+    $scope.get_items = function(){
+        $http.get('/inventory/items/').success(function(data)
+        {
+            $scope.items = data.items;
+            $scope.item = 'select';
         })
     }
     

@@ -31,6 +31,17 @@
 		</div>
 		<div class="reportinput">
 			<input type="text" name="end_date" id="end_date" value="{{end_date}}">
+		</div>
+		<div ng-show="report_item_wise">
+			<div class="reporttext">
+				<label>Item</label> 
+			</div>	
+			<div class="reportinput">
+				<select name="item" ng-model="item" value="{{item}}">
+				 	<option value="select">Select Item</option>
+				 	<option ng-repeat="item in items" value="[[item.item_code]]">[[item.item_code]]-[[item.item_name]]-[[item.barcode]]</option>
+				</select>
+			</div>	
 		</div>		
 			
 		<div ng-show="report_customer_wise">	
