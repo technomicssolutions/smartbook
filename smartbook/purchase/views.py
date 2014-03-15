@@ -122,7 +122,7 @@ class PurchaseEntry(View):
             old_vendor_account.total_amount = old_vendor_account.total_amount - old_vendor_amount
             old_vendor_account.balance = old_vendor_account.balance - old_vendor_amount
             old_vendor_account.save()
-            old_purchase_items = PurchaseItems.objects.filter(purchase=purchase)
+            old_purchase_items = PurchaseItem.objects.filter(purchase=purchase)
             for item in old_purchase_items:
                 in_item = item.item
                 inventory = Inventory.objects.get(item=in_item, vendor=old_vendor)
