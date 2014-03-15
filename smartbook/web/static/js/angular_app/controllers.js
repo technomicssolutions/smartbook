@@ -343,8 +343,6 @@ function PurchaseController($scope, $element, $http, $timeout, share, $location)
                 $scope.mobile = '';
                 $scope.land_line = '';
                 $scope.email_id = '';
-
-
             }
         }).error(function(data, success){
             
@@ -605,7 +603,7 @@ function PurchaseController($scope, $element, $http, $timeout, share, $location)
     $scope.validate_purchase = function() {
         $scope.purchase.purchase_invoice_date = $$('#purchase_invoice_date')[0].get('value');
         $scope.purchase.vendor_invoice_date = $$('#vendor_invoice_date')[0].get('value');
-            
+        console.log($scope.purchase.vendor);    
         if($scope.purchase.vendor_invoice_number == '') {
             $scope.validation_error = "Please Enter Vendor invoice number" ;
             return false;
@@ -618,13 +616,14 @@ function PurchaseController($scope, $element, $http, $timeout, share, $location)
         } else if($scope.purchase.purchase_invoice_date == ''){
             $scope.validation_error = "Please enter purchase invoice date";
             return false;
-        } else if($scope.purchase.brand == '') {
-            $scope.validation_error = "Please select brand";
+        } else if($scope.purchase.brand == 'select') {
+            console.log($scope.purchase.brand);
+            $scope.validation_error = "Please select brand";            
             return false;
-        } else if($scope.purchase.vendor == '') {
+        } else if($scope.purchase.vendor == 'select') {
             $scope.validation_error == "Please select vendor";
             return false;
-        } else if($scope.purchase.trasport == '') {
+        } else if($scope.purchase.trasport == 'select') {
             $scope.validation_error == "Please select Transportation company";
             return false;
         } else if($scope.purchase.purchase_items.length == 0){
@@ -2121,5 +2120,7 @@ function AddItemController($scope, $http, $element, $location, $timeout) {
     }
 }
 
+function OpeningStockController($scope, $http, $element, $location, $timeout) {
+}
 
 

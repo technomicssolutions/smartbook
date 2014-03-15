@@ -38,8 +38,7 @@ class Item(models.Model):
 
 class Inventory(models.Model):
 
-	item = models.ForeignKey(Item)
-	vendor = models.ForeignKey(Vendor)
+	item = models.ForeignKey(Item, unique=True)
 	quantity = models.IntegerField('Quantity', default=0)
 	unit_price = models.DecimalField('Unit Price',max_digits=14, decimal_places=2, default=0)
 	selling_price = models.DecimalField('Selling Price',max_digits=14, decimal_places=2, default=0)
@@ -51,11 +50,10 @@ class Inventory(models.Model):
 
 	class Meta:
 		verbose_name_plural = 'Inventory'
-		unique_together = ('item', 'vendor')
+		
 
 class OpeningStock(models.Model):
 	item = models.ForeignKey(Item)
-	vendor = models.ForeignKey(Vendor)
 	quantity = models.IntegerField('Quantity', default=0)
 	unit_price = models.DecimalField('Unit Price',max_digits=14, decimal_places=2, default=0)
 	selling_price = models.DecimalField('Selling Price',max_digits=14, decimal_places=2, default=0)
@@ -67,4 +65,3 @@ class OpeningStock(models.Model):
 
 	class Meta:
 		verbose_name_plural = 'Opening Stock'
-		unique_together = ('item', 'vendor')
