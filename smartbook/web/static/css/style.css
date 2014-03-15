@@ -1,3 +1,54 @@
+/* responsive styling ******************************/
+
+@media (min-width:1021px)  {
+	.login {
+		width: 30%;
+	}
+
+}
+
+@media (min-width: 951px) and (max-width:1020px) { 
+	.login {
+		width: 30%;
+	}
+ 
+ }
+@media (min-width: 700px) and (max-width:950px) {
+	.login {
+		width: 30%;
+	}
+ 
+}
+
+@media (min-width: 588px) and (max-width:699px) {
+	.login {
+		width: 30%;
+	}
+ 
+}
+
+@media (min-width: 400px) and (max-width:587px) {
+	.login {
+		width: 30%;
+	}
+ 
+}
+@media (min-width: 100px) and (max-width:399px) { 
+}
+
+.login {
+	min-width: 320px;
+}
+.login label {
+	width: 25%;
+	float: left;
+}
+/******************** responsive styling end ************/
+table {
+	margin: auto;
+	width: 80% !important;
+}
+
 body {
 	width: 100%;
 	height: 100%;
@@ -96,7 +147,7 @@ header {
 }
 .login_form_container {
 	margin: 5%;
-	width: 100%;
+	width: 90%;
 }
 .content {
 	float: left;
@@ -634,3 +685,6 @@ a {
 	margin: auto;
 	padding: 20px;
 }
+
+/************* Vendor account end ********************/
+

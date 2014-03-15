@@ -8,24 +8,23 @@
 </div>
 
 
-<div class="form_container">
-	{% if inventory.count == 0 %}
-		<p class="error_message"> NO Items on stock </p>
-	{% else %}
-		<table>
-			<tr><th> Item code </th> <th> Item Name </th> <th> Barcode </th> <th> Quantity </th> <th> UOM </th></tr>
-			{% for item in inventory %}
-			 	<tr>
-			 		<td> {{item.item.code}} </td>
-			 		<td> {{item.item.name}} </td>
-			 		<td> {{item.item.barcode}} </td>
-			 		<td> {{item.quantity}} </td>
-			 		<td> {{item.item.uom}} </td>
-			 	</tr>
-			{% endfor %}
-		</table>
-	{% endif %}
-</div>
+{% if inventory.count == 0 %}
+	<p class="error_message"> NO Items on stock </p>
+{% else %}
+	<table class="table table-striped">
+		<tr><th> Item code </th> <th> Item Name </th> <th> Barcode </th> <th> Quantity </th> <th> UOM </th> <th> Vendor </th> </tr>
+		{% for item in inventory %}
+		 	<tr>
+		 		<td> {{item.item.code}} </td>
+		 		<td> {{item.item.name}} </td>
+		 		<td> {{item.item.barcode}} </td>
+		 		<td> {{item.quantity}} </td>
+		 		<td> {{item.item.uom}} </td>
+		 		<td> {{item.vendor}} </td>
+		 	</tr>
+		{% endfor %}
+	</table>
+{% endif %}
 
 
 {% endblock content %}

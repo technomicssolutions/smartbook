@@ -61,7 +61,6 @@ class SalesEntry(View):
             s_item, item_created = SalesItem.objects.get_or_create(item=item, sales=sales)
             inventory, created = Inventory.objects.get_or_create(item=item)
             if sales_created:
-
                 inventory.quantity = inventory.quantity - int(sales_item['qty_sold'])
             else:
                 inventory.quantity = inventory.quantity + s_item.quantity_sold - int(sales_item['qty_sold'])
