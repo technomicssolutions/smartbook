@@ -913,52 +913,7 @@ class PurchaseReturnReport(View):
         return response    
 
 
-            # ctx_purchase_return_report = []
-            # status_code = 200
-            # if request.GET['report_name'] == 'date':
-                                
-            #     start_date = request.GET['start_date']
-            #     end_date = request.GET['end_date']
-            #     start_date = datetime.strptime(start_date, '%d/%m/%Y')
-            #     end_date = datetime.strptime(end_date, '%d/%m/%Y')
-            #     # 
-            #     # if len(purchase_returns) > 0:
-            #     #     for purchase_return in purchase_returns:
-            #     #         ctx_purchase_return_report.append({
-            #     #             'date': purchase_return.date.strftime('%d/%m/%Y'),
-            #     #             'vendor_name': purchase_return.vendor.user.first_name,
-            #     #             'payment_mode': purchase_return.payment_mode,
-            #     #             'narration': purchase_return.narration,
-            #     #             'total_amount': purchase_return.total_amount,
-            #     #             'paid_amount': purchase_return.paid_amount,
-            #     #             'balance': purchase_return.balance,
-            #     #         })
-            # else:
-            #     vendor_name = request.GET['vendor_name']
-            #     vendor = Vendor.objects.get(user__first_name = vendor_name)
-            #     # purchase_returns = PurchaseReturn.objects.filter(vendor = vendor)
-            #     # if len(purchase_returns) > 0:
-            #     #     for purchasse_return in purchase_returns:
-            #     #         ctx_purchase_return_report.append({
-            #     #             'date': purchasse_return.date.strftime('%d/%m/%Y'),
-            #     #             'payment_mode': purchasse_return.payment_mode,
-            #     #             'narration': purchasse_return.narration,
-            #     #             'total_amount': purchasse_return.total_amount,
-            #     #             'paid_amount': purchasse_return.paid_amount,
-            #     #             'balance': purchasse_return.balance,
-            #     #         })
-            # try:    
-            #     res = {
-            #         'purchase_returns': ctx_purchase_return_report,                 
-            #     }    
-            #     response = simplejson.dumps(res)
-            # except Exception as ex:
-            #     # remember to change exception
-            #     response = simplejson.dumps({'result': 'error', 'error': str(ex)})
-            #     status_code = 500
-            # return HttpResponse(response, status = status_code, mimetype = 'application/json')
-        # else:
-        #     return render(request, 'reports/purchase_return.html',{})
+            
 
 class ExpenseReport(View):
 
@@ -1158,14 +1113,13 @@ class StockReports(View):
         p.drawString(80, y, 'Item Code')
         p.drawString(160, y, 'Item Name')
         p.drawString(240, y, 'Barcode')
-        p.drawString(320, y, 'Brand Name')
-        p.drawString(400, y, 'Vendor Name')
-        p.drawString(480, y, 'Stock')
-        p.drawString(560, y, 'UOM')
-        p.drawString(640, y, 'Selling Price')
-        p.drawString(720, y, 'Tax')
-        p.drawString(800, y, 'Discount')
-        p.drawString(880, y, 'Stock By value')
+        p.drawString(320, y, 'Brand Name')    
+        p.drawString(400, y, 'Stock')
+        p.drawString(480, y, 'UOM')
+        p.drawString(560, y, 'Selling Price')
+        p.drawString(640, y, 'Tax')
+        p.drawString(720, y, 'Discount')
+        p.drawString(800, y, 'Stock By value')
         
         y = y - 50 
         if len(stocks) > 0:
@@ -1173,14 +1127,13 @@ class StockReports(View):
                 p.drawString(80, y, stock.item.code)
                 p.drawString(160, y, stock.item.name)
                 p.drawString(240, y, stock.item.barcode)
-                p.drawString(320, y, stock.item.brand.brand)
-                p.drawString(400, y, stock.vendor.user.first_name)
-                p.drawString(480, y, str(stock.quantity))
-                p.drawString(560, y, stock.item.uom.uom)
-                p.drawString(640, y, str(stock.selling_price))
-                p.drawString(720, y, str(stock.item.tax))
-                p.drawString(800, y, str(stock.discount_permit_percentage))
-                p.drawString(880, y, str(stock.quantity * stock.selling_price))
+                p.drawString(320, y, stock.item.brand.brand)                
+                p.drawString(400, y, str(stock.quantity))
+                p.drawString(480, y, stock.item.uom.uom)
+                p.drawString(560, y, str(stock.selling_price))
+                p.drawString(640, y, str(stock.item.tax))
+                p.drawString(720, y, str(stock.discount_permit_percentage))
+                p.drawString(800, y, str(stock.quantity * stock.selling_price))
                 y = y - 30
 
         p.showPage()
