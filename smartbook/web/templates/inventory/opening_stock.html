@@ -1,6 +1,6 @@
 {% extends 'base.html' %}
 {% block title %}Opening Stock{% endblock title %}
-{% block body_id %}opening_stock{% endblock %}
+{% block body_id %}opening_stock_entry{% endblock %}
 
 {% block controller %}
 	ng-controller="OpeningStockController" ng-init="init('{{csrf_token}}')"   
@@ -15,57 +15,48 @@
 
 
 <div id="main-title">
-	<div class="alert alert-info" align="Center"><h4>Add Item</h4></div>
+	<div class="alert alert-info" align="Center"><h4>Add Opening stock item</h4></div>
 </div>
 
 
 <div class="form_container">
-	<form class="" name="opening_stock" method="post" action="">
+	<form class="" name="opening_stock" id="opening_stock_form" method="post" action="{% url 'opening_stock_entry' %}" >
 		{% csrf_token %}
 		<div ng-show="error_flag" class="message"><p>[[message]]</p></div>
 		<div class="control">
 			<label > Item</label>  
-			<input type="text"  name="code" value=""  ng-model="item_code">
-		</div>
-		<div class="control">
-			<label> Item Name</label>
-			<input type="text" name="name" value="" ng-model="item_name">
-		</div>
-		<div class="control">
-			<label> Description</label>
-			<input type="text"name="description" value="" ng-model="item_description"></textarea>
-		</div>
-		<div class="control">
-			<label> UOM</label>  
-			<select name="uom" ng-model="uom_value" ng-change="add_uom()">
-				<option value="select">Select</option>
-				<option ng-repeat="uom in uoms" value="[[uom.uom_name]]" ng-selected="uom.uom_name == uom_value">[[uom.uom_name]]</option>
-				<option value="other">Other</option>
+			<select name="item">
+				{% for item in items %}
+					<option value="{{item.code}}">{{item.code}} - {{item.name}} - {{item.barcode}}</option>
+				{% endfor %}
 			</select>
 		</div>
 		<div class="control">
-			<label> Brand</label>  
-			
-			<select name="brand" ng-model="brand_value" ng-change="add_brand()">
-				<option value="select">Select</option>
-				<option ng-repeat="brand in brands" value="[[brand.brand_name]]" ng-selected="brand.brand_name == brand_value">[[brand.brand_name]]</option>
-				<option value="other">Other</option>
-			</select>
+			<label> Quantity</label>
+			<input type="text" name="quantity" value="" ng-model="quantity">
 		</div>
 		<div class="control">
-			<label>Barcode</label>
-			<input type="text" name="barcode" value="" ng-model="bar_code"> 
+			<label> Unit Price</label>
+			<input type="text"name="unit_price" value="" ng-model="unit_price"></textarea>
 		</div>
-
 		<div class="control">
-			<label>Tax(%)</label>  
-			<input type="text" name="tax" value="" ng-model="tax">
+			<label> Selling Price</label>  
+			<input type="text" name="selling_price" ng-model="selling_price" />
 		</div>
-		
+		<div class="control">
+			<label> Discount Permitted (amt)</label>  
+			<input type="text" name="discount_permit_amount" ng-model="discount_permit_amount" />
+		</div>
+		<div class="control">
+			<label> Discount Permitted (%)</label>  
+			<input type="text" name="discount_permit_percent" ng-model="discount_permit_percent" />
+		</div>
 		<div  align="Center">
 			<div class="buttons">
+				<p class="error_message"> [[validation_error]] </p>
 				<a href="{% url 'home' %}"><input type="button" value="Cancel"></a>
-				<input type="submit" value="Submit" ng-click="save_item()">
+				
+				<input type="button" value="Submit" ng-click="validate()">
 				
 			</div>
 		</div>

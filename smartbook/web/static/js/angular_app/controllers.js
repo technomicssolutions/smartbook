@@ -1986,6 +1986,43 @@ function AddItemController($scope, $http, $element, $location, $timeout) {
 }
 
 function OpeningStockController($scope, $http, $element, $location, $timeout) {
+    $scope.init = function(csrf_token) {
+        $scope.scrf_token = csrf_token;
+    }
+    $scope.validate = function(){
+        console.log($scope.quantity, '$scope.quantity');
+        if($scope.quantity == '' || $scope.quantity == undefined ) {
+            $scope.validation_error = "Please enter quantity";
+            return false;
+        } else if($scope.unit_price == '' || $scope.unit_price == undefined ) {
+            $scope.validation_error = "Please enter unit price";
+            return false;
+        } else if($scope.selling_price == '' || $scope.selling_price == undefined) {
+            $scope.validation_error = "Please enter selling price";
+            return false;
+        } else if($scope.discount_permit_amount == '' || $scope.discount_permit_amount == undefined || $scope.discount_permit_percent == '' || $scope.discount_permit_percent == undefined) {
+            $scope.validation_error = "Please enter discount";
+            return false;
+        } else if( $scope.quantity != Number($scope.quantity)){
+            $scope.validation_error = "Please enter digits as quantity ";
+            return false;
+        } else if( $scope.unit_price != Number($scope.unit_price)){
+            $scope.validation_error = "Please enter digits as unit price ";
+            return false;
+        } else if( $scope.selling_price != Number($scope.selling_price)){
+            $scope.validation_error = "Please enter digits as selling price ";
+            return false;
+        }else if( $scope.discount_permit_amount != '' && $scope.discount_permit_amount != Number($scope.discount_permit_amount)){
+            $scope.validation_error = "Please enter digits as discount amount ";
+            return false;
+        }else if( $scope.discount_permit_percent != '' && $scope.discount_permit_percent != Number($scope.discount_permit_percent)){
+            $scope.validation_error = "Please enter digits as discount percent ";
+            return false;
+        } else {
+            document.getElementById("opening_stock_form").submit();
+            return true;
+        }
+    }
 }
 
 
