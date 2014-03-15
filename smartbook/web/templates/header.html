@@ -30,16 +30,13 @@
 					<ul> 
 						<li> <a href="{% url 'add_item' %}"> New Item </a> </li>
 						<li> <a href="{% url 'item_list' %}"> Stock </a> </li>
+						<li> <a href="{% url 'opening_stock' %}"> Opening Stock </a> </li>
 					</ul>
 				</li>
 				<li class="menu"> <a href=""> Purchase </a> </a> 
 					<ul> 
 						<li> <a href="{% url 'purchase' %}"> New Entry </a> </li>
-						<li> <a href="{% url 'edit_purchase' %}"> Edit Purchase </a> </li>
 						<li> <a href="{% url 'purchase_return' %}"> Purchase Return </a> </li>
-						{% comment %}
-							<li> <a href="{% url 'edit_purchase_return' %}"> Edit Purchase Return </a> </li>
-						{% endcomment %}
 						<li> <a href="{% url 'vendor_accounts' %}"> Vendor Accounts </a> </li>
 					</ul>
 				</li>
@@ -65,7 +62,7 @@
 						<li><a href="{% url 'purchase_reports' %}"> Purchase </a> </li>
 						<li><a href="{% url 'purchase_return_report' %}"> Purchase Return </a> </li>
 						<li><a href="{% url 'expense_report' %}"> Expense Report </a> </li>
-						<li><a href="{% url 'purchase_accounts_report' %}"> Vendor Accounts </a> </li>
+						<li><a href="{% url 'vendor_accounts_report' %}"> Vendor Accounts </a> </li>
 					</ul>
 				</li>
 			</ul>

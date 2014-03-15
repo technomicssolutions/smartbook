@@ -44,6 +44,10 @@
 	float: left;
 }
 /******************** responsive styling end ************/
+table {
+	margin: auto;
+	width: 80% !important;
+}
 
 body {
 	width: 100%;
