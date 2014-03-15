@@ -11,5 +11,6 @@ urlpatterns = patterns('',
 	url(r'^add/uom/$', AddUom.as_view(), name="add_uom"),
 	url(r'^openining_stock/$', OpeningStockView.as_view(), name="opening_stock"),
 	url(r'^openining_stock/entry/$', AddOpeningStock.as_view(), name="opening_stock_entry"),
+	url(r'^edit_stock/$', EditStockView.as_view(), name='edit_stock'),
 )
 
