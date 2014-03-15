@@ -1328,45 +1328,7 @@ function VendorAccountReportController($scope, $element, $http, $location) {
             $scope.report_vendor_wise_flag = true;
         }
     }
-    // $scope.view_report = function(report_type) {
-    //     $scope.report_type = report_type;
-    //     $scope.start_date = $$('#start_date')[0].get('value');
-    //     $scope.end_date = $$('#end_date')[0].get('value');
-    //     if ($scope.report_type == 'date') {
-    //         if ($scope.start_date == '' || $scope.start_date == undefined ){
-    //             $scope.error_flag = true;
-    //             $scope.messages = 'Please choose Start date';
-    //         } else if($scope.end_date == '' || $scope.end_date == undefined ){
-    //             $scope.error_flag = true;
-    //             $scope.messages = 'Please choose End date';
-    //         } else {
-    //            $http.get('/reports/purchase_accounts/?report_name=date&start_date='+$scope.start_date+'&end_date='+$scope.end_date).success(function(data){
-    //                 for (i=0; i < data.purchase_accounts.length; i++) {
-    //                     data.purchase_accounts[i].total_amount = data.purchase_accounts[i].total_amount.toFixed(2);
-    //                     data.purchase_accounts[i].paid_amount = data.purchase_accounts[i].paid_amount.toFixed(2);
-    //                     data.purchase_accounts[i].balance = data.purchase_accounts[i].balance.toFixed(2);  
-    //                 }
-    //                 $scope.purchase_accounts = data.purchase_accounts;
-    //             }); 
-    //         }
-    //    } else {
-    //         if ($scope.vendor_name == '' || $scope.vendor_name == undefined || $scope.vendor_name == 'select') {
-    //             $scope.error_flag = true;
-    //             $scope.messages = 'Please choose Vendor';
-    //         } else {
-    //             $http.get('/reports/purchase_accounts/?report_name=vendor&vendor_name='+$scope.vendor_name).success(function(data){
-                    
-    //                 for (i=0; i < data.purchase_accounts.length; i++) {
-    //                     data.purchase_accounts[i].total_amount = data.purchase_accounts[i].total_amount.toFixed(2);
-    //                     data.purchase_accounts[i].paid_amount = data.purchase_accounts[i].paid_amount.toFixed(2);
-    //                     data.purchase_accounts[i].balance = data.purchase_accounts[i].balance.toFixed(2); 
-    //                 }
-    //                 $scope.purchase_accounts_vendor = data.purchase_accounts;
-    //             });
-    //         }
-    //    }
-        
-    // } 
+    
 }
 
 function PurchaseReturnReportController($scope, $element, $http, $location) {

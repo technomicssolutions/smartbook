@@ -227,5 +227,8 @@ class AddOpeningStock(View):
             'items': items
         })
 
+class EditStockView(View):
+    pass
+
 
 

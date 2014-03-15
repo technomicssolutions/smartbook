@@ -1,0 +1,12 @@
+{% extends 'base.html' %}
+{% block title %}Edit Stock{% endblock title %}
+{% block body_id %}edit_stock{% endblock %}
+
+{% block controller %}
+	ng-controller="EditStockController" ng-init="init('{{csrf_token}}')"   
+{% endblock controller %}
+
+{% block content %}
+
+
+{% endblock content %}
