@@ -118,7 +118,7 @@ class PurchaseEntry(View):
         elif purchase.vendor is not vendor:
             old_vendor = purchase.vendor
             old_vendor_amount = purchase.vendor_amount
-            old_vendor_account = VendorAccount.objects.get_or_create(vendor=old_vendor)
+            old_vendor_account = VendorAccount.objects.get(vendor=old_vendor)
             old_vendor_account.total_amount = old_vendor_account.total_amount - old_vendor_amount
             old_vendor_account.balance = old_vendor_account.balance - old_vendor_amount
             old_vendor_account.save()
