@@ -2,7 +2,7 @@
 {% block title %}Purchase_Reports_Date{% endblock title %}
 {% block body_id %}purchase_reports_date{% endblock %}
 {% block controller %}
-	ng-controller="PurchaseReportController" ng-init="init('{{csrf_token}}')"   
+	ng-controller="PurchaseReportController" ng-init="init('{{csrf_token}}','{{report_type}}')"   
 {% endblock controller %}
 {% block content %}
 	<div>
@@ -20,10 +20,11 @@
 			<div class="reporttext">
 					<label for="e_date">Report type: </label>
 			</div>
+			
 			<div class="reportinput">
-				<select name="report_type" ng-change="set_report_type()" ng-model="report_name">
-					<option value="date" >Date Wise Report</option>
-					<option value="vendor" >Vendor Wise Report</option>
+				<select name="report_type" ng-change="set_report_type()" ng-model="report_type">
+					<option value="date" {% if report_type == 'date' %} selected="true"{% endif %}>Date Wise Report</option>
+					<option value="vendor" {% if report_type == 'vendor' %} selected="true"{% endif %}>Vendor Wise Report</option>
 				</select>
 			</div>
 			<div ng-show="report_date_wise">

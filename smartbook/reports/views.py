@@ -65,15 +65,15 @@ class SalesReports(View):
         report_type = request.GET.get('report_type', '')
 
         if not report_type:
-            return render(request, 'reports/sales_reports.html', {})
+            return render(request, 'reports/sales_reports.html', {
+                'report_type' : 'date',
+                })
 
         if report_type == 'date': 
 
             start = request.GET['start_date']
             end = request.GET['end_date']
-
-            if start is None:
-                return render(request, 'reports/sales_reports.html', {})
+           
             if not start:            
                 ctx = {
                     'msg' : 'Please Select Start Date',
@@ -504,7 +504,9 @@ class PurchaseReports(View):
         report_type = request.GET.get('report_type', '')
 
         if not report_type:
-            return render(request, 'reports/purchase_reports.html',{})
+            return render(request, 'reports/purchase_reports.html',{
+                'report_type' : 'date',
+                })
 
         if report_type == 'date':               
             p.drawCentredString(400, 900, 'Purchase Report Date wise')
@@ -516,12 +518,14 @@ class PurchaseReports(View):
                     'msg': 'Please Enter start date',
                     'start_date' : start_date,
                     'end_date' : end_date,
+                    'report_type' : 'date',
                 })
             if not end_date:
                 return render(request, 'reports/purchase_reports.html',{
                     'msg': 'Please Enter end date',
                     'start_date' : start_date,
                     'end_date' : end_date,
+                    'report_type' : 'date',
                 })
             start_date = datetime.strptime(start_date, '%d/%m/%Y')
             end_date = datetime.strptime(end_date, '%d/%m/%Y')
@@ -563,6 +567,7 @@ class PurchaseReports(View):
             if vendor_name == 'select':
                 return render(request, 'reports/purchase_reports.html',{
                     'msg': 'Please Select Vendor Name',
+                    'report_type' : 'vendor',
                     
                 })
 
@@ -793,7 +798,9 @@ class PurchaseReturnReport(View):
         report_type = request.GET.get('report_type', '')
 
         if not report_type:
-            return render(request, 'reports/purchase_return.html',{})
+            return render(request, 'reports/purchase_return.html',{
+                'report_type' : 'date',
+                })
 
         if report_type == 'date':               
            
@@ -992,7 +999,9 @@ class VendorAccountsReport(View):
         report_type = request.GET.get('report_type', '')
 
         if not report_type:
-            return render(request, 'reports/purchase_accounts_report.html', {})
+            return render(request, 'reports/vendor_accounts_report.html', {
+                'report_type' : 'date',
+                })
 
         if report_type == 'date':             
                                 
@@ -1000,7 +1009,7 @@ class VendorAccountsReport(View):
             end_date = request.GET['end_date']
 
             if start_date is None:
-                return render(request, 'reports/purchase_accounts_report.html', {})
+                return render(request, 'reports/vendor_accounts_report.html', {})
             if not start_date:            
                 ctx = {
                     'msg' : 'Please Select Start Date',
@@ -1008,7 +1017,7 @@ class VendorAccountsReport(View):
                     'end_date' : end_date,
                     'report_type' : 'date',
                 }
-                return render(request, 'reports/purchase_accounts_report.html', ctx)
+                return render(request, 'reports/vendor_accounts_report.html', ctx)
             elif not end_date:
                 ctx = {
                     'msg' : 'Please Select End Date',
@@ -1016,7 +1025,7 @@ class VendorAccountsReport(View):
                     'end_date' : end_date,
                     'report_type' : 'date',
                 }
-                return render(request, 'reports/purchase_accounts_report.html', ctx) 
+                return render(request, 'reports/vendor_accounts_report.html', ctx) 
             else:
                 start_date = datetime.strptime(start_date, '%d/%m/%Y')
                 end_date = datetime.strptime(end_date, '%d/%m/%Y')
@@ -1064,7 +1073,7 @@ class VendorAccountsReport(View):
                     'msg' : 'Please Select Vendor',
                     'report_type' : 'vendor',
                 }
-                return render(request, 'reports/purchase_accounts_report.html', ctx)
+                return render(request, 'reports/vendor_accounts_report.html', ctx)
             else:               
 
                 p.drawString(350, 900, 'Vendor Wise Vendor Accounts')

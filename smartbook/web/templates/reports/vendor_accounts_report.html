@@ -3,7 +3,7 @@
 {% block body_id %}purchase_accounts_reports{% endblock %}
 
 {% block controller %}
-	ng-controller="VendorAccountReportController" ng-init="init('{{csrf_token}}')"   
+	ng-controller="VendorAccountReportController" ng-init="init('{{csrf_token}}','{{report_type}}')"   
 {% endblock controller %}
 
 {% block content %}
@@ -48,7 +48,7 @@
 					<label for="e_date">Report type: </label>
 			</div>
 			<div class="reportinput">
-				<select name="report_type" ng-change="get_report_type()" ng-model="report_name">
+				<select name="report_type" ng-change="get_report_type()" ng-model="report_type">
 					<option value="date" >Date Wise Report</option>
 					<option value="vendor" >Vendor Wise Report</option>
 				</select>
