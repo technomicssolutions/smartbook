@@ -113,7 +113,22 @@ class PurchaseEntry(View):
         purchase.brand = brand
         vendor = Vendor.objects.get(user__first_name=purchase_dict['vendor'])       
         transport = TransportationCompany.objects.get(company_name=purchase_dict['transport'])
-        purchase.vendor = vendor
+        if purchase_created:
+            purchase.vendor = vendor
+        elif purchase.vendor is not vendor:
+            old_vendor = purchase.vendor
+            old_vendor_amount = purchase.vendor_amount
+            old_vendor_account = VendorAccount.objects.get_or_create(vendor=old_vendor)
+            old_vendor_account.total_amount = old_vendor_account.total_amount - old_vendor_amount
+            old_vendor_account.balance = old_vendor_account.balance - old_vendor_amount
+            old_vendor_account.save()
+            old_purchase_items = PurchaseItems.objects.filter(purchase=purchase)
+            for item in old_purchase_items:
+                in_item = item.item
+                inventory = Inventory.objects.get(item=in_item, vendor=old_vendor)
+                inventory.quantity = inventory.quantity - item.quantity_purchased
+                inventory.save()
+
         purchase.transportation_company = transport
         if purchase_dict['discount']:
             purchase.discount = purchase_dict['discount']
