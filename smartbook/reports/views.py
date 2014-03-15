@@ -219,7 +219,7 @@ class SalesReports(View):
                                     i = i + 1
                                 avg_cp = cost_price/i
                             # profit = (selling_price - avg_cp)*total_qty
-                            profit = round(((selling_price - discount - avg_cp)*qty),0)
+                            profit = round(((selling_price - discount - avg_cp)*total_qty),0)
 
                             total_profit = total_profit + profit
                             total_discount = total_discount + discount
@@ -475,6 +475,7 @@ class PurchaseReports(View):
         
         ctx_purchase_report = []
         status_code = 200
+        total_amount = 0
         response = HttpResponse(content_type='application/pdf')
         p = canvas.Canvas(response, pagesize=(1000, 1000))
         p.setFontSize(15)
@@ -484,24 +485,34 @@ class PurchaseReports(View):
             return render(request, 'reports/purchase_reports.html',{})
 
         if report_type == 'date':               
-            p.drawString(425, 900, 'Purchase Report Date wise')
+            p.drawCentredString(400, 900, 'Purchase Report Date wise')
             start_date = request.GET['start_date']
             end_date = request.GET['end_date']
+
+            if not start_date:
+                return render(request, 'reports/purchase_reports.html',{
+                    'validation_error': 'Please Enter start date and end date'
+                })
+            if not end_date:
+                return render(request, 'reports/purchase_reports.html',{
+                    'validation_error': 'Please Enter satrt date and end date'
+                })
             start_date = datetime.strptime(start_date, '%d/%m/%Y')
             end_date = datetime.strptime(end_date, '%d/%m/%Y')
             purchases = Purchase.objects.filter(purchase_invoice_date__gte=start_date, purchase_invoice_date__lte=end_date).order_by('purchase_invoice_date')
             p.setFontSize(13)
-            p.drawString(50, 875, "Date")
-            p.drawString(150, 875, "Invoice No")
-            p.drawString(250, 875, "Vendor Invoice")
-            p.drawString(350, 875, "Item code")
-            p.drawString(450, 875, "Item name")
-            p.drawString(550, 875, "Unit Cost price")
-            p.drawString(650, 875, "Quantity")
-            p.drawString(750, 875, "Amount")
+            p.drawString(50, 850, "Date")
+            p.drawString(150, 850, "Invoice No")
+            p.drawString(250, 850, "Vendor Invoice")
+            p.drawString(350, 850, "Item code")
+            p.drawString(450, 850, "Item name")
+            p.drawString(550, 850, "Unit Cost price")
+            p.drawString(650, 850, "Quantity")
+            p.drawString(750, 850, "Amount")
 
-            y = 850
+            y = 820
             p.setFontSize(12)
+            total_amount = 0
             for purchase in purchases:
                 purchase_items = purchase.purchaseitem_set.all()
                 for purchase_item in purchase_items:                    
@@ -514,7 +525,10 @@ class PurchaseReports(View):
                     p.drawString(550, y, str(purchase_item.cost_price))
                     p.drawString(650, y, str(purchase_item.quantity_purchased))
                     p.drawString(750, y, str(purchase_item.net_amount))
-
+                    total_amount = total_amount + purchase_item.net_amount
+            y = y - 30
+            p.drawString(650, y, 'Total:')
+            p.drawString(750, y, str(total_amount))
             p.showPage()
             p.save()
         elif report_type == 'vendor':
@@ -522,7 +536,7 @@ class PurchaseReports(View):
             vendor = Vendor.objects.get(user__first_name = vendor_name)
             purchases = Purchase.objects.filter(vendor = vendor)
             
-            p.drawString(225, 900, 'Purchase Report Vendor wise')
+            p.drawCentredString(400, 900, 'Purchase Report Vendor wise')
             p.setFontSize(13)
             p.drawString(50, 875, "Date")
             p.drawString(150, 875, "Invoice No")
@@ -530,17 +544,22 @@ class PurchaseReports(View):
             p.drawString(370, 875, "Amount")
             p.setFontSize(12)  
             y = 850
+            total_amount = 0
             for purchase in purchases:
                             
                 y = y - 30
                 p.drawString(50, y, purchase.purchase_invoice_date.strftime('%d/%m/%y'))
                 p.drawString(150, y, str(purchase.purchase_invoice_number))
                 p.drawString(250, y, str(purchase.vendor_invoice_number))
-                p.drawString(370, y, str(purchase.vendor_amount))
+                p.drawString(350, y, str(purchase.vendor_amount))
+                total_amount = total_amount + purchase.vendor_amount
+            y = y - 30
+            p.drawString(250, y, 'Total:')
+            p.drawString(350, y, str(total_amount))    
             p.showPage()
             p.save()
                   
-        return response       
+        return response      
 
 
 class PurchaseAccountsDate(View):
@@ -742,53 +761,141 @@ class DailyReport(View):
 class PurchaseReturn(View):
 
     def get(self, request, *args, **kwargs):
-        if request.is_ajax():
-            ctx_purchase_return_report = []
-            status_code = 200
-            if request.GET['report_name'] == 'date':
-                                
-                start_date = request.GET['start_date']
-                end_date = request.GET['end_date']
-                start_date = datetime.strptime(start_date, '%d/%m/%Y')
-                end_date = datetime.strptime(end_date, '%d/%m/%Y')
-                # purchase_returns = PurchaseReturn.objects.filter(date__gte=start_date, date__lte=end_date).order_by('date')
-                # if len(purchase_returns) > 0:
-                #     for purchase_return in purchase_returns:
-                #         ctx_purchase_return_report.append({
-                #             'date': purchase_return.date.strftime('%d/%m/%Y'),
-                #             'vendor_name': purchase_return.vendor.user.first_name,
-                #             'payment_mode': purchase_return.payment_mode,
-                #             'narration': purchase_return.narration,
-                #             'total_amount': purchase_return.total_amount,
-                #             'paid_amount': purchase_return.paid_amount,
-                #             'balance': purchase_return.balance,
-                #         })
-            else:
-                vendor_name = request.GET['vendor_name']
-                vendor = Vendor.objects.get(user__first_name = vendor_name)
-                # purchase_returns = PurchaseReturn.objects.filter(vendor = vendor)
-                # if len(purchase_returns) > 0:
-                #     for purchasse_return in purchase_returns:
-                #         ctx_purchase_return_report.append({
-                #             'date': purchasse_return.date.strftime('%d/%m/%Y'),
-                #             'payment_mode': purchasse_return.payment_mode,
-                #             'narration': purchasse_return.narration,
-                #             'total_amount': purchasse_return.total_amount,
-                #             'paid_amount': purchasse_return.paid_amount,
-                #             'balance': purchasse_return.balance,
-                #         })
-            try:    
-                res = {
-                    'purchase_returns': ctx_purchase_return_report,                 
-                }    
-                response = simplejson.dumps(res)
-            except Exception as ex:
-                # remember to change exception
-                response = simplejson.dumps({'result': 'error', 'error': str(ex)})
-                status_code = 500
-            return HttpResponse(response, status = status_code, mimetype = 'application/json')
-        else:
+
+
+        ctx_purchase_retrun_report = []
+        status_code = 200
+        response = HttpResponse(content_type='application/pdf')
+        p = canvas.Canvas(response, pagesize=(1000, 1000))
+        p.setFontSize(15)
+        report_type = request.GET.get('report_type', '')
+
+        if not report_type:
             return render(request, 'reports/purchase_return.html',{})
+
+        if report_type == 'date':               
+            p.drawCentredString(400, 900, 'Purchase Report Date wise')
+            start_date = request.GET['start_date']
+            end_date = request.GET['end_date']
+            if not start_date:
+                return render(request, 'reports/purchase_return.html',{
+                    'validation_error': 'Please Enter start date and end date'
+                })
+            if not end_date:
+                return render(request, 'reports/purchase_return.html',{
+                    'validation_error': 'Please Enter satrt date and end date'
+                })
+            start_date = datetime.strptime(start_date, '%d/%m/%Y')
+            end_date = datetime.strptime(end_date, '%d/%m/%Y')
+            purchases = PurchaseReturn.objects.filter(date__gte=start_date, date__lte=end_date).order_by('date')
+            p.setFontSize(13)
+            p.drawString(50, 850, "Date")
+            p.drawString(150, 850, "Invoice No")
+            p.drawString(250, 850, "Vendor Invoice")
+            p.drawString(350, 850, "Item code")
+            p.drawString(450, 850, "Item name")
+            p.drawString(550, 850, "Unit Cost price")
+            p.drawString(650, 850, "Quantity")
+            p.drawString(750, 850, "Amount")
+
+            y = 820
+            p.setFontSize(12)
+            total_amount = 0
+            for purchase in purchases:
+                purchase_items = purchase.purchaseitem_set.all()
+                for purchase_item in purchase_items:                    
+                    y = y - 30
+                    p.drawString(50, y, purchase_item.purchase.purchase_invoice_date.strftime('%d/%m/%y'))
+                    p.drawString(150, y, str(purchase_item.purchase.purchase_invoice_number))
+                    p.drawString(250, y, str(purchase_item.purchase.vendor_invoice_number))
+                    p.drawString(350, y, purchase_item.item.code)
+                    p.drawString(450, y, purchase_item.item.name)
+                    p.drawString(550, y, str(purchase_item.cost_price))
+                    p.drawString(650, y, str(purchase_item.quantity_purchased))
+                    p.drawString(750, y, str(purchase_item.net_amount))
+                    total_amount = total_amount + purchase_item.net_amount
+            y = y - 30
+            p.drawString(650, y, 'Total:')
+            p.drawString(750, y, str(purchase_item.net_amount))
+            p.showPage()
+            p.save()
+        elif report_type == 'vendor':
+            vendor_name = request.GET['vendor']
+            vendor = Vendor.objects.get(user__first_name = vendor_name)
+            purchases = Purchase.objects.filter(vendor = vendor)
+            
+            p.drawCentredString(400, 900, 'Purchase Report Vendor wise')
+            p.setFontSize(13)
+            p.drawString(50, 875, "Date")
+            p.drawString(150, 875, "Invoice No")
+            p.drawString(250, 875, "Vendor Invoice")
+            p.drawString(370, 875, "Amount")
+            p.setFontSize(12)  
+            y = 850
+            total_amount = 0
+            for purchase in purchases:
+                            
+                y = y - 30
+                p.drawString(50, y, purchase.purchase_invoice_date.strftime('%d/%m/%y'))
+                p.drawString(150, y, str(purchase.purchase_invoice_number))
+                p.drawString(250, y, str(purchase.vendor_invoice_number))
+                p.drawString(350, y, str(purchase.vendor_amount))
+                total_amount = total_amount + purchase.vendor_amount
+            y = y - 30
+            p.drawString(250, y, 'Total:')
+            p.drawString(350, y, str(total_amount))    
+            p.showPage()
+            p.save()
+                  
+        return response    
+
+
+            # ctx_purchase_return_report = []
+            # status_code = 200
+            # if request.GET['report_name'] == 'date':
+                                
+            #     start_date = request.GET['start_date']
+            #     end_date = request.GET['end_date']
+            #     start_date = datetime.strptime(start_date, '%d/%m/%Y')
+            #     end_date = datetime.strptime(end_date, '%d/%m/%Y')
+            #     # 
+            #     # if len(purchase_returns) > 0:
+            #     #     for purchase_return in purchase_returns:
+            #     #         ctx_purchase_return_report.append({
+            #     #             'date': purchase_return.date.strftime('%d/%m/%Y'),
+            #     #             'vendor_name': purchase_return.vendor.user.first_name,
+            #     #             'payment_mode': purchase_return.payment_mode,
+            #     #             'narration': purchase_return.narration,
+            #     #             'total_amount': purchase_return.total_amount,
+            #     #             'paid_amount': purchase_return.paid_amount,
+            #     #             'balance': purchase_return.balance,
+            #     #         })
+            # else:
+            #     vendor_name = request.GET['vendor_name']
+            #     vendor = Vendor.objects.get(user__first_name = vendor_name)
+            #     # purchase_returns = PurchaseReturn.objects.filter(vendor = vendor)
+            #     # if len(purchase_returns) > 0:
+            #     #     for purchasse_return in purchase_returns:
+            #     #         ctx_purchase_return_report.append({
+            #     #             'date': purchasse_return.date.strftime('%d/%m/%Y'),
+            #     #             'payment_mode': purchasse_return.payment_mode,
+            #     #             'narration': purchasse_return.narration,
+            #     #             'total_amount': purchasse_return.total_amount,
+            #     #             'paid_amount': purchasse_return.paid_amount,
+            #     #             'balance': purchasse_return.balance,
+            #     #         })
+            # try:    
+            #     res = {
+            #         'purchase_returns': ctx_purchase_return_report,                 
+            #     }    
+            #     response = simplejson.dumps(res)
+            # except Exception as ex:
+            #     # remember to change exception
+            #     response = simplejson.dumps({'result': 'error', 'error': str(ex)})
+            #     status_code = 500
+            # return HttpResponse(response, status = status_code, mimetype = 'application/json')
+        # else:
+        #     return render(request, 'reports/purchase_return.html',{})
 
 class ExpenseReport(View):
 
@@ -820,67 +927,65 @@ class ExpenseReport(View):
 
 class PurchaseAccountsReport(View):
     def get(self, request, *args, **kwargs):
-        if request.is_ajax():
-            ctx_purchase_accounts_report = []
-            status_code = 200
-            if request.GET['report_name'] == 'date':
-                                
-                start_date = request.GET['start_date']
-                end_date = request.GET['end_date']
-                start_date = datetime.strptime(start_date, '%d/%m/%Y')
-                end_date = datetime.strptime(end_date, '%d/%m/%Y')
-                purchase_accounts = VendorAccount.objects.filter(date__gte=start_date, date__lte=end_date).order_by('date')
-                if len(purchase_accounts) > 0:
-                    for purchase_account in purchase_accounts:
-                        ctx_purchase_accounts_report.append({
-                            'date': purchase_account.date.strftime('%d/%m/%Y'),
-                            'vendor_name': purchase_account.vendor.user.first_name,
-                            'payment_mode': purchase_account.payment_mode,
-                            'narration': purchase_account.narration,
-                            'total_amount': purchase_account.total_amount,
-                            'paid_amount': purchase_account.paid_amount,
-                            'balance': purchase_account.balance,
-                        })
-                # fileobj = createPDF(purchases)
-                # file_extension = 'pdf'
-                # path = settings.PROJECT_ROOT
-                # print path
-                # print 'root === ',settings.PROJECT_ROOT
-                # pdf_file_name = 'purchase_report_date_wise'+"."+file_extension
-                # pdf_name = path+'/media/uploads/reports/%s'%(pdf_file_name)
-                # file_name = '%s'%(pdf_name)
-                # print file_name
-                # with open(file_name, 'w') as destination:
-                #     for chunk in fileobj.chunks():
-                #         destination.write(chunk)
-                # file_path = "uploads/reports/"+pdf_file_name
-            else:
-                vendor_name = request.GET['vendor_name']
-                vendor = Vendor.objects.get(user__first_name = vendor_name)
-                purchase_accounts = VendorAccount.objects.filter(vendor = vendor)
-                if len(purchase_accounts) > 0:
-                    for purchase_account in purchase_accounts:
-                        ctx_purchase_accounts_report.append({
-                            'date': purchase_account.date.strftime('%d/%m/%Y'),
-                            'payment_mode': purchase_account.payment_mode,
-                            'narration': purchase_account.narration,
-                            'total_amount': purchase_account.total_amount,
-                            'paid_amount': purchase_account.paid_amount,
-                            'balance': purchase_account.balance,
-                        })
-            try:    
-                res = {
-                    'purchase_accounts': ctx_purchase_accounts_report,                 
-                }    
-                response = simplejson.dumps(res)
-            except Exception as ex:
-                # remember to change exception
-                response = simplejson.dumps({'result': 'error', 'error': str(ex)})
-                status_code = 500
-            return HttpResponse(response, status = status_code, mimetype = 'application/json')
-
+  
+        ctx_purchase_accounts_report = []
+        status_code = 200
+        if request.GET['report_name'] == 'date':
+                            
+            start_date = request.GET['start_date']
+            end_date = request.GET['end_date']
+            start_date = datetime.strptime(start_date, '%d/%m/%Y')
+            end_date = datetime.strptime(end_date, '%d/%m/%Y')
+            purchase_accounts = VendorAccount.objects.filter(date__gte=start_date, date__lte=end_date).order_by('date')
+            if len(purchase_accounts) > 0:
+                for purchase_account in purchase_accounts:
+                    ctx_purchase_accounts_report.append({
+                        'date': purchase_account.date.strftime('%d/%m/%Y'),
+                        'vendor_name': purchase_account.vendor.user.first_name,
+                        'payment_mode': purchase_account.payment_mode,
+                        'narration': purchase_account.narration,
+                        'total_amount': purchase_account.total_amount,
+                        'paid_amount': purchase_account.paid_amount,
+                        'balance': purchase_account.balance,
+                    })
+            # fileobj = createPDF(purchases)
+            # file_extension = 'pdf'
+            # path = settings.PROJECT_ROOT
+            # print path
+            # print 'root === ',settings.PROJECT_ROOT
+            # pdf_file_name = 'purchase_report_date_wise'+"."+file_extension
+            # pdf_name = path+'/media/uploads/reports/%s'%(pdf_file_name)
+            # file_name = '%s'%(pdf_name)
+            # print file_name
+            # with open(file_name, 'w') as destination:
+            #     for chunk in fileobj.chunks():
+            #         destination.write(chunk)
+            # file_path = "uploads/reports/"+pdf_file_name
         else:
-            return render(request, 'reports/purchase_accounts_report.html',{})
+            vendor_name = request.GET['vendor_name']
+            vendor = Vendor.objects.get(user__first_name = vendor_name)
+            purchase_accounts = VendorAccount.objects.filter(vendor = vendor)
+            if len(purchase_accounts) > 0:
+                for purchase_account in purchase_accounts:
+                    ctx_purchase_accounts_report.append({
+                        'date': purchase_account.date.strftime('%d/%m/%Y'),
+                        'payment_mode': purchase_account.payment_mode,
+                        'narration': purchase_account.narration,
+                        'total_amount': purchase_account.total_amount,
+                        'paid_amount': purchase_account.paid_amount,
+                        'balance': purchase_account.balance,
+                    })
+        try:    
+            res = {
+                'purchase_accounts': ctx_purchase_accounts_report,                 
+            }    
+            response = simplejson.dumps(res)
+        except Exception as ex:
+            # remember to change exception
+            response = simplejson.dumps({'result': 'error', 'error': str(ex)})
+            status_code = 500
+        return HttpResponse(response, status = status_code, mimetype = 'application/json')
+
 
 class PurchaseAccountsVendor(View):
     def get(self, request, *args, **kwargs):
@@ -888,45 +993,49 @@ class PurchaseAccountsVendor(View):
 
 class StockReports(View):
     def get(self, request, *args, **kwargs):
-        if request.is_ajax():
-            status_code = 200
-            stocks = Inventory.objects.all()
-            
-            ctx_stock = []
-            if len(stocks) > 0:
-                for stock in stocks:
-                    print stock.item.purchaseitem_set.all()
-                    ctx_stock.append({
-                       'item_code': stock.item.code,
-                       'item_name': stock.item.name,
-                       'bar_code': stock.item.barcode,
-                       'description': stock.item.description,
-                       'brand_name': stock.item.brand.brand,
-                       # 'vendor_name': stock.item.purchaseitem_set.all()[0].purchase.vendor.user.first_name,
-                       'stock': stock.quantity,
-                       'uom': stock.item.uom.uom,
-                       'cost_price': stock.item.purchaseitem_set.all()[0].cost_price,
-                       'selling_price': stock.selling_price,
-                       'tax': stock.item.tax,
-                       'discount': stock.discount_permit_percentage,
-                       'stock_by_value': float(stock.quantity * stock.selling_price),
-                       'profit': stock.selling_price - stock.item.purchaseitem_set.all()[0].cost_price,
-                    })
 
-            try:
-                res = {
-                    'stocks': ctx_stock,
-                }
-                response = simplejson.dumps(res)
-            except Exception as ex:
-                # remember to change exception
-                response = simplejson.dumps({'result': 'error', 'error': str(ex)})
-                status_code = 500
-            return HttpResponse(response, status = status_code, mimetype = 'application/json')
+        response = HttpResponse(content_type='application/pdf')
+        p = canvas.Canvas(response, pagesize=(1000, 1000))
 
-        else:
-            return render(request, 'reports/stock.html',{})
+        status_code = 200
+        
+        stocks = Inventory.objects.all()
+        
+        p.drawString(400, 900, 'Stock Report')
 
+        y = 850
+        p.drawString(80, y, 'Item Code')
+        p.drawString(160, y, 'Item Name')
+        p.drawString(240, y, 'Barcode')
+        p.drawString(320, y, 'Brand Name')
+        p.drawString(400, y, 'Vendor Name')
+        p.drawString(480, y, 'Stock')
+        p.drawString(560, y, 'UOM')
+        p.drawString(640, y, 'Selling Price')
+        p.drawString(720, y, 'Tax')
+        p.drawString(800, y, 'Discount')
+        p.drawString(880, y, 'Stock By value')
+        
+        y = y - 50 
+        if len(stocks) > 0:
+            for stock in stocks:
+                p.drawString(80, y, stock.item.code)
+                p.drawString(160, y, stock.item.name)
+                p.drawString(240, y, stock.item.barcode)
+                p.drawString(320, y, stock.item.brand.brand)
+                p.drawString(400, y, stock.vendor.user.first_name)
+                p.drawString(480, y, str(stock.quantity))
+                p.drawString(560, y, stock.item.uom.uom)
+                p.drawString(640, y, str(stock.selling_price))
+                p.drawString(720, y, str(stock.item.tax))
+                p.drawString(800, y, str(stock.discount_permit_percentage))
+                p.drawString(880, y, str(stock.quantity * stock.selling_price))
+                y = y - 30
+
+        p.showPage()
+        p.save()
+        return response
+        
 
 
 
