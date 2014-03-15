@@ -119,8 +119,11 @@ class SalesReports(View):
                             invoice_no = item.sales.sales_invoice_number
                             qty = item.quantity_sold
                             item_name = item.item.name
-                            inventorys = item.item.inventory_set.all()[0]                            
-                            selling_price = inventorys.selling_price
+                            inventorys = item.item.inventory_set.all()
+                            selling_price = 0                            
+                            if inventorys.count()>0:
+                            	inventory = inventorys[0]                            
+                            	selling_price = inventory.selling_price
 
                             purchases = item.item.purchaseitem_set.all()
                             if purchases.count()>0:                                
@@ -209,8 +212,11 @@ class SalesReports(View):
                             total_qty = item.quantity_sold
                             item_name = item.item.name
                             item_code = item.item.code
-                            inventorys = item.item.inventory_set.all()[0]
-                            selling_price = inventorys.selling_price
+                            inventorys = item.item.inventory_set.all()
+                            selling_price = 0                            
+                            if inventorys.count()>0:
+                            	inventory = inventorys[0]                            
+                            	selling_price = inventory.selling_price                            
 
                             purchases = item.item.purchaseitem_set.all()
                             if purchases.count()>0:
@@ -313,8 +319,12 @@ class SalesReports(View):
                             item_name = item.item.name
                             qty = item.quantity_sold
                             discount = item.discount_given
-                            inventorys = item.item.inventory_set.all()[0]
-                            selling_price = inventorys.selling_price
+                            inventorys = item.item.inventory_set.all()
+                            selling_price = 0                            
+                            if inventorys.count()>0:
+                            	inventory = inventorys[0]                            
+                            	selling_price = inventory.selling_price
+                            
                             total = selling_price * qty
 
                             purchases = item.item.purchaseitem_set.all()
@@ -424,8 +434,12 @@ class SalesReports(View):
                             item_name = item.item.name
                             qty = item.quantity_sold
                             discount = item.discount_given
-                            inventorys = item.item.inventory_set.all()[0]
-                            selling_price = inventorys.selling_price
+                            inventorys = item.item.inventory_set.all()
+                            selling_price = 0                            
+                            if inventorys.count()>0:
+                            	inventory = inventorys[0]                            
+                            	selling_price = inventory.selling_price
+                            
                             total = selling_price * qty
 
                             purchases = item.item.purchaseitem_set.all()
