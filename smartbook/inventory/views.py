@@ -97,7 +97,7 @@ class ItemList(View):
             else:
                 items = Item.objects.all()
                 ctx = {
-                    'items': item
+                    'items': items
                 }
                 return render(request, 'inventory/stock.html',ctx)
 
