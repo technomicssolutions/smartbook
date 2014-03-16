@@ -129,6 +129,10 @@ class UserList(View):
             'user_type': user_type
         })
 
+class RegisterSalesman(View):
+    def get(self, request, *args, **kwargs):
+        return render(request, 'register_user.html',{'user_type': kwargs['user_type'], 'salesman': 'salesman'})
+
 class RegisterUser(View):
     def get(self, request, *args, **kwargs):
         user_type = kwargs['user_type']
@@ -144,11 +148,15 @@ class RegisterUser(View):
 
     def post(self, request, *args, **kwargs):
         
-        userprofile = UserProfile()
+        
         context={}
         user_type = kwargs['user_type']
-        
-        user, created = User.objects.get_or_create(username=request.POST['name']+user_type, first_name = request.POST['name'])
+        if user_type == 'staff':
+            user, created = User.objects.get_or_create(username=request.POST['username'], first_name = request.POST['name'])
+            user.set_password(request.POST['password'])
+            user.save()
+        else:
+            user, created = User.objects.get_or_create(username=request.POST['name']+user_type, first_name = request.POST['name'])
         if not created:
             message = ''
             template = 'register_user.html'
@@ -174,6 +182,7 @@ class RegisterUser(View):
         else:
             user.email = request.POST['email']
             user.save()
+        userprofile = UserProfile()
         userprofile.user_type=user_type
         userprofile.user = user
         userprofile.house_name =request.POST['house']
@@ -206,13 +215,12 @@ class RegisterUser(View):
             }
             return render(request, 'register_user.html',context)
         elif user_type == 'staff':
-            user.username = request.POST['username']
-            user.set_password(request.POST['password'])
-            user.save()
-            userprofile.user = user
             userprofile.save()
             try:
-                designation = Designation.objects.get(title=request.POST['designation'])
+                if request.POST['designation'] == 'salesman':
+                    designation, created = Designation.objects.get_or_create(title='salesman')
+                else:
+                    designation = Designation.objects.get(title=request.POST['designation'])
             except Designation.DoesNotExist:
                 context = {
                     'message' : 'Please choose designation',
