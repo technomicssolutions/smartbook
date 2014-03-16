@@ -24,7 +24,7 @@
 		 		<td> {{item.item.uom}} </td>
 
 		 		<td> 
-		 			<a href="{% url 'edit_stock' %}">
+		 			<a href="{% url 'edit_stock' %}?item_code={{item.item.code}}">
 						<img src="/static/images/edit.png">
 					</a>
 				 </td>
