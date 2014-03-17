@@ -702,6 +702,8 @@ function SalesController($scope, $element, $http, $timeout, share, $location) {
     $scope.item_selected = false;
     $scope.payment_mode = 'cash';
     $scope.payment_mode_selection = true;
+    $scope.payment_mode_selection_check = true;
+
     $scope.sales = {
         'sales_items': [],
         'sales_invoice_number': '',
@@ -709,6 +711,9 @@ function SalesController($scope, $element, $http, $timeout, share, $location) {
         'customer':'',
         'staff': '',
         'net_total': 0,
+        'payment_mode':'cash',
+        'card_number':'',
+        'bank_name':'',
         'net_discount': 0,
         'roundoff': 0,
         'grant_total': 0,
@@ -731,7 +736,8 @@ function SalesController($scope, $element, $http, $timeout, share, $location) {
     }
     $scope.payment_mode_change_sales = function(payment_mode) {
         if(payment_mode == 'cheque') {
-            $scope.payment_mode_selection = false;
+            $scope.payment_mode_selection = true;
+            $scope.payment_mode_selection_check = false;
             
             var date_picker = new Picker.Date($$('#sales_invoice_date'), {
             timePicker: false,
@@ -741,8 +747,17 @@ function SalesController($scope, $element, $http, $timeout, share, $location) {
             format:'%d/%m/%Y',
         });
             
-        } else {
+        }
+        else if(payment_mode == 'card'){
+            $scope.payment_mode_selection = false;
+
+
+
+        }
+         else {
+            
             $scope.payment_mode_selection = true;
+            $scope.payment_mode_selection_check = true;
         }
     }
     $scope.validate_sales = function() {
