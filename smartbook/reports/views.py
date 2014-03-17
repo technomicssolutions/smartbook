@@ -751,7 +751,7 @@ class DailyReport(View):
             }
             return render(request, 'reports/daily_report.html', ctx)
 
-        else:        000
+        else:
             start = request.GET['start_date']
             end = request.GET['end_date']                    
             start_date = datetime.strptime(start, '%d/%m/%Y')
@@ -1088,10 +1088,11 @@ class VendorAccountsReport(View):
 
                         y = y - 30
 
-                        p.drawString(50, y, purchase_account.date.strftime('%d/%m/%Y'))
+                        p.drawString(50, y, purchase_account.date.strftime('%d/%m/%Y') if purchase_account.date else '')
                         p.drawString(150, y, purchase_account.vendor.user.first_name)
                         p.drawString(250, y, purchase_account.payment_mode)
-                        p.drawString(350, y, purchase_account.narration)
+                        p.drawString(350, y, purchase_account.narration if purchase_account.narration else '')
+
                         p.drawString(450, y, str(purchase_account.total_amount))
                         p.drawString(550, y, str(purchase_account.paid_amount))
                         p.drawString(650, y, str(purchase_account.balance)) 
