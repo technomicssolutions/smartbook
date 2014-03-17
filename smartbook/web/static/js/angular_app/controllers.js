@@ -461,14 +461,18 @@ function PurchaseController($scope, $element, $http, $timeout, share, $location)
 
     $scope.getItems = function(parameter){
 
-        console.log('parameter', parameter);
+        $scope.validation_error = '';
         if(parameter == 'item_code')
             var param = $scope.item_code;
         else if(parameter == 'item_name')
             var param = $scope.item_name;
         else if (parameter == 'barcode')
             var param = $scope.barcode;
-        $http.get('/inventory/items/?'+parameter+'='+param).success(function(data)
+        if($scope.purchase.brand == 'select'){
+            $scope.validation_error = 'Please select brand';
+            return false;
+        }
+        $http.get('/inventory/items/?'+parameter+'='+param+'&brand='+$scope.purchase.brand).success(function(data)
         {
             $scope.selecting_item = true;
             $scope.item_selected = false;
@@ -1018,9 +1022,7 @@ function SalesController($scope, $element, $http, $timeout, share, $location) {
         $scope.sales.balance = $scope.sales.grant_total - $scope.sales.paid;
     }
     $scope.save_sales = function() {
-        console.log("slaesssssss");
         if($scope.validate_sales()){
-        console.log("valid") ;
             $scope.sales.sales_invoice_date = $$('#sales_invoice_date')[0].get('value');
             
             params = { 
