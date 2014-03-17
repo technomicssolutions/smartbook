@@ -61,13 +61,25 @@ class ItemList(View):
                     item_code = request.GET.get('item_code', '')
                     item_name = request.GET.get('item_name', '')
                     barcode = request.GET.get('barcode', '')
+                    brand =  request.GET.get('brand', '')
+                    if brand:
+                        brand = Brand.objects.get(brand=brand)
                     items = []
                     if item_code:
-                        items = Item.objects.filter(code__istartswith=item_code)
+                        if brand:
+                            items = Item.objects.filter(code__istartswith=item_code, brand=brand)
+                        else:
+                            items = Item.objects.filter(code__istartswith=item_code)
                     elif item_name:
-                        items = Item.objects.filter(name__istartswith=item_name)
+                        if brand:
+                            items = Item.objects.filter(name__istartswith=item_name, brand=brand)
+                        else:
+                            items = Item.objects.filter(name__istartswith=item_name)
                     elif barcode:
-                        items = Item.objects.filter(barcode__istartswith=barcode)
+                        if brand:
+                            items = Item.objects.filter(barcode__istartswith=barcode, brand=brand)
+                        else:
+                            items = Item.objects.filter(barcode__istartswith=barcode)
                     else:
                         items = Item.objects.all()
                     item_list = []

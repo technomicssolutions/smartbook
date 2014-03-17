@@ -128,6 +128,7 @@ class SalesReports(View):
                             	selling_price = inventory.selling_price
 
                             purchases = item.item.purchaseitem_set.all()
+                            avg_cp = 0
                             if purchases.count()>0:                                
                                 for purchase in purchases:                                
                                     cost_price = cost_price + purchase.cost_price
@@ -235,6 +236,7 @@ class SalesReports(View):
                         	selling_price = inventory.selling_price                            
 
                         purchases = salesitem.item.purchaseitem_set.all()
+                        avg_cp = 0
                         if purchases.count()>0:
                             for purchase in purchases:
                                 cost_price = cost_price + purchase.cost_price
@@ -349,6 +351,7 @@ class SalesReports(View):
                             total = selling_price * qty
 
                             purchases = item.item.purchaseitem_set.all()
+                            avg_cp = 0
                             if purchases.count()>0:                                
                                 for purchase in purchases:
                                     cost_price = cost_price + purchase.cost_price
@@ -464,6 +467,7 @@ class SalesReports(View):
                             total = selling_price * qty
 
                             purchases = item.item.purchaseitem_set.all()
+                            avg_cp = 0
                             if purchases.count()>0:                                
                                 for purchase in purchases:
                                     cost_price = cost_price + purchase.cost_price
@@ -1110,9 +1114,9 @@ class VendorAccountsReport(View):
 
                         y = y-30
 
-                        p.drawString(50, y, purchase_account.date.strftime('%d/%m/%Y'))
+                        p.drawString(50, y, purchase_account.date.strftime('%d/%m/%Y') if purchase_account.date else '')
                         p.drawString(150, y, purchase_account.payment_mode)
-                        p.drawString(250, y, purchase_account.narration)
+                        p.drawString(250, y, purchase_account.narration if purchase_account.narration else '')
                         p.drawString(350, y, str(purchase_account.total_amount))
                         p.drawString(450, y, str(purchase_account.paid_amount))
                         p.drawString(550, y, str(purchase_account.balance)) 
@@ -1138,7 +1142,7 @@ class StockReports(View):
         p.drawString(320, y, 'Brand Name')    
         p.drawString(400, y, 'Stock')
         p.drawString(480, y, 'UOM')
-        p.drawString(560, y, 'Selling Price')
+        p.drawString(560, y, 'Unit Price')
         p.drawString(640, y, 'Tax')
         p.drawString(720, y, 'Discount')
         p.drawString(800, y, 'Stock By value')
@@ -1152,10 +1156,10 @@ class StockReports(View):
                 p.drawString(320, y, stock.item.brand.brand)                
                 p.drawString(400, y, str(stock.quantity))
                 p.drawString(480, y, stock.item.uom.uom)
-                p.drawString(560, y, str(stock.selling_price))
+                p.drawString(560, y, str(stock.unit_price))
                 p.drawString(640, y, str(stock.item.tax))
                 p.drawString(720, y, str(stock.discount_permit_percentage))
-                p.drawString(800, y, str(stock.quantity * stock.selling_price))
+                p.drawString(800, y, str(stock.quantity * stock.unit_price))
                 y = y - 30
 
         p.showPage()
