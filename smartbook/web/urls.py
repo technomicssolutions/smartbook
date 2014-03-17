@@ -1,5 +1,7 @@
 from django.conf.urls import patterns, include, url
 
+from django.conf import settings
+
 from web.views import *
 
 urlpatterns = patterns('',
@@ -16,4 +18,8 @@ urlpatterns = patterns('',
 	url(r'^company_list/$', TransportationCompanyList.as_view(), name="designation_list"),
 	url(r'^add_company/$', AddTransportationCompany.as_view(), name="add_designation"),
 	url(r'^reset_password/(?P<user_id>\d+)/$', ResetPassword.as_view(), name="reset_password"),
+	url(r'^backup/$', BackupView.as_view(), name="backup"),
+	url(r'^clear_backup/$', ClearBackup.as_view(), name="clear_backup"),
+	url(r'^backups/(?P<path>.*)$', 'django.views.static.serve', {'document_root': settings.MEDIA_ROOT, 'show_indexes': True}),
+
 )

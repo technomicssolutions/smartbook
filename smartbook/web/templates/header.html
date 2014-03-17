@@ -19,6 +19,8 @@
 			<ul>
 				<li class="menu"> <img src="/static/images/user.png" width="24px" >
 					<ul>
+						<li> <a href="{% url 'backup' %}"> DB Backup </a> </li>
+						<li> <a href="{% url 'clear_backup' %}"> Clear Backup Folder </a> </li>
 						<li> <a href="{% url 'users' user_type='vendor' %}"> Vendors </a> </li>
 						<li> <a href="{% url 'users' user_type='staff' %}"> Staff </a> </li>
 						<li> <a href="{% url 'register_salesman' user_type='staff' %}"> Sales Man </a> </li>

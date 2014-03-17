@@ -2,9 +2,11 @@
 
 import sys
 import simplejson
+import os
+import shutil
 
 from django.db import IntegrityError
-
+from django.core.management import call_command
 from django.contrib.auth.views import password_reset
 from django.shortcuts import get_object_or_404, render
 from django.views.generic.base import View
@@ -483,8 +485,24 @@ class ResetPassword(View):
             return HttpResponseRedirect(reverse('users', kwargs={'user_type': user_type}))
 
 
+class BackupView(View):
+    
+    def get(self, request, *args, **kwargs):        
+        call_command('dbbackup')
+        return HttpResponseRedirect('/backups/')
 
-
+class ClearBackup(View):    
+            
+    def get(self, request, *args, **kwargs):       
+        path = os.path.dirname(__file__)
+        path = path.split('web')[0]
+        path = path+'media/'
+        for root, dirs, files in os.walk(path):
+            for f in files:
+                os.unlink(os.path.join(root, f))
+            for d in dirs:
+                shutil.rmtree(os.path.join(root, d))
+        return HttpResponseRedirect('/backups/')
 
 
 
