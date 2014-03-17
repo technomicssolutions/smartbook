@@ -31,7 +31,13 @@ class PurchaseDetail(View):
             purchase_items = PurchaseItem.objects.filter(purchase=purchase)
             items_list = []
             for item in purchase_items:
+                ret_quantity = 0
                 inventory = Inventory.objects.get(item=item.item)
+                purchase_returns = PurchaseReturn.objects.filter(purchase=purchase)
+                for ret in purchase_returns:
+                    ret_items = PurchaseReturnItem.objects.filter(purchase_return=ret, item=item.item)
+                    for itm in ret_items:
+                        ret_quantity = ret_quantity + itm.quantity
                 items_list.append({
                     'item_code': item.item.code,
                     'item_name': item.item.name,
@@ -51,6 +57,7 @@ class PurchaseDetail(View):
                     'unit_price': inventory.unit_price,
                     'expense': item.expense,
                     'expense_unit': item.expense_per_unit,
+                    'already_ret_quantity': ret_quantity
                 })
 
             purchase_dict = {
