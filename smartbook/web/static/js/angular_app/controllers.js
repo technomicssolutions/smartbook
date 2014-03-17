@@ -628,14 +628,8 @@ function PurchaseController($scope, $element, $http, $timeout, share, $location)
         } else if($scope.purchase.purchase_items.length == 0){
             $scope.validation_error = "Please Choose Item";
             return false;
-        } else if(!(Number($scope.purchase.vendor_invoice_number) == $scope.purchase.vendor_invoice_number)) {
-            $scope.validation_error = "Please enter a number as vendor invoice number";
-            return false;
         } else if(!(Number($scope.purchase.purchase_invoice_number) == $scope.purchase.purchase_invoice_number)) {
             $scope.validation_error = "Please enter a number as purchase invoice number";
-            return false;
-        } else if(!(Number($scope.purchase.vendor_do_number) == $scope.purchase.vendor_do_number)) {
-            $scope.validation_error = "Please enter a number as vendor do number";
             return false;
         } else if(!(Number($scope.purchase.discount) == $scope.purchase.discount)) {
             $scope.validation_error = "Please enter a number as discount";
@@ -1505,7 +1499,8 @@ function PurchaseReturnController($scope, $element, $http, $timeout, share, $loc
     $scope.purchase_return = {
         'purchase_return_date': '',
         'invoice_number': '',
-        'purchase_items': []
+        'purchase_items': [],
+        'net_return_total': '',
 
     }
     $scope.init = function(csrf_token, invoice_number) {
@@ -1545,8 +1540,15 @@ function PurchaseReturnController($scope, $element, $http, $timeout, share, $loc
         }    
     }
     $scope.calculate_return_amount = function(item){
-        item.returned_amount = parseFloat(item.returned_quantity) * parseFloat(item.cost_price);
-        $scope.calculate_net_return_amount();
+        $scope.validation_error = '';
+        if(parseInt(item.current_stock) >= parseInt(item.returned_quantity)) {
+           item.returned_amount = parseInt(item.returned_quantity) * parseFloat(item.cost_price);
+            $scope.calculate_net_return_amount(); 
+        } else {
+            $scope.validation_error = "Quantity not in stock";
+            return false;
+        }
+        
     }
     $scope.calculate_net_return_amount = function() {
         var amount = 0;
@@ -1557,12 +1559,21 @@ function PurchaseReturnController($scope, $element, $http, $timeout, share, $loc
     }
      $scope.save_purchase_return = function() {
         $scope.purchase_return.purchase_invoice_number = $scope.purchase.purchase_invoice_number;
-        for(var i=0; i< $scope.purchase_return.purchase_items.length; i++){
-            $scope.purchase_return.purchase_items[i].selected = "selected";
-        }
+        
         if($$('#purchase_return_date')[0].get('value') == '') {
             $scope.validation_error = "Please select date";
             return false;
+        }
+        if($scope.purchase_return.purchase_items.length == 0) {
+            $scope.validation_error = "Please select items";
+            return false;
+        }
+        if($scope.purchase_return.net_return_total == '') {
+            $scope.validation_error = "Please enter return quantity";
+            return false;
+        }
+        for(var i=0; i< $scope.purchase_return.purchase_items.length; i++){
+            $scope.purchase_return.purchase_items[i].selected = "selected";
         }
         $scope.purchase_return.purchase_return_date = $$('#purchase_return_date')[0].get('value');
         params = {
@@ -1577,7 +1588,7 @@ function PurchaseReturnController($scope, $element, $http, $timeout, share, $loc
                 'Content-Type' : 'application/x-www-form-urlencoded'
             }
         }).success(function(data, status) {
-            document.location.href = '/purchase/entry/';
+            document.location.href = '/purchase/return/';
            
         }).error(function(data, success){
             
