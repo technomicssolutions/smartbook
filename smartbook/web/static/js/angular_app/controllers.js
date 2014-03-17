@@ -178,7 +178,7 @@ function AddEditUserController($scope, $element, $http, $timeout, $location) {
         }
     }
     $scope.validate = function() {
-
+        
     }
     $scope.add_new_designation = function() {
         params = { 
