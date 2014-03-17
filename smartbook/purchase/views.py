@@ -111,7 +111,7 @@ class PurchaseEntry(View):
         purchase.purchase_invoice_date = datetime.strptime(purchase_dict['purchase_invoice_date'], '%d/%m/%Y')
         brand = Brand.objects.get(brand=purchase_dict['brand'])
         purchase.brand = brand
-        vendor = Vendor.objects.get(user__first_name=purchase_dict['vendor'])       
+        vendor = Vendor.objects.get(user__first_name=purchase_dict['vendor_name'])       
         transport = TransportationCompany.objects.get(company_name=purchase_dict['transport'])
         purchase.vendor = vendor
         purchase.transportation_company = transport
