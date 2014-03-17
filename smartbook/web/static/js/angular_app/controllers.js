@@ -773,7 +773,17 @@ function SalesController($scope, $element, $http, $timeout, share, $location) {
         } else if($scope.sales.sales_items.length == 0){
             $scope.validation_error = "Choose Item";
             return false;
-        } 
+        }
+        else if( $scope.sales.payment_mode == 'card' && ($scope.sales.card_number == '' )) {
+            
+            
+            $scope.validation_error = 'Please Enter Card Number';
+            return false;
+        } else if( $scope.sales.payment_mode == 'card' && ($scope.sales.bank_name == '' )) {
+           
+            $scope.validation_error = 'Please Enter Bank Name';
+            return false; 
+        }
         else {
             return true;
         }        
