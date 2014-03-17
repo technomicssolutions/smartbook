@@ -1116,7 +1116,7 @@ class VendorAccountsReport(View):
 
                         p.drawString(50, y, purchase_account.date.strftime('%d/%m/%Y') if purchase_account.date else '')
                         p.drawString(150, y, purchase_account.payment_mode)
-                        p.drawString(250, y, purchase_account.narration)
+                        p.drawString(250, y, purchase_account.narration if purchase_account.narration else '')
                         p.drawString(350, y, str(purchase_account.total_amount))
                         p.drawString(450, y, str(purchase_account.paid_amount))
                         p.drawString(550, y, str(purchase_account.balance)) 
