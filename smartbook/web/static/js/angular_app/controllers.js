@@ -1018,7 +1018,9 @@ function SalesController($scope, $element, $http, $timeout, share, $location) {
         $scope.sales.balance = $scope.sales.grant_total - $scope.sales.paid;
     }
     $scope.save_sales = function() {
-        if($scope.validate_sales()) {
+        console.log("slaesssssss");
+        if($scope.validate_sales()){
+        console.log("valid") ;
             $scope.sales.sales_invoice_date = $$('#sales_invoice_date')[0].get('value');
             
             params = { 
@@ -1829,7 +1831,8 @@ function AddItemController($scope, $http, $element, $location, $timeout) {
             } else {
                 $scope.popup.hide_popup();
                 $scope.get_brands();
-                $scope.brand_value = $scope.brand_name;              
+                $scope.brand_value = $scope.brand_name;  
+                $scope.brand_name = '';            
             }
         }).error(function(data, success){
             
@@ -1884,7 +1887,8 @@ function AddItemController($scope, $http, $element, $location, $timeout) {
             } else {
                 $scope.popup.hide_popup();
                 $scope.get_uoms();
-                $scope.uom_value = $scope.uom_name;              
+                $scope.uom_value = $scope.uom_name;    
+                $scope.uom_name = '';          
             }
         }).error(function(data, success){
             
