@@ -21,6 +21,7 @@
 					<ul>
 						<li> <a href="{% url 'users' user_type='vendor' %}"> Vendors </a> </li>
 						<li> <a href="{% url 'users' user_type='staff' %}"> Staff </a> </li>
+						<li> <a href="{% url 'register_salesman' user_type='staff' %}"> Sales Man </a> </li>
 						<li> <a href="{% url 'users' user_type='customer'  %}"> Customers </a> </li>
 						<li> <a href="{% url 'logout' %}"> Logout </a> </li>
 						<li> <a href="{% url 'reset_password' user_id=user.id %}"> Reset password </a> </li>
@@ -29,7 +30,7 @@
 				<li class="menu"> <a href=""> Inventory </a> 
 					<ul> 
 						<li> <a href="{% url 'add_item' %}"> New Item </a> </li>
-						<li> <a href="{% url 'item_list' %}"> Stock </a> </li>
+						<li> <a href="{% url 'stock' %}"> Stock </a> </li>
 						<li> <a href="{% url 'opening_stock' %}"> Opening Stock </a> </li>
 					</ul>
 				</li>
@@ -62,7 +63,7 @@
 						<li><a href="{% url 'purchase_reports' %}"> Purchase </a> </li>
 						<li><a href="{% url 'purchase_return_report' %}"> Purchase Return </a> </li>
 						<li><a href="{% url 'expense_report' %}"> Expense Report </a> </li>
-						<li><a href="{% url 'purchase_accounts_report' %}"> Vendor Accounts </a> </li>
+						<li><a href="{% url 'vendor_accounts_report' %}"> Vendor Accounts </a> </li>
 					</ul>
 				</li>
 			</ul>
