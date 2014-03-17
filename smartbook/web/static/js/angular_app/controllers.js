@@ -968,6 +968,10 @@ function SalesController($scope, $element, $http, $timeout, share, $location) {
     
     
     $scope.calculate_net_amount_sale = function(item) {
+        if(parseInt(item.qty_sold) > parseInt(item.current_stock)) {
+            $scope.validation_error = "Qauntity not in stock";
+            return false;
+        }
         if(item.qty_sold != '' && item.unit_price != ''){
             item.net_amount = ((parseFloat(item.qty_sold)*parseFloat(item.unit_price))+(parseFloat(item.tax_amount)*parseFloat(item.qty_sold))-parseFloat(item.disc_given)).toFixed(2);
             $scope.calculate_net_discount_sale();
