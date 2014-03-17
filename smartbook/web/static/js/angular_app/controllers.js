@@ -177,6 +177,9 @@ function AddEditUserController($scope, $element, $http, $timeout, $location) {
             // $scope.new_desiganation_flag = false;
         }
     }
+    $scope.validate = function() {
+
+    }
     $scope.add_new_designation = function() {
         params = { 
             'new_designation':$scope.new_designation,
@@ -249,6 +252,9 @@ function PurchaseController($scope, $element, $http, $timeout, share, $location)
     $scope.purchase.vendor_name = 'select';
     $scope.purchase.brand = 'select';
     $scope.purchase.transport = 'select';
+    $scope.item_name = '';
+    $scope.item_code = '';
+    $scope.barcode = '';
     $scope.init = function(csrf_token, invoice_number)
     {
         $scope.csrf_token = csrf_token;
@@ -274,7 +280,6 @@ function PurchaseController($scope, $element, $http, $timeout, share, $location)
         $scope.get_brands();
         $scope.get_companies();
 
-        console.log("$scope.purchase.purchase_invoice_number ", $scope.purchase.purchase_invoice_number );
     }
 
     $scope.get_vendors = function() {
@@ -473,6 +478,7 @@ function PurchaseController($scope, $element, $http, $timeout, share, $location)
             return false;
         }
         if($scope.item_code == '' && $scope.item_name == '' && $scope.barcode == '') {
+            $scope.items = [];
             return false;
         }
         $http.get('/inventory/items/?'+parameter+'='+param+'&brand='+$scope.purchase.brand).success(function(data)
@@ -1550,7 +1556,7 @@ function PurchaseReturnController($scope, $element, $http, $timeout, share, $loc
         if(parseInt(item.qty_purchased) <= parseInt(item.already_ret_quantity)) {
             $scope.validation_error = "All quantity already returned";
             return false;
-        } else if(parseInt(item.qty_purchased) - parseInt(item.already_ret_quantity) < parseInt(item.qty_purchased)) {
+        } else if(parseInt(item.qty_purchased) - parseInt(item.already_ret_quantity) < parseInt(item.returned_quantity)) {
             $scope.validation_error = "This quantity cannot be returned";
             return false;
         }
