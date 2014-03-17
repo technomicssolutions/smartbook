@@ -472,6 +472,9 @@ function PurchaseController($scope, $element, $http, $timeout, share, $location)
             $scope.validation_error = 'Please select brand';
             return false;
         }
+        if($scope.item_code == '' && $scope.item_name == '' && $scope.barcode == '') {
+            return false;
+        }
         $http.get('/inventory/items/?'+parameter+'='+param+'&brand='+$scope.purchase.brand).success(function(data)
         {
             $scope.selecting_item = true;
@@ -719,7 +722,6 @@ function SalesController($scope, $element, $http, $timeout, share, $location) {
         $scope.get_staff();
         $scope.get_customers();
             
-        console.log("$scope.sales.sales_invoice_number ", $scope.sales.sales_invoice_number );
     }
     $scope.payment_mode_change_sales = function(payment_mode) {
         if(payment_mode == 'cheque') {
@@ -1545,11 +1547,23 @@ function PurchaseReturnController($scope, $element, $http, $timeout, share, $loc
     }
     $scope.calculate_return_amount = function(item){
         $scope.validation_error = '';
-        if(parseInt(item.current_stock) >= parseInt(item.returned_quantity)) {
+        if(parseInt(item.qty_purchased) <= parseInt(item.already_ret_quantity)) {
+            $scope.validation_error = "All quantity already returned";
+            return false;
+        } else if(parseInt(item.qty_purchased) - parseInt(item.already_ret_quantity) < parseInt(item.qty_purchased)) {
+            $scope.validation_error = "This quantity cannot be returned";
+            return false;
+        }
+        if(parseInt(item.current_stock) >= parseInt(item.returned_quantity) && parseInt(item.qty_purchased) >= parseInt(item.returned_quantity)) {
            item.returned_amount = parseInt(item.returned_quantity) * parseFloat(item.cost_price);
             $scope.calculate_net_return_amount(); 
         } else {
-            $scope.validation_error = "Quantity not in stock";
+            if(parseInt(item.current_stock) >= parseInt(item.returned_quantity)) {
+                $scope.validation_error = "Item Not in stock";
+            }
+            if(parseInt(item.qty_purchased) >= parseInt(item.returned_quantity)) {
+                $scope.validation_error = "Quantity exceeds purchased quantity";
+            }
             return false;
         }
         
