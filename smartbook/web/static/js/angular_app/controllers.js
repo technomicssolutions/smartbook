@@ -178,7 +178,7 @@ function AddEditUserController($scope, $element, $http, $timeout, $location) {
         }
     }
     $scope.validate = function() {
-        
+
     }
     $scope.add_new_designation = function() {
         params = { 
@@ -567,7 +567,7 @@ function PurchaseController($scope, $element, $http, $timeout, share, $location)
 
     $scope.calculate_net_amount = function(item) {
         if(item.qty_purchased != '' && item.unit_price != ''){
-            item.net_amount = ((parseFloat(item.qty_purchased)*parseFloat(item.unit_price)) + parseFloat(item.frieght_unit)+ parseFloat(item.handling_unit)+parseFloat(item.expense_unit)).toFixed(3);
+            item.net_amount = ((parseFloat(item.qty_purchased)*parseFloat(item.unit_price)) + parseFloat(item.frieght)+ parseFloat(item.handling)+parseFloat(item.expense)).toFixed(3);
         }
         $scope.calculate_vendor_amount();
         $scope.calculate_net_total();
