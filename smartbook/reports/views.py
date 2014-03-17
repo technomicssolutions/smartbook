@@ -128,6 +128,7 @@ class SalesReports(View):
                             	selling_price = inventory.selling_price
 
                             purchases = item.item.purchaseitem_set.all()
+                            avg_cp = 0
                             if purchases.count()>0:                                
                                 for purchase in purchases:                                
                                     cost_price = cost_price + purchase.cost_price
@@ -235,6 +236,7 @@ class SalesReports(View):
                         	selling_price = inventory.selling_price                            
 
                         purchases = salesitem.item.purchaseitem_set.all()
+                        avg_cp = 0
                         if purchases.count()>0:
                             for purchase in purchases:
                                 cost_price = cost_price + purchase.cost_price
@@ -349,6 +351,7 @@ class SalesReports(View):
                             total = selling_price * qty
 
                             purchases = item.item.purchaseitem_set.all()
+                            avg_cp = 0
                             if purchases.count()>0:                                
                                 for purchase in purchases:
                                     cost_price = cost_price + purchase.cost_price
@@ -464,6 +467,7 @@ class SalesReports(View):
                             total = selling_price * qty
 
                             purchases = item.item.purchaseitem_set.all()
+                            avg_cp = 0
                             if purchases.count()>0:                                
                                 for purchase in purchases:
                                     cost_price = cost_price + purchase.cost_price
@@ -1110,7 +1114,7 @@ class VendorAccountsReport(View):
 
                         y = y-30
 
-                        p.drawString(50, y, purchase_account.date.strftime('%d/%m/%Y'))
+                        p.drawString(50, y, purchase_account.date.strftime('%d/%m/%Y') if purchase_account.date else '')
                         p.drawString(150, y, purchase_account.payment_mode)
                         p.drawString(250, y, purchase_account.narration)
                         p.drawString(350, y, str(purchase_account.total_amount))
