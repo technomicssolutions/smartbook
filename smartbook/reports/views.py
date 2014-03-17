@@ -1138,7 +1138,7 @@ class StockReports(View):
         p.drawString(320, y, 'Brand Name')    
         p.drawString(400, y, 'Stock')
         p.drawString(480, y, 'UOM')
-        p.drawString(560, y, 'Selling Price')
+        p.drawString(560, y, 'Unit Price')
         p.drawString(640, y, 'Tax')
         p.drawString(720, y, 'Discount')
         p.drawString(800, y, 'Stock By value')
@@ -1152,10 +1152,10 @@ class StockReports(View):
                 p.drawString(320, y, stock.item.brand.brand)                
                 p.drawString(400, y, str(stock.quantity))
                 p.drawString(480, y, stock.item.uom.uom)
-                p.drawString(560, y, str(stock.selling_price))
+                p.drawString(560, y, str(stock.unit_price))
                 p.drawString(640, y, str(stock.item.tax))
                 p.drawString(720, y, str(stock.discount_permit_percentage))
-                p.drawString(800, y, str(stock.quantity * stock.selling_price))
+                p.drawString(800, y, str(stock.quantity * stock.unit_price))
                 y = y - 30
 
         p.showPage()
