@@ -11,7 +11,7 @@
 	{% endif %}
 {% endblock title %}
 {% block controller %}
-	ng-controller="AddEditUserController" ng-init="init('{{csrf_token}}', '{{user_type}}')"   
+	ng-controller="AddEditUserController" ng-init="init('{{csrf_token}}', '{{user_type}}', '{{salesman}}')"   
 {% endblock controller %}
 {% block body_id %} new_{{user_type}} {% endblock body_id %}
 {% block content %}
@@ -60,12 +60,15 @@
 
 			<div class="control">
 				<label>Designation</label>
-
-				<select name="designation" ng-model="designation" ng-change="add_designation()">
-					<option value="select">Select</option>
-					<option ng-repeat="designatn in designations" value="[[designatn.title]]" ng-selected="designatn.title == designation">[[designatn.title]]</option>
-					<option value="other">Other</option>
-				</select>
+				{% if salesman %}
+					<input type="text" name="designation" ng-model="designation" value="salesman" readonly />
+				{% else %}
+					<select name="designation" ng-model="designation" ng-change="add_designation()">
+						<option value="select">Select</option>
+						<option ng-repeat="designatn in designations" value="[[designatn.title]]" ng-selected="designatn.title == designation">[[designatn.title]]</option>
+						<option value="other">Other</option>
+					</select>
+				{% endif %}
 
 			</div>
 			

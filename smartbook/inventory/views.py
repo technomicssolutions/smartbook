@@ -23,7 +23,7 @@ class ItemAdd(View):
             try:
                 uom = UnitOfMeasure.objects.get(uom = request.POST['uom'])
                 brand = Brand.objects.get(brand = request.POST['brand'])
-                item, created = Item.objects.get_or_create(code=request.POST['code'], brand=brand, uom=uom)
+                item, created = Item.objects.get_or_create(code=request.POST['code'], brand=brand, uom=uom, name=request.POST['name'])
                 if not created:
                     res = {
                         'result': 'error',
@@ -95,11 +95,19 @@ class ItemList(View):
                 status_code = 200
                 return HttpResponse(response, status = status_code, mimetype = 'application/json')
             else:
-                inventory = Inventory.objects.all()
+                items = Item.objects.all()
                 ctx = {
-                    'inventory': inventory
+                    'items': items
                 }
                 return render(request, 'inventory/stock.html',ctx)
+
+class StockView(View):
+    def get(self, request, *args, **kwargs):
+        inventory = Inventory.objects.all()
+        ctx = {
+            'inventory': inventory
+        }
+        return render(request, 'inventory/stock.html',ctx)
 
 class BrandList(View):
 
@@ -227,5 +235,35 @@ class AddOpeningStock(View):
             'items': items
         })
 
+class EditStockView(View):
+    def get(self, request, *args, **kwargs):
+        stock = Inventory.objects.get(item__code=request.GET['item_code'])
+        if request.is_ajax():
+            res = {
+                 'stock': {
+                    'item': stock.item.code,
+                    'quantity': stock.quantity,
+                    'unit_price': stock.unit_price,
+                    'selling_price': stock.selling_price,
+                    'discount_permit_amount': stock.discount_permit_amount,
+                    'discount_permit_percent': stock.discount_permit_percentage
+                 },
+            }
+            response = simplejson.dumps(res)    
+            return HttpResponse(response, status=200, mimetype='application/json')
+        return render(request, 'inventory/edit_stock.html', {
+            'stock': stock
+        })
+
+    def post(self, request, *args, **kwargs):
+
+        inventory = Inventory.objects.get(item__code=request.POST['item_code'])
+        inventory.quantity = request.POST['quantity']
+        inventory.unit_price = request.POST['unit_price']
+        inventory.selling_price = request.POST['selling_price']
+        inventory.discount_permit_amount = request.POST['discount_permit_amount']
+        inventory.discount_permit_percentage = request.POST['discount_permit_percent']
+        inventory.save()
+        return HttpResponseRedirect(reverse('stock'))
 
 
