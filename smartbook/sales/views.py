@@ -150,9 +150,11 @@ class SalesDetails(View):
                     'barcode': item.item.barcode,
                     'stock': item.item.inventory_set.all()[0].quantity,
                     'unit_price': item.item.inventory_set.all()[0].selling_price,
+                    'tax': item.item.tax,
                     'uom': item.item.uom.uom,
                     'quantity_sold': item.quantity_sold,
-                    'discount_given': item.discount_given
+                    'discount_given': item.discount_given,
+
 
                 })
             sales_dict = {

@@ -1617,6 +1617,7 @@ function SalesReturnController($scope, $element, $http, $timeout, share, $locati
         'invoice_number': '',
         'sales_return_date': '',
         'net_amount': '',
+        'tax_amount':0,
         'sales_items': [],
     }
     $scope.init = function(csrf_token, invoice_number){
@@ -1707,25 +1708,58 @@ function SalesReturnController($scope, $element, $http, $timeout, share, $locati
     }
 
     $scope.addSalesReturnItems = function(item) {
+        $scope.calculate_tax_amount_sales_return(item);
         var ind = $scope.sales_return.sales_items.indexOf(item)
         if(ind >= 0){
             $scope.sales_return.sales_items.splice(ind, 1);
         } else {
+
             $scope.sales_return.sales_items.push(item);
-        }        
+        } 
+               
+    }
+    $scope.calculate_tax_amount_sales_return = function(item) {
+        
+        
+        if(item.tax != '' && item.unit_price != ''){
+
+            item.tax_amount = (parseFloat(item.unit_price)*parseFloat(item.tax))/100;
+        }
     }
     $scope.calculate_return_amount = function(item){
-        item.returned_amount = parseFloat(item.returned_quantity) * parseFloat(item.unit_price);
-        $scope.calculate_net_return_amount();
+        if($scope.check_return(item)) {
+            $scope.validation_error = "";
+            item.returned_amount = parseFloat(item.returned_quantity) * (parseFloat(item.unit_price) + parseFloat(item.tax_amount) - parseFloat(item.discount_given) ) ;
+            $scope.calculate_net_return_amount();
+        }
+        else{
+                item.returned_amount= 0;
+        }
+
+
     }
     $scope.calculate_net_return_amount = function() {
+
         var amount = 0;
         for(var i=0;i<$scope.sales_return.sales_items.length;i++) {
             amount = amount + $scope.sales_return.sales_items[i].returned_amount;
         }
+        
         $scope.sales_return.net_return_total = amount;
     }
+    $scope.check_return = function(item) {
+
+        
+        if(parseInt(item.returned_quantity) > parseInt(item.quantity_sold)) {
+            $scope.validation_error = "Check Qauntity Entered with invoice";
+            return false;
+        }
+        else{
+            return true;
+        }
+    }
     $scope.save_sales_return = function() {
+
         if($scope.validate_salesreturn()) {
             $scope.sales_return.sales_return_date = $$('#sales_return_date')[0].get('value');
             $scope.sales_return.sales_invoice_number = $scope.sales.sales_invoice_number;
