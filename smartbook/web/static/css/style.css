@@ -4,6 +4,12 @@
 	.login {
 		width: 30%;
 	}
+	.form_container {
+		min-width: 417px;
+	}
+	.search_purchase {
+		min-width: 861px;
+	}
 
 }
 
@@ -11,27 +17,41 @@
 	.login {
 		width: 30%;
 	}
- 
+ 	.form_container {
+		min-width: 417px;
+	}
+	.search_purchase {
+		min-width: 861px;
+	}
  }
 @media (min-width: 700px) and (max-width:950px) {
 	.login {
 		width: 30%;
 	}
- 
+ 	.form_container {
+		min-width: 417px;
+	}
+	.search_purchase {
+		min-width: 861px;
+	}
 }
 
 @media (min-width: 588px) and (max-width:699px) {
 	.login {
 		width: 30%;
 	}
- 
+ 	.form_container {
+		min-width: 417px;
+	}
 }
 
 @media (min-width: 400px) and (max-width:587px) {
 	.login {
 		width: 30%;
 	}
- 
+ 	.form_container {
+		min-width: 417px;
+	}
 }
 @media (min-width: 100px) and (max-width:399px) { 
 }
@@ -203,7 +223,7 @@ textarea{
 
 .form_container {
 	margin: auto;
-	width: 30%;
+	width: 35%;
 	min-height: 100%
 }
 .form_container .control {
@@ -213,18 +233,23 @@ textarea{
 	padding: 10px;
 }
 .form_container label{
-	float: left;
 	display: block !important;
+    float: left;
+    width: 45%;
 }
 
 .form_container input{
-	float: right;
+	float: left;
 	display: block;
+	width: 50%;
 }
-
+.form_container input[type="button"]{
+	width: auto;
+}
 .form_container select{
-	float: right;
+	float: left;
 	display: block;
+	width: 50%;
 }
 
 form {
@@ -294,9 +319,11 @@ form {
 }
 .buttons {
 	margin: auto;
-    width: 35%;
+    width: 42%;
 }
-
+.buttons .btn {
+	margin-right: 10px;
+}
 .buttons a {
 	float: left;
 	margin-right: 10px;
@@ -387,7 +414,7 @@ form {
 	background-color: #ADD8E6;
     float: left;
     padding: 13px;
-    width: 31%;
+    width: 30%;
 }
 
 .vendor_section_1 {
