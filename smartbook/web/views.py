@@ -151,15 +151,37 @@ class RegisterUser(View):
         
         context={}
         user_type = kwargs['user_type']
+        message = ''
+        template = 'register_user.html'
         if user_type == 'staff':
-            user, created = User.objects.get_or_create(username=request.POST['username'], first_name = request.POST['name'])
+            if request.POST['name'] == '':
+                message = "Please enter name"
+            elif request.POST['username'] == '':
+                message = "Please enter username"
+            elif request.POST['password'] == '':
+                message = "Please enter password"
+            if message:
+                context = {
+                    'error_message': message,
+                    'user_type': user_type
+                }
+                context.update(request.POST)            
+                return render(request, template, context)
+            user, created = User.objects.get_or_create(username=request.POST['username'])
             user.set_password(request.POST['password'])
             user.save()
         else:
+            if request.POST['name'] == '':
+                message = "Please enter name"
+            if message:
+                context = {
+                    'error_message': message,
+                    'user_type': user_type
+                }
+                context.update(request.POST)
+                return render(request, template, context)
             user, created = User.objects.get_or_create(username=request.POST['name']+user_type, first_name = request.POST['name'])
-        if not created:
-            message = ''
-            template = 'register_user.html'
+        if not created:            
             if user_type == 'vendor':
                 message = 'Vendor with this name already exists'
                 if request.is_ajax():
@@ -181,6 +203,7 @@ class RegisterUser(View):
             return render(request, template, context)
         else:
             user.email = request.POST['email']
+            user.first_name = request.POST['name']
             user.save()
         userprofile = UserProfile()
         userprofile.user_type=user_type
