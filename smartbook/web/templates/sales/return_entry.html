@@ -77,23 +77,27 @@
    					<div class="purchase_item_list">
    						<div class="item_list_row header">
 
-							<span class="small_column"> Item Code </span>
+							<span class="small_column  "> Item Code </span>
 							<span> Item name </span>
 							<span> Barcode </span>
-							<span> Stock </span>
-							<span> Cost Price </span>
-							<span> Return cost</span>												
+							
+							<span> Unit Price </span>
+							<span> Qty Sold </span>
+							<span> Tax Amt </span>
+							<span> Dis Giv</span>												
 							<span> Quantity </span>
 							<span> Amount </span>
+							
 						</div>
-						<div ng-repeat="item in sales.sales_items" class="item_list_row">
+						<div ng-repeat="item in sales_return.sales_items" class="item_list_row">
 							<span class="small_column">[[item.item_code]] </span>
 							<span>[[item.item_name]] </span>
 							<span>[[item.barcode]] </span>
-							<span>[[item.stock]] </span>
 							
-							<span> [[item.unit_price]] </span>
-							<span> [[item.unit_price]] </span>
+							<span>[[item.unit_price]] </span>
+							<span>[[item.quantity_sold]] </span>
+							<span> [[item.tax_amount]] </span>
+							<span> [[item.discount_given]] </span>
 							<span> <input type="text" ng-model="item.returned_quantity" ng-change="calculate_return_amount(item)" />	</span>	
 							<span> [[item.returned_amount]] </span>							 
 						</div>
