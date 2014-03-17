@@ -178,7 +178,7 @@ function AddEditUserController($scope, $element, $http, $timeout, $location) {
         }
     }
     $scope.validate = function() {
-        
+
     }
     $scope.add_new_designation = function() {
         params = { 
@@ -567,7 +567,7 @@ function PurchaseController($scope, $element, $http, $timeout, share, $location)
 
     $scope.calculate_net_amount = function(item) {
         if(item.qty_purchased != '' && item.unit_price != ''){
-            item.net_amount = ((parseFloat(item.qty_purchased)*parseFloat(item.unit_price)) + parseFloat(item.frieght_unit)+ parseFloat(item.handling_unit)+parseFloat(item.expense_unit)).toFixed(3);
+            item.net_amount = ((parseFloat(item.qty_purchased)*parseFloat(item.unit_price)) + parseFloat(item.frieght)+ parseFloat(item.handling)+parseFloat(item.expense)).toFixed(3);
         }
         $scope.calculate_vendor_amount();
         $scope.calculate_net_total();
@@ -702,6 +702,8 @@ function SalesController($scope, $element, $http, $timeout, share, $location) {
     $scope.item_selected = false;
     $scope.payment_mode = 'cash';
     $scope.payment_mode_selection = true;
+    $scope.payment_mode_selection_check = true;
+
     $scope.sales = {
         'sales_items': [],
         'sales_invoice_number': '',
@@ -709,6 +711,9 @@ function SalesController($scope, $element, $http, $timeout, share, $location) {
         'customer':'',
         'staff': '',
         'net_total': 0,
+        'payment_mode':'cash',
+        'card_number':'',
+        'bank_name':'',
         'net_discount': 0,
         'roundoff': 0,
         'grant_total': 0,
@@ -731,7 +736,8 @@ function SalesController($scope, $element, $http, $timeout, share, $location) {
     }
     $scope.payment_mode_change_sales = function(payment_mode) {
         if(payment_mode == 'cheque') {
-            $scope.payment_mode_selection = false;
+            $scope.payment_mode_selection = true;
+            $scope.payment_mode_selection_check = false;
             
             var date_picker = new Picker.Date($$('#sales_invoice_date'), {
             timePicker: false,
@@ -741,8 +747,17 @@ function SalesController($scope, $element, $http, $timeout, share, $location) {
             format:'%d/%m/%Y',
         });
             
-        } else {
+        }
+        else if(payment_mode == 'card'){
+            $scope.payment_mode_selection = false;
+
+
+
+        }
+         else {
+            
             $scope.payment_mode_selection = true;
+            $scope.payment_mode_selection_check = true;
         }
     }
     $scope.validate_sales = function() {
@@ -758,7 +773,17 @@ function SalesController($scope, $element, $http, $timeout, share, $location) {
         } else if($scope.sales.sales_items.length == 0){
             $scope.validation_error = "Choose Item";
             return false;
-        } 
+        }
+        else if( $scope.sales.payment_mode == 'card' && ($scope.sales.card_number == '' )) {
+            
+            
+            $scope.validation_error = 'Please Enter Card Number';
+            return false;
+        } else if( $scope.sales.payment_mode == 'card' && ($scope.sales.bank_name == '' )) {
+           
+            $scope.validation_error = 'Please Enter Bank Name';
+            return false; 
+        }
         else {
             return true;
         }        

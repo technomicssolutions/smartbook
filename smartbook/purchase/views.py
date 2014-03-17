@@ -272,8 +272,7 @@ class VendorAccountDetails(View):
         vendor_account, created =  VendorAccount.objects.get_or_create(vendor=vendor) 
         vendor_account.date = datetime.strptime(vendor_account_dict['vendor_account_date'], '%d/%m/%Y')
         vendor_account.payment_mode = vendor_account_dict['payment_mode']
-        if vendor_account_dict['cheque_date'] != "null" :
-            vendor_account.narration = vendor_account_dict['narration']
+        vendor_account.narration = vendor_account_dict['narration']
         vendor_account.total_amount = int(vendor_account_dict['total_amount'])
         vendor_account.paid_amount = int(vendor_account_dict['amount_paid'])
         vendor_account.balance = int(vendor_account_dict['balance_amount'])        
