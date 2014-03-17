@@ -13,8 +13,8 @@ from web.models import Vendor, TransportationCompany
 class Purchase(models.Model):
 	
 	purchase_invoice_number = models.IntegerField('Purchase Invoice Number', unique=True)
-	vendor_invoice_number = models.IntegerField('Vendor Invoice Number', default=0)
-	vendor_do_number = models.IntegerField('Vendor DO Number', default=0)
+	vendor_invoice_number = models.CharField('Vendor Invoice Number', default='1', max_length=10)
+	vendor_do_number = models.CharField('Vendor DO Number', default='1', max_length = 10)
 	vendor_invoice_date = models.DateField('Vendor Invoice Date', null=True, blank=True)
 	purchase_invoice_date = models.DateField('Purchase Invoice Date', null=True, blank=True)
 	brand = models.ForeignKey(Brand, null=True, blank=True)
