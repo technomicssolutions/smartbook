@@ -372,7 +372,7 @@ class SalesReports(View):
                                 avg_cp = cost_price/i
                             # profit = (selling_price - avg_cp)*qty
 
-                            profit = round(((selling_price - avg_cp)*qty) - discount,0)
+                            profit = math.ceil((selling_price - avg_cp)*qty) - discount
 
                             total_profit = total_profit + profit
                             total_discount = total_discount + discount                            
