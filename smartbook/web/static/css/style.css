@@ -10,7 +10,9 @@
 	.search_purchase {
 		min-width: 861px;
 	}
-
+	.purchase_items_list {
+		min-width: 1025px;
+	}
 }
 
 @media (min-width: 951px) and (max-width:1020px) { 
@@ -23,6 +25,9 @@
 	.search_purchase {
 		min-width: 861px;
 	}
+	.purchase_items_list {
+		min-width: 1025px;
+	}
  }
 @media (min-width: 700px) and (max-width:950px) {
 	.login {
@@ -34,6 +39,9 @@
 	.search_purchase {
 		min-width: 861px;
 	}
+	.purchase_items_list {
+		min-width: 1025px;
+	}
 }
 
 @media (min-width: 588px) and (max-width:699px) {
@@ -42,6 +50,9 @@
 	}
  	.form_container {
 		min-width: 417px;
+	}
+	.purchase_items_list {
+		min-width: 1025px;
 	}
 }
 
@@ -52,8 +63,14 @@
  	.form_container {
 		min-width: 417px;
 	}
+	.purchase_items_list {
+		min-width: 1025px;
+	}
 }
 @media (min-width: 100px) and (max-width:399px) { 
+	.purchase_items_list {
+		min-width: 1025px;
+	}
 }
 
 .login {

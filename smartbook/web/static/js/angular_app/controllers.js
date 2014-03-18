@@ -1200,20 +1200,20 @@ function VendorAccountController($scope, $element, $http, $timeout, $location){
         $scope.vendor_account.vendor = '';
         
     }
-    $scope.calculate_vendor_account_amounts = function(){
-        if($scope.actual_total_amount != 0 && $scope.actual_balance_amount != 0) {
-            var total_amount = $scope.actual_total_amount;
-            var balance_amount = $scope.actual_balance_amount;
-            var amount_paid = $scope.actual_amount_paid;
-            var amount = $scope.vendor_account.amount
-            $scope.vendor_account.amount_paid = parseInt(amount) + parseInt(amount_paid);
-            if(parseInt(balance_amount) > parseInt(amount) ) {
-                $scope.vendor_account.balance_amount = parseInt(balance_amount) - parseInt(amount);
-            } else {
-                $scope.vendor_account.balance_amount = 0
-            } 
-        }        
-    }
+    // $scope.calculate_vendor_account_amounts = function(){
+    //     if($scope.actual_total_amount != 0 && $scope.actual_balance_amount != 0) {
+    //         var total_amount = $scope.actual_total_amount;
+    //         var balance_amount = $scope.actual_balance_amount;
+    //         var amount_paid = $scope.actual_amount_paid;
+    //         var amount = $scope.vendor_account.amount
+    //         $scope.vendor_account.amount_paid = parseInt(amount) + parseInt(amount_paid);
+    //         if(parseInt(balance_amount) > parseInt(amount) ) {
+    //             $scope.vendor_account.balance_amount = parseInt(balance_amount) - parseInt(amount);
+    //         } else {
+    //             $scope.vendor_account.balance_amount = 0
+    //         } 
+    //     }        
+    // }
     $scope.save_vendor_account = function(){
         $scope.vendor_account.vendor_account_date = $$('#vendor_account_date')[0].get('value');
         
