@@ -242,11 +242,11 @@ function PurchaseController($scope, $element, $http, $timeout, share, $location)
         'brand': '',
         'vendor': '',
         'transport': '',
-        'discount': '',
-        'net_total': '',
-        'purchase_expense': '',
-        'grant_total': '',
-        'vendor_amount': '',
+        'discount': 0,
+        'net_total': 0,
+        'purchase_expense': 0,
+        'grant_total': 0,
+        'vendor_amount': 0,
         'deleted_items': []
     }
     $scope.purchase.vendor_name = 'select';
@@ -513,19 +513,19 @@ function PurchaseController($scope, $element, $http, $timeout, share, $location)
             'barcode': item.barcode,
             'uom': item.uom,
             'current_stock': item.current_stock,
-            'frieght': '',
+            'frieght': 0,
             'frieght_unit': 0,
-            'handling': '',
+            'handling': 0,
             'handling_unit': 0,
             'tax': item.tax,
-            'selling_price': '',
+            'selling_price': 0,
             'qty_purchased': 0,
-            'cost_price': '',
-            'permit_disc_amt': '',
-            'permit_disc_percent': '',
-            'net_amount': '',
+            'cost_price': 0,
+            'permit_disc_amt': 0,
+            'permit_disc_percent': 0,
+            'net_amount': 0,
             'unit_price': 0,
-            'expense': '',
+            'expense': 0,
             'expense_unit': 0
         }
         $scope.purchase.purchase_items.push(selected_item);
@@ -642,9 +642,11 @@ function PurchaseController($scope, $element, $http, $timeout, share, $location)
             $scope.validation_error = "Please Choose Item";
             return false;
         } else if(!(Number($scope.purchase.purchase_invoice_number) == $scope.purchase.purchase_invoice_number)) {
+            
             $scope.validation_error = "Please enter a number as purchase invoice number";
             return false;
-        } else if(!(Number($scope.purchase.discount) == $scope.purchase.discount)) {
+        }
+        else if(!(Number($scope.purchase.discount) == $scope.purchase.discount)) {
             $scope.validation_error = "Please enter a number as discount";
         }
         else {
