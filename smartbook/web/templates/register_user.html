@@ -35,7 +35,7 @@
 <div class="form_container">
 	<form name="staffadd" method="post" action="{% url 'register_user' user_type=user_type %}">
 		{% csrf_token %}
-		{{ message }}
+		
 		<div class="control">
 			<label>Name</label>
 			<input name="name" type="text" value="{{name.0}}" />
@@ -108,6 +108,7 @@
 		</div>
 		<div class="control">
 			<label> </label>
+			<p class="error_message">{{ message }}</p>
 			<p class="error_message"> {{error_message}} </p> 
 			<input type="submit" value="Submit">
 		</div>
