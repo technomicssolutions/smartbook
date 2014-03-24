@@ -97,9 +97,10 @@ body {
 }
 
 .menu_div {
-	float: left;
+	float: right;
 	height: 50%;
-	margin-top: 2%
+	margin-top: 2%;
+	margin-right: 7%;
 }
 
 .menu_div ul li {
@@ -154,7 +155,7 @@ a {
 	height: 60px;
 	float: left;	
 }
-header {
+.menu_header {
 	background-color: #ADD8E6;
 	width: 100%;
 	min-height: 20px !important;
@@ -211,10 +212,7 @@ footer {
 }
 
 .user_name {
-	display: block;
-	float: left;
-	padding: 30px;
-	width: 30%;
+	color: green;
 }
 
 .main-content {

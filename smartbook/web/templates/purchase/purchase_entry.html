@@ -176,8 +176,8 @@
 							<span> [[item.handling_unit]] </span>
 							<span> <input type="text" ng-model="item.expense" ng-change="calculate_expense(item)" /> </span>	
 							<span class="small_column"> [[item.expense_unit]] </span> </span>
-							<span> <input type="text" ng-model="item.cost_price" /> </span>
-							<span> <input type="text" ng-model="item.selling_price" ng-change="calculate_discount(item)"/> </span>
+							<span> [[item.cost_price]] </span>
+							<span> <input type="text" ng-model="item.selling_price" ng-change="calculate_discount_amt(item)"/> </span>
 									
 							<span> <input type="text" ng-model="item.permit_disc_amt" ng-change="calculate_discount_percent(item)" /> </span>
 							<span> <input type="text" ng-model="item.permit_disc_percent" ng-change="calculate_discount_amt(item)"/> </span>
