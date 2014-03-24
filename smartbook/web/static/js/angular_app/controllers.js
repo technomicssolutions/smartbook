@@ -534,9 +534,11 @@ function PurchaseController($scope, $element, $http, $timeout, share, $location)
         var index = $scope.purchase.purchase_items.indexOf(item);
         $scope.purchase.purchase_items.splice(index, 1);
         $scope.purchase.deleted_items.push(item);
-        console.log($scope.purchase.purchase_items, index);
     }
     $scope.calculate_frieght = function(item){
+        if(item.frieght != Number(item.frieght)){
+            item.frieght = 0;
+        }
         if(item.qty_purchased != '' && item.frieght != ''){
             item.frieght_unit = parseFloat(item.frieght)/parseFloat(item.qty_purchased);
         }
@@ -544,6 +546,9 @@ function PurchaseController($scope, $element, $http, $timeout, share, $location)
         $scope.calculate_cost_price(item);
     }
     $scope.calculate_handling = function(item){
+        if(item.handling != Number(item.handling)) {
+            item.handling = 0;
+        }
         if(item.qty_purchased != '' && item.handling != ''){
             item.handling_unit = parseFloat(item.handling)/parseFloat(item.qty_purchased);
         }
@@ -551,6 +556,9 @@ function PurchaseController($scope, $element, $http, $timeout, share, $location)
         $scope.calculate_net_amount(item);
     }
     $scope.calculate_expense = function(item){
+        if(item.expense != Number(item.expense)){
+            item.expense = 0;
+        }
         if(item.qty_purchased != '' && item.expense != ''){
             item.expense_unit = parseFloat(item.expense)/parseFloat(item.qty_purchased);
         }
@@ -559,6 +567,9 @@ function PurchaseController($scope, $element, $http, $timeout, share, $location)
         $scope.calculate_purchase_expense();
     }
     $scope.calculate_cost_price = function(item) {
+        if(item.unit_price == '' || item.unit_price != Number(item.unit_price)){
+            item.unit_price = 0;
+        }
         if(item.unit_price != '' || item.frieght_unit != '' || item.handling_unit != '' || item.expense_unit != ''){
             item.cost_price = parseFloat(item.unit_price) + parseFloat(item.frieght_unit) + parseFloat(item.handling_unit) + parseFloat(item.expense_unit)
         }
@@ -566,19 +577,53 @@ function PurchaseController($scope, $element, $http, $timeout, share, $location)
     }
 
     $scope.calculate_net_amount = function(item) {
+        if(item.qty_purchased == '' || item.qty_purchased != Number(item.qty_purchased)) {
+            item.qty_purchased = 0;
+        }
+        if(item.unit_price != Number(item.unit_price)) {
+            item.unit_price = 0;
+        }
         if(item.qty_purchased != '' && item.unit_price != ''){
+            if(item.frieght == '' || item.frieght != Number(item.frieght)){
+                item.frieght = 0;
+            }
+            if(item.handling == '' || item.handling != Number(item.handling)){
+                item.handling = 0;
+            }
+            if(item.expense == '' || item.expense != Number(item.expense)){
+                item.expense = 0;
+            }            
+            
             item.net_amount = ((parseFloat(item.qty_purchased)*parseFloat(item.unit_price)) + parseFloat(item.frieght)+ parseFloat(item.handling)+parseFloat(item.expense)).toFixed(3);
         }
         $scope.calculate_vendor_amount();
         $scope.calculate_net_total();
     }
     $scope.calculate_discount_amt = function(item) {
+        if(item.selling_price == '' || item.selling_price != Number(item.selling_price)) {
+            item.selling_price = 0;
+        }
+        if(item.permit_disc_percent == '' || item.permit_disc_percent != Number(item.permit_disc_percent)){
+            item.permit_disc_percent = 0;
+        }
+        if(item.permit_disc_percent == '' || item.permit_disc_percent != Number(item.permit_disc_percent)){
+            item.permit_disc_percent = 0;
+        }
         if((item.permit_disc_percent != '' || item.permit_disc_percent != 0) && (item.selling_price != '' || item.selling_price != 0)) {
             item.permit_disc_amt = (parseFloat(item.selling_price)*parseFloat(item.permit_disc_percent))/100;
         }
     }
 
     $scope.calculate_discount_percent = function(item) {
+        if(item.selling_price == '' || item.selling_price != Number(item.selling_price)) {
+            item.selling_price = 0;
+        }
+        if(item.permit_disc_percent == '' || item.permit_disc_percent != Number(item.permit_disc_percent)){
+            item.permit_disc_percent = 0;
+        }
+        if(item.permit_disc_percent == '' || item.permit_disc_percent != Number(item.permit_disc_percent)){
+            item.permit_disc_percent = 0;
+        }
         if((item.permit_disc_amt != '' || item.permit_disc_amt != '') && (item.selling_price != '' || item.selling_price != 0)) {
             item.permit_disc_percent = (parseFloat(item.permit_disc_amt)/parseFloat(item.selling_price))*100;
         }
