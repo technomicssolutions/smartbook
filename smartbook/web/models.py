@@ -60,16 +60,20 @@ class Vendor(models.Model):
 
     
 class Customer(models.Model):
-    user = models.ForeignKey(User)
+    
+    customer_name = models.CharField('Name of the customer', null=True, blank=True, max_length=50)
+    address = models.TextField('Address of the customer', null=True, blank=True)
+    mobile_number = models.CharField('Mobile Number', max_length=15, null=True, blank=True)
+    customer_id = models.CharField('Customer Id(Email id)', max_length=75, null=True, blank=True)
 
     def __unicode__(self):
-        return "customer - "+self.user.first_name
+        return "customer - "+self.customer_name
 
-    def save(self, *args, **kwargs):
-        profile = self.user.userprofile_set.all()
-        if len(profile) == 0:
-            profile = UserProfile.objects.create(user = self.user)
-        super(Customer, self).save(*args, **kwargs)
+    # def save(self, *args, **kwargs):
+    #     profile = self.user.userprofile_set.all()
+    #     if len(profile) == 0:
+    #         profile = UserProfile.objects.create(user = self.user)
+    #     super(Customer, self).save(*args, **kwargs)
 
 
     class Meta:
