@@ -2182,3 +2182,247 @@ function StockEditController($scope, $http, $element, $location, $timeout) {
     }
 }
 
+function QuotationController($scope, $element, $http, $timeout, share, $location) {
+
+    $scope.items = [];
+    $scope.selected_item = '';
+    $scope.customer = '';
+    $scope.selecting_item = false;
+    $scope.item_selected = false;
+
+    $scope.quotation = {
+        'sales_items': [],
+        'date': '',
+        'customer':'',
+        'net_total': 0,
+        'reference_no': '',
+        'attention': '',
+        'subject': '',
+        'total_amount': '',
+        
+    }
+    $scope.quotation.customer = 'select';
+    $scope.init = function(csrf_token, sales_invoice_number)
+    {
+        $scope.csrf_token = csrf_token;
+        $scope.popup = '';
+        
+        $scope.get_customers();
+            
+    }
+
+    $scope.get_customers = function() {
+        $http.get('/customer/list/').success(function(data)
+        {   
+            
+            $scope.customers = data.customers;
+
+        }).error(function(data, status)
+        {
+            console.log(data || "Request failed");
+        });
+    }
+    $scope.add_customer = function() {
+
+        if($scope.quotation.customer == 'other') {
+
+
+            $scope.popup = new DialogueModelWindow({
+                'dialogue_popup_width': '36%',
+                'message_padding': '0px',
+                'left': '28%',
+                'top': '40px',
+                'height': 'auto',
+                'content_div': '#add_customer'
+            });
+            var height = $(document).height();
+            $scope.popup.set_overlay_height(height);
+            $scope.popup.show_content();
+        }
+    }
+    $scope.close_popup = function(){
+        $scope.popup.hide_popup();
+    }
+
+    $scope.add_new_customer = function() { 
+        params = { 
+            'name':$scope.customer_name,
+            // 'contact_person': $scope.contact_person,
+            'house': $scope.house_name,
+            'street': $scope.street,
+            'city': $scope.city,
+            'district':$scope.district,
+            'pin': $scope.pin,
+            'mobile': $scope.mobile,
+            'phone': $scope.land_line,
+            'email': $scope.email_id,
+            "csrfmiddlewaretoken" : $scope.csrf_token
+        }
+        $http({
+            method : 'post',
+            url : "/create_customer/",
+            data : $.param(params),
+            headers : {
+                'Content-Type' : 'application/x-www-form-urlencoded'
+            }
+        }).success(function(data, status) {
+            
+            if (data.result == 'error'){
+                $scope.error_flag=true;
+                $scope.message = data.message;
+            } else {
+                $scope.popup.hide_popup();
+                $scope.get_customers();
+
+                $scope.quotation.customer = $scope.customer_name;
+                $scope.quotation.customer = data.customer_name;
+            }
+        }).error(function(data, success){
+            
+        });
+    }
+
+    $scope.items = [];
+    $scope.selected_item = '';
+    $scope.selecting_item = false;
+    $scope.item_selected = false;
+    $scope.sales_items = [];
+    
+    $scope.getItems = function(parameter){
+
+        console.log('parameter', parameter);
+        if(parameter == 'item_code')
+            var param = $scope.item_code;
+        else if(parameter == 'item_name')
+            var param = $scope.item_name;
+        else if (parameter == 'barcode')
+            var param = $scope.barcode;
+        $http.get('/inventory/items/?'+parameter+'='+param).success(function(data)
+        {
+            $scope.selecting_item = true;
+            $scope.item_selected = false;
+            $scope.items = data.items;
+        }).error(function(data, status)
+        {
+            console.log(data || "Request failed");
+        });
+    }
+
+    $scope.addSalesItem = function(item) {
+        $scope.selecting_item = false;
+        $scope.item_selected = true;
+        $scope.item_code = '';
+        $scope.item_name = '';
+        $scope.barcode = '';
+
+        $scope.item_select_error = '';
+        
+        if($scope.quotation.sales_items.length > 0) {
+            for(var i=0; i< $scope.quotation.sales_items.length; i++) {
+                if($scope.quotation.sales_items[i].item_code == item.item_code) {
+                    $scope.item_select_error = "Item already selected";
+                    return false;
+                }
+            }
+        } 
+        var selected_item = {
+            'sl_no': item.sl_no,
+            'item_code': item.item_code,
+            'item_name': item.item_name,
+            'barcode': item.barcode,
+            'current_stock': item.current_stock,
+            'unit_price': item.selling_price,
+            'tax': item.tax,
+            'tax_amount':0,
+            'qty_sold': 0,
+            'uom': item.uom,
+            'discount_permit': item.discount_permit,
+            'discount_permit_amount':0,
+            'disc_given': 0,
+            'unit_cost':0,
+            'net_amount': 0,    
+        }
+       
+        $scope.quotation.sales_items.push(selected_item);
+    }
+    
+    
+    $scope.calculate_net_amount_sale = function(item) {
+        $scope.validation_error = "";
+        if(parseInt(item.qty_sold) > parseInt(item.current_stock)) {
+            $scope.validation_error = "Qauntity not in stock";
+            return false;
+        } else {
+            if(item.qty_sold != '' && item.unit_price != ''){
+                item.net_amount = ((parseFloat(item.qty_sold)*parseFloat(item.unit_price))).toFixed(2);
+            }
+            $scope.calculate_net_total_amount();
+        }
+    }
+
+    $scope.calculate_net_total_amount = function() {
+        var total_amount = 0
+        for(var i=0; i< $scope.quotation.sales_items.length; i++){
+            total_amount = (parseFloat(total_amount) + parseFloat($scope.quotation.sales_items[i].net_amount)).toFixed(2);
+        }
+        $scope.quotation.total_amount = total_amount;
+        console.log($scope.quotation.total_amount);
+    }
+
+    $scope.quotation_validation = function(){
+
+        $scope.quotation.date = $$('#quotation_date')[0].get('value');
+        $scope.quotation.reference_no = $$('#reference_number')[0].get('value');
+
+        if ($scope.quotation.date == '' || $scope.quotation.date == undefined) {
+            $scope.validation_error = "Enter quotation Date" ;
+            return false;
+        } else if ($scope.quotation.customer == 'select') {
+            $scope.validation_error = "Enter Customer Name";
+            return false;
+        } else if ($scope.quotation.reference_no == '' || $scope.quotation.reference_no == undefined) {
+            $scope.validation_error = "Enter Reference number";
+            return false;
+        } else if ($scope.quotation.attention == '' || $scope.quotation.attention == undefined) {
+            $scope.validation_error = "Enter attention";
+            return false;
+        } else if ($scope.quotation.subject == '' || $scope.quotation.subject == undefined) {
+            $scope.validation_error = "Enter subject";
+            return false;
+        } else if($scope.quotation.sales_items.length == 0){
+            $scope.validation_error = "Choose Item";
+            return false;
+        } 
+        return true;
+    }
+    $scope.create_quotation = function() {
+        $scope.is_valid = $scope.quotation_validation();
+        if($scope.is_valid) {
+            params = { 
+                'quotation': angular.toJson($scope.quotation),
+                "csrfmiddlewaretoken" : $scope.csrf_token
+            }
+            $http({
+                method : 'post',
+                url : "/sales/create_quotation/",
+                data : $.param(params),
+                headers : {
+                    'Content-Type' : 'application/x-www-form-urlencoded'
+                }
+            }).success(function(data, status) {
+                
+                if (data.result == 'error'){
+                    $scope.error_flag=true;
+                    $scope.message = data.message;
+                } else {
+                    console.log('created')
+                }
+            }).error(function(data, success){
+                
+            });
+        }
+    }
+
+}
+
+

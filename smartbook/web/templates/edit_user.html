@@ -35,12 +35,20 @@
 </div>
 
 <div class="form_container">
-	<form name="staffadd" method="post" action="{% url 'edit_user' user_type=user_type user_id=profile.user.id%}">
+	{% if user_type == 'customer' %}
+		<form name="staffadd" method="post" action="{% url 'edit_user' user_type=user_type user_id=profile.id%}">
+	{% else %}
+		<form name="staffadd" method="post" action="{% url 'edit_user' user_type=user_type user_id=profile.user.id%}">
+	{% endif %}
 		{% csrf_token %}
-		{{ message }}
+		<p class="error_message">{{ message }}</p>
 		<div class="control">
 			<label>Name</label>
-			<input name="name" type="text" value="{{profile.user.first_name}}" />
+			{% if user_type == 'customer' %}
+				<input name="name" type="text" value="{{profile.customer_name}}" />
+			{% else %}
+				<input name="name" type="text" value="{{profile.user.first_name}}" />
+			{% endif %}
 		</div>
 		{% if user_type == 'vendor' %}
 			<div class="control">
@@ -86,7 +94,11 @@
 		</div>
 		<div class="control">
 			<label>Mobile</label>
-			<input name="mobile" type="text" value="{{profile.mobile}}" />
+			{% if user_type == 'customer' %}
+				<input name="mobile" type="text" value="{{profile.mobile_number}}" />
+			{% else %}
+				<input name="mobile" type="text" value="{{profile.mobile}}" />
+			{% endif %}
 		</div>
 		<div class="control">
 			<label>Land Line</label>
@@ -94,7 +106,11 @@
 		</div>
 		<div class="control">
 			<label>Email Id</label>
-			<input name="email" type="text" value="{{profile.email_id}}" />
+			{% if user_type == 'customer' %}
+				<input name="email" type="text" value="{{profile.customer_id}}" />
+			{% else %}
+				<input name="email" type="text" value="{{profile.email_id}}" />
+			{% endif %}
 		</div>
 		<div class="control">
 			<label>&nbsp; &nbsp; </label>

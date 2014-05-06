@@ -15,7 +15,7 @@ from django.contrib.auth import authenticate, login, logout
 from django.core.urlresolvers import reverse
 from django.contrib.auth.models import User
 
-from sales.models import Sales, SalesItem, SalesReturn, SalesReturnItem
+from sales.models import Sales, SalesItem, SalesReturn, SalesReturnItem, Quotation, QuotationItem
 from inventory.models import Item, Inventory
 from web.models import Customer, Staff
 
@@ -179,3 +179,61 @@ class SalesDetails(View):
             return HttpResponse(response, status = status_code, mimetype="application/json")
 
         return render(request, 'sales/view_sales.html',{})
+
+class CreateQuotation(View):
+
+    def get(self, request, *args, **kwargs):
+
+        current_date = dt.datetime.now().date()
+
+        ref_number = Quotation.objects.aggregate(Max('id'))['id__max']
+        
+        if not ref_number:
+            ref_number = 1
+            prefix = 'QO'
+        else:
+            ref_number = ref_number + 1
+            prefix = Quotation.objects.latest('id').prefix
+        reference_number = prefix + str(ref_number)
+        print reference_number
+        context = {
+            'current_date': current_date.strftime('%d-%m-%Y'),
+            'reference_number': reference_number,
+        }
+
+        return render(request, 'sales/create_quotation.html', context)
+
+    def post(self, request, *args, **kwargs):
+
+        if request.is_ajax():
+            quotation_data = ast.literal_eval(request.POST['quotation'])
+            quotation, quotation_created = Quotation.objects.get_or_create(reference_id=quotation_data['reference_no'])
+            quotation.date = datetime.strptime(quotation_data['date'], '%d-%m-%Y')
+            quotation.attention = quotation_data['attention']
+            quotation.subject = quotation_data['subject']
+            quotation.net_total = quotation_data['total_amount']
+            quotation.save()
+            customer = Customer.objects.get(customer_name=quotation_data['customer'])
+            quotation.to = customer
+            quotation.save()
+
+            quotation_data_items = quotation_data['sales_items']
+            for quotation_item in quotation_data_items:
+                item = Item.objects.get(code=quotation_item['item_code'])
+                quotation_item_obj, item_created = QuotationItem.objects.get_or_create(item=item, quotation=quotation)
+                inventory, created = Inventory.objects.get_or_create(item=item)
+                if quotation_created:
+                    inventory.quantity = inventory.quantity - int(quotation_item['qty_sold'])
+                else:
+                    inventory.quantity = inventory.quantity + quotation_item_obj.quantity_sold - int(sales_item['qty_sold'])
+                inventory.save()
+                quotation_item_obj.net_amount = float(quotation_item['net_amount'])
+                quotation_item_obj.quantity_sold = int(quotation_item['qty_sold'])
+                quotation_item_obj.save()
+            res = {
+                'result': 'OK',
+            }
+
+            response = simplejson.dumps(res)
+
+            return HttpResponse(response, status=200, mimetype='application/json')
