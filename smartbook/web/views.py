@@ -92,9 +92,9 @@ class UserList(View):
             
             if request.is_ajax():
                 if len(users) > 0:
-                    for usr in users:
+                    for customer in users:
                         ctx_customers.append({
-                            'customer_name': usr.user.first_name,
+                            'customer_name': customer.customer_name,
                         })
                 res = {
                     'customers': ctx_customers,
@@ -262,26 +262,26 @@ class RegisterUser(View):
                 'user_type': user_type
             }
             return render(request, 'register_user.html',context)
-        elif user_type == 'customer':
+        # elif user_type == 'customer':
 
-            customer = Customer()
-            user.is_active = False
-            user.save()
-            customer.user = user
-            customer.save()
+        #     customer = Customer()
+        #     user.is_active = False
+        #     user.save()
+        #     customer.user = user
+        #     customer.save()
             
-            if request.is_ajax():
-                res = {
-                    'result': 'ok',
-                    'customer_name': user.first_name
-                }
-                response = simplejson.dumps(res)
-                return HttpResponse(response, status = 200, mimetype="application/json")
-            context = {
-                'message' : 'Customer added correctly',
-                'user_type': user_type
-            }
-            return render(request, 'register_user.html',context)
+        #     if request.is_ajax():
+        #         res = {
+        #             'result': 'ok',
+        #             'customer_name': user.first_name
+        #         }
+        #         response = simplejson.dumps(res)
+        #         return HttpResponse(response, status = 200, mimetype="application/json")
+        #     context = {
+        #         'message' : 'Customer added correctly',
+        #         'user_type': user_type
+        #     }
+        #     return render(request, 'register_user.html',context)
 
             
         
@@ -290,80 +290,107 @@ class EditUser(View):
     def get(self, request, *args, **kwargs):
 
         user_type = kwargs['user_type']
-        userprofile = UserProfile.objects.get(user_id=kwargs['user_id'])
-        if user_type == 'vendor':
-            return render(request, 'edit_user.html',{'user_type': user_type, 'profile': userprofile})
-        elif user_type == 'staff':
-            return render(request, 'edit_user.html',{
-                'user_type': user_type,
-                'profile': userprofile
-
-            })
-        elif user_type == 'customer':
+        if user_type == 'customer':
+            userprofile = Customer.objects.get(id=kwargs['user_id'])
             return render(request, 'edit_user.html',{'user_type': user_type,'profile': userprofile})
+        else:
+            userprofile = UserProfile.objects.get(user_id=kwargs['user_id'])
+            if user_type == 'vendor':
+                return render(request, 'edit_user.html',{'user_type': user_type, 'profile': userprofile})
+            elif user_type == 'staff':
+                return render(request, 'edit_user.html',{
+                    'user_type': user_type,
+                    'profile': userprofile
+
+                })
 
     def post(self, request, *args, **kwargs):
 
         user_type = kwargs['user_type']
         post_dict = request.POST
-        user = User.objects.get(id= kwargs['user_id'])
-        user.first_name = post_dict['name']
-        user.username= post_dict['name']+user_type
-        user.email = post_dict['email']
-        user.save()
-        userprofile, created = UserProfile.objects.get_or_create(user = user)
-        userprofile.user_type=user_type
-        userprofile.user = user
-        userprofile.house_name =request.POST['house']
-        userprofile.street = request.POST['street']
-        userprofile.city = request.POST['city']
-        userprofile.district = request.POST['district']
-        userprofile.pin = request.POST['pin']
-        userprofile.mobile = request.POST['mobile']
-        userprofile.land_line = request.POST['phone']
-        userprofile.email_id = request.POST['email']
-        userprofile.save()
-        if user_type == 'vendor':
-            vendor = user.vendor_set.all()[0]  
-            vendor.contact_person= request.POST['contact_person']
-            vendor.user = user
-            vendor.save()
-            context = {
-                'message' : 'Vendor edited correctly',
-                'user_type': user_type,
-                'profile': userprofile
-            }
-            return render(request, 'edit_user.html',context)
-        elif user_type == 'customer':
-            customer = user.customer_set.all()[0]
-            customer.user = user
+        if user_type == 'customer':
+            customer = Customer.objects.get(id = kwargs['user_id'])
+            if request.POST['name'] == '':
+                context = {
+                    'message': 'Name cannot be null',
+                    'user_type': user_type,
+                    'profile': customer
+                }
+                context.update(request.POST)
+                return render(request, 'edit_user.html',context)
+            elif request.POST['email'] == '':
+                context = {
+                    'message': 'Email cannot be null',
+                    'user_type': user_type,
+                    'profile': customer
+                }
+                context.update(request.POST)
+                return render(request, 'edit_user.html',context)
+            customer.customer_name = request.POST['name']
+            customer.house_name =request.POST['house']
+            customer.street = request.POST['street']
+            customer.city = request.POST['city']
+            customer.district = request.POST['district']
+            customer.pin = request.POST['pin']
+            customer.mobile_number = request.POST['mobile']
+            customer.land_line = request.POST['phone']
+            customer.customer_id = request.POST['email']
             customer.save()
             context = {
                 'message' : 'Customer edited correctly',
                 'user_type': user_type,
-                'profile': userprofile
+                'profile': customer
             }
             return render(request, 'edit_user.html',context)
-        elif user_type == 'staff':
-            user.username = request.POST['username']
+        else:
+            user = User.objects.get(id= kwargs['user_id'])
+            user.first_name = post_dict['name']
+            user.username= post_dict['name']+user_type
+            user.email = post_dict['email']
             user.save()
+            userprofile, created = UserProfile.objects.get_or_create(user = user)
+            userprofile.user_type=user_type
             userprofile.user = user
+            userprofile.house_name =request.POST['house']
+            userprofile.street = request.POST['street']
+            userprofile.city = request.POST['city']
+            userprofile.district = request.POST['district']
+            userprofile.pin = request.POST['pin']
+            userprofile.mobile = request.POST['mobile']
+            userprofile.land_line = request.POST['phone']
+            userprofile.email_id = request.POST['email']
             userprofile.save()
-            staff = user.staff_set.all()[0]
-            staff.user = user
-            if request.POST['old_designation'] != request.POST['new_designation']:
-                try:
-                    designation =  Designation.objects.get(title=request.POST['new_designation'])
-                    staff.designation = designation
-                except Designation.DoesNotExist:
-                    pass   
-            staff.save()
-            context = {
-                'message' : 'Staff edited correctly',
-                'user_type': user_type,
-                'profile': userprofile
-            }
-            return render(request, 'edit_user.html',context)
+            if user_type == 'vendor':
+                vendor = user.vendor_set.all()[0]  
+                vendor.contact_person= request.POST['contact_person']
+                vendor.user = user
+                vendor.save()
+                context = {
+                    'message' : 'Vendor edited correctly',
+                    'user_type': user_type,
+                    'profile': userprofile
+                }
+                return render(request, 'edit_user.html',context)
+            elif user_type == 'staff':
+                user.username = request.POST['username']
+                user.save()
+                userprofile.user = user
+                userprofile.save()
+                staff = user.staff_set.all()[0]
+                staff.user = user
+                if request.POST['old_designation'] != request.POST['new_designation']:
+                    try:
+                        designation =  Designation.objects.get(title=request.POST['new_designation'])
+                        staff.designation = designation
+                    except Designation.DoesNotExist:
+                        pass   
+                staff.save()
+                context = {
+                    'message' : 'Staff edited correctly',
+                    'user_type': user_type,
+                    'profile': userprofile
+                }
+                return render(request, 'edit_user.html',context)
 
 class DesignationList(View):
 
@@ -503,6 +530,70 @@ class ClearBackup(View):
             for d in dirs:
                 shutil.rmtree(os.path.join(root, d))
         return HttpResponseRedirect('/backups/')
+
+class CreateCustomer(View):
+
+    def get(self, request, *args, **kwargs):
+
+        user_type = 'customer'
+        return render(request, 'register_user.html',{'user_type': user_type})
+
+    def post(self, request, *args, **kwargs):
+
+        if request.POST['name'] == '':
+            context = {
+                'error_message': 'Please enter the name',
+                'user_type': 'customer',
+            }
+            context.update(request.POST)
+            return render(request, 'register_user.html',context)
+        elif request.POST['email'] == '':
+            context = {
+                'error_message': 'Please enter the email id',
+                'user_type': 'customer',
+            }
+            context.update(request.POST)
+            return render(request, 'register_user.html',context)
+        customer, created = Customer.objects.get_or_create(customer_id = request.POST['email'])
+        if not created:
+            if request.is_ajax():
+                res = {
+                    'result': 'error',
+                    'message': 'Customer with this email id already exists',
+                }
+                response = simplejson.dumps(res)
+                return HttpResponse(response, status = 200, mimetype="application/json")
+            else:
+                context = {
+                    'error_message': 'Customer with this email id already exists',
+                    'user_type': 'customer',
+                }
+                context.update(request.POST)
+                return render(request, 'register_user.html',context)
+        else:
+            customer.customer_name = request.POST['name']
+            customer.house_name = request.POST['house'] 
+            customer.street = request.POST['street']
+            customer.city = request.POST['city']
+            customer.district = request.POST['district'] 
+            customer.pin = request.POST['pin']
+            customer.mobile_number = request.POST['mobile']
+            customer.land_line = request.POST['phone']
+            customer.customer_id = request.POST['email']
+            customer.save()
+            if request.is_ajax():
+                res = {
+                    'result': 'ok',
+                    'customer_name': customer.customer_name
+                }
+                response = simplejson.dumps(res)
+                return HttpResponse(response, status = 200, mimetype="application/json")
+
+        context = {
+            'message' : 'Customer added correctly',
+            'user_type': 'customer'
+        }
+        return render(request, 'register_user.html',context)
 
 
 

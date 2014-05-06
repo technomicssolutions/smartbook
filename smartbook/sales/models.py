@@ -12,15 +12,14 @@ from web.models import Customer, Staff
 
 class Quotation(models.Model):
 
-    to = models.ForeignKey(Customer)
+    to = models.ForeignKey(Customer, null=True, blank=True)
     date = models.DateField('Date', null=True, blank=True)
     attention = models.TextField('Attention', null=True, blank=True)
     subject = models.CharField('Subject', null=True, blank=True, max_length=20)
     reference_id = models.CharField('Reference no', null=True, blank=True, max_length=10)
     prefix = models.CharField('Prefix', null=True, blank=True, max_length=20, default='QO')
-    item = models.ManyToManyField(Item, null=True, blank=True)
     processed = models.BooleanField('Is Processed', default=False)
-
+    net_total = models.DecimalField('Net Total',max_digits=14, decimal_places=2, default=0)
 
     def __unicode__(self):
 
@@ -30,6 +29,14 @@ class Quotation(models.Model):
 
         verbose_name = 'Quotation'
         verbose_name_plural = 'Quotation'
+
+class QuotationItem(models.Model):
+
+    item = models.ForeignKey(Item, null=True, blank=True)
+    quotation = models.ForeignKey(Quotation, null=True, blank=True)
+    net_amount = models.DecimalField('Net Amount',max_digits=14, decimal_places=2, default=0)
+    quantity_sold = models.IntegerField('Quantity Sold', default=0)
+
 
 class DeliveryNote(models.Model):
 

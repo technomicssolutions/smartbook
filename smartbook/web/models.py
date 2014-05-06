@@ -62,8 +62,13 @@ class Vendor(models.Model):
 class Customer(models.Model):
     
     customer_name = models.CharField('Name of the customer', null=True, blank=True, max_length=50)
-    address = models.TextField('Address of the customer', null=True, blank=True)
+    house_name = models.CharField('House name', null=True, blank=True, max_length=50)
+    street = models.CharField('Street', null=True, blank=True, max_length=50)
+    city = models.CharField('City', null=True, blank=True, max_length=50)
+    district = models.CharField('District', null=True, blank=True, max_length=50)
+    pin = models.CharField('Pin', max_length=10, null=True, blank=True,)
     mobile_number = models.CharField('Mobile Number', max_length=15, null=True, blank=True)
+    land_line = models.CharField('Land Line', max_length=25, null=True, blank=True)
     customer_id = models.CharField('Customer Id(Email id)', max_length=75, null=True, blank=True)
 
     def __unicode__(self):
