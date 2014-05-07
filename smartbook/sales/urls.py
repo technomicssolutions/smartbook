@@ -14,4 +14,5 @@ urlpatterns = patterns('',
 	url(r'create_delivery_note/$', CreateDeliveryNote.as_view(), name='create_delivery_note'),
 	url(r'quotation_details/$', QuotationDetails.as_view(), name='quotation_details'),
 	url(r'delivery_note_details/$', DeliveryNoteDetails.as_view(), name='delivery_note_details'),
+	url(r'^delivery_note_pdf/(?P<delivery_note_id>\d+)/$', DeliveryNotePDF.as_view(), name='delivery_note_pdf'),
 )
