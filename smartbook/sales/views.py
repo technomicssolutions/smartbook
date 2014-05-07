@@ -500,5 +500,3 @@ class QuotationDetails(View):
         }
         response = simplejson.dumps(res)
         return HttpResponse(response, status=200, mimetype='application/json')
-
->>>>>>> 8f349e706812cf29e8acf3e59c6e3b2849ade08c

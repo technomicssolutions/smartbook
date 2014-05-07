@@ -122,6 +122,7 @@ class TransportationCompany(models.Model):
 class OwnerCompany(models.Model):
 
     company_name = models.CharField('Company Name', max_length=100)
+    logo = models.FileField('Logo', upload_to = "uploads/logo/", null=True, blank=True)
 
     def __unicode__(self):
 
