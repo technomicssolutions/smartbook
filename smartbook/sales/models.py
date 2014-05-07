@@ -20,6 +20,7 @@ class Quotation(models.Model):
     prefix = models.CharField('Prefix', null=True, blank=True, max_length=20, default='QO')
     processed = models.BooleanField('Is Processed', default=False)
     net_total = models.DecimalField('Net Total',max_digits=14, decimal_places=2, default=0)
+    is_sales_invoice_created = models.BooleanField('Is Sales Invoice Created', default=False)
 
     def __unicode__(self):
 
@@ -60,7 +61,7 @@ class DeliveryNote(models.Model):
 
     def __unicode__(self):
 
-        return str(self.quotation.reference_id)
+        return str(self.delivery_note_number)
 
     class Meta:
 
@@ -70,7 +71,7 @@ class DeliveryNote(models.Model):
 
 class Sales(models.Model): 
 
-    sales_invoice_number = models.IntegerField('Sales Invoice Number', default=0)
+    sales_invoice_number = models.CharField('Sales Invoice Number', null=True, blank=True, max_length=10)
     sales_invoice_date = models.DateField('Sales Invoice Date', null=True, blank=True)
     customer = models.ForeignKey(Customer, null=True, blank=True)
     salesman = models.ForeignKey(Staff, null=True, blank=True)
@@ -97,7 +98,7 @@ class Sales(models.Model):
 class SalesInvoice(models.Model):
 
     quotation = models.ForeignKey(Quotation)
-    delivery_note = models.ForeignKey(DeliveryNote)
+    delivery_note = models.ForeignKey(DeliveryNote, null=True, blank=True)
     sales = models.ForeignKey(Sales)
     customer = models.ForeignKey(Customer, null=True, blank=True)
     date = models.DateField('Date', null=True, blank=True)

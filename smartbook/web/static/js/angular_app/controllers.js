@@ -770,7 +770,7 @@ function SalesController($scope, $element, $http, $timeout, share, $location) {
         'delivery_no': '',   
     }
     $scope.sales.staff = 'select';
-    $scope.sales.customer = 'select';
+    $scope.sales.customer = '';
     $scope.init = function(csrf_token, sales_invoice_number)
     {
         $scope.csrf_token = csrf_token;
@@ -779,7 +779,7 @@ function SalesController($scope, $element, $http, $timeout, share, $location) {
         
         
         $scope.get_staff();
-        $scope.get_customers();
+        // $scope.get_customers();
             
     }
     $scope.payment_mode_change_sales = function(payment_mode) {
@@ -806,7 +806,11 @@ function SalesController($scope, $element, $http, $timeout, share, $location) {
         }
     }
     $scope.validate_sales = function() {
-        if($scope.sales.sales_invoice_date == '') {
+
+        if ($scope.sales.quotation_ref_no == ''){
+            $scope.validation_error = "Enter Quotation Reference No" ;
+            return false;
+        } else if($scope.sales.sales_invoice_date == '') {
             $scope.validation_error = "Enter Sales invoice Date" ;
             return false;
         } else if($scope.sales.customer =='select'){
@@ -900,81 +904,81 @@ function SalesController($scope, $element, $http, $timeout, share, $location) {
         });
     }
 
-    $scope.get_customers = function() {
-        $http.get('/customer/list/').success(function(data)
-        {   
+    // $scope.get_customers = function() {
+    //     $http.get('/customer/list/').success(function(data)
+    //     {   
             
-            $scope.customers = data.customers;
+    //         $scope.customers = data.customers;
 
-        }).error(function(data, status)
-        {
-            console.log(data || "Request failed");
-        });
-    }
-        $scope.add_customer = function() {
+    //     }).error(function(data, status)
+    //     {
+    //         console.log(data || "Request failed");
+    //     });
+    // }
+    //     $scope.add_customer = function() {
 
-        if($scope.sales.customer == 'other') {
+    //     if($scope.sales.customer == 'other') {
 
 
-            $scope.popup = new DialogueModelWindow({
-                'dialogue_popup_width': '36%',
-                'message_padding': '0px',
-                'left': '28%',
-                'top': '40px',
-                'height': 'auto',
-                'content_div': '#add_customer'
-            });
-            var height = $(document).height();
-            $scope.popup.set_overlay_height(height);
-            $scope.popup.show_content();
-        }
-    }
-    $scope.close_popup = function(){
-        $scope.popup.hide_popup();
-    }
+    //         $scope.popup = new DialogueModelWindow({
+    //             'dialogue_popup_width': '36%',
+    //             'message_padding': '0px',
+    //             'left': '28%',
+    //             'top': '40px',
+    //             'height': 'auto',
+    //             'content_div': '#add_customer'
+    //         });
+    //         var height = $(document).height();
+    //         $scope.popup.set_overlay_height(height);
+    //         $scope.popup.show_content();
+    //     }
+    // }
+    // $scope.close_popup = function(){
+    //     $scope.popup.hide_popup();
+    // }
 
-    $scope.add_new_customer = function() { 
-        params = { 
-            'name':$scope.customer_name,
-            'contact_person': $scope.contact_person,
-            'house': $scope.house_name,
-            'street': $scope.street,
-            'city': $scope.city,
-            'district':$scope.district,
-            'pin': $scope.pin,
-            'mobile': $scope.mobile,
-            'phone': $scope.land_line,
-            'email': $scope.email_id,
-            "csrfmiddlewaretoken" : $scope.csrf_token
-        }
-        $http({
-            method : 'post',
-            url : "/register/customer/",
-            data : $.param(params),
-            headers : {
-                'Content-Type' : 'application/x-www-form-urlencoded'
-            }
-        }).success(function(data, status) {
+    // $scope.add_new_customer = function() { 
+    //     params = { 
+    //         'name':$scope.customer_name,
+    //         'contact_person': $scope.contact_person,
+    //         'house': $scope.house_name,
+    //         'street': $scope.street,
+    //         'city': $scope.city,
+    //         'district':$scope.district,
+    //         'pin': $scope.pin,
+    //         'mobile': $scope.mobile,
+    //         'phone': $scope.land_line,
+    //         'email': $scope.email_id,
+    //         "csrfmiddlewaretoken" : $scope.csrf_token
+    //     }
+    //     $http({
+    //         method : 'post',
+    //         url : "/register/customer/",
+    //         data : $.param(params),
+    //         headers : {
+    //             'Content-Type' : 'application/x-www-form-urlencoded'
+    //         }
+    //     }).success(function(data, status) {
             
-            if (data.result == 'error'){
-                $scope.error_flag=true;
-                $scope.message = data.message;
-            } else {
-                $scope.popup.hide_popup();
-                $scope.get_customers();
+    //         if (data.result == 'error'){
+    //             $scope.error_flag=true;
+    //             $scope.message = data.message;
+    //         } else {
+    //             $scope.popup.hide_popup();
+    //             $scope.get_customers();
 
-                $scope.sales.customer = $scope.customer_name;
-                $scope.sales.customer = data.customer_name;
-            }
-        }).error(function(data, success){
+    //             $scope.sales.customer = $scope.customer_name;
+    //             $scope.sales.customer = data.customer_name;
+    //         }
+    //     }).error(function(data, success){
             
-        });
-    }
+    //     });
+    // }
     $scope.get_quotation_details = function(){
 
         var ref_no = $scope.quotation_no;
         $scope.quotations = []
-        $http.get('/sales/quotation_details/?reference_no='+ref_no).success(function(data)
+        $http.get('/sales/quotation_details/?reference_no='+ref_no+'&sales_invoice=true').success(function(data)
         {
             $scope.selecting_quotation = true;
             $scope.quotation_selected = false;
@@ -1018,6 +1022,7 @@ function SalesController($scope, $element, $http, $timeout, share, $location) {
                 $scope.calculate_tax_amount_sale(selected_item);
                 $scope.calculate_discount_amount_sale(selected_item);
                 $scope.calculate_unit_cost_sale(selected_item);
+                $scope.calculate_grant_total_sale();
                 $scope.sales.sales_items.push(selected_item);
             }
         }
@@ -1072,6 +1077,7 @@ function SalesController($scope, $element, $http, $timeout, share, $location) {
                 $scope.calculate_tax_amount_sale(selected_item);
                 $scope.calculate_discount_amount_sale(selected_item);
                 $scope.calculate_unit_cost_sale(selected_item);
+                $scope.calculate_grant_total_sale();
                 $scope.sales.sales_items.push(selected_item);
             }
         }
