@@ -71,8 +71,8 @@ class Customer(models.Model):
     land_line = models.CharField('Land Line', max_length=25, null=True, blank=True)
     customer_id = models.CharField('Customer Id(Email id)', max_length=75, null=True, blank=True)
 
-    def __unicode__(self):
-        return "customer - "+self.customer_name
+    # def __unicode__(self):
+    #     return "customer - "+self.customer_name
 
     # def save(self, *args, **kwargs):
     #     profile = self.user.userprofile_set.all()
@@ -122,6 +122,7 @@ class TransportationCompany(models.Model):
 class OwnerCompany(models.Model):
 
     company_name = models.CharField('Company Name', max_length=100)
+    logo = models.FileField('Logo', upload_to = "uploads/logo/", null=True, blank=True)
 
     def __unicode__(self):
 

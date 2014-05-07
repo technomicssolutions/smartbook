@@ -2519,7 +2519,9 @@ function QuotationController($scope, $element, $http, $timeout, share, $location
                     $scope.error_flag=true;
                     $scope.message = data.message;
                 } else {
-                    console.log('created')
+                    // console.log('created')
+                    document.location.href = '/sales/create_quotation_pdf/'+data.quotation_id+'/';
+
                 }
             }).error(function(data, success){
                 

@@ -19,6 +19,23 @@ from sales.models import Sales, SalesItem, SalesReturn, SalesReturnItem, Quotati
 from inventory.models import Item, Inventory
 from web.models import Customer, Staff
 
+from reportlab.lib.units import cm
+from reportlab.pdfgen.canvas import Canvas
+from reportlab.platypus import Frame, Image, Table, TableStyle
+from reportlab.lib import colors
+from reportlab.lib.pagesizes import letter, A4
+
+try:
+    from cStringIO import StringIO
+except ImportError:
+    from StringIO import StringIO
+
+from reportlab.pdfgen import canvas
+from reportlab.lib.pagesizes import letter, A4
+from reportlab.lib.units import inch
+from reportlab.pdfgen import canvas
+from django.http import HttpResponse
+
 class SalesEntry(View):
     def get(self, request, *args, **kwargs):
         current_date = dt.datetime.now().date()
@@ -242,11 +259,176 @@ class CreateQuotation(View):
                 quotation_item_obj.save()
             res = {
                 'result': 'OK',
+                'quotation_id': quotation.id,
             }
 
             response = simplejson.dumps(res)
 
             return HttpResponse(response, status=200, mimetype='application/json')
+
+class DeliveryNotePDF(View):
+     def get(self, request, *args, **kwargs):
+        response = HttpResponse(content_type='application/pdf')
+        p = canvas.Canvas(response, pagesize=(1000, 1000))
+
+        status_code = 200
+
+        y=850
+
+        p.drawString(100, 950, "SUNLIGHT STATIONARY")
+        p.drawString(100, 930, "Colour Printing, Photo Copy, Spiral Binding")
+        p.drawString(100, 910, "Tender Document and Printing Service")
+        p.drawString(100, 890, "Tel. : +971-2-6763571")
+        p.drawString(100, 870, "Fax : +971-2-6763581")
+        p.drawString(100, 850, "E-mail : sunlight.stationary@yahoo.com")
+        p.drawString(100, 830, "P.O.Box : 48296")
+        p.drawString(100, 810, "Behind Russian Embassy")
+        p.drawString(100, 790, "Ziyani, Abu Dhabi, U.A.E.")
+        p.drawString(100, 700, "No.  ")
+        p.drawString(700, 700, "Date : ....................................")
+        p.drawString(700, 680, "L.P.O. No : ............................")
+        p.drawString(100, 650, "Mr.M/s.......................................................................................................................................................................................................................")
+
+        data=[['Sl.No:', 'Description', 'Qty', 'Remarks']]
+
+        table = Table(data, colWidths=[100, 400, 100, 150], rowHeights=40)
+        table.setStyle(TableStyle([
+                                   # ('INNERGRID', (0,0), (0,0), 0.25, colors.black),
+                                   # ('INNERGRID', (0,1), (-1,-1), 0.25, colors.black),
+                                   ('BOX', (0,0), (-1,-1), 0.25, colors.black),
+                                   # ('BACKGROUND',(0,0),(1,0),colors.lightgrey),
+                                   ('ALIGN', (1,1), (-1,-1),'CENTRE'),
+                                   ]))
+        table.wrapOn(p, 200, 400)
+        table.drawOn(p,105,500)
+
+        data1=[['', '', '', '']]
+        table = Table(data1, colWidths=[100, 400, 100, 150], rowHeights=40)
+        table.setStyle(TableStyle([
+                                   # ('INNERGRID', (0,0), (0,0), 0.25, colors.black),
+                                   # ('INNERGRID', (0,1), (-1,-1), 0.25, colors.black),
+                                   ('BOX', (0,0), (-1,-1), 0.25, colors.black),
+                                   # ('BACKGROUND',(0,0),(1,0),colors.lightgrey)
+                                   ]))
+        table.wrapOn(p, 200, 400)
+        table.drawOn(p,105,460)
+
+
+        p.showPage()
+        p.save()
+        return response
+
+
+class CreateQuotationPdf(View):
+    def get(self, request, *args, **kwargs):
+
+        quotation_id = kwargs['quotation_id']
+        quotation = Quotation.objects.get(id=quotation_id)
+
+        response = HttpResponse(content_type='application/pdf')
+        p = canvas.Canvas(response, pagesize=(1000, 1000))
+
+        status_code = 200
+        y = 850
+
+        # p.drawInlineImage(self, 1.jpg, 80,y, width=None,height=None)
+        p.roundRect(80, y-130, 840, 0.5*inch, 10, stroke=1, fill=0)
+        p.drawString(400, 735, "QUOTATION")
+        p.roundRect(80, y-250, 840, 120, 20, stroke=1, fill=0)   
+
+
+        data=[['To                    :', quotation.to.customer_name]]
+        table = Table(data, colWidths=[100, 400], rowHeights=40)      
+        table.wrapOn(p, 200, 400)
+        table.drawOn(p,160, 680)
+
+        data=[['Attention          :', quotation.attention]]
+        table = Table(data, colWidths=[100, 400], rowHeights=40)       
+        table.wrapOn(p, 200, 400)
+        table.drawOn(p,160, 650)
+
+        data=[['Subject            :', quotation.subject]]
+        table = Table(data, colWidths=[100, 400], rowHeights=40)       
+        table.wrapOn(p, 200, 400)
+        table.drawOn(p,160, 620)
+
+
+        data=[['Date              :', quotation.date.strftime('%d-%m-%Y')]]
+        table = Table(data, colWidths=[100, 400], rowHeights=40)       
+        table.wrapOn(p, 200, 400)
+        table.drawOn(p,700, 680)
+
+        data=[['Ref                :', quotation.reference_id]]
+        table = Table(data, colWidths=[100, 400], rowHeights=40)        
+        table.wrapOn(p, 200, 400)
+        table.drawOn(p,700, 650)
+
+
+        data=[['Sl.No:', 'Description', 'Qty', 'Unit Price', 'Amount(AED)']]
+
+        table = Table(data, colWidths=[100, 400, 100, 100, 100], rowHeights=40)
+        table.setStyle(TableStyle([                                  
+                                   ('BOX', (0,0), (-1,-1), 0.25, colors.black),                                  
+                                   ]))
+        table.wrapOn(p, 200, 400)
+        table.drawOn(p,105,500)
+
+        x=500
+
+        i = 0 
+        i = i + 1
+
+        for q_item in quotation.quotationitem_set.all():
+            
+
+            x=x-40
+
+            data1=[[i, q_item.item.description, q_item.quantity_sold, q_item.item.inventory_set.all()[0].unit_price, q_item.net_amount]]
+            table = Table(data1, colWidths=[100, 400, 100, 100, 100], rowHeights=40)
+            table.setStyle(TableStyle([
+                                       # ('INNERGRID', (0,0), (0,0), 0.25, colors.black),
+                                       # ('INNERGRID', (0,1), (-1,-1), 0.25, colors.black),
+                                       ('BOX', (0,0), (-1,-1), 0.25, colors.black),
+                                       # ('BACKGROUND',(0,0),(1,0),colors.lightgrey)
+                                       ]))
+            # table.wrapOn(p, 300, 200)
+            table.wrapOn(p, 200, 400)
+            # table.drawOn(p,105,460)
+            table.drawOn(p,105, x)
+            i = i + 1
+
+        data=[['Total', quotation.net_total]]
+
+        table = Table(data, colWidths=[700, 100], rowHeights=40)
+        table.setStyle(TableStyle([
+                                   # ('INNERGRID', (0,0), (0,0), 0.25, colors.black),
+                                   # ('INNERGRID', (0,1), (-1,-1), 0.25, colors.black),
+                                   ('BOX', (0,0), (-1,-1), 0.25, colors.black),
+                                   # ('BACKGROUND',(0,0),(1,0),colors.lightgrey),
+                                   ('ALIGN', (0,0), (-1,-1),'RIGHT'),
+                                   ]))
+        table.wrapOn(p, 200, 400)
+        table.drawOn(p,105,x-40)
+
+        p.drawString(160, x-80, "Hope the above quoted prices will meet your satisfaction and for further information please do not hesitate to contact us.")
+        p.drawString(160, 220, "For")
+        p.drawString(160, 200, "Sunlight Stationary")
+        p.drawString(160, 120, "Authorized Signatory")
+        p.drawString(700, 120, "Prepared By")
+
+        data=[['Tel: +971-2-6763571, Fax : +971-2-6763581,P.O.Box : 48296, Abu Dhabi, United Arab Emirates']]
+        table = Table(data, colWidths=[700], rowHeights=30)
+        table.setStyle(TableStyle([
+                                   ('BOX', (0,0), (-1,-1), 0.25, colors.black),   
+                                   ('ALIGN',(0,0), (-1,-1),'CENTRE'),                                    
+                                   ]))
+       
+        table.wrapOn(p, 200, 400)
+        table.drawOn(p,160, 50)
+
+        p.showPage()
+        p.save()
+        return response
 
 class CreateDeliveryNote(View):
 
@@ -380,6 +562,3 @@ class DeliveryNoteDetails(View):
         }
         response = simplejson.dumps(res)
         return HttpResponse(response, status=200, mimetype='application/json')
-
-
-
