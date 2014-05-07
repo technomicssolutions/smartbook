@@ -2630,7 +2630,8 @@ function DeliveryNoteController($scope, $element, $http, $timeout, share, $locat
                     $scope.error_flag=true;
                     $scope.message = data.message;
                 } else {
-                    console.log('created')
+                    // console.log('created')
+                    document.location.href = '/sales/delivery_note_pdf/'+data.delivery_note_id+'/';
                 }
             }).error(function(data, success){
                 

@@ -269,6 +269,11 @@ class CreateQuotation(View):
 
 class DeliveryNotePDF(View):
      def get(self, request, *args, **kwargs):
+
+        delivery_note_id = kwargs['delivery_note_id']
+        delivery_note = DeliveryNote.objects.get(id=delivery_note_id)
+
+
         response = HttpResponse(content_type='application/pdf')
         p = canvas.Canvas(response, pagesize=(1000, 1000))
 
@@ -292,28 +297,37 @@ class DeliveryNotePDF(View):
 
         # data=[['Sl.No:', 'Description', 'Qty', 'Remarks']]
 
-        table = Table(data, colWidths=[100, 400, 100, 150], rowHeights=40)
-        table.setStyle(TableStyle([
-                                   # ('INNERGRID', (0,0), (0,0), 0.25, colors.black),
-                                   # ('INNERGRID', (0,1), (-1,-1), 0.25, colors.black),
-                                   ('BOX', (0,0), (-1,-1), 0.25, colors.black),
-                                   # ('LINEBEFORE',(1,1), (-1,-1),1,colors.black),
-                                   # ('BACKGROUND',(0,0),(1,0),colors.lightgrey),
-                                   ('ALIGN', (1,1), (-1,-1),'CENTRE'),
-                                   ]))
-        table.wrapOn(p, 200, 400)
-        table.drawOn(p,105,500)
+        # table = Table(data, colWidths=[100, 400, 100, 150], rowHeights=40)
+        # table.setStyle(TableStyle([
+        #                            # ('INNERGRID', (0,0), (0,0), 0.25, colors.black),
+        #                            # ('INNERGRID', (0,1), (-1,-1), 0.25, colors.black),
+        #                            ('BOX', (0,0), (-1,-1), 0.25, colors.black),
+        #                            # ('LINEBEFORE',(1,1), (-1,-1),1,colors.black),
+        #                            # ('BACKGROUND',(0,0),(1,0),colors.lightgrey),
+        #                            # ('ALIGN', (1,1), (-1,-1),'CENTRE'),
+        #                            ]))
+        # table.wrapOn(p, 200, 400)
+        # table.drawOn(p,105,500)
 
-        data1=[['', '', '', '']]
-        table = Table(data1, colWidths=[100, 400, 100, 150], rowHeights=40)
-        table.setStyle(TableStyle([
-                                   # ('INNERGRID', (0,0), (0,0), 0.25, colors.black),
-                                   # ('INNERGRID', (0,1), (-1,-1), 0.25, colors.black),
-                                   ('BOX', (0,0), (-1,-1), 0.25, colors.black),
-                                   # ('BACKGROUND',(0,0),(1,0),colors.lightgrey)
-                                   ]))
-        table.wrapOn(p, 200, 400)
-        table.drawOn(p,105,460)
+        x=500
+
+        i = 0
+        i = i + 1
+        for q_item in delivery_note.quotation.quotationitem_set.all():
+                   
+            x=x-40
+
+            data1=[[i, q_item.item.description, q_item.quantity_sold, '']]
+            table = Table(data1, colWidths=[100, 400, 100, 150], rowHeights=40)
+            # table.setStyle(TableStyle([
+            #                            # ('INNERGRID', (0,0), (0,0), 0.25, colors.black),
+            #                            # ('INNERGRID', (0,1), (-1,-1), 0.25, colors.black),
+            #                            ('BOX', (0,0), (-1,-1), 0.25, colors.black),
+            #                            # ('BACKGROUND',(0,0),(1,0),colors.lightgrey)
+            #                            ]))
+            table.wrapOn(p, 200, 400)
+            table.drawOn(p,105,x)
+            i = i + 1
 
 
         p.showPage()
@@ -334,14 +348,14 @@ class CreateQuotationPdf(View):
         y = 850
 
         # p.drawInlineImage(self, 1.jpg, 80,y, width=None,height=None)
-        # owner_company = OwnerCompany.objects.latest('id')
-        # path = settings.PROJECT_ROOT+"/media/"+owner_company.logo.name
-        # p.drawImage(path, 7*cm, 30*cm, width=20*cm, preserveAspectRatio=True)
+        owner_company = OwnerCompany.objects.latest('id')
+        path = settings.PROJECT_ROOT+"/media/"+owner_company.logo.name
+        p.drawImage(path, 7*cm, 30*cm, width=20*cm, preserveAspectRatio=True)
 
 
-        # p.roundRect(80, y-130, 840, 0.5*inch, 10, stroke=1, fill=0)
-        # p.drawString(400, 735, "QUOTATION")
-        # p.roundRect(80, y-250, 840, 120, 20, stroke=1, fill=0)   
+        p.roundRect(80, y-130, 840, 0.5*inch, 10, stroke=1, fill=0)
+        p.drawString(400, 735, "QUOTATION")
+        p.roundRect(80, y-250, 840, 120, 20, stroke=1, fill=0)   
 
 
         data=[['                      ', quotation.to.customer_name]]
@@ -371,15 +385,15 @@ class CreateQuotationPdf(View):
         table.drawOn(p,700, 650)
 
 
-        # data=[['Sl.No:', 'Description', 'Qty', 'Unit Price', 'Amount(AED)']]
+        data=[['Sl.No:', 'Description', 'Qty', 'Unit Price', 'Amount(AED)']]
 
-        # table = Table(data, colWidths=[100, 400, 100, 100, 100], rowHeights=40)
-        # # table.setStyle(TableStyle([                                  
-        # #                            ('BOX', (0,0), (-1,-1), 0.25, colors.black),
-        # #                            ('LINEBEFORE',(1,0), (0,-1),1,colors.black),                                  
-        # #                            ]))
-        # table.wrapOn(p, 200, 400)
-        # table.drawOn(p,105,500)
+        table = Table(data, colWidths=[100, 400, 100, 100, 100], rowHeights=40)
+        table.setStyle(TableStyle([                                  
+                                   ('BOX', (0,0), (-1,-1), 0.25, colors.black),
+                                   ('LINEBEFORE',(1,0), (0,-1),1,colors.black),                                  
+                                   ]))
+        table.wrapOn(p, 200, 400)
+        table.drawOn(p,105,500)
 
         x=500
 
@@ -393,46 +407,46 @@ class CreateQuotationPdf(View):
 
             data1=[[i, q_item.item.description, q_item.quantity_sold, q_item.item.inventory_set.all()[0].unit_price, q_item.net_amount]]
             table = Table(data1, colWidths=[100, 400, 100, 100, 100], rowHeights=40)
-            # table.setStyle(TableStyle([
-            #                            # ('INNERGRID', (0,0), (0,0), 0.25, colors.black),
-            #                            # ('INNERGRID', (0,1), (-1,-1), 0.25, colors.black),
-            #                            ('BOX', (0,0), (-1,-1), 0.25, colors.black),
-            #                            # ('BACKGROUND',(0,0),(1,0),colors.lightgrey)
-            #                            ]))
+            table.setStyle(TableStyle([
+                                       # ('INNERGRID', (0,0), (0,0), 0.25, colors.black),
+                                       # ('INNERGRID', (0,1), (-1,-1), 0.25, colors.black),
+                                       ('BOX', (0,0), (-1,-1), 0.25, colors.black),
+                                       # ('BACKGROUND',(0,0),(1,0),colors.lightgrey)
+                                       ]))
             # table.wrapOn(p, 300, 200)
             table.wrapOn(p, 200, 400)
             # table.drawOn(p,105,460)
             table.drawOn(p,105, x)
             i = i + 1
 
-        data=[['', quotation.net_total]]
+        data=[['Total', quotation.net_total]]
 
         table = Table(data, colWidths=[700, 100], rowHeights=40)
-        # table.setStyle(TableStyle([
-        #                            # ('INNERGRID', (0,0), (0,0), 0.25, colors.black),
-        #                            # ('INNERGRID', (0,1), (-1,-1), 0.25, colors.black),
-        #                            ('BOX', (0,0), (-1,-1), 0.25, colors.black),
-        #                            # ('BACKGROUND',(0,0),(1,0),colors.lightgrey),
-        #                            ('ALIGN', (0,0), (-1,-1),'RIGHT'),
-        #                            ]))
+        table.setStyle(TableStyle([
+                                   # ('INNERGRID', (0,0), (0,0), 0.25, colors.black),
+                                   # ('INNERGRID', (0,1), (-1,-1), 0.25, colors.black),
+                                   ('BOX', (0,0), (-1,-1), 0.25, colors.black),
+                                   # ('BACKGROUND',(0,0),(1,0),colors.lightgrey),
+                                   ('ALIGN', (0,0), (-1,-1),'RIGHT'),
+                                   ]))
         table.wrapOn(p, 200, 400)
         table.drawOn(p,105,x-40)
 
-        # p.drawString(160, x-80, "Hope the above quoted prices will meet your satisfaction and for further information please do not hesitate to contact us.")
-        # p.drawString(160, 220, "For")
-        # p.drawString(160, 200, "Sunlight Stationary")
-        # p.drawString(160, 120, "Authorized Signatory")
-        # p.drawString(700, 120, "Prepared By")
+        p.drawString(160, x-80, "Hope the above quoted prices will meet your satisfaction and for further information please do not hesitate to contact us.")
+        p.drawString(160, 220, "For")
+        p.drawString(160, 200, "Sunlight Stationary")
+        p.drawString(160, 120, "Authorized Signatory")
+        p.drawString(700, 120, "Prepared By")
 
-        # data=[['Tel: +971-2-6763571, Fax : +971-2-6763581,P.O.Box : 48296, Abu Dhabi, United Arab Emirates']]
-        # table = Table(data, colWidths=[700], rowHeights=30)
-        # table.setStyle(TableStyle([
-        #                            # ('BOX', (0,0), (-1,-1), 0.25, colors.black),   
-        #                            ('ALIGN',(0,0), (-1,-1),'CENTRE'),                                    
-        #                            ]))
+        data=[['Tel: +971-2-6763571, Fax : +971-2-6763581,P.O.Box : 48296, Abu Dhabi, United Arab Emirates']]
+        table = Table(data, colWidths=[700], rowHeights=30)
+        table.setStyle(TableStyle([
+                                   # ('BOX', (0,0), (-1,-1), 0.25, colors.black),   
+                                   ('ALIGN',(0,0), (-1,-1),'CENTRE'),                                    
+                                   ]))
        
-        # table.wrapOn(p, 200, 400)
-        # table.drawOn(p,160, 50)
+        table.wrapOn(p, 200, 400)
+        table.drawOn(p,160, 50)
 
         p.showPage()
         p.save()
@@ -479,7 +493,7 @@ class CreateDeliveryNote(View):
 
             res = {
                 'result': 'ok',
-
+                'delivery_note_id': delivery_note.id
             }
 
             response = simplejson.dumps(res)
