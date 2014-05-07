@@ -50,6 +50,7 @@ class QuotationItem(models.Model):
 class DeliveryNote(models.Model):
 
     quotation = models.ForeignKey(Quotation)
+    customer = models.ForeignKey(Customer, null=True, blank=True)
     delivery_note_number = models.CharField('Delivery Note Serial number', max_length=50, null=True, blank=True)
     date = models.DateField('Date', null=True, blank=True)
     lpo_number = models.CharField('LPO Number', null=True, blank=True, max_length=20)
@@ -68,7 +69,7 @@ class DeliveryNote(models.Model):
 
 
 class Sales(models.Model): 
- 
+
     sales_invoice_number = models.IntegerField('Sales Invoice Number', default=0)
     sales_invoice_date = models.DateField('Sales Invoice Date', null=True, blank=True)
     customer = models.ForeignKey(Customer, null=True, blank=True)
@@ -98,7 +99,7 @@ class SalesInvoice(models.Model):
     quotation = models.ForeignKey(Quotation)
     delivery_note = models.ForeignKey(DeliveryNote)
     sales = models.ForeignKey(Sales)
-    customer = models.ForeignKey(Customer)
+    customer = models.ForeignKey(Customer, null=True, blank=True)
     date = models.DateField('Date', null=True, blank=True)
     invoice_no = models.CharField('Invoice Number',null=True, blank=True, max_length=20)
     prefix =  models.CharField('Prefix', max_length=20, default='SI')
