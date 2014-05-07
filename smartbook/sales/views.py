@@ -322,6 +322,11 @@ class CreateQuotationPdf(View):
         y = 850
 
         # p.drawInlineImage(self, 1.jpg, 80,y, width=None,height=None)
+        owner_company = OwnerCompany.objects.latest('id')
+        path = settings.PROJECT_PATH +"/media/"+owner_company.logo
+        p.drawImage(path, 3*cm, 25*cm, width=5*cm, preserveAspectRatio=True)
+
+
         p.roundRect(80, y-130, 840, 0.5*inch, 10, stroke=1, fill=0)
         p.drawString(400, 735, "QUOTATION")
         p.roundRect(80, y-250, 840, 120, 20, stroke=1, fill=0)   
