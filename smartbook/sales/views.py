@@ -15,7 +15,7 @@ from django.contrib.auth import authenticate, login, logout
 from django.core.urlresolvers import reverse
 from django.contrib.auth.models import User
 
-from sales.models import Sales, SalesItem, SalesReturn, SalesReturnItem, Quotation, QuotationItem, DeliveryNote
+from sales.models import Sales, SalesItem, SalesReturn, SalesReturnItem, Quotation, QuotationItem, DeliveryNote, SalesInvoice
 from inventory.models import Item, Inventory
 from web.models import Customer, Staff
 
@@ -23,14 +23,18 @@ class SalesEntry(View):
     def get(self, request, *args, **kwargs):
         current_date = dt.datetime.now().date()
 
-        sales_invoice_number = Sales.objects.aggregate(Max('sales_invoice_number'))['sales_invoice_number__max']
+        inv_number = SalesInvoice.objects.aggregate(Max('id'))['id__max']
         
-        if not sales_invoice_number:
-            sales_invoice_number = 1
+        if not inv_number:
+            inv_number = 1
+            prefix = 'SI'
         else:
-            sales_invoice_number = sales_invoice_number + 1
+            inv_number = inv_number + 1
+            prefix = SalesInvoice.objects.latest('id').prefix
+        invoice_number = prefix + str(inv_number)
+
         return render(request, 'sales/sales_entry.html',{
-            'sales_invoice_number': sales_invoice_number,
+            'sales_invoice_number': invoice_number,
             'current_date': current_date.strftime('%d/%m/%Y'),
         })
 
@@ -41,7 +45,13 @@ class SalesEntry(View):
         sales, sales_created = Sales.objects.get_or_create(sales_invoice_number=sales_dict['sales_invoice_number'])
         sales.sales_invoice_number = sales_dict['sales_invoice_number']
         sales.sales_invoice_date = datetime.strptime(sales_dict['sales_invoice_date'], '%d/%m/%Y')
-        customer = Customer.objects.get(user__first_name=sales_dict['customer'])
+        quotation = Quotation.objects.get(reference_id=sales_dict['quotation_ref_no'])
+        sales.quotation = quotation
+        delivery_note = DeliveryNote.objects.get(delivery_note_number=sales_dict['delivery_no'])
+        sales.delivery_note = delivery_note
+        sales.customer = delivery_note.customer
+        sales.save()
+        # customer = Customer.objects.get(user__first_name=sales_dict['customer'])
         
         salesman = Staff.objects.get(user__first_name=sales_dict['staff']) 
         
@@ -61,14 +71,14 @@ class SalesEntry(View):
            
             item = Item.objects.get(code=sales_item['item_code'])
             s_item, item_created = SalesItem.objects.get_or_create(item=item, sales=sales)
-            inventory, created = Inventory.objects.get_or_create(item=item)
-            if sales_created:
-                inventory.quantity = inventory.quantity - int(sales_item['qty_sold'])
-            else:
-                inventory.quantity = inventory.quantity + s_item.quantity_sold - int(sales_item['qty_sold'])
+            # inventory, created = Inventory.objects.get_or_create(item=item)
+            # if sales_created:
+            #     inventory.quantity = inventory.quantity - int(sales_item['qty_sold'])
+            # else:
+            #     inventory.quantity = inventory.quantity + s_item.quantity_sold - int(sales_item['qty_sold'])
                 
 
-            inventory.save()
+            # inventory.save()
 
                     
             s_item, item_created = SalesItem.objects.get_or_create(item=item, sales=sales)
@@ -264,13 +274,14 @@ class CreateDeliveryNote(View):
     def post(self, request, *args, **kwargs):
 
         if request.is_ajax():
-            
+
             delivery_note_details = ast.literal_eval(request.POST['delivery_note'])
             quotation = Quotation.objects.get(reference_id=delivery_note_details['quotation_no'])
             delivery_note = DeliveryNote.objects.create(quotation=quotation)
             quotation.processed = True
             quotation.save()
             delivery_note.quotation = quotation
+            delivery_note.customer = quotation.to
             delivery_note.date = datetime.strptime(delivery_note_details['date'], '%d-%m-%Y')
             delivery_note.lpo_number = delivery_note_details['lpo_no']
             delivery_note.delivery_note_number = delivery_note_details['delivery_note_no']
@@ -305,12 +316,20 @@ class QuotationDetails(View):
                     'barcode': q_item.item.barcode,
                     'item_description': q_item.item.description,
                     'qty_sold': q_item.quantity_sold,
+                    'tax': q_item.item.tax,
+                    'uom': q_item.item.uom.uom,
+                    'current_stock': q_item.item.inventory_set.all()[0].quantity if q_item.item.inventory_set.count() > 0  else 0 ,
+                    'selling_price': q_item.item.inventory_set.all()[0].selling_price if q_item.item.inventory_set.count() > 0 else 0 ,
+                    'discount_permit': q_item.item.inventory_set.all()[0].discount_permit_percentage if q_item.item.inventory_set.count() > 0 else 0,
+                    'net_amount': q_item.net_amount,
                 })
                 i = i + 1
             quotation_list.append({
                 'ref_no': quotation.reference_id,
-                'customer': quotation.to.customer_name,
+                'customer': quotation.to.customer_name if quotation.to else '' ,
                 'items': item_list,
+                'net_total': quotation.net_total,
+                'delivery_no': quotation.deliverynote_set.all()[0].delivery_note_number if quotation.deliverynote_set.all().count() > 0 else 0,
             })
         res = {
             'quotations': quotation_list,
@@ -318,4 +337,49 @@ class QuotationDetails(View):
         }
         response = simplejson.dumps(res)
         return HttpResponse(response, status=200, mimetype='application/json')
+
+class DeliveryNoteDetails(View):
+
+    def get(self, request, *args, **kwargs):
+
+        delivery_no = request.GET.get('delivery_no', '')
+
+        delivery_note_details = DeliveryNote.objects.filter(delivery_note_number__istartswith=delivery_no)
+        delivery_note_list = []
+
+        for delivery_note in delivery_note_details:
+            i = 0 
+            i = i + 1
+            item_list = []
+            for q_item in delivery_note.quotation.quotationitem_set.all():
+                    item_list.append({
+                        'sl_no': i,
+                        'item_name': q_item.item.name,
+                        'item_code': q_item.item.code,
+                        'barcode': q_item.item.barcode,
+                        'item_description': q_item.item.description,
+                        'qty_sold': q_item.quantity_sold,
+                        'tax': q_item.item.tax,
+                        'uom': q_item.item.uom.uom,
+                        'current_stock': q_item.item.inventory_set.all()[0].quantity if q_item.item.inventory_set.count() > 0  else 0 ,
+                        'selling_price': q_item.item.inventory_set.all()[0].selling_price if q_item.item.inventory_set.count() > 0 else 0 ,
+                        'discount_permit': q_item.item.inventory_set.all()[0].discount_permit_percentage if q_item.item.inventory_set.count() > 0 else 0,
+                        'net_amount': q_item.net_amount,
+                    })
+                    i = i + 1
+            delivery_note_list.append({
+                'ref_no': delivery_note.quotation.reference_id,
+                'customer': delivery_note.quotation.to.customer_name if delivery_note.quotation.to else '' ,
+                'items': item_list,
+                'net_total': delivery_note.quotation.net_total,
+                'delivery_no': delivery_note.delivery_note_number,
+            })
+        res = {
+            'delivery_notes': delivery_note_list,
+            'result': 'ok',
+        }
+        response = simplejson.dumps(res)
+        return HttpResponse(response, status=200, mimetype='application/json')
+
+
 

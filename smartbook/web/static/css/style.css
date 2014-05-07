@@ -752,3 +752,13 @@ a {
 #create_quotation .purchase_item_list .item_list_row span {
 	width: 14%;
 }
+.delivery_note {
+	width: 17%;
+	margin-left: 200px;
+    margin-top: 30px;
+}
+.quotation_list {
+	width: 17%;
+	margin-left: 200px;
+    margin-top: 30px;
+}

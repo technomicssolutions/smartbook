@@ -766,7 +766,8 @@ function SalesController($scope, $element, $http, $timeout, share, $location) {
         'grant_total': 0,
         'paid': 0,
         'balance': 0,
-        
+        'quotation_ref_no':'',
+        'delivery_no': '',   
     }
     $scope.sales.staff = 'select';
     $scope.sales.customer = 'select';
@@ -835,7 +836,6 @@ function SalesController($scope, $element, $http, $timeout, share, $location) {
             return true;
         }        
     }
-
 
     $scope.get_staff = function() {
         $http.get('/salesman/list/').success(function(data)
@@ -973,6 +973,112 @@ function SalesController($scope, $element, $http, $timeout, share, $location) {
             
         });
     }
+    $scope.get_quotation_details = function(){
+
+        var ref_no = $scope.quotation_no;
+        $scope.quotations = []
+        $http.get('/sales/quotation_details/?reference_no='+ref_no).success(function(data)
+        {
+            $scope.selecting_quotation = true;
+            $scope.quotation_selected = false;
+            $scope.quotations = data.quotations;
+        }).error(function(data, status)
+        {
+            console.log(data || "Request failed");
+        });
+    }
+    $scope.add_quotation = function(quotation) {
+        $scope.selecting_quotation = false;
+        $scope.quotation_selected = true;
+        $scope.item_select_error = '';
+        $scope.sales.sales_items = []
+        $scope.quotation_no = quotation.ref_no; 
+        $scope.delivery_no = quotation.delivery_no;
+        $scope.sales.quotation_ref_no = $scope.quotation_no;
+        $scope.sales.delivery_no = $scope.delivery_no
+        $scope.sales.customer = quotation.customer; 
+        $scope.sales.net_total = quotation.net_total;
+        if(quotation.items.length > 0){
+            for(var i=0; i< quotation.items.length; i++){
+                var selected_item = {
+                    'sl_no': quotation.items[i].sl_no,
+                    'item_code': quotation.items[i].item_code,
+                    'item_name': quotation.items[i].item_name,
+                    'barcode': quotation.items[i].barcode,
+                    'item_description': quotation.items[i].item_description,
+                    'qty_sold': quotation.items[i].qty_sold,
+                    'current_stock': quotation.items[i].current_stock,
+                    'uom': quotation.items[i].uom,
+                    'unit_price': quotation.items[i].selling_price,
+                    'discount_permit': quotation.items[i].discount_permit,
+                    'tax': quotation.items[i].tax,
+                    'tax_amount': 0,
+                    'discount_permit_amount':0,
+                    'disc_given': 0,
+                    'unit_cost':0,
+                    'net_amount': quotation.items[i].net_amount,
+                }
+                $scope.calculate_tax_amount_sale(selected_item);
+                $scope.calculate_discount_amount_sale(selected_item);
+                $scope.calculate_unit_cost_sale(selected_item);
+                $scope.sales.sales_items.push(selected_item);
+            }
+        }
+    }
+
+
+    $scope.get_delivery_note_details = function(){
+
+        var delivery_no = $scope.delivery_no;
+        $scope.delivery_notes = []
+        $http.get('/sales/delivery_note_details/?delivery_no='+delivery_no).success(function(data)
+        {
+            $scope.selecting_delivery_note = true;
+            $scope.delivery_note_selected = false;
+            $scope.delivery_notes = data.delivery_notes;
+        }).error(function(data, status)
+        {
+            console.log(data || "Request failed");
+        });
+    }
+    $scope.add_delivery_note = function(delivery_note) {
+        $scope.selecting_delivery_note = false;
+        $scope.delivery_note_selected = true;
+        $scope.item_select_error = '';
+        $scope.sales.sales_items = []
+        $scope.quotation_no = delivery_note.ref_no; 
+        $scope.delivery_no = delivery_note.delivery_no;
+        $scope.sales.quotation_ref_no = $scope.quotation_no;
+        $scope.sales.delivery_no = $scope.delivery_no
+        $scope.sales.customer = delivery_note.customer; 
+        $scope.sales.net_total = delivery_note.net_total;
+        if(delivery_note.items.length > 0){
+            for(var i=0; i< delivery_note.items.length; i++){
+                var selected_item = {
+                    'sl_no': delivery_note.items[i].sl_no,
+                    'item_code': delivery_note.items[i].item_code,
+                    'item_name': delivery_note.items[i].item_name,
+                    'barcode': delivery_note.items[i].barcode,
+                    'item_description': delivery_note.items[i].item_description,
+                    'qty_sold': delivery_note.items[i].qty_sold,
+                    'current_stock': delivery_note.items[i].current_stock,
+                    'uom': delivery_note.items[i].uom,
+                    'unit_price': delivery_note.items[i].selling_price,
+                    'discount_permit': delivery_note.items[i].discount_permit,
+                    'tax': delivery_note.items[i].tax,
+                    'tax_amount': 0,
+                    'discount_permit_amount':0,
+                    'disc_given': 0,
+                    'unit_cost':0,
+                    'net_amount': delivery_note.items[i].net_amount,
+                }
+                $scope.calculate_tax_amount_sale(selected_item);
+                $scope.calculate_discount_amount_sale(selected_item);
+                $scope.calculate_unit_cost_sale(selected_item);
+                $scope.sales.sales_items.push(selected_item);
+            }
+        }
+    }
 
     $scope.items = [];
     $scope.selected_item = '';
@@ -1074,7 +1180,7 @@ function SalesController($scope, $element, $http, $timeout, share, $location) {
     }
 
     $scope.calculate_net_total_sale = function(){
-        var net_total = 0;
+        var net_total = $scope.sales.net_total;
         for(i=0; i<$scope.sales.sales_items.length; i++){
             net_total = net_total + parseFloat($scope.sales.sales_items[i].net_amount);
         }
@@ -2288,7 +2394,7 @@ function QuotationController($scope, $element, $http, $timeout, share, $location
     $scope.sales_items = [];
     
     $scope.getItems = function(parameter){
-        
+
         if(parameter == 'item_code')
             var param = $scope.item_code;
         else if(parameter == 'item_name')
