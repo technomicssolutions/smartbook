@@ -798,11 +798,8 @@ function SalesController($scope, $element, $http, $timeout, share, $location) {
         }
         else if(payment_mode == 'card'){
             $scope.payment_mode_selection = false;
-
-
-
         }
-         else {
+        else {
             
             $scope.payment_mode_selection = true;
             $scope.payment_mode_selection_check = true;
