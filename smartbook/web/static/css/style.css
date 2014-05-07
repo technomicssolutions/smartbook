@@ -731,3 +731,17 @@ a {
 
 /************* Vendor account end ********************/
 
+/******************   Delivery Note **********************/
+
+#create_delivery_note .item_list {
+	width: 17% !important;
+	margin-left: 200px;
+    margin-top: 29px;
+}
+
+#create_delivery_note .purchase_items_list .purchase_item_list {
+	margin: auto;
+}
+#create_delivery_note .purchase_item_list .item_list_row span {
+	width: 16%;
+}

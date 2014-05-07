@@ -15,7 +15,7 @@ from django.contrib.auth import authenticate, login, logout
 from django.core.urlresolvers import reverse
 from django.contrib.auth.models import User
 
-from sales.models import Sales, SalesItem, SalesReturn, SalesReturnItem, Quotation, QuotationItem
+from sales.models import Sales, SalesItem, SalesReturn, SalesReturnItem, Quotation, QuotationItem, DeliveryNote
 from inventory.models import Item, Inventory
 from web.models import Customer, Staff
 
@@ -195,7 +195,7 @@ class CreateQuotation(View):
             ref_number = ref_number + 1
             prefix = Quotation.objects.latest('id').prefix
         reference_number = prefix + str(ref_number)
-        print reference_number
+
         context = {
             'current_date': current_date.strftime('%d-%m-%Y'),
             'reference_number': reference_number,
@@ -237,3 +237,85 @@ class CreateQuotation(View):
             response = simplejson.dumps(res)
 
             return HttpResponse(response, status=200, mimetype='application/json')
+
+class CreateDeliveryNote(View):
+
+    def get(self, request, *args, **kwargs):
+
+        current_date = dt.datetime.now().date()
+
+        ref_number = DeliveryNote.objects.aggregate(Max('id'))['id__max']
+        
+        if not ref_number:
+            ref_number = 1
+            prefix = 'DN'
+        else:
+            ref_number = ref_number + 1
+            prefix = DeliveryNote.objects.latest('id').prefix
+        delivery_no = prefix + str(ref_number)
+
+        context = {
+            'current_date': current_date.strftime('%d-%m-%Y'),
+            'delivery_no': delivery_no,
+        }
+
+        return render(request, 'sales/create_delivery_note.html', context)
+
+    def post(self, request, *args, **kwargs):
+
+        if request.is_ajax():
+            
+            delivery_note_details = ast.literal_eval(request.POST['delivery_note'])
+            quotation = Quotation.objects.get(reference_id=delivery_note_details['quotation_no'])
+            delivery_note = DeliveryNote.objects.create(quotation=quotation)
+            quotation.processed = True
+            quotation.save()
+            delivery_note.quotation = quotation
+            delivery_note.date = datetime.strptime(delivery_note_details['date'], '%d-%m-%Y')
+            delivery_note.lpo_number = delivery_note_details['lpo_no']
+            delivery_note.delivery_note_number = delivery_note_details['delivery_note_no']
+            delivery_note.save()
+
+            res = {
+                'result': 'ok',
+
+            }
+
+            response = simplejson.dumps(res)
+
+            return HttpResponse(response, status=200, mimetype='application/json')
+
+class QuotationDetails(View):
+
+    def get(self, request, *args, **kwargs):
+
+        ref_number = request.GET.get('reference_no', '')
+
+        quotations = Quotation.objects.filter(reference_id__istartswith=ref_number)
+        quotation_list = []
+        for quotation in quotations:
+            item_list = []
+            i = 0 
+            i = i + 1
+            for q_item in quotation.quotationitem_set.all():
+                item_list.append({
+                    'sl_no': i,
+                    'item_name': q_item.item.name,
+                    'item_code': q_item.item.code,
+                    'barcode': q_item.item.barcode,
+                    'item_description': q_item.item.description,
+                    'qty_sold': q_item.quantity_sold,
+                })
+                i = i + 1
+            quotation_list.append({
+                'ref_no': quotation.reference_id,
+                'customer': quotation.to.customer_name,
+                'items': item_list,
+            })
+        res = {
+            'quotations': quotation_list,
+            'result': 'ok',
+        }
+        response = simplejson.dumps(res)
+        return HttpResponse(response, status=200, mimetype='application/json')
+

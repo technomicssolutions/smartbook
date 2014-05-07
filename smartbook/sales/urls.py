@@ -10,5 +10,6 @@ urlpatterns = patterns('',
 	#url(r'sales_return_entry/$', SalesReturnView.as_view(), name='return_entry'),
 	url(r'view_sales/$', ViewSales.as_view(), name='view_sales'),
 	url(r'create_quotation/$', CreateQuotation.as_view(), name='create_quotation'),
-
+	url(r'create_delivery_note/$', CreateDeliveryNote.as_view(), name='create_delivery_note'),
+	url(r'quotation_details/$', QuotationDetails.as_view(), name='quotation_details'),
 )

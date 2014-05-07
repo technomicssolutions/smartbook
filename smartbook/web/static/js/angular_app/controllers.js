@@ -2247,7 +2247,6 @@ function QuotationController($scope, $element, $http, $timeout, share, $location
     $scope.add_new_customer = function() { 
         params = { 
             'name':$scope.customer_name,
-            // 'contact_person': $scope.contact_person,
             'house': $scope.house_name,
             'street': $scope.street,
             'city': $scope.city,
@@ -2289,8 +2288,7 @@ function QuotationController($scope, $element, $http, $timeout, share, $location
     $scope.sales_items = [];
     
     $scope.getItems = function(parameter){
-
-        console.log('parameter', parameter);
+        
         if(parameter == 'item_code')
             var param = $scope.item_code;
         else if(parameter == 'item_name')
@@ -2424,5 +2422,118 @@ function QuotationController($scope, $element, $http, $timeout, share, $location
     }
 
 }
+
+function DeliveryNoteController($scope, $element, $http, $timeout, share, $location) {
+
+    $scope.quotation = {
+        'sales_items': [],
+        'customer':'',
+        'reference_no': '',
+    }
+    $scope.delivery_note = {
+        'date':'',
+        'lpo_no': '',
+        'delivery_note_no': '',
+        'quotation_no': ''
+    }
+    $scope.quotation.customer = '';
+    $scope.quotation_no = ''
+    $scope.init = function(csrf_token, sales_invoice_number)
+    {
+        $scope.csrf_token = csrf_token;
+        $scope.popup = '';    
+    }
+
+    $scope.quotations = [];
+    $scope.selected_item = '';
+    $scope.selecting_quotation = false;
+    $scope.quotation_selected = false;
+
+    $scope.get_quotation_details = function(){
+
+        var ref_no = $scope.quotation_no;
+        $scope.quotations = []
+        $http.get('/sales/quotation_details/?reference_no='+ref_no).success(function(data)
+        {
+            $scope.selecting_quotation = true;
+            $scope.quotation_selected = false;
+            $scope.quotations = data.quotations;
+        }).error(function(data, status)
+        {
+            console.log(data || "Request failed");
+        });
+    }
+    $scope.add_quotation = function(quotation) {
+        $scope.selecting_quotation = false;
+        $scope.quotation_selected = true;
+        $scope.item_select_error = '';
+        $scope.quotation.sales_items = []
+        $scope.quotation_no = quotation.ref_no; 
+        $scope.quotation.customer = quotation.customer; 
+
+        if(quotation.items.length > 0){
+            for(var i=0; i< quotation.items.length; i++){
+                var selected_item = {
+                    'sl_no': quotation.items[i].sl_no,
+                    'item_code': quotation.items[i].item_code,
+                    'item_name': quotation.items[i].item_name,
+                    'barcode': quotation.items[i].barcode,
+                    'item_description': quotation.items[i].item_description,
+                    'qty_sold': quotation.items[i].qty_sold,
+                }
+                $scope.quotation.sales_items.push(selected_item);
+            }
+        }
+    }
+  
+    $scope.delivery_note_validation = function(){
+
+        $scope.delivery_note.date = $$('#delivery_note_date')[0].get('value');
+        $scope.delivery_note.delivery_note_no = $$('#delivery_no')[0].get('value');
+        $scope.delivery_note.lpo_no = $$('#lpo_no')[0].get('value');
+        $scope.delivery_note.quotation_no = $scope.quotation_no;
+
+        if ($scope.delivery_note.date == '' || $scope.delivery_note.date == undefined) {
+            $scope.validation_error = "Enter Date" ;
+            return false;
+        } else if ($scope.delivery_note.delivery_note_no == '') {
+            $scope.validation_error = "Enter Delivery Note No";
+            return false;
+        } else if ($scope.delivery_note.quotation_no == '') {
+            $scope.validation_error = "Enter Quotation Reference No";
+            return false;
+        } 
+        return true;
+    }
+    $scope.create_delivery_note = function() {
+        $scope.is_valid = $scope.delivery_note_validation();
+        if($scope.is_valid) {
+            params = { 
+                'delivery_note': angular.toJson($scope.delivery_note),
+                "csrfmiddlewaretoken" : $scope.csrf_token
+            }
+            $http({
+                method : 'post',
+                url : "/sales/create_delivery_note/",
+                data : $.param(params),
+                headers : {
+                    'Content-Type' : 'application/x-www-form-urlencoded'
+                }
+            }).success(function(data, status) {
+                
+                if (data.result == 'error'){
+                    $scope.error_flag=true;
+                    $scope.message = data.message;
+                } else {
+                    console.log('created')
+                }
+            }).error(function(data, success){
+                
+            });
+        }
+    }
+
+}
+
 
 
