@@ -530,11 +530,11 @@ class QuotationDetails(View):
         ref_number = request.GET.get('reference_no', '')
         in_sales_invoice_creation = ''
         sales_invoice_creation = request.GET.get('sales_invoice', '')
-        
+
         if sales_invoice_creation == 'true':
             quotations = Quotation.objects.filter(reference_id__istartswith=ref_number, is_sales_invoice_created=False)
         else:
-            quotations = Quotation.objects.filter(reference_id__istartswith=ref_number, processed=False)
+            quotations = Quotation.objects.filter(reference_id__istartswith=ref_number, processed=False, is_sales_invoice_created=False)
         quotation_list = []
         for quotation in quotations:
             item_list = []
