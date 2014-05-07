@@ -23,7 +23,7 @@ class Quotation(models.Model):
 
     def __unicode__(self):
 
-        return str(self.to.customer_name)
+        return str(self.reference_id)
 
     class Meta:
 
@@ -37,11 +37,19 @@ class QuotationItem(models.Model):
     net_amount = models.DecimalField('Net Amount',max_digits=14, decimal_places=2, default=0)
     quantity_sold = models.IntegerField('Quantity Sold', default=0)
 
+    def __unicode__(self):
+
+        return str(self.quotation.reference_id)
+
+    class Meta:
+
+        verbose_name = 'Quotation Item'
+        verbose_name_plural = 'Quotation Item'
+
 
 class DeliveryNote(models.Model):
 
     quotation = models.ForeignKey(Quotation)
-    customer = models.ForeignKey(Customer)
     delivery_note_number = models.CharField('Delivery Note Serial number', max_length=50, null=True, blank=True)
     date = models.DateField('Date', null=True, blank=True)
     lpo_number = models.CharField('LPO Number', null=True, blank=True, max_length=20)
@@ -51,7 +59,7 @@ class DeliveryNote(models.Model):
 
     def __unicode__(self):
 
-        return str(self.to.customer_name)
+        return str(self.quotation.reference_id)
 
     class Meta:
 
@@ -59,7 +67,8 @@ class DeliveryNote(models.Model):
         verbose_name_plural = 'Delivery Note'
 
 
-class Sales(models.Model):  
+class Sales(models.Model): 
+ 
     sales_invoice_number = models.IntegerField('Sales Invoice Number', default=0)
     sales_invoice_date = models.DateField('Sales Invoice Date', null=True, blank=True)
     customer = models.ForeignKey(Customer, null=True, blank=True)

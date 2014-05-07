@@ -11,5 +11,6 @@ urlpatterns = patterns('',
 	url(r'view_sales/$', ViewSales.as_view(), name='view_sales'),
 	url(r'create_quotation/$', CreateQuotation.as_view(), name='create_quotation'),
 	url(r'^create_quotation_pdf/(?P<quotation_id>\d+)/$', CreateQuotationPdf.as_view(), name='create_quotation_pdf'),
-
+	url(r'create_delivery_note/$', CreateDeliveryNote.as_view(), name='create_delivery_note'),
+	url(r'quotation_details/$', QuotationDetails.as_view(), name='quotation_details'),
 )
