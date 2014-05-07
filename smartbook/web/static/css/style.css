@@ -745,3 +745,10 @@ a {
 #create_delivery_note .purchase_item_list .item_list_row span {
 	width: 16%;
 }
+
+#create_quotation .purchase_items_list .purchase_item_list {
+	margin: auto;
+}
+#create_quotation .purchase_item_list .item_list_row span {
+	width: 14%;
+}
