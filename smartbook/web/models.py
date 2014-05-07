@@ -60,16 +60,25 @@ class Vendor(models.Model):
 
     
 class Customer(models.Model):
-    user = models.ForeignKey(User)
+    
+    customer_name = models.CharField('Name of the customer', null=True, blank=True, max_length=50)
+    house_name = models.CharField('House name', null=True, blank=True, max_length=50)
+    street = models.CharField('Street', null=True, blank=True, max_length=50)
+    city = models.CharField('City', null=True, blank=True, max_length=50)
+    district = models.CharField('District', null=True, blank=True, max_length=50)
+    pin = models.CharField('Pin', max_length=10, null=True, blank=True,)
+    mobile_number = models.CharField('Mobile Number', max_length=15, null=True, blank=True)
+    land_line = models.CharField('Land Line', max_length=25, null=True, blank=True)
+    customer_id = models.CharField('Customer Id(Email id)', max_length=75, null=True, blank=True)
 
     def __unicode__(self):
-        return "customer - "+self.user.first_name
+        return "customer - "+self.customer_name
 
-    def save(self, *args, **kwargs):
-        profile = self.user.userprofile_set.all()
-        if len(profile) == 0:
-            profile = UserProfile.objects.create(user = self.user)
-        super(Customer, self).save(*args, **kwargs)
+    # def save(self, *args, **kwargs):
+    #     profile = self.user.userprofile_set.all()
+    #     if len(profile) == 0:
+    #         profile = UserProfile.objects.create(user = self.user)
+    #     super(Customer, self).save(*args, **kwargs)
 
 
     class Meta:

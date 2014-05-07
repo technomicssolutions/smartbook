@@ -21,5 +21,5 @@ urlpatterns = patterns('',
 	url(r'^backup/$', BackupView.as_view(), name="backup"),
 	url(r'^clear_backup/$', ClearBackup.as_view(), name="clear_backup"),
 	url(r'^backups/(?P<path>.*)$', 'django.views.static.serve', {'document_root': settings.MEDIA_ROOT, 'show_indexes': True}),
-
+	url(r'^create_customer/$', CreateCustomer.as_view(), name='create_customer'),
 )

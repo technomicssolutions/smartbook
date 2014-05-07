@@ -83,18 +83,24 @@ class ItemList(View):
                     else:
                         items = Item.objects.all()
                     item_list = []
+                    i = 0
+                    i = i + 1
                     for item in items:
+
                         item_list.append({
+                            'sl_no': i,
                             'item_code': item.code,
                             'item_name': item.name,
                             'barcode': item.barcode,
                             'brand': item.brand.brand,
+                            'description': item.description,
                             'tax': item.tax,
                             'uom': item.uom.uom,
                             'current_stock': item.inventory_set.all()[0].quantity if item.inventory_set.count() > 0  else 0 ,
                             'selling_price': item.inventory_set.all()[0].selling_price if item.inventory_set.count() > 0 else 0 ,
                             'discount_permit': item.inventory_set.all()[0].discount_permit_percentage if item.inventory_set.count() > 0 else 0,
                         })
+                        i = i + 1
 
                     res = {
                         'items': item_list,
