@@ -779,7 +779,6 @@ function CreateSalesEntryController($scope, $element, $http, $timeout, share, $l
         
         
         $scope.get_staff();
-        // $scope.get_customers();
             
     }
     $scope.payment_mode_change_sales = function(payment_mode) {
@@ -904,76 +903,6 @@ function CreateSalesEntryController($scope, $element, $http, $timeout, share, $l
         });
     }
 
-    // $scope.get_customers = function() {
-    //     $http.get('/customer/list/').success(function(data)
-    //     {   
-            
-    //         $scope.customers = data.customers;
-
-    //     }).error(function(data, status)
-    //     {
-    //         console.log(data || "Request failed");
-    //     });
-    // }
-    //     $scope.add_customer = function() {
-
-    //     if($scope.sales.customer == 'other') {
-
-
-    //         $scope.popup = new DialogueModelWindow({
-    //             'dialogue_popup_width': '36%',
-    //             'message_padding': '0px',
-    //             'left': '28%',
-    //             'top': '40px',
-    //             'height': 'auto',
-    //             'content_div': '#add_customer'
-    //         });
-    //         var height = $(document).height();
-    //         $scope.popup.set_overlay_height(height);
-    //         $scope.popup.show_content();
-    //     }
-    // }
-    // $scope.close_popup = function(){
-    //     $scope.popup.hide_popup();
-    // }
-
-    // $scope.add_new_customer = function() { 
-    //     params = { 
-    //         'name':$scope.customer_name,
-    //         'contact_person': $scope.contact_person,
-    //         'house': $scope.house_name,
-    //         'street': $scope.street,
-    //         'city': $scope.city,
-    //         'district':$scope.district,
-    //         'pin': $scope.pin,
-    //         'mobile': $scope.mobile,
-    //         'phone': $scope.land_line,
-    //         'email': $scope.email_id,
-    //         "csrfmiddlewaretoken" : $scope.csrf_token
-    //     }
-    //     $http({
-    //         method : 'post',
-    //         url : "/register/customer/",
-    //         data : $.param(params),
-    //         headers : {
-    //             'Content-Type' : 'application/x-www-form-urlencoded'
-    //         }
-    //     }).success(function(data, status) {
-            
-    //         if (data.result == 'error'){
-    //             $scope.error_flag=true;
-    //             $scope.message = data.message;
-    //         } else {
-    //             $scope.popup.hide_popup();
-    //             $scope.get_customers();
-
-    //             $scope.sales.customer = $scope.customer_name;
-    //             $scope.sales.customer = data.customer_name;
-    //         }
-    //     }).error(function(data, success){
-            
-    //     });
-    // }
     $scope.get_quotation_details = function(){
 
         var ref_no = $scope.quotation_no;
@@ -1015,15 +944,17 @@ function CreateSalesEntryController($scope, $element, $http, $timeout, share, $l
                     'tax': quotation.items[i].tax,
                     'tax_amount': 0,
                     'discount_permit_amount':0,
-                    'disc_given': 0,
+                    'disc_given': quotation.items[i].discount_given,
                     'unit_cost':0,
                     'net_amount': quotation.items[i].net_amount,
                 }
-                $scope.calculate_tax_amount_sale(selected_item);
-                $scope.calculate_discount_amount_sale(selected_item);
-                $scope.calculate_unit_cost_sale(selected_item);
-                $scope.calculate_grant_total_sale();
+                // $scope.calculate_tax_amount_sale(selected_item);
+                // $scope.calculate_discount_amount_sale(selected_item);
+                // $scope.calculate_unit_cost_sale(selected_item);
                 $scope.sales.sales_items.push(selected_item);
+                $scope.calculate_grant_total_sale();
+                $scope.calculate_net_discount_sale();
+                
             }
         }
     }
@@ -1070,15 +1001,17 @@ function CreateSalesEntryController($scope, $element, $http, $timeout, share, $l
                     'tax': delivery_note.items[i].tax,
                     'tax_amount': 0,
                     'discount_permit_amount':0,
-                    'disc_given': 0,
+                    'disc_given': delivery_note.items[i].discount_given,
                     'unit_cost':0,
                     'net_amount': delivery_note.items[i].net_amount,
                 }
-                $scope.calculate_tax_amount_sale(selected_item);
-                $scope.calculate_discount_amount_sale(selected_item);
-                $scope.calculate_unit_cost_sale(selected_item);
-                $scope.calculate_grant_total_sale();
+                // $scope.calculate_tax_amount_sale(selected_item);
+                // $scope.calculate_discount_amount_sale(selected_item);
+                // $scope.calculate_unit_cost_sale(selected_item);
                 $scope.sales.sales_items.push(selected_item);
+                $scope.calculate_grant_total_sale();
+                $scope.calculate_net_discount_sale();
+                
             }
         }
     }
@@ -1142,8 +1075,6 @@ function CreateSalesEntryController($scope, $element, $http, $timeout, share, $l
             'disc_given': 0,
             'unit_cost':0,
             'net_amount': 0,
-
-            
         }
         $scope.calculate_tax_amount_sale(selected_item);
         $scope.calculate_discount_amount_sale(selected_item);
@@ -1159,31 +1090,31 @@ function CreateSalesEntryController($scope, $element, $http, $timeout, share, $l
             return false;
         }
         if(item.qty_sold != '' && item.unit_price != ''){
-            item.net_amount = ((parseFloat(item.qty_sold)*parseFloat(item.unit_price))+(parseFloat(item.tax_amount)*parseFloat(item.qty_sold))-parseFloat(item.disc_given)).toFixed(2);
+            item.net_amount = ((parseFloat(item.qty_sold)*parseFloat(item.unit_price))-parseFloat(item.disc_given)).toFixed(2);
             $scope.calculate_net_discount_sale();
         }
         $scope.calculate_net_total_sale();
     }
-    $scope.calculate_tax_amount_sale = function(item) {
-        if(item.tax != '' && item.unit_price != ''){
-            item.tax_amount = (parseFloat(item.unit_price)*parseFloat(item.tax))/100;
-        }
-    }
-    $scope.calculate_discount_amount_sale = function(item) {
-        if(item.discount_permit != '' && item.unit_price != ''){
-            item.discount_permit_amount = (parseFloat(item.unit_price)*parseFloat(item.discount_permit))/100;
+    // $scope.calculate_tax_amount_sale = function(item) {
+    //     if(item.tax != '' && item.unit_price != ''){
+    //         item.tax_amount = (parseFloat(item.unit_price)*parseFloat(item.tax))/100;
+    //     }
+    // }
+    // $scope.calculate_discount_amount_sale = function(item) {
+    //     if(item.discount_permit != '' && item.unit_price != ''){
+    //         item.discount_permit_amount = (parseFloat(item.unit_price)*parseFloat(item.discount_permit))/100;
             
-        }
-    }
-    $scope.calculate_unit_cost_sale = function(item) {
-        if(item.unit_price != ''){
-            item.unit_cost = (parseFloat(item.unit_price)+parseFloat(item.tax_amount)-parseFloat(item.disc_given)).toFixed(2);
+    //     }
+    // }
+    // $scope.calculate_unit_cost_sale = function(item) {
+    //     if(item.unit_price != ''){
+    //         item.unit_cost = (parseFloat(item.unit_price)+parseFloat(item.tax_amount)-parseFloat(item.disc_given)).toFixed(2);
             
-        }
-    }
+    //     }
+    // }
 
     $scope.calculate_net_total_sale = function(){
-        var net_total = $scope.sales.net_total;
+        var net_total = 0;
         for(i=0; i<$scope.sales.sales_items.length; i++){
             net_total = net_total + parseFloat($scope.sales.sales_items[i].net_amount);
         }
@@ -1194,13 +1125,15 @@ function CreateSalesEntryController($scope, $element, $http, $timeout, share, $l
     $scope.calculate_net_discount_sale = function(){
         
         var net_discount = 0;
+        alert('hi');
         for(i=0; i<$scope.sales.sales_items.length; i++){
            
             net_discount = net_discount + parseFloat($scope.sales.sales_items[i].disc_given);
 
         }
+        console.log(net_discount);
         $scope.sales.net_discount = net_discount;
-        
+        console.log($scope.sales);
     }
 
 
@@ -2971,7 +2904,7 @@ function DeliveryNoteController($scope, $element, $http, $timeout, share, $locat
         }
         if(item.qty_sold != '' && item.unit_price != ''){
             item.net_amount = ((parseFloat(item.qty_sold)*parseFloat(item.unit_price))-parseFloat(item.disc_given)).toFixed(2);
-            // $scope.calculate_net_discount_sale();
+            $scope.calculate_net_discount_sale();
         }
         $scope.calculate_net_total_sale();
     }
