@@ -1156,7 +1156,7 @@ function CreateSalesEntryController($scope, $element, $http, $timeout, share, $l
                     'Content-Type' : 'application/x-www-form-urlencoded'
                 }
             }).success(function(data, status) {
-                document.location.href = '/sales/create_sales_entry/';               
+                document.location.href = '/sales/sales_invoice_pdf/'+data.sales_invoice_id+'/';               
             }).error(function(data, success){
                 
             });

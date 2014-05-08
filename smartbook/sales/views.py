@@ -348,7 +348,7 @@ class CreateQuotationPdf(View):
         p.roundRect(80, y-250, 840, 120, 20, stroke=1, fill=0)   
 
 
-        data=[['To                               : ', quotation.to.customer_name]]
+        data=[['To                               :', quotation.to.customer_name]]
         table = Table(data, colWidths=[100, 400], rowHeights=40)      
         table.wrapOn(p, 200, 400)
         table.drawOn(p,160, 680)
@@ -735,7 +735,63 @@ class CreateSalesEntry(View):
                     
         res = {
             'result': 'Ok',
+            'sales_invoice_id': sales_invoice.id,
         }
         response = simplejson.dumps(res)
         status_code = 200
         return HttpResponse(response, status = status_code, mimetype="application/json")
+
+class CreateSalesInvoicePDF(View):
+     def get(self, request, *args, **kwargs):
+
+        sales_invoice_id = kwargs['sales_invoice_id']
+        sales_invoice = SalesInvoice.objects.get(id=sales_invoice_id)
+
+
+        response = HttpResponse(content_type='application/pdf')
+        p = canvas.Canvas(response, pagesize=(1000, 1000))
+
+        status_code = 200
+
+        y=850
+
+        data=[['', sales_invoice.date.strftime('%d-%m-%Y'), '', sales_invoice.invoice_no]]
+        table = Table(data, colWidths=[0, 100, 650, 100], rowHeights=40)      
+        table.wrapOn(p, 200, 400)
+        table.drawOn(p,100, 750)
+
+        quotation = sales_invoice.quotation
+
+        data=[['', '', sales_invoice.delivery_note.lpo_number if sales_invoice.delivery_note else '' ]]
+        table = Table(data, colWidths=[450, 60, 100], rowHeights=40)      
+        table.wrapOn(p, 200, 400)
+        table.drawOn(p,100, 700)
+
+        data=[['', '', sales_invoice.date.strftime('%d-%m-%Y')]]
+        table = Table(data, colWidths=[450, 30, 100], rowHeights=40)      
+        table.wrapOn(p, 200, 400)
+        table.drawOn(p,100, 650)
+
+        data=[['', '', sales_invoice.delivery_note.delivery_note_number if sales_invoice.delivery_note else sales_invoice.quotation.reference_id]]
+        table = Table(data, colWidths=[450, 30, 100], rowHeights=40)      
+        table.wrapOn(p, 200, 400)
+        table.drawOn(p,150, 620)
+
+        x=600
+
+        i = 0
+        i = i + 1
+        for q_item in quotation.quotationitem_set.all():
+                   
+            x=x-40
+
+            data1=[[i, q_item.item.code, q_item.item.description, q_item.quantity_sold,q_item.item.uom.uom, q_item.item.inventory_set.all()[0].unit_price, q_item.net_amount]]
+            table = Table(data1, colWidths=[50, 100, 400, 70, 90, 100, 50], rowHeights=40)
+            table.wrapOn(p, 200, 400)
+            table.drawOn(p,50,x)
+            i = i + 1
+
+
+        p.showPage()
+        p.save()
+        return response
