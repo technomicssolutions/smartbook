@@ -1125,15 +1125,12 @@ function CreateSalesEntryController($scope, $element, $http, $timeout, share, $l
     $scope.calculate_net_discount_sale = function(){
         
         var net_discount = 0;
-        alert('hi');
         for(i=0; i<$scope.sales.sales_items.length; i++){
            
             net_discount = net_discount + parseFloat($scope.sales.sales_items[i].disc_given);
 
         }
-        console.log(net_discount);
         $scope.sales.net_discount = net_discount;
-        console.log($scope.sales);
     }
 
 

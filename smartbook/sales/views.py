@@ -348,28 +348,28 @@ class CreateQuotationPdf(View):
         p.roundRect(80, y-250, 840, 120, 20, stroke=1, fill=0)   
 
 
-        data=[['                      ', quotation.to.customer_name]]
+        data=[['To                               : ', quotation.to.customer_name]]
         table = Table(data, colWidths=[100, 400], rowHeights=40)      
         table.wrapOn(p, 200, 400)
         table.drawOn(p,160, 680)
 
-        data=[['                      ', quotation.attention]]
+        data=[['Attention                    :', quotation.attention]]
         table = Table(data, colWidths=[100, 400], rowHeights=40)       
         table.wrapOn(p, 200, 400)
         table.drawOn(p,160, 650)
 
-        data=[['                      ', quotation.subject]]
+        data=[['Subject                      :', quotation.subject]]
         table = Table(data, colWidths=[100, 400], rowHeights=40)       
         table.wrapOn(p, 200, 400)
         table.drawOn(p,160, 620)
 
 
-        data=[['                  ', quotation.date.strftime('%d-%m-%Y')]]
+        data=[['Date                  :', quotation.date.strftime('%d-%m-%Y')]]
         table = Table(data, colWidths=[100, 400], rowHeights=40)       
         table.wrapOn(p, 200, 400)
         table.drawOn(p,700, 680)
 
-        data=[['                   ', quotation.reference_id]]
+        data=[['Ref.id                   :', quotation.reference_id]]
         table = Table(data, colWidths=[100, 400], rowHeights=40)        
         table.wrapOn(p, 200, 400)
         table.drawOn(p,700, 650)
