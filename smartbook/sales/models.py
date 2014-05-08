@@ -37,6 +37,7 @@ class QuotationItem(models.Model):
     quotation = models.ForeignKey(Quotation, null=True, blank=True)
     net_amount = models.DecimalField('Net Amount',max_digits=14, decimal_places=2, default=0)
     quantity_sold = models.IntegerField('Quantity Sold', default=0)
+    discount = models.DecimalField('Total Discount',max_digits=14, decimal_places=3, default=0)
 
     def __unicode__(self):
 

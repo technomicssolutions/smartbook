@@ -81,6 +81,8 @@
 							<span> Barcode </span>
 							<span> Description </span>
 							<span> Qty  </span>	
+							<span> Dis Given </span>
+							<span> Net Amount </span>
 						</div>
 						<div ng-repeat="item in quotation.sales_items" class="item_list_row">
 							<span>[[item.sl_no]]</span>
@@ -88,13 +90,21 @@
 							<span>[[item.item_name]] </span>
 							<span>[[item.barcode]] </span>
 							<span>[[item.item_description]] </span>
-							<span> [[item.qty_sold]] </span>  
+							<span> <input type="text" ng-model="item.qty_sold" ng-change="calculate_net_amount_sale(item)" /> </span>
+							<span> <input type="text" ng-model="item.disc_given" ng-change="calculate_net_amount_sale(item)"/> </span>  
+							<span>[[item.net_amount]] </span>
 						</div>
 						
 						<div class="clear"></div>
    					</div>
    					<div class="clear"></div>
    				</div>
+   				<div class="formtext_sales">
+					<label for="net_total">Net Total</label>
+				</div>
+				<div class="forminput_sales">
+					<input type="text" name="net_total"ng-model="quotation.net_total" readonly/ >
+				</div>
    				
    				<div class="clear"></div>
 

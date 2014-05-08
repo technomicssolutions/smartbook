@@ -1,6 +1,6 @@
 {% extends 'base.html' %}
 
-{% block body_id %}sales{% endblock %}
+{% block body_id %}Sales{% endblock %}
 
 {% block title %}Sales Entry{% endblock title %}
 {% block controller %}ng-controller="SalesController" ng-init="init('{{csrf_token}}', '{{sales_invoice_number}}')"{% endblock controller %}
@@ -20,57 +20,27 @@
 			<div class="form_contents_sales">
 				<div class="section_1_sales">
 					<div class="formrow_sales">
-						<div class="formtext_sales">
-							<label for="customer">Quotation Reference No</label>
-						</div>
-						<div class="forminput_sales">
-							<input type='text' id="quotation_no" ng-model="quotation_no" ng-change="get_quotation_details()"/>
-						</div>
-						<div class="item_list quotation_list" ng-show='selecting_quotation' ng-hide="quotation_selected">
-							<div ng-repeat="quotation in quotations" ng-click="add_quotation(quotation)" class="item_list_row">
-								<span>[[quotation.ref_no]]</span>
-							</div>
-							<div class="clear"></div>
-						</div>
-					</div>
-					
-					<div class="formrow_sales">
-						<div class="formtext_sales">
-							<label for="customer">Delivery No</label>
-						</div>
-
-						<div class="forminput_sales">
-							<input type='text' id="delivery_no" ng-model="delivery_no" ng-change="get_delivery_note_details()"/>
-						</div>
-						<div class="item_list delivery_note" ng-show='selecting_delivery_note' ng-hide="delivery_note_selected">
-							<div ng-repeat="delivery_note in delivery_notes" ng-click="add_delivery_note(delivery_note)" class="item_list_row">
-								<span>[[delivery_note.delivery_no]]</span>
-							</div>
-							<div class="clear"></div>
-						</div>
-					</div>
-					<div class="formrow_sales">
 						<div class="formtext_sales	">
 							<label for="Date ">Date </label>
 						</div>
 
 						<div class="forminput_sales">
 							
-							<input type="text" name="sales_invoice_date"  id="sales_invoice_date" value="{{current_date}}" ng-readonly="payment_mode_selection_check">
+							<input type="text" name="sales_invoice_date"  id="sales_invoice_date" value="{{current_date}}" ng-readonly="payment_mode_selection">
 						</div>
 					</div>
+
 					<div class="formrow_sales">
 						<div class="formtext_sales">
 							<label for="customer">Customer Name</label>
 						</div>
 						<div class="forminput_sales">
-							<input type="text" name="customer"  id="customer" ng-model="sales.customer" >
-							<!-- <select name="customer" ng-model="sales.customer" ng-change="add_customer()" >
+							<select name="customer" ng-model="sales.customer" ng-change="add_customer()" >
 								<option value="select">Select</option>
 								<option ng-repeat="customer in customers" value="[[customer.customer_name]]" ng-selected="customer.customer_name == sales.customer">[[customer.customer_name]]
 								</option>
 								<option value="other">Other</option>
-							</select> -->
+							</select>
 							
 						</div>
 					</div>
@@ -85,9 +55,12 @@
 						</div>
 					</div>
 
+
+					
+
 				</div>	
 		
-				<!-- <div class="section_3_sales">
+				<div class="section_3_sales">
 					<div class="search_sales">
 						<div class="control">
 							<label> Item Code </label>
@@ -117,7 +90,7 @@
 						</div>
     				</div>
     				<div class="clear"></div>
-   				</div> -->
+   				</div>
 
 
    				<div class="purchase_items_list" ng-show="sales.sales_items.length > 0">
@@ -147,8 +120,7 @@
 							<span>[[item.unit_price]] </span>
 							<span>[[item.tax]] </span>
 							<span> [[item.tax_amount]] </span> 
-							<span> [[item.qty_sold]]</span> 
-							<!-- <span> <input type="text" ng-model="item.qty_sold" ng-change="calculate_net_amount_sale(item)"/></span>  -->
+							<span> <input type="text" ng-model="item.qty_sold" ng-change="calculate_net_amount_sale(item)" /> </span> 
 							<span>[[item.uom]] </span>
 							<span>[[item.discount_permit]] </span>
 							<span>[[item.discount_permit_amount]] </span>
@@ -156,6 +128,7 @@
 							<span>[[item.unit_cost]] </span>
 							<span>[[item.net_amount]] </span>
 							 
+							
 						</div>
 						
 						<div class="clear"></div>
@@ -185,24 +158,9 @@
 							<label for="payment_mode">Payment Mode</label>
 						</div>
 						<div class="forminput_sales" id="radio_input">
-							<input type="radio" name="payment_mode" ng-model="sales.payment_mode" value="cash" ng-change="payment_mode_change_sales('cash')"><label>Cash</label>
-							<input type="radio" name="payment_mode" ng-model="sales.payment_mode" value="cheque" ng-change="payment_mode_change_sales('cheque')"><label>Cheque</label>
-							<input type="radio" name="payment_mode" ng-model="sales.payment_mode" value="card" ng-change="payment_mode_change_sales('card')"><label>Card</label>
-
+							<input type="radio" name="payment_mode" ng-model="payment_mode" value="cash" ng-change="payment_mode_change_sales('cash')"><label>Cash</label>
+							<input type="radio" name="payment_mode" ng-model="payment_mode" value="cheque" ng-change="payment_mode_change_sales('cheque')"><label>Cheque</label>
 						</div>
-						<div class="formtext_sales">
-							<label for="card_number">Card Number</label>
-						</div>
-						<div class="forminput_sales">
-							<input type="text" name="card_number"ng-model="sales.card_number" ng-readonly="payment_mode_selection">
-						</div>
-						<div class="formtext_sales">
-							<label for="bank_name">Bank Name</label>
-						</div>
-						<div class="forminput_sales">
-							<input type="text" name="bank_name"ng-model="sales.bank_name" ng-readonly="payment_mode_selection">
-						</div>
-
 					</div>
 					
 
@@ -263,3 +221,43 @@
 	</div>
 
 {% endblock content %}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

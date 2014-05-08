@@ -39,78 +39,69 @@ from django.http import HttpResponse
 
 class SalesEntry(View):
     def get(self, request, *args, **kwargs):
+        # current_date = dt.datetime.now().date()
+
+        # inv_number = SalesInvoice.objects.aggregate(Max('id'))['id__max']
+        
+        # if not inv_number:
+        #     inv_number = 1
+        #     prefix = 'SI'
+        # else:
+        #     inv_number = inv_number + 1
+        #     prefix = SalesInvoice.objects.latest('id').prefix
+        # invoice_number = prefix + str(inv_number)
+
+        # return render(request, 'sales/sales_entry.html',{
+        #     'sales_invoice_number': invoice_number,
+        #     'current_date': current_date.strftime('%d/%m/%Y'),
+        # })
         current_date = dt.datetime.now().date()
 
-        inv_number = SalesInvoice.objects.aggregate(Max('id'))['id__max']
+        sales_invoice_number = Sales.objects.aggregate(Max('id'))['id__max']
         
-        if not inv_number:
-            inv_number = 1
-            prefix = 'SI'
+        if not sales_invoice_number:
+            sales_invoice_number = 1
         else:
-            inv_number = inv_number + 1
-            prefix = SalesInvoice.objects.latest('id').prefix
-        invoice_number = prefix + str(inv_number)
-
+            sales_invoice_number = sales_invoice_number + 1
         return render(request, 'sales/sales_entry.html',{
-            'sales_invoice_number': invoice_number,
+            'sales_invoice_number': sales_invoice_number,
             'current_date': current_date.strftime('%d/%m/%Y'),
         })
 
+
     def post(self, request, *args, **kwargs):
 
-        
         sales_dict = ast.literal_eval(request.POST['sales'])
         sales, sales_created = Sales.objects.get_or_create(sales_invoice_number=sales_dict['sales_invoice_number'])
         sales.sales_invoice_number = sales_dict['sales_invoice_number']
         sales.sales_invoice_date = datetime.strptime(sales_dict['sales_invoice_date'], '%d/%m/%Y')
-        quotation = Quotation.objects.get(reference_id=sales_dict['quotation_ref_no'])
-        sales.quotation = quotation
-        if sales_dict['delivery_no'] is not 0:
-            delivery_note, delivery_note_created = DeliveryNote.objects.get_or_create(delivery_note_number=sales_dict['delivery_no'], quotation=quotation)
-        # if delivery_note_created:
-        #     delivery_note.customer = quotation.to
-        #     delivery_note.date = datetime.strptime(sales_dict['sales_invoice_date'], '%d/%m/%Y')
-            
-        #     ref_number = DeliveryNote.objects.aggregate(Max('id'))['id__max']
-        #     if not ref_number:
-        #         ref_number = 1
-        #         prefix = 'DN'
-        #     else:
-        #         ref_number = ref_number + 1
-        #         prefix = DeliveryNote.objects.latest('id').prefix
-        #     delivery_no = prefix + str(ref_number)
-        #     delivery_note.delivery_note_number = delivery_no
-        #     delivery_note.save()
-
-            sales.delivery_note = delivery_note
-        sales.customer = quotation.to
-        sales.save()
-
+        customer = Customer.objects.get(customer_name=sales_dict['customer'])
+        
         salesman = Staff.objects.get(user__first_name=sales_dict['staff']) 
         
         sales.discount = sales_dict['net_discount']
         sales.round_off = sales_dict['roundoff']
         sales.net_amount = sales_dict['net_total']
         sales.grant_total = sales_dict['grant_total']
+
+        sales.customer = customer
         sales.salesman = salesman
-        sales.payment_mode = sales_dict['payment_mode']
-        if sales_dict['payment_mode'] == 'card':
-            sales.card_number = sales_dict['card_number']
-            sales.bank_name = sales_dict['bank_name']
+        
         sales.save()
         sales_items = sales_dict['sales_items']
         for sales_item in sales_items:
            
             item = Item.objects.get(code=sales_item['item_code'])
             s_item, item_created = SalesItem.objects.get_or_create(item=item, sales=sales)
-            # inventory, created = Inventory.objects.get_or_create(item=item)
-            # if sales_created:
-            #     inventory.quantity = inventory.quantity - int(sales_item['qty_sold'])
-            # else:
-            #     inventory.quantity = inventory.quantity + s_item.quantity_sold - int(sales_item['qty_sold'])
+            inventory, created = Inventory.objects.get_or_create(item=item)
+            if sales_created:
+
+                inventory.quantity = inventory.quantity - int(sales_item['qty_sold'])
+            else:
+                inventory.quantity = inventory.quantity + s_item.quantity_sold - int(sales_item['qty_sold'])
                 
 
-            # inventory.save()
+            inventory.save()
 
                     
             s_item, item_created = SalesItem.objects.get_or_create(item=item, sales=sales)
@@ -120,29 +111,6 @@ class SalesEntry(View):
             s_item.discount_given = sales_item['disc_given']
             s_item.net_amount = sales_item['net_amount']
             s_item.save()
-
-
-        # Creating sales invoice 
-
-        sales_invoice = SalesInvoice.objects.create(quotation=quotation, sales=sales)
-        if sales_dict['delivery_no'] is not 0:
-            delivery_note.processed = True
-            delivery_note.save()
-        quotation.is_sales_invoice_created = True
-        quotation.save()
-        if sales_dict['delivery_no'] is not 0:
-            sales.delivery_note = delivery_note
-        sales.quotation = quotation
-        sales.save()
-        sales_invoice.sales = sales
-        if sales_dict['delivery_no'] is not 0:
-            sales_invoice.delivery_note = delivery_note
-        sales_invoice.quotation = quotation
-        sales_invoice.date = datetime.strptime(sales_dict['sales_invoice_date'], '%d/%m/%Y')
-        sales_invoice.customer = quotation.to
-        sales_invoice.invoice_no = sales_dict['sales_invoice_number']
-        sales_invoice.save()
-
                     
         res = {
             'result': 'Ok',
@@ -150,6 +118,97 @@ class SalesEntry(View):
         response = simplejson.dumps(res)
         status_code = 200
         return HttpResponse(response, status = status_code, mimetype="application/json")
+        # sales_dict = ast.literal_eval(request.POST['sales'])
+        # sales, sales_created = Sales.objects.get_or_create(sales_invoice_number=sales_dict['sales_invoice_number'])
+        # sales.sales_invoice_number = sales_dict['sales_invoice_number']
+        # sales.sales_invoice_date = datetime.strptime(sales_dict['sales_invoice_date'], '%d/%m/%Y')
+        # quotation = Quotation.objects.get(reference_id=sales_dict['quotation_ref_no'])
+        # sales.quotation = quotation
+        # if sales_dict['delivery_no'] is not 0:
+        #     delivery_note, delivery_note_created = DeliveryNote.objects.get_or_create(delivery_note_number=sales_dict['delivery_no'], quotation=quotation)
+        # # if delivery_note_created:
+        # #     delivery_note.customer = quotation.to
+        # #     delivery_note.date = datetime.strptime(sales_dict['sales_invoice_date'], '%d/%m/%Y')
+            
+        # #     ref_number = DeliveryNote.objects.aggregate(Max('id'))['id__max']
+        # #     if not ref_number:
+        # #         ref_number = 1
+        # #         prefix = 'DN'
+        # #     else:
+        # #         ref_number = ref_number + 1
+        # #         prefix = DeliveryNote.objects.latest('id').prefix
+        # #     delivery_no = prefix + str(ref_number)
+        # #     delivery_note.delivery_note_number = delivery_no
+        # #     delivery_note.save()
+
+        #     sales.delivery_note = delivery_note
+        # sales.customer = quotation.to
+        # sales.save()
+
+        # salesman = Staff.objects.get(user__first_name=sales_dict['staff']) 
+        
+        # sales.discount = sales_dict['net_discount']
+        # sales.round_off = sales_dict['roundoff']
+        # sales.net_amount = sales_dict['net_total']
+        # sales.grant_total = sales_dict['grant_total']
+        # sales.salesman = salesman
+        # sales.payment_mode = sales_dict['payment_mode']
+        # if sales_dict['payment_mode'] == 'card':
+        #     sales.card_number = sales_dict['card_number']
+        #     sales.bank_name = sales_dict['bank_name']
+        # sales.save()
+        # sales_items = sales_dict['sales_items']
+        # for sales_item in sales_items:
+           
+        #     item = Item.objects.get(code=sales_item['item_code'])
+        #     s_item, item_created = SalesItem.objects.get_or_create(item=item, sales=sales)
+        #     # inventory, created = Inventory.objects.get_or_create(item=item)
+        #     # if sales_created:
+        #     #     inventory.quantity = inventory.quantity - int(sales_item['qty_sold'])
+        #     # else:
+        #     #     inventory.quantity = inventory.quantity + s_item.quantity_sold - int(sales_item['qty_sold'])
+                
+
+        #     # inventory.save()
+
+                    
+        #     s_item, item_created = SalesItem.objects.get_or_create(item=item, sales=sales)
+        #     s_item.sales = sales
+        #     s_item.item = item
+        #     s_item.quantity_sold = sales_item['qty_sold']
+        #     s_item.discount_given = sales_item['disc_given']
+        #     s_item.net_amount = sales_item['net_amount']
+        #     s_item.save()
+
+
+        # # Creating sales invoice 
+
+        # sales_invoice = SalesInvoice.objects.create(quotation=quotation, sales=sales)
+        # if sales_dict['delivery_no'] is not 0:
+        #     delivery_note.processed = True
+        #     delivery_note.save()
+        # quotation.is_sales_invoice_created = True
+        # quotation.save()
+        # if sales_dict['delivery_no'] is not 0:
+        #     sales.delivery_note = delivery_note
+        # sales.quotation = quotation
+        # sales.save()
+        # sales_invoice.sales = sales
+        # if sales_dict['delivery_no'] is not 0:
+        #     sales_invoice.delivery_note = delivery_note
+        # sales_invoice.quotation = quotation
+        # sales_invoice.date = datetime.strptime(sales_dict['sales_invoice_date'], '%d/%m/%Y')
+        # sales_invoice.customer = quotation.to
+        # sales_invoice.invoice_no = sales_dict['sales_invoice_number']
+        # sales_invoice.save()
+
+                    
+        # res = {
+        #     'result': 'Ok',
+        # }
+        # response = simplejson.dumps(res)
+        # status_code = 200
+        # return HttpResponse(response, status = status_code, mimetype="application/json")
     
 
 class SalesReturnView(View):
@@ -515,9 +574,31 @@ class CreateDeliveryNote(View):
     def post(self, request, *args, **kwargs):
 
         if request.is_ajax():
-
+            quotation_details = ast.literal_eval(request.POST['quotation'])
             delivery_note_details = ast.literal_eval(request.POST['delivery_note'])
             quotation = Quotation.objects.get(reference_id=delivery_note_details['quotation_no'])
+            for q_item in quotation.quotationitem_set.all():
+                for item_data in quotation_details['sales_items']:
+                    if q_item.item.code == item_data['item_code']:
+                        if q_item.quantity_sold != int(item_data['qty_sold']):
+                            item = q_item.item
+                            inventory, created = Inventory.objects.get_or_create(item=item)
+                            inventory.quantity = inventory.quantity + int(q_item.quantity_sold)
+                            inventory.save()
+                            inventory.quantity = inventory.quantity - int(item_data['qty_sold'])
+                            inventory.save()
+                            q_item.quantity_sold = int(item_data['qty_sold'])
+                            q_item.save()
+                        if q_item.discount != float(item_data['disc_given']):
+                            q_item.discount = item_data['disc_given']
+                            q_item.save()
+                        if q_item.net_amount != float(item_data['net_amount']):
+                            q_item.net_amount = item_data['net_amount']
+                            q_item.save()
+            if quotation.net_total != float(quotation_details['net_total']):
+                quotation.net_total = quotation_details['net_total']
+                quotation.save()
+
             delivery_note, created = DeliveryNote.objects.get_or_create(quotation=quotation)
             quotation.processed = True
             quotation.save()
@@ -568,6 +649,7 @@ class QuotationDetails(View):
                     'selling_price': q_item.item.inventory_set.all()[0].selling_price if q_item.item.inventory_set.count() > 0 else 0 ,
                     'discount_permit': q_item.item.inventory_set.all()[0].discount_permit_percentage if q_item.item.inventory_set.count() > 0 else 0,
                     'net_amount': q_item.net_amount,
+                    'discount_given': q_item.discount,
                 })
                 i = i + 1
             quotation_list.append({
