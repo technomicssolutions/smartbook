@@ -307,7 +307,7 @@ class DeliveryNotePDF(View):
                    
             x=x-40
 
-            data1=[[i, q_item.item.description, q_item.quantity_sold, '']]
+            data1=[[i, q_item.item.name, q_item.quantity_sold, '']]
             table = Table(data1, colWidths=[100, 400, 100, 150], rowHeights=40)
             # table.setStyle(TableStyle([
             #                            # ('INNERGRID', (0,0), (0,0), 0.25, colors.black),
@@ -348,7 +348,7 @@ class CreateQuotationPdf(View):
         p.roundRect(80, y-250, 840, 120, 20, stroke=1, fill=0)   
 
 
-        data=[['To                               :', quotation.to.customer_name]]
+        data=[['To                              :', quotation.to.customer_name]]
         table = Table(data, colWidths=[100, 400], rowHeights=40)      
         table.wrapOn(p, 200, 400)
         table.drawOn(p,160, 680)
@@ -364,7 +364,7 @@ class CreateQuotationPdf(View):
         table.drawOn(p,160, 620)
 
 
-        data=[['Date                  :', quotation.date.strftime('%d-%m-%Y')]]
+        data=[['Date                     :', quotation.date.strftime('%d-%m-%Y')]]
         table = Table(data, colWidths=[100, 400], rowHeights=40)       
         table.wrapOn(p, 200, 400)
         table.drawOn(p,700, 680)
@@ -395,7 +395,7 @@ class CreateQuotationPdf(View):
 
             x=x-40
 
-            data1=[[i, q_item.item.description, q_item.quantity_sold, q_item.item.inventory_set.all()[0].unit_price, q_item.net_amount]]
+            data1=[[i, q_item.item.name, q_item.quantity_sold, q_item.item.inventory_set.all()[0].unit_price, q_item.net_amount]]
             table = Table(data1, colWidths=[100, 400, 100, 100, 100], rowHeights=40)
             table.setStyle(TableStyle([
                                        # ('INNERGRID', (0,0), (0,0), 0.25, colors.black),
@@ -742,7 +742,7 @@ class CreateSalesEntry(View):
         return HttpResponse(response, status = status_code, mimetype="application/json")
 
 class CreateSalesInvoicePDF(View):
-     def get(self, request, *args, **kwargs):
+    def get(self, request, *args, **kwargs):
 
         sales_invoice_id = kwargs['sales_invoice_id']
         sales_invoice = SalesInvoice.objects.get(id=sales_invoice_id)
@@ -785,7 +785,7 @@ class CreateSalesInvoicePDF(View):
                    
             x=x-40
 
-            data1=[[i, q_item.item.code, q_item.item.description, q_item.quantity_sold,q_item.item.uom.uom, q_item.item.inventory_set.all()[0].unit_price, q_item.net_amount]]
+            data1=[[i, q_item.item.code, q_item.item.name, q_item.quantity_sold,q_item.item.uom.uom, q_item.item.inventory_set.all()[0].unit_price, q_item.net_amount]]
             table = Table(data1, colWidths=[50, 100, 400, 70, 90, 100, 50], rowHeights=40)
             table.wrapOn(p, 200, 400)
             table.drawOn(p,50,x)

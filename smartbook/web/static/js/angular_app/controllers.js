@@ -1,7 +1,53 @@
-function HomeController($scope, $element, $http, $timeout, share, $location)
-{
-  
+function validateEmail(email) { 
+    var re = /\S+@\S+\.\S+/;
+    return re.test(email);
 }
+
+add_new_customer = function($http, $scope) { 
+    if($scope.customer_name == '') {
+        $scope.error_message = "Please enter customer name";
+        $scope.error_flag = true;
+    } else if($scope.email_id == '') {
+        $scope.error_message = "Please enter email";
+        $scope.error_flag = true;
+    } else if(!validateEmail($scope.email_id)){
+        $scope.error_message = "Please enter correct email";
+        $scope.error_flag = true;
+    }else {
+        params = { 
+            'name':$scope.customer_name,
+            'house': $scope.house_name,
+            'street': $scope.street,
+            'city': $scope.city,
+            'district':$scope.district,
+            'pin': $scope.pin,
+            'mobile': $scope.mobile,
+            'phone': $scope.land_line,
+            'email': $scope.email_id,
+            "csrfmiddlewaretoken" : $scope.csrf_token
+        }
+        $http({
+            method : 'post',
+            url : "/create_customer/",
+            data : $.param(params),
+            headers : {
+                'Content-Type' : 'application/x-www-form-urlencoded'
+            }
+        }).success(function(data, status) {
+            
+            if (data.result == 'error'){
+                $scope.error_flag=true;
+                $scope.message = data.message;
+            } else {
+                $scope.popup.hide_popup();
+                $scope.get_customers();
+            }
+        }).error(function(data, success){
+            
+        });
+    } 
+}       
+
 
 function ExpenseController($scope, $element, $http, $timeout, $location) {
 
@@ -1170,6 +1216,7 @@ function SalesController($scope, $element, $http, $timeout, share, $location) {
     $scope.items = [];
     $scope.selected_item = '';
     $scope.customer = '';
+    $scope.customer_name = '';
     $scope.staff = '';
     $scope.selecting_item = false;
     $scope.item_selected = false;
@@ -1248,7 +1295,7 @@ function SalesController($scope, $element, $http, $timeout, share, $location) {
             console.log(data || "Request failed");
         });
     }
-        $scope.add_staff = function() {
+    $scope.add_staff = function() {
 
         if($scope.sales.staff == 'other') {
 
@@ -1314,11 +1361,9 @@ function SalesController($scope, $element, $http, $timeout, share, $location) {
             console.log(data || "Request failed");
         });
     }
-        $scope.add_customer = function() {
+    $scope.add_customer = function() {
 
         if($scope.sales.customer == 'other') {
-
-
             $scope.popup = new DialogueModelWindow({
                 'dialogue_popup_width': '36%',
                 'message_padding': '0px',
@@ -1337,41 +1382,8 @@ function SalesController($scope, $element, $http, $timeout, share, $location) {
     }
 
     $scope.add_new_customer = function() { 
-        params = { 
-            'name':$scope.customer_name,
-            'contact_person': $scope.contact_person,
-            'house': $scope.house_name,
-            'street': $scope.street,
-            'city': $scope.city,
-            'district':$scope.district,
-            'pin': $scope.pin,
-            'mobile': $scope.mobile,
-            'phone': $scope.land_line,
-            'email': $scope.email_id,
-            "csrfmiddlewaretoken" : $scope.csrf_token
-        }
-        $http({
-            method : 'post',
-            url : "/register/customer/",
-            data : $.param(params),
-            headers : {
-                'Content-Type' : 'application/x-www-form-urlencoded'
-            }
-        }).success(function(data, status) {
-            
-            if (data.result == 'error'){
-                $scope.error_flag=true;
-                $scope.message = data.message;
-            } else {
-                $scope.popup.hide_popup();
-                $scope.get_customers();
-
-                $scope.sales.customer = $scope.customer_name;
-                $scope.sales.customer = data.customer_name;
-            }
-        }).error(function(data, success){
-            
-        });
+        
+       add_new_customer($http, $scope);
     }
 
     $scope.items = [];
@@ -2588,7 +2600,7 @@ function QuotationController($scope, $element, $http, $timeout, share, $location
     $scope.customer = '';
     $scope.selecting_item = false;
     $scope.item_selected = false;
-
+    $scope.customer_name = '';
     $scope.quotation = {
         'sales_items': [],
         'date': '',
@@ -2604,16 +2616,14 @@ function QuotationController($scope, $element, $http, $timeout, share, $location
     $scope.init = function(csrf_token, sales_invoice_number)
     {
         $scope.csrf_token = csrf_token;
-        $scope.popup = '';
-        
-        $scope.get_customers();
-            
+        $scope.popup = '';        
+        $scope.get_customers();            
     }
 
     $scope.get_customers = function() {
         $http.get('/customer/list/').success(function(data)
         {   
-            
+
             $scope.customers = data.customers;
 
         }).error(function(data, status)
@@ -2621,10 +2631,10 @@ function QuotationController($scope, $element, $http, $timeout, share, $location
             console.log(data || "Request failed");
         });
     }
+
     $scope.add_customer = function() {
 
         if($scope.quotation.customer == 'other') {
-
 
             $scope.popup = new DialogueModelWindow({
                 'dialogue_popup_width': '36%',
@@ -2639,45 +2649,14 @@ function QuotationController($scope, $element, $http, $timeout, share, $location
             $scope.popup.show_content();
         }
     }
+
     $scope.close_popup = function(){
         $scope.popup.hide_popup();
     }
 
     $scope.add_new_customer = function() { 
-        params = { 
-            'name':$scope.customer_name,
-            'house': $scope.house_name,
-            'street': $scope.street,
-            'city': $scope.city,
-            'district':$scope.district,
-            'pin': $scope.pin,
-            'mobile': $scope.mobile,
-            'phone': $scope.land_line,
-            'email': $scope.email_id,
-            "csrfmiddlewaretoken" : $scope.csrf_token
-        }
-        $http({
-            method : 'post',
-            url : "/create_customer/",
-            data : $.param(params),
-            headers : {
-                'Content-Type' : 'application/x-www-form-urlencoded'
-            }
-        }).success(function(data, status) {
-            
-            if (data.result == 'error'){
-                $scope.error_flag=true;
-                $scope.message = data.message;
-            } else {
-                $scope.popup.hide_popup();
-                $scope.get_customers();
-
-                $scope.quotation.customer = $scope.customer_name;
-                $scope.quotation.customer = data.customer_name;
-            }
-        }).error(function(data, success){
-            
-        });
+        add_new_customer($http, $scope);
+        $scope.quotation.customer = $scope.customer_name;      
     }
 
     $scope.items = [];
