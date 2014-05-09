@@ -344,8 +344,9 @@ class CreateQuotationPdf(View):
 
         # p.drawInlineImage(self, 1.jpg, 80,y, width=None,height=None)
         owner_company = OwnerCompany.objects.latest('id')
-        path = settings.PROJECT_ROOT.replace("\\", "/")+"/media/"+owner_company.logo.name
-        p.drawImage(path, 7*cm, 30*cm, width=20*cm, preserveAspectRatio=True)
+        if owner_company.logo:
+            path = settings.PROJECT_ROOT.replace("\\", "/")+"/media/"+owner_company.logo.name
+            p.drawImage(path, 7*cm, 30*cm, width=20*cm, preserveAspectRatio=True)
 
 
         p.roundRect(80, y-130, 840, 0.5*inch, 10, stroke=1, fill=0)
