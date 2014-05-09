@@ -20,10 +20,11 @@ class Quotation(models.Model):
     prefix = models.CharField('Prefix', null=True, blank=True, max_length=20, default='QO')
     processed = models.BooleanField('Is Processed', default=False)
     net_total = models.DecimalField('Net Total',max_digits=14, decimal_places=2, default=0)
+    is_sales_invoice_created = models.BooleanField('Is Sales Invoice Created', default=False)
 
     def __unicode__(self):
 
-        return str(self.to.customer_name)
+        return str(self.reference_id)
 
     class Meta:
 
@@ -36,12 +37,22 @@ class QuotationItem(models.Model):
     quotation = models.ForeignKey(Quotation, null=True, blank=True)
     net_amount = models.DecimalField('Net Amount',max_digits=14, decimal_places=2, default=0)
     quantity_sold = models.IntegerField('Quantity Sold', default=0)
+    discount = models.DecimalField('Total Discount',max_digits=14, decimal_places=3, default=0)
+
+    def __unicode__(self):
+
+        return str(self.quotation.reference_id)
+
+    class Meta:
+
+        verbose_name = 'Quotation Item'
+        verbose_name_plural = 'Quotation Item'
 
 
 class DeliveryNote(models.Model):
 
     quotation = models.ForeignKey(Quotation)
-    customer = models.ForeignKey(Customer)
+    customer = models.ForeignKey(Customer, null=True, blank=True)
     delivery_note_number = models.CharField('Delivery Note Serial number', max_length=50, null=True, blank=True)
     date = models.DateField('Date', null=True, blank=True)
     lpo_number = models.CharField('LPO Number', null=True, blank=True, max_length=20)
@@ -51,7 +62,7 @@ class DeliveryNote(models.Model):
 
     def __unicode__(self):
 
-        return str(self.to.customer_name)
+        return str(self.delivery_note_number)
 
     class Meta:
 
@@ -59,8 +70,9 @@ class DeliveryNote(models.Model):
         verbose_name_plural = 'Delivery Note'
 
 
-class Sales(models.Model):  
-    sales_invoice_number = models.IntegerField('Sales Invoice Number', default=0)
+class Sales(models.Model): 
+
+    sales_invoice_number = models.CharField('Sales Invoice Number', null=True, blank=True, max_length=10)
     sales_invoice_date = models.DateField('Sales Invoice Date', null=True, blank=True)
     customer = models.ForeignKey(Customer, null=True, blank=True)
     salesman = models.ForeignKey(Staff, null=True, blank=True)
@@ -87,9 +99,9 @@ class Sales(models.Model):
 class SalesInvoice(models.Model):
 
     quotation = models.ForeignKey(Quotation)
-    delivery_note = models.ForeignKey(DeliveryNote)
+    delivery_note = models.ForeignKey(DeliveryNote, null=True, blank=True)
     sales = models.ForeignKey(Sales)
-    customer = models.ForeignKey(Customer)
+    customer = models.ForeignKey(Customer, null=True, blank=True)
     date = models.DateField('Date', null=True, blank=True)
     invoice_no = models.CharField('Invoice Number',null=True, blank=True, max_length=20)
     prefix =  models.CharField('Prefix', max_length=20, default='SI')

@@ -438,13 +438,21 @@ class DeleteUser(View):
     def get(self, request, *args, **kwargs):
 
         user_type = kwargs['user_type']
-        user = User.objects.get(id=kwargs['user_id'])
         if request.user.is_superuser:
-            user.delete()
+            if user_type == 'customer':
+                customer = Customer.objects.get(id=kwargs['user_id'])
+                customer.delete()
+            else:
+                user = User.objects.get(id=kwargs['user_id'])            
+                user.delete()
+                context = {
+                    'message': 'Deleted Successfully'
+                }
+        else:
             context = {
-                'message': 'Deleted Successfully'
+                'message': "You don't have permission to perform this action"
             }
-            return HttpResponseRedirect(reverse('users', kwargs={'user_type': user_type}))
+        return HttpResponseRedirect(reverse('users', kwargs={'user_type': user_type}))
 
 class TransportationCompanyList(View):
 
@@ -540,20 +548,21 @@ class CreateCustomer(View):
 
     def post(self, request, *args, **kwargs):
 
-        if request.POST['name'] == '':
-            context = {
-                'error_message': 'Please enter the name',
-                'user_type': 'customer',
-            }
-            context.update(request.POST)
-            return render(request, 'register_user.html',context)
-        elif request.POST['email'] == '':
-            context = {
-                'error_message': 'Please enter the email id',
-                'user_type': 'customer',
-            }
-            context.update(request.POST)
-            return render(request, 'register_user.html',context)
+        if not request.is_ajax:
+            if request.POST['name'] == '':
+                context = {
+                    'error_message': 'Please enter the name',
+                    'user_type': 'customer',
+                }
+                context.update(request.POST)
+                return render(request, 'register_user.html',context)
+            elif request.POST['email'] == '':
+                context = {
+                    'error_message': 'Please enter the email id',
+                    'user_type': 'customer',
+                }
+                context.update(request.POST)
+                return render(request, 'register_user.html',context)
         customer, created = Customer.objects.get_or_create(customer_id = request.POST['email'])
         if not created:
             if request.is_ajax():
@@ -579,7 +588,6 @@ class CreateCustomer(View):
             customer.pin = request.POST['pin']
             customer.mobile_number = request.POST['mobile']
             customer.land_line = request.POST['phone']
-            customer.customer_id = request.POST['email']
             customer.save()
             if request.is_ajax():
                 res = {
@@ -594,13 +602,3 @@ class CreateCustomer(View):
             'user_type': 'customer'
         }
         return render(request, 'register_user.html',context)
-
-
-
-
-
-
-
-
-
-

@@ -69,7 +69,7 @@ class Customer(models.Model):
     pin = models.CharField('Pin', max_length=10, null=True, blank=True,)
     mobile_number = models.CharField('Mobile Number', max_length=15, null=True, blank=True)
     land_line = models.CharField('Land Line', max_length=25, null=True, blank=True)
-    customer_id = models.CharField('Customer Id(Email id)', max_length=75, null=True, blank=True)
+    customer_id = models.CharField('Customer Id(Email id)', max_length=75)
 
     def __unicode__(self):
         return "customer - "+self.customer_name
@@ -122,6 +122,7 @@ class TransportationCompany(models.Model):
 class OwnerCompany(models.Model):
 
     company_name = models.CharField('Company Name', max_length=100)
+    logo = models.FileField('Logo', upload_to = "uploads/logo/", null=True, blank=True)
 
     def __unicode__(self):
 

@@ -47,6 +47,8 @@
 				<li class="menu"> <a href=""> Sales </a>
 					<ul>
 						<li><a href="{% url 'create_quotation' %}">Create Quotation</a></li>
+						<li><a href="{% url 'create_delivery_note' %}">Create Delivery Note</a></li>
+						<li><a href="{% url 'create_sales_entry' %}">Create Sales Invoice</a></li>
 						<li> <a href="{% url 'sales' %}"> Sales Entry </a> </li>
 						<li> <a href="{% url 'return_entry' %}"> Return Entry</a> </li>
 					</ul>
@@ -68,7 +70,6 @@
 						<li><a href="{% url 'purchase_return_report' %}"> Purchase Return </a> </li>
 						<li><a href="{% url 'expense_report' %}"> Expense Report </a> </li>
 						<li><a href="{% url 'vendor_accounts_report' %}"> Vendor Accounts </a> </li>
-						<li><a href="{% url 'vendor_accounts_report' %}"> Quotations </a> </li>
 					</ul>
 				</li>
 			</ul>

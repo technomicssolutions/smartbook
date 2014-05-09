@@ -48,13 +48,13 @@
 						<td> {{ customer.land_line }} </td>
 						<td> {{ customer.customer_id }} </td>
 						
-						<td><a href="{% url 'edit_user' user_type=user_type user_id=customer.id%}">
+						<td><a href="{% url 'edit_user' user_type=user_type user_id=customer.id %}">
 							<img src="/static/images/edit.png">
 							</a>
 						</td>
 						{% if user.is_superuser %}
 							<td>
-								<a href="{% url 'delete_user' user_type=user_type user_id=customer.id%}"><img src="/static/images/delete.png"></a>
+								<a href="{% url 'delete_user' user_type=user_type user_id=customer.id %}"><img src="/static/images/delete.png"></a>
 							</td>
 							
 						{% endif %}	

@@ -3,7 +3,7 @@
 {% block body_id %}create_quotation{% endblock %}
 
 {% block title %}Create Quotation{% endblock title %}
-{% block controller %}ng-controller="QuotationController" ng-init="init('{{csrf_token}}', '{{sales_invoice_number}}')"{% endblock controller %}
+{% block controller %}ng-controller="QuotationController" ng-init="init('{{csrf_token}}')"{% endblock controller %}
 {% block dialogue_popup %}
 	{% include 'add_new_customer.html' %} 
 	              	
@@ -66,7 +66,7 @@
 					</div>
 
 					<div class="formrow_sales">
-						<div class="formtext_sales	">
+						<div class="formtext_sales">
 							<label for="Date ">Subject </label>
 						</div>
 
