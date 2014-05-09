@@ -158,40 +158,48 @@ class SalesDetails(View):
     def get(self, request, *args, **kwargs):
         if request.is_ajax():
             invoice_number = request.GET['invoice_no']
-            sales = Sales.objects.get(sales_invoice_number=invoice_number)
-            sales_items = SalesItem.objects.filter(sales=sales)
+            try:
+                sales = Sales.objects.get(sales_invoice_number=invoice_number)
+            except:
+                sales = None
+            if sales:
+                sales_items = SalesItem.objects.filter(sales=sales)
 
-            sl_items = []
+                sl_items = []
 
-            for item in sales_items:
-                sl_items.append({
-                    'item_code': item.item.code,
-                    'item_name': item.item.name,
-                    'barcode': item.item.barcode,
-                    'stock': item.item.inventory_set.all()[0].quantity,
-                    'unit_price': item.item.inventory_set.all()[0].selling_price,
-                    'tax': item.item.tax,
-                    'uom': item.item.uom.uom,
-                    'quantity_sold': item.quantity_sold,
-                    'discount_given': item.discount_given,
+                for item in sales_items:
+                    sl_items.append({
+                        'item_code': item.item.code,
+                        'item_name': item.item.name,
+                        'barcode': item.item.barcode,
+                        'stock': item.item.inventory_set.all()[0].quantity,
+                        'unit_price': item.item.inventory_set.all()[0].selling_price,
+                        'tax': item.item.tax,
+                        'uom': item.item.uom.uom,
+                        'quantity_sold': item.quantity_sold,
+                        'discount_given': item.discount_given,
 
 
-                })
-            sales_dict = {
-                'invoice_number': sales.sales_invoice_number,
-                'sales_invoice_date': sales.sales_invoice_date.strftime('%d/%m/%Y'),
-                'customer': sales.customer.user.first_name,
-                'sales_man': sales.salesman.user.first_name,
-                'net_amount': sales.net_amount,
-                'round_off': sales.round_off,
-                'grant_total': sales.grant_total,
-                'discount': sales.discount,
-                'sales_items': sl_items
-            }
-            res = {
-                'result': 'Ok',
-                'sales': sales_dict
-            }
+                    })
+                sales_dict = {
+                    'invoice_number': sales.sales_invoice_number,
+                    'sales_invoice_date': sales.sales_invoice_date.strftime('%d/%m/%Y'),
+                    'customer': sales.customer.customer_name,
+                    'sales_man': sales.salesman.user.first_name,
+                    'net_amount': sales.net_amount,
+                    'round_off': sales.round_off,
+                    'grant_total': sales.grant_total,
+                    'discount': sales.discount,
+                    'sales_items': sl_items
+                }
+                res = {
+                    'result': 'Ok',
+                    'sales': sales_dict
+                }
+            else:
+                res = {
+                    'result': 'No Sales entry for this invoice number',
+                }
             response = simplejson.dumps(res)
             status_code = 200
             return HttpResponse(response, status = status_code, mimetype="application/json")

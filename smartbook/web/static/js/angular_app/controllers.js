@@ -195,9 +195,9 @@ function AddEditUserController($scope, $element, $http, $timeout, $location) {
         if ($scope.user_type == 'staff'){
             $scope.get_designation_list();
             $scope.designation = salesman;
-        }
-        
+        } 
     }
+
     $scope.get_designation_list = function() {
         $http.get('/designation_list/').success(function(data)
         {
@@ -2215,9 +2215,15 @@ function SalesReturnController($scope, $element, $http, $timeout, share, $locati
         {
             $scope.selecting_item = true;
             $scope.item_selected = false;
-            $scope.sales = data.sales;
-            $scope.sales.deleted_items = [];
-            $scope.sales.sales_invoice_number = invoice;
+            if(data.sales) {
+                $scope.sales = data.sales;
+                $scope.sales.deleted_items = [];
+                $scope.sales.sales_invoice_number = invoice;
+                $scope.message = ''
+            } else {
+                $scope.message = data.result;
+            }
+                
         }).error(function(data, status)
         {
             console.log(data || "Request failed");
