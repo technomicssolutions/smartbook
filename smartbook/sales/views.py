@@ -248,10 +248,7 @@ class CreateQuotation(View):
                 item = Item.objects.get(code=quotation_item['item_code'])
                 quotation_item_obj, item_created = QuotationItem.objects.get_or_create(item=item, quotation=quotation)
                 inventory, created = Inventory.objects.get_or_create(item=item)
-                if quotation_created:
-                    inventory.quantity = inventory.quantity - int(quotation_item['qty_sold'])
-                else:
-                    inventory.quantity = inventory.quantity + quotation_item_obj.quantity_sold - int(sales_item['qty_sold'])
+                inventory.quantity = inventory.quantity - int(quotation_item['qty_sold'])
                 inventory.save()
                 quotation_item_obj.net_amount = float(quotation_item['net_amount'])
                 quotation_item_obj.quantity_sold = int(quotation_item['qty_sold'])
@@ -347,7 +344,7 @@ class CreateQuotationPdf(View):
 
         # p.drawInlineImage(self, 1.jpg, 80,y, width=None,height=None)
         owner_company = OwnerCompany.objects.latest('id')
-        path = settings.PROJECT_ROOT+"/media/"+owner_company.logo.name
+        path = settings.PROJECT_ROOT.replace("\\", "/")+"/media/"+owner_company.logo.name
         p.drawImage(path, 7*cm, 30*cm, width=20*cm, preserveAspectRatio=True)
 
 
