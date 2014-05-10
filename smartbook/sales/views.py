@@ -763,15 +763,15 @@ class CreateSalesInvoicePDF(View):
 
         status_code = 200
 
-        y=900
+        y=1000
         style = [
-            ('FONTSIZE', (0,0), (-1, -1), 17),
+            ('FONTSIZE', (0,0), (-1, -1), 20),
             ('FONTNAME',(0,0),(-1,-1),'Helvetica') 
         ]
         data=[['', sales_invoice.date.strftime('%d-%m-%Y'), '', sales_invoice.invoice_no]]
-        table = Table(data, colWidths=[30, 60, 650, 100], rowHeights=40, style = style)      
+        table = Table(data, colWidths=[30, 60, 650, 100], rowHeights=50, style = style)      
         table.wrapOn(p, 200, 400)
-        table.drawOn(p,100, 850)
+        table.drawOn(p,100, 960)
 
         quotation = sales_invoice.quotation
 
@@ -782,16 +782,16 @@ class CreateSalesInvoicePDF(View):
         data=[['', customer_name, sales_invoice.delivery_note.lpo_number if sales_invoice.delivery_note else '' ]]
         table = Table(data, colWidths=[30, 420, 100], rowHeights=40, style = style)      
         table.wrapOn(p, 200, 400)
-        table.drawOn(p,100, 830)
+        table.drawOn(p,100, 920)
 
         data=[['', '', sales_invoice.date.strftime('%d-%m-%Y')]]
 
         # table = Table(data, colWidths=[450, 60, 100], rowHeights=40, style = style)      
 
-        table = Table(data, colWidths=[450, 30, 100], rowHeights=40, style = style)      
+        table = Table(data, colWidths=[450, 30, 100], rowHeights=50, style = style)      
 
         table.wrapOn(p, 200, 400)
-        table.drawOn(p,100, 810)
+        table.drawOn(p,100, 910)
 
         if sales_invoice.quotation or sales_invoice.delivery_note:            
             data=[['', '', sales_invoice.delivery_note.delivery_note_number if sales_invoice.delivery_note else sales_invoice.quotation.reference_id]]
@@ -802,28 +802,39 @@ class CreateSalesInvoicePDF(View):
 
             table = Table(data, colWidths=[450, 30, 100], rowHeights=40, style = style)      
             table.wrapOn(p, 200, 400)
-            table.drawOn(p,100, 790)
+            table.drawOn(p,150, 870)
 
 
-        x=700
+        x=800
 
         i = 0
         i = i + 1
 
         TWOPLACES = Decimal(10) ** -2
-  
+        total_amount = 0
         for s_item in sales.salesitem_set.all():
                    
             x=x-40
             
             item_price = s_item.item.inventory_set.all()[0].selling_price
-            final_price = item_price+(item_price*(s_item.item.tax/100))
-            data1=[[i, s_item.item.code, s_item.item.name, s_item.quantity_sold, s_item.item.uom.uom, s_item.item.inventory_set.all()[0].unit_price, Decimal((final_price*s_item.quantity_sold)).quantize(TWOPLACES)]]
-            table = Table(data1, colWidths=[50, 100, 400, 70, 90, 100, 50], rowHeights=40, style=style)
+            total_amount = total_amount + (item_price*s_item.quantity_sold)
+            # final_price = item_price+(item_price*(s_item.item.tax/100))
+            # data1=[[i, s_item.item.code, s_item.item.name, s_item.quantity_sold, s_item.item.uom.uom, s_item.item.inventory_set.all()[0].unit_price, Decimal((final_price*s_item.quantity_sold)).quantize(TWOPLACES)]]
+            data1=[[i, s_item.item.code, s_item.item.name, s_item.quantity_sold, s_item.item.uom.uom, s_item.item.inventory_set.all()[0].unit_price, (item_price*s_item.quantity_sold)]]
+            table = Table(data1, colWidths=[50, 100, 350, 70, 90, 100, 50], rowHeights=40, style=style)
             table.wrapOn(p, 200, 400)
             table.drawOn(p,50,x)
             i = i + 1
+        x=600
 
+        data=[['', total_amount]]
+
+        # table = Table(data, colWidths=[450, 60, 100], rowHeights=40, style = style)      
+
+        table = Table(data, colWidths=[450, 30, 100], rowHeights=40, style = style)      
+
+        table.wrapOn(p, 200, 400)
+        table.drawOn(p, 370, 60)
 
         p.showPage()
         p.save()
