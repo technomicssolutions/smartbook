@@ -98,7 +98,7 @@ class Sales(models.Model):
 
 class SalesInvoice(models.Model):
 
-    quotation = models.ForeignKey(Quotation)
+    quotation = models.ForeignKey(Quotation, null=True, blank=True)
     delivery_note = models.ForeignKey(DeliveryNote, null=True, blank=True)
     sales = models.ForeignKey(Sales)
     customer = models.ForeignKey(Customer, null=True, blank=True)

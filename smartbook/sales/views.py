@@ -96,9 +96,18 @@ class SalesEntry(View):
             s_item.discount_given = sales_item['disc_given']
             s_item.net_amount = sales_item['net_amount']
             s_item.save()
+
+        sales_invoice = SalesInvoice.objects.create(sales=sales)
+        sales.save()
+        sales_invoice.date = sales.sales_invoice_date
+        sales_invoice.customer = sales.customer
+        sales_invoice.invoice_no = sales.sales_invoice_number
+        sales_invoice.save()
+
                     
         res = {
             'result': 'Ok',
+            'sales_invoice_id': sales_invoice.id,
         }
         response = simplejson.dumps(res)
         status_code = 200
@@ -268,13 +277,10 @@ class DeliveryNotePDF(View):
         delivery_note_id = kwargs['delivery_note_id']
         delivery_note = DeliveryNote.objects.get(id=delivery_note_id)
 
-
         response = HttpResponse(content_type='application/pdf')
         p = canvas.Canvas(response, pagesize=(1000, 1000))
 
         status_code = 200
-
-        y=850
 
         # p.drawString(100, 950, "SUNLIGHT STATIONARY")
         # p.drawString(100, 930, "Colour Printing, Photo Copy, Spiral Binding")
@@ -304,13 +310,13 @@ class DeliveryNotePDF(View):
         # table.wrapOn(p, 200, 400)
         # table.drawOn(p,105,500)
 
-        x=500
+        y=700
 
         i = 0
         i = i + 1
         for q_item in delivery_note.quotation.quotationitem_set.all():
                    
-            x=x-40
+            y=y-40
 
             data1=[[i, q_item.item.name, q_item.quantity_sold, '']]
             table = Table(data1, colWidths=[100, 400, 100, 150], rowHeights=40)
@@ -320,8 +326,8 @@ class DeliveryNotePDF(View):
             #                            ('BOX', (0,0), (-1,-1), 0.25, colors.black),
             #                            # ('BACKGROUND',(0,0),(1,0),colors.lightgrey)
             #                            ]))
-            table.wrapOn(p, 200, 400)
-            table.drawOn(p,105,x)
+            table.wrapOn(p, 200, 600)
+            table.drawOn(p, 105, y)
             i = i + 1
 
 
@@ -343,10 +349,13 @@ class CreateQuotationPdf(View):
         y = 850
 
         # p.drawInlineImage(self, 1.jpg, 80,y, width=None,height=None)
-        owner_company = OwnerCompany.objects.latest('id')
-        if owner_company.logo:
-            path = settings.PROJECT_ROOT.replace("\\", "/")+"/media/"+owner_company.logo.name
-            p.drawImage(path, 7*cm, 30*cm, width=20*cm, preserveAspectRatio=True)
+        try:
+            owner_company = OwnerCompany.objects.latest('id')
+            if owner_company.logo:
+                path = settings.PROJECT_ROOT.replace("\\", "/")+"/media/"+owner_company.logo.name
+                p.drawImage(path, 7*cm, 30*cm, width=20*cm, preserveAspectRatio=True)
+        except:
+            pass
 
 
         p.roundRect(80, y-130, 840, 0.5*inch, 10, stroke=1, fill=0)
@@ -610,7 +619,7 @@ class DeliveryNoteDetails(View):
         response = simplejson.dumps(res)
         return HttpResponse(response, status=200, mimetype='application/json')
 
-class CreateSalesEntry(View):
+class QuotationDeliverynoteSales(View):
 
     def get(self, request, *args, **kwargs):
 
@@ -752,7 +761,7 @@ class CreateSalesInvoicePDF(View):
 
         sales_invoice_id = kwargs['sales_invoice_id']
         sales_invoice = SalesInvoice.objects.get(id=sales_invoice_id)
-
+        sales = sales_invoice.sales
 
         response = HttpResponse(content_type='application/pdf')
         p = canvas.Canvas(response, pagesize=(1000, 1000))
@@ -778,20 +787,24 @@ class CreateSalesInvoicePDF(View):
         table.wrapOn(p, 200, 400)
         table.drawOn(p,100, 650)
 
-        data=[['', '', sales_invoice.delivery_note.delivery_note_number if sales_invoice.delivery_note else sales_invoice.quotation.reference_id]]
-        table = Table(data, colWidths=[450, 30, 100], rowHeights=40)      
-        table.wrapOn(p, 200, 400)
-        table.drawOn(p,150, 620)
+        if sales_invoice.quotation or sales_invoice.delivery_note:            
+            data=[['', '', sales_invoice.delivery_note.delivery_note_number if sales_invoice.delivery_note else sales_invoice.quotation.reference_id]]
+            table = Table(data, colWidths=[450, 30, 100], rowHeights=40)      
+            table.wrapOn(p, 200, 400)
+            table.drawOn(p,150, 620)
 
         x=600
 
         i = 0
         i = i + 1
-        for q_item in quotation.quotationitem_set.all():
+  
+        for s_item in sales.salesitem_set.all():
                    
             x=x-40
-
-            data1=[[i, q_item.item.code, q_item.item.name, q_item.quantity_sold,q_item.item.uom.uom, q_item.item.inventory_set.all()[0].unit_price, q_item.net_amount]]
+            
+            item_price = s_item.item.inventory_set.all()[0].selling_price
+            final_price = item_price+(item_price*(s_item.item.tax/100))
+            data1=[[i, s_item.item.code, s_item.item.name, s_item.quantity_sold, s_item.item.uom.uom, s_item.item.inventory_set.all()[0].unit_price, (final_price*s_item.quantity_sold)]]
             table = Table(data1, colWidths=[50, 100, 400, 70, 90, 100, 50], rowHeights=40)
             table.wrapOn(p, 200, 400)
             table.drawOn(p,50,x)

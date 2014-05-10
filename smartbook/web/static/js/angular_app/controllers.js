@@ -47,6 +47,26 @@ add_new_customer = function($http, $scope) {
         });
     } 
 }       
+get_quotation_details = function($http, $scope){
+
+    var ref_no = $scope.quotation_no;
+    $scope.quotations = []
+    $http.get('/sales/quotation_details/?reference_no='+ref_no+'&sales_invoice=true').success(function(data)
+    {
+        console.log(data.quotations.length);
+        if(data.quotations.length > 0){
+            $scope.selecting_quotation = true;
+            $scope.quotation_selected = false;
+            $scope.quotations = data.quotations;
+        } else {
+            $scope.message = "There is no quotations with this number";
+        }
+        
+    }).error(function(data, status)
+    {
+        console.log(data || "Request failed");
+    });
+}
 
 
 function ExpenseController($scope, $element, $http, $timeout, $location) {
@@ -785,7 +805,7 @@ function PurchaseController($scope, $element, $http, $timeout, share, $location)
     }
 }
 
-function CreateSalesEntryController($scope, $element, $http, $timeout, share, $location) {
+function SalesQNDNController($scope, $element, $http, $timeout, share, $location) {
 
     $scope.items = [];
     $scope.selected_item = '';
@@ -950,18 +970,7 @@ function CreateSalesEntryController($scope, $element, $http, $timeout, share, $l
     }
 
     $scope.get_quotation_details = function(){
-
-        var ref_no = $scope.quotation_no;
-        $scope.quotations = []
-        $http.get('/sales/quotation_details/?reference_no='+ref_no+'&sales_invoice=true').success(function(data)
-        {
-            $scope.selecting_quotation = true;
-            $scope.quotation_selected = false;
-            $scope.quotations = data.quotations;
-        }).error(function(data, status)
-        {
-            console.log(data || "Request failed");
-        });
+        get_quotation_details($http, $scope);        
     }
     $scope.add_quotation = function(quotation) {
         $scope.selecting_quotation = false;
@@ -1012,9 +1021,14 @@ function CreateSalesEntryController($scope, $element, $http, $timeout, share, $l
         $scope.delivery_notes = []
         $http.get('/sales/delivery_note_details/?delivery_no='+delivery_no).success(function(data)
         {
-            $scope.selecting_delivery_note = true;
-            $scope.delivery_note_selected = false;
-            $scope.delivery_notes = data.delivery_notes;
+            if(data.delivery_notes.length > 0){
+               $scope.selecting_delivery_note = true;
+                $scope.delivery_note_selected = false;
+                $scope.delivery_notes = data.delivery_notes; 
+            } else {
+                $scope.dn_message = "There is no delivery note with this number";
+            }
+            
         }).error(function(data, status)
         {
             console.log(data || "Request failed");
@@ -1196,7 +1210,7 @@ function CreateSalesEntryController($scope, $element, $http, $timeout, share, $l
             }
             $http({
                 method : 'post',
-                url : "/sales/create_sales_entry/",
+                url : "/sales/quotaion_deliverynote_sales/",
                 data : $.param(params),
                 headers : {
                     'Content-Type' : 'application/x-www-form-urlencoded'
@@ -1526,7 +1540,7 @@ function SalesController($scope, $element, $http, $timeout, share, $location) {
                     'Content-Type' : 'application/x-www-form-urlencoded'
                 }
             }).success(function(data, status) {
-                document.location.href = '/sales/entry/';               
+                document.location.href = '/sales/sales_invoice_pdf/'+data.sales_invoice_id+'/';                
             }).error(function(data, success){
                 
             });
@@ -2837,18 +2851,7 @@ function DeliveryNoteController($scope, $element, $http, $timeout, share, $locat
     $scope.quotation_selected = false;
 
     $scope.get_quotation_details = function(){
-
-        var ref_no = $scope.quotation_no;
-        $scope.quotations = []
-        $http.get('/sales/quotation_details/?reference_no='+ref_no).success(function(data)
-        {
-            $scope.selecting_quotation = true;
-            $scope.quotation_selected = false;
-            $scope.quotations = data.quotations;
-        }).error(function(data, status)
-        {
-            console.log(data || "Request failed");
-        });
+        get_quotation_details($http, $scope);
     }
     $scope.add_quotation = function(quotation) {
         $scope.selecting_quotation = false;
