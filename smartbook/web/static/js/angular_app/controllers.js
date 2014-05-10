@@ -3,17 +3,19 @@ function validateEmail(email) {
     return re.test(email);
 }
 
-add_new_customer = function($http, $scope) { 
+add_new_customer = function($http, $scope) {
+    console.log($scope.email_id.length); 
     if($scope.customer_name == '') {
         $scope.error_message = "Please enter customer name";
         $scope.error_flag = true;
-    } else if($scope.email_id == '') {
-        $scope.error_message = "Please enter email";
-        $scope.error_flag = true;
-    } else if(!validateEmail($scope.email_id)){
-        $scope.error_message = "Please enter correct email";
-        $scope.error_flag = true;
-    }else {
+    } else if($scope.email_id.length > 0 && $scope.email_id != undefined) {
+        if (!validateEmail($scope.email_id)){
+
+            $scope.error_message = "Please enter a valid email id";
+            $scope.error_flag = true;
+        }
+    }
+    else {
         params = { 
             'name':$scope.customer_name,
             'house': $scope.house_name,
@@ -2667,6 +2669,7 @@ function QuotationController($scope, $element, $http, $timeout, share, $location
             var height = $(document).height();
             $scope.popup.set_overlay_height(height);
             $scope.popup.show_content();
+            $scope.email_id = '';
         }
     }
 
@@ -2675,6 +2678,7 @@ function QuotationController($scope, $element, $http, $timeout, share, $location
     }
 
     $scope.add_new_customer = function() { 
+
         add_new_customer($http, $scope);
         $scope.quotation.customer = $scope.customer_name;      
     }
@@ -2788,7 +2792,10 @@ function QuotationController($scope, $element, $http, $timeout, share, $location
         } else if($scope.quotation.sales_items.length == 0){
             $scope.validation_error = "Choose Item";
             return false;
-        } 
+        } else if($scope.quotation.sales_items.length == 0){
+            $scope.validation_error = "Choose Item";
+            return false;
+        }  
         return true;
     }
     $scope.create_quotation = function() {
