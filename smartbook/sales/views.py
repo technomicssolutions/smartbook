@@ -70,8 +70,7 @@ class SalesEntry(View):
         sales.grant_total = sales_dict['grant_total']
 
         sales.customer = customer
-        sales.salesman = salesman
-        
+        sales.salesman = salesman        
         sales.save()
         sales_items = sales_dict['sales_items']
         for sales_item in sales_items:
@@ -83,11 +82,9 @@ class SalesEntry(View):
 
                 inventory.quantity = inventory.quantity - int(sales_item['qty_sold'])
             else:
-                inventory.quantity = inventory.quantity + s_item.quantity_sold - int(sales_item['qty_sold'])
-                
+                inventory.quantity = inventory.quantity + s_item.quantity_sold - int(sales_item['qty_sold'])      
 
             inventory.save()
-
                     
             s_item, item_created = SalesItem.objects.get_or_create(item=item, sales=sales)
             s_item.sales = sales
@@ -103,7 +100,6 @@ class SalesEntry(View):
         sales_invoice.customer = sales.customer
         sales_invoice.invoice_no = sales.sales_invoice_number
         sales_invoice.save()
-
                     
         res = {
             'result': 'Ok',
@@ -136,9 +132,7 @@ class SalesReturnView(View):
         sales_return, created = SalesReturn.objects.get_or_create(sales=sales, return_invoice_number = post_dict['invoice_number'])
         sales_return.date = datetime.strptime(post_dict['sales_return_date'], '%d/%m/%Y')
         sales_return.net_amount = post_dict['net_return_total']
-        sales_return.save()
-        
-        
+        sales_return.save()        
 
         return_items = post_dict['sales_items']
 
@@ -783,15 +777,15 @@ class CreateSalesInvoicePDF(View):
         table.drawOn(p,100, 700)
 
         data=[['', '', sales_invoice.date.strftime('%d-%m-%Y')]]
-        table = Table(data, colWidths=[450, 30, 100], rowHeights=40)      
+        table = Table(data, colWidths=[450, 60, 100], rowHeights=40)      
         table.wrapOn(p, 200, 400)
         table.drawOn(p,100, 650)
 
         if sales_invoice.quotation or sales_invoice.delivery_note:            
             data=[['', '', sales_invoice.delivery_note.delivery_note_number if sales_invoice.delivery_note else sales_invoice.quotation.reference_id]]
-            table = Table(data, colWidths=[450, 30, 100], rowHeights=40)      
+            table = Table(data, colWidths=[450, 60, 100], rowHeights=40)      
             table.wrapOn(p, 200, 400)
-            table.drawOn(p,150, 620)
+            table.drawOn(p,100, 620)
 
         x=600
 

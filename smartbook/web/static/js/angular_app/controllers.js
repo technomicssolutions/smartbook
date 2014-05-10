@@ -7,13 +7,15 @@ add_new_customer = function($http, $scope) {
     if($scope.customer_name == '') {
         $scope.error_message = "Please enter customer name";
         $scope.error_flag = true;
-    } else if($scope.email_id == '') {
-        $scope.error_message = "Please enter email";
+    } else if($scope.email_id != '' || !validateEmail($scope.email_id)) {
+        $scope.error_message = "Please enter a valid email id";
         $scope.error_flag = true;
-    } else if(!validateEmail($scope.email_id)){
-        $scope.error_message = "Please enter correct email";
-        $scope.error_flag = true;
-    }else {
+    } 
+    // else if(!validateEmail($scope.email_id)){
+    //     $scope.error_message = "Please enter correct email";
+    //     $scope.error_flag = true;
+    // }
+    else {
         params = { 
             'name':$scope.customer_name,
             'house': $scope.house_name,
