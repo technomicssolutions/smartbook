@@ -771,7 +771,7 @@ class CreateSalesInvoicePDF(View):
         data=[['', sales_invoice.date.strftime('%d-%m-%Y'), '', sales_invoice.invoice_no]]
         table = Table(data, colWidths=[30, 60, 650, 100], rowHeights=50, style = style)      
         table.wrapOn(p, 200, 400)
-        table.drawOn(p,100, 960)
+        table.drawOn(p,100, 970)
 
         quotation = sales_invoice.quotation
 
@@ -802,7 +802,7 @@ class CreateSalesInvoicePDF(View):
 
             table = Table(data, colWidths=[450, 30, 100], rowHeights=40, style = style)      
             table.wrapOn(p, 200, 400)
-            table.drawOn(p,150, 870)
+            table.drawOn(p,150, 880)
 
 
         x=800
@@ -821,7 +821,7 @@ class CreateSalesInvoicePDF(View):
             # final_price = item_price+(item_price*(s_item.item.tax/100))
             # data1=[[i, s_item.item.code, s_item.item.name, s_item.quantity_sold, s_item.item.uom.uom, s_item.item.inventory_set.all()[0].unit_price, Decimal((final_price*s_item.quantity_sold)).quantize(TWOPLACES)]]
             data1=[[i, s_item.item.code, s_item.item.name, s_item.quantity_sold, s_item.item.uom.uom, s_item.item.inventory_set.all()[0].unit_price, (item_price*s_item.quantity_sold)]]
-            table = Table(data1, colWidths=[50, 100, 350, 70, 90, 100, 50], rowHeights=40, style=style)
+            table = Table(data1, colWidths=[50, 100, 370, 80, 90, 100, 50], rowHeights=40, style=style)
             table.wrapOn(p, 200, 400)
             table.drawOn(p,50,x)
             i = i + 1
