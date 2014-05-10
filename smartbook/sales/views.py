@@ -768,32 +768,35 @@ class CreateSalesInvoicePDF(View):
 
         status_code = 200
 
-        y=850
-
+        y=900
+        style = [
+            ('FONTSIZE', (0,0), (-1, -1), 11),
+        ]
         data=[['', sales_invoice.date.strftime('%d-%m-%Y'), '', sales_invoice.invoice_no]]
-        table = Table(data, colWidths=[0, 100, 650, 100], rowHeights=40)      
+        table = Table(data, colWidths=[0, 100, 650, 100], rowHeights=40, style = style)      
         table.wrapOn(p, 200, 400)
-        table.drawOn(p,100, 750)
+        table.drawOn(p,100, 850)
 
         quotation = sales_invoice.quotation
+        
 
-        data=[['', '', sales_invoice.delivery_note.lpo_number if sales_invoice.delivery_note else '' ]]
-        table = Table(data, colWidths=[450, 60, 100], rowHeights=40)      
+        data=[['Customer name :-', quotation.to.customer_name, sales_invoice.delivery_note.lpo_number if sales_invoice.delivery_note else '' ]]
+        table = Table(data, colWidths=[90, 420, 100], rowHeights=40, style = style)      
         table.wrapOn(p, 200, 400)
-        table.drawOn(p,100, 700)
+        table.drawOn(p,100, 830)
 
         data=[['', '', sales_invoice.date.strftime('%d-%m-%Y')]]
-        table = Table(data, colWidths=[450, 30, 100], rowHeights=40)      
+        table = Table(data, colWidths=[450, 30, 100], rowHeights=40, style = style)      
         table.wrapOn(p, 200, 400)
-        table.drawOn(p,100, 650)
+        table.drawOn(p,100, 810)
 
         if sales_invoice.quotation or sales_invoice.delivery_note:            
             data=[['', '', sales_invoice.delivery_note.delivery_note_number if sales_invoice.delivery_note else sales_invoice.quotation.reference_id]]
-            table = Table(data, colWidths=[450, 30, 100], rowHeights=40)      
+            table = Table(data, colWidths=[450, 30, 100], rowHeights=40, style = style)      
             table.wrapOn(p, 200, 400)
-            table.drawOn(p,150, 620)
+            table.drawOn(p,150, 790)
 
-        x=600
+        x=700
 
         i = 0
         i = i + 1
@@ -805,7 +808,7 @@ class CreateSalesInvoicePDF(View):
             item_price = s_item.item.inventory_set.all()[0].selling_price
             final_price = item_price+(item_price*(s_item.item.tax/100))
             data1=[[i, s_item.item.code, s_item.item.name, s_item.quantity_sold, s_item.item.uom.uom, s_item.item.inventory_set.all()[0].unit_price, (final_price*s_item.quantity_sold)]]
-            table = Table(data1, colWidths=[50, 100, 400, 70, 90, 100, 50], rowHeights=40)
+            table = Table(data1, colWidths=[50, 100, 400, 70, 90, 100, 50], rowHeights=40, style=style)
             table.wrapOn(p, 200, 400)
             table.drawOn(p,50,x)
             i = i + 1
