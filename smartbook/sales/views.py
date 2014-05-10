@@ -771,6 +771,7 @@ class CreateSalesInvoicePDF(View):
         y=900
         style = [
             ('FONTSIZE', (0,0), (-1, -1), 11),
+            ('FONTNAME',(0,0),(-1,-1),'Helvetica') 
         ]
         data=[['', sales_invoice.date.strftime('%d-%m-%Y'), '', sales_invoice.invoice_no]]
         table = Table(data, colWidths=[0, 100, 650, 100], rowHeights=40, style = style)      
