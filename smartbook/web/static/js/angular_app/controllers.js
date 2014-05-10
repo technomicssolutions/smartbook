@@ -7,7 +7,9 @@ add_new_customer = function($http, $scope) {
     if($scope.customer_name == '') {
         $scope.error_message = "Please enter customer name";
         $scope.error_flag = true;
-    } else if((!validateEmail($scope.email_id))){  
+    } else if(($scope.email_id != '' || $scope.email_id != undefined ) && (!validateEmail($scope.email_id))){
+
+    // else if((!validateEmail($scope.email_id))){  
         
         $scope.error_message = "Please enter a valid email id";
         $scope.error_flag = true;
