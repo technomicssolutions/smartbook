@@ -4,6 +4,7 @@ import ast
 import simplejson
 import datetime as dt
 from datetime import datetime
+from decimal import *
 
 from django.db import IntegrityError
 from django.db.models import Max
@@ -808,6 +809,8 @@ class CreateSalesInvoicePDF(View):
 
         i = 0
         i = i + 1
+
+        TWOPLACES = Decimal(10) ** -2
   
         for s_item in sales.salesitem_set.all():
                    
@@ -815,7 +818,7 @@ class CreateSalesInvoicePDF(View):
             
             item_price = s_item.item.inventory_set.all()[0].selling_price
             final_price = item_price+(item_price*(s_item.item.tax/100))
-            data1=[[i, s_item.item.code, s_item.item.name, s_item.quantity_sold, s_item.item.uom.uom, s_item.item.inventory_set.all()[0].unit_price, format(round((final_price*s_item.quantity_sold), 2))]]
+            data1=[[i, s_item.item.code, s_item.item.name, s_item.quantity_sold, s_item.item.uom.uom, s_item.item.inventory_set.all()[0].unit_price, Decimal((final_price*s_item.quantity_sold)).quantize(TWOPLACES)]]
             table = Table(data1, colWidths=[50, 100, 400, 70, 90, 100, 50], rowHeights=40, style=style)
             table.wrapOn(p, 200, 400)
             table.drawOn(p,50,x)
