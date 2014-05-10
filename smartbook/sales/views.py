@@ -773,9 +773,12 @@ class CreateSalesInvoicePDF(View):
         table.drawOn(p,100, 850)
 
         quotation = sales_invoice.quotation
-        
 
-        data=[['', quotation.to.customer_name, sales_invoice.delivery_note.lpo_number if sales_invoice.delivery_note else '' ]]
+        customer_name = ''
+        if sales_invoice.customer:
+            customer_name = sales_invoice.customer.customer_name
+
+        data=[['', customer_name, sales_invoice.delivery_note.lpo_number if sales_invoice.delivery_note else '' ]]
         table = Table(data, colWidths=[30, 420, 100], rowHeights=40, style = style)      
         table.wrapOn(p, 200, 400)
         table.drawOn(p,100, 830)
