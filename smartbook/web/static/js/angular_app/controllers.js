@@ -14,10 +14,9 @@ add_new_customer = function($http, $scope) {
             $scope.error_message = "Please enter a valid email id";
             $scope.error_flag = true;
         }
-    }
-    else {
+    } else {
         params = { 
-            'name':$scope.customer_name,
+            'name': $scope.customer_name,
             'house': $scope.house_name,
             'street': $scope.street,
             'city': $scope.city,
