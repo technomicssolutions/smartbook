@@ -767,14 +767,14 @@ class CreateSalesInvoicePDF(View):
             ('FONTSIZE', (0,0), (-1, -1), 11),
         ]
         data=[['', sales_invoice.date.strftime('%d-%m-%Y'), '', sales_invoice.invoice_no]]
-        table = Table(data, colWidths=[0, 100, 650, 100], rowHeights=40, style = style)      
+        table = Table(data, colWidths=[90, 100, 650, 100], rowHeights=40, style = style)      
         table.wrapOn(p, 200, 400)
         table.drawOn(p,100, 850)
 
         quotation = sales_invoice.quotation
         
 
-        data=[['Customer name :-', quotation.to.customer_name, sales_invoice.delivery_note.lpo_number if sales_invoice.delivery_note else '' ]]
+        data=[['', quotation.to.customer_name, sales_invoice.delivery_note.lpo_number if sales_invoice.delivery_note else '' ]]
         table = Table(data, colWidths=[90, 420, 100], rowHeights=40, style = style)      
         table.wrapOn(p, 200, 400)
         table.drawOn(p,100, 830)
