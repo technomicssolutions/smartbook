@@ -771,7 +771,7 @@ class CreateSalesInvoicePDF(View):
         data=[['', sales_invoice.date.strftime('%d-%m-%Y'), '', sales_invoice.invoice_no]]
         table = Table(data, colWidths=[30, 60, 700, 100], rowHeights=50, style = style)      
         table.wrapOn(p, 200, 400)
-        table.drawOn(p,50, 1020)
+        table.drawOn(p,50, 1050)
 
         quotation = sales_invoice.quotation
 
@@ -784,7 +784,7 @@ class CreateSalesInvoicePDF(View):
 
         table = Table(data, colWidths=[30, 510, 100], rowHeights=40, style = style)      
         table.wrapOn(p, 200, 400)
-        table.drawOn(p,50, 980)
+        table.drawOn(p,50, 1010)
 
         data=[['', '', sales_invoice.date.strftime('%d-%m-%Y')]]
 
@@ -804,10 +804,10 @@ class CreateSalesInvoicePDF(View):
 
             table = Table(data, colWidths=[450, 90, 100], rowHeights=40, style = style)      
             table.wrapOn(p, 200, 400)
-            table.drawOn(p,50, 920)
+            table.drawOn(p,50, 950)
 
 
-        x=820
+        x=850
 
         i = 0
         i = i + 1
