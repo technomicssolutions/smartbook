@@ -779,8 +779,8 @@ class CreateSalesInvoicePDF(View):
         if sales_invoice.customer:
             customer_name = sales_invoice.customer.customer_name
 
-        # data=[['', customer_name, sales_invoice.delivery_note.lpo_number if sales_invoice.delivery_note else '' ]]
-        data=[['', customer_name, 'Lpo']]
+        data=[['', customer_name, sales_invoice.delivery_note.lpo_number if sales_invoice.delivery_note else '' ]]
+        # data=[['', customer_name, 'Lpo']]
 
         table = Table(data, colWidths=[30, 510, 100], rowHeights=40, style = style)      
         table.wrapOn(p, 200, 400)
@@ -793,7 +793,7 @@ class CreateSalesInvoicePDF(View):
         table = Table(data, colWidths=[450, 90, 100], rowHeights=50, style = style)      
 
         table.wrapOn(p, 200, 400)
-        table.drawOn(p,50, 950)
+        table.drawOn(p,50, 980)
 
         if sales_invoice.quotation or sales_invoice.delivery_note:            
             data=[['', '', sales_invoice.delivery_note.delivery_note_number if sales_invoice.delivery_note else sales_invoice.quotation.reference_id]]
