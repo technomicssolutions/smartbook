@@ -771,7 +771,7 @@ class CreateSalesInvoicePDF(View):
         data=[['', sales_invoice.date.strftime('%d-%m-%Y'), '', sales_invoice.invoice_no]]
         table = Table(data, colWidths=[30, 60, 700, 100], rowHeights=50, style = style)      
         table.wrapOn(p, 200, 400)
-        table.drawOn(p,50, 1020)
+        table.drawOn(p,50, 990)
 
         quotation = sales_invoice.quotation
 
