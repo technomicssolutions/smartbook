@@ -816,7 +816,7 @@ class CreateSalesInvoicePDF(View):
         
 
 
-        x=650
+        x=610
 
         i = 0
         i = i + 1
@@ -846,7 +846,7 @@ class CreateSalesInvoicePDF(View):
         table = Table(data, colWidths=[500, 50], rowHeights=40, style = style)      
 
         table.wrapOn(p, 200, 400)
-        table.drawOn(p, 400, 60)
+        table.drawOn(p, 400, 20)
 
         p.showPage()
         p.save()
