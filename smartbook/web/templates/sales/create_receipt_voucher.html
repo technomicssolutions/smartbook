@@ -72,12 +72,21 @@
 
 
 					<div class="formrow_sales">
+
 						<div class="formtext_sales">
+							<label for="sales_invoice_number">Invoice Number</label>
+						</div>
+						<div class="forminput_sales">
+							<input type="text" name="sales_invoice_number" ng-model="sales.sales_invoice_number" readonly/>
+						</div>
+
+
+						<!-- <div class="formtext_sales">
 							<label for="sales_invoice_number">Invoice Number </label>
 						</div>
 						<div class="forminput_sales">
 							<input type="text" name="sales_invoice_number"  ng-model="sales.sales_invoice_number"  readonly / >
-						</div>
+						</div> -->
 					</div>
 				</div>		
 				
@@ -161,10 +170,22 @@
 						
 
 						<div class="formtext_sales">
-							<label for="Sum Of">Sum Of</label>
+							<label for="Sum Of">Amount</label>
 						</div>
 						<div class="forminput_sales">
 							<input type="text" name="sum_of" ng-model="sales.sum_of" readonly/>
+						</div>
+
+						
+					</div>
+					<div class="formrow_sales">
+						
+
+						<div class="formtext_sales">
+							<label for="Settlement">On Settlement Of</label>
+						</div>
+						<div class="forminput_sales">
+							<input type="text" name="Settlement" ng-model="sales.Settlement">
 						</div>
 
 						
@@ -188,4 +209,4 @@
 
 
 
- invoice no, date, received from, the sum of , on settlement of, cheque no, cash, dated
+<!--  invoice no, date, received from, the sum of , on settlement of, cheque no, cash, dated -->
