@@ -2975,7 +2975,36 @@ function ReceiptVoucherController($scope, $element, $http, $timeout, share, $loc
         $scope.csrf_token = csrf_token;
 
     }
+
+    $scope.receipt_validation = function(){
+
+        $scope.receiptvoucher.date = $$('#receipt_voucher_date')[0].get('value');
+        // $scope.receiptvoucher.reference_no = $$('#reference_number')[0].get('value');
+
+        if ($scope.receiptvoucher.date == '' || $scope.receiptvoucher.date == undefined) {
+            $scope.validation_error = "Enter the Date" ;
+            return false;
+        } else if ($scope.receiptvoucher.customer == '' || $scope.receiptvoucher.customer == undefined)) {
+            $scope.validation_error = "Enter Customer Name";
+            return false;
+        } else if ($scope.receiptvoucher.sales_invoice == '' || $scope.receiptvoucher.sales_invoice == undefined) {
+            $scope.validation_error = "Enter the Sales Invoice no.";
+            return false;
+        } else if ($scope.receiptvoucher.check_no == '' || $scope.receiptvoucher.check_no == undefined) {
+            $scope.validation_error = "Enter Check no.";
+            return false;
+        } else if ($scope.receiptvoucher.dated == '' || $scope.receiptvoucher.dated == undefined) {
+            $scope.validation_error = "Enter Check Date";
+            return false;
+        } else if ($scope.receiptvoucher.settlement_amount == '' || $scope.receiptvoucher.settlement_amount == undefined) {
+            $scope.validation_error = "Enter Settlement Amount";
+            return false;
+        }
+        
+        return true;
+    }
     $scope.get_sales_invoice_details = function(){
+        // get_sales_invoice_details($http, $scope);
 
     }
 
