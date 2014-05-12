@@ -153,6 +153,27 @@ class SalesReturnItem(models.Model):
 
         return str(self.sales_return.return_invoice_number)
 
+class ReceiptVoucher(models.Model):
+
+    sales_invoice = models.ForeignKey(SalesInvoice, null=True, blank=True)
+    date = models.DateField('Date', null=True, blank=True)
+    amount = models.DecimalField('Amount',max_digits=14, decimal_places=2, default=0)
+    customer = models.ForeignKey(Customer, null=True, blank=True)
+    sum_of = models.DecimalField('Sum of', max_digits=14, decimal_places=2, default=0)
+    settlement_amount = models.DecimalField('Settlement amount', max_digits=14, decimal_places=2, default=0)
+    check_no = models.CharField('Check Number', null=True, blank=True, max_length=50)
+    cash = models.DecimalField('Cash', max_digits=14, decimal_places=2, default=0)
+    bank = models.CharField('Bank', null=True, blank=True, max_length=100)
+    dated = models.DateField('Dated', null=True, blank=True)
+
+    def __unicode__(self):
+
+        return str(self.sales_invoice.invoice_no)
+
+
+
+
+
 
 
 
