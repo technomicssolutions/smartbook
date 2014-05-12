@@ -836,10 +836,10 @@ class CreateSalesInvoicePDF(View):
 
         # table = Table(data, colWidths=[450, 60, 100], rowHeights=40, style = style)      
 
-        table = Table(data, colWidths=[450, 50, 100], rowHeights=40, style = style)      
+        table = Table(data, colWidths=[570, 50], rowHeights=40, style = style)      
 
         table.wrapOn(p, 200, 400)
-        table.drawOn(p, 370, 60)
+        table.drawOn(p, 250, 60)
 
         p.showPage()
         p.save()
