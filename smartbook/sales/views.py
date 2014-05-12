@@ -764,16 +764,26 @@ class CreateSalesInvoicePDF(View):
 
         status_code = 200
 
-        y = 995
+        y = 1000
         style = [
             ('FONTSIZE', (0,0), (-1, -1), 20),
             ('FONTNAME',(0,0),(-1,-1),'Helvetica') 
         ]
 
-        data=[['', sales_invoice.date.strftime('%d-%m-%Y'), 'Invoice', sales_invoice.invoice_no]]
-        table = Table(data, colWidths=[30, 200, 540, 100], rowHeights=50, style = style)      
+        new_style = [
+            ('FONTSIZE', (0,0), (-1, -1), 30),
+            ('FONTNAME',(0,0),(-1,-1),'Helvetica') 
+        ]
+
+        data=[['', '', 'Invoice', '']]
+        table = Table(data, colWidths=[30, 310, 540, 100], rowHeights=50, style = new_style)      
         table.wrapOn(p, 200, 400)
-        table.drawOn(p,50, 785)
+        table.drawOn(p,50, 940)
+
+        data=[['', sales_invoice.date.strftime('%d-%m-%Y'), '', sales_invoice.invoice_no]]
+        table = Table(data, colWidths=[30, 60, 710, 100], rowHeights=50, style = style)      
+        table.wrapOn(p, 200, 400)
+        table.drawOn(p,50, 920)
 
         quotation = sales_invoice.quotation
 
@@ -786,7 +796,7 @@ class CreateSalesInvoicePDF(View):
 
         table = Table(data, colWidths=[30, 510, 100], rowHeights=40, style = style)      
         table.wrapOn(p, 200, 400)
-        table.drawOn(p,50, 750)
+        table.drawOn(p,50, 890)
 
         data=[['', '', sales_invoice.date.strftime('%d-%m-%Y')]]
 
@@ -795,7 +805,7 @@ class CreateSalesInvoicePDF(View):
         table = Table(data, colWidths=[450, 90, 100], rowHeights=50, style = style)      
 
         table.wrapOn(p, 200, 400)
-        table.drawOn(p,50, 720)
+        table.drawOn(p,50, 860)
 
         if sales_invoice.quotation or sales_invoice.delivery_note:            
             data=[['', '', sales_invoice.delivery_note.delivery_note_number if sales_invoice.delivery_note else sales_invoice.quotation.reference_id]]
@@ -806,12 +816,12 @@ class CreateSalesInvoicePDF(View):
 
             table = Table(data, colWidths=[450, 90, 100], rowHeights=40, style = style)      
             table.wrapOn(p, 200, 400)
-            table.drawOn(p,50, 640)
+            table.drawOn(p,50, 840)
 
         
 
 
-        x=610
+        x=800
 
         i = 0
         i = i + 1
@@ -831,7 +841,7 @@ class CreateSalesInvoicePDF(View):
             table.wrapOn(p, 200, 400)
             table.drawOn(p,10,x)
             i = i + 1
-        x=410
+        x=600
 
         total_amount_in_words = num2words(total_amount).title() + ' Only'
         data=[[total_amount_in_words, total_amount]]
@@ -841,7 +851,7 @@ class CreateSalesInvoicePDF(View):
         table = Table(data, colWidths=[500, 50], rowHeights=40, style = style)      
 
         table.wrapOn(p, 200, 400)
-        table.drawOn(p, 400, 3)
+        table.drawOn(p, 400, 60)
 
         p.showPage()
         p.save()
