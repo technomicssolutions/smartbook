@@ -849,3 +849,26 @@ class CreateSalesInvoicePDF(View):
         p.showPage()
         p.save()
         return response
+
+
+# class QuotationDeliverynoteSales(View):
+
+#     def get(self, request, *args, **kwargs):
+
+#         current_date = dt.datetime.now().date()
+
+#         inv_number = SalesInvoice.objects.aggregate(Max('id'))['id__max']
+        
+#         if not inv_number:
+#             inv_number = 1
+#             prefix = 'SI'
+#         else:
+#             inv_number = inv_number + 1
+#             prefix = SalesInvoice.objects.latest('id').prefix
+#         invoice_number = prefix + str(inv_number)
+
+#         return render(request, 'sales/create_sales_entry.html',{
+#             'sales_invoice_number': invoice_number,
+#             'current_date': current_date.strftime('%d/%m/%Y'),
+#         })
+
