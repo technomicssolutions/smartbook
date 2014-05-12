@@ -778,12 +778,12 @@ class CreateSalesInvoicePDF(View):
         data=[['', '', 'Invoice', '']]
         table = Table(data, colWidths=[30, 310, 540, 100], rowHeights=50, style = new_style)      
         table.wrapOn(p, 200, 400)
-        table.drawOn(p,50, 830)
+        table.drawOn(p,50, 890)
 
         data=[['', sales_invoice.date.strftime('%d-%m-%Y'), '', sales_invoice.invoice_no]]
         table = Table(data, colWidths=[30, 60, 710, 100], rowHeights=50, style = style)      
         table.wrapOn(p, 200, 400)
-        table.drawOn(p,50, 785)
+        table.drawOn(p,50, 840)
 
         quotation = sales_invoice.quotation
 
@@ -796,7 +796,7 @@ class CreateSalesInvoicePDF(View):
 
         table = Table(data, colWidths=[30, 510, 100], rowHeights=40, style = style)      
         table.wrapOn(p, 200, 400)
-        table.drawOn(p,50, 750)
+        table.drawOn(p,50, 790)
 
         data=[['', '', sales_invoice.date.strftime('%d-%m-%Y')]]
 
@@ -805,7 +805,7 @@ class CreateSalesInvoicePDF(View):
         table = Table(data, colWidths=[450, 90, 100], rowHeights=50, style = style)      
 
         table.wrapOn(p, 200, 400)
-        table.drawOn(p,50, 720)
+        table.drawOn(p,50, 760)
 
         if sales_invoice.quotation or sales_invoice.delivery_note:            
             data=[['', '', sales_invoice.delivery_note.delivery_note_number if sales_invoice.delivery_note else sales_invoice.quotation.reference_id]]
@@ -816,12 +816,12 @@ class CreateSalesInvoicePDF(View):
 
             table = Table(data, colWidths=[450, 90, 100], rowHeights=40, style = style)      
             table.wrapOn(p, 200, 400)
-            table.drawOn(p,50, 640)
+            table.drawOn(p,50, 730)
 
         
 
 
-        x=680
+        x=660
 
         i = 0
         i = i + 1
@@ -851,7 +851,7 @@ class CreateSalesInvoicePDF(View):
         table = Table(data, colWidths=[500, 50], rowHeights=40, style = style)      
 
         table.wrapOn(p, 200, 400)
-        table.drawOn(p, 400, 10)
+        table.drawOn(p, 400, 8)
 
         p.showPage()
         p.save()
