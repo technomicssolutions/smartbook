@@ -770,14 +770,8 @@ class CreateSalesInvoicePDF(View):
             ('FONTNAME',(0,0),(-1,-1),'Helvetica') 
         ]
 
-        data=[['', 'Invoice', '']]
-        table = Table(data, colWidths=[230, 90, 100], rowHeights=50, style = style)      
-
-        table.wrapOn(p, 200, 400)
-        table.drawOn(p,100, 880) 
-
-        data=[['', sales_invoice.date.strftime('%d-%m-%Y'), '', sales_invoice.invoice_no]]
-        table = Table(data, colWidths=[30, 60, 710, 100], rowHeights=50, style = style)      
+        data=[['', sales_invoice.date.strftime('%d-%m-%Y'), 'Invoice', sales_invoice.invoice_no]]
+        table = Table(data, colWidths=[30, 200, 540, 100], rowHeights=50, style = style)      
         table.wrapOn(p, 200, 400)
         table.drawOn(p,50, 785)
 
@@ -847,7 +841,7 @@ class CreateSalesInvoicePDF(View):
         table = Table(data, colWidths=[500, 50], rowHeights=40, style = style)      
 
         table.wrapOn(p, 200, 400)
-        table.drawOn(p, 400, 10)
+        table.drawOn(p, 400, 3)
 
         p.showPage()
         p.save()
