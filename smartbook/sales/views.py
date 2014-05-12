@@ -807,6 +807,12 @@ class CreateSalesInvoicePDF(View):
             table.wrapOn(p, 200, 400)
             table.drawOn(p,50, 950)
 
+        data=[['', 'Invoice', '']]
+        table = Table(data, colWidths=[230, 90, 100], rowHeights=50, style = style)      
+
+        table.wrapOn(p, 200, 400)
+        table.drawOn(p,50, 900)
+
 
         x=850
 
@@ -830,9 +836,8 @@ class CreateSalesInvoicePDF(View):
             i = i + 1
         x=600
 
-        # print num2words(total_amount)
-
-        data=[[num2words(total_amount), total_amount]]
+        total_amount_in_words = num2words(total_amount).title() + ' Only'
+        data=[[total_amount_in_words, total_amount]]
 
         # table = Table(data, colWidths=[450, 60, 100], rowHeights=40, style = style)      
 
