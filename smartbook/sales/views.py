@@ -830,7 +830,9 @@ class CreateSalesInvoicePDF(View):
             i = i + 1
         x=600
 
-        data=[['', total_amount]]
+        # print num2words(total_amount)
+
+        data=[[num2words(total_amount), total_amount]]
 
         # table = Table(data, colWidths=[450, 60, 100], rowHeights=40, style = style)      
 
