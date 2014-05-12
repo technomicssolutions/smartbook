@@ -2976,7 +2976,28 @@ function ReceiptVoucherController($scope, $element, $http, $timeout, share, $loc
 
     }
     $scope.get_sales_invoice_details = function(){
-
+        
+        var invoice_no = $scope.invoice_no;
+        $scope.delivery_notes = []
+        $http.get('/sales/invoice_details/?invoice_no='+invoice_no).success(function(data)
+        {
+            if(data.invoice_details.length > 0){
+                $scope.selecting_invoice = true;
+                $scope.invoice_selected = false;
+                $scope.invoices = data.invoice_details; 
+            } else {
+                $scope.dn_message = "There is no invoice with this number";
+            }
+            
+        }).error(function(data, status)
+        {
+            console.log(data || "Request failed");
+        });
+    }
+    $scope.add_invoice = function(invoice) {
+        $scope.selecting_invoice = false;
+        $scope.invoice_selected = true;
+        $scope.invoice_no = invoice.invoice_no;
     }
 
 }
