@@ -777,15 +777,18 @@ class CreateSalesInvoicePDF(View):
         quotation = sales_invoice.quotation
 
         customer_name = ''
+        print sales_invoice.customer
         if sales_invoice.customer:
+            print "in if"
             customer_name = sales_invoice.customer.customer_name
+            print customer_name
 
         data=[['', customer_name, sales_invoice.delivery_note.lpo_number if sales_invoice.delivery_note else '' ]]
         # data=[['', customer_name, 'Lpo']]
 
         table = Table(data, colWidths=[30, 510, 100], rowHeights=40, style = style)      
         table.wrapOn(p, 200, 400)
-        table.drawOn(p,50, 1010)
+        table.drawOn(p,50, 930)
 
         data=[['', '', sales_invoice.date.strftime('%d-%m-%Y')]]
 
@@ -794,7 +797,13 @@ class CreateSalesInvoicePDF(View):
         table = Table(data, colWidths=[450, 90, 100], rowHeights=50, style = style)      
 
         table.wrapOn(p, 200, 400)
-        table.drawOn(p,50, 980)
+        table.drawOn(p,50, 900)
+
+        data=[['', 'Invoice', '']]
+        table = Table(data, colWidths=[230, 90, 100], rowHeights=50, style = style)      
+
+        table.wrapOn(p, 200, 400)
+        table.drawOn(p,50, 860)
 
         if sales_invoice.quotation or sales_invoice.delivery_note:            
             data=[['', '', sales_invoice.delivery_note.delivery_note_number if sales_invoice.delivery_note else sales_invoice.quotation.reference_id]]
@@ -805,13 +814,9 @@ class CreateSalesInvoicePDF(View):
 
             table = Table(data, colWidths=[450, 90, 100], rowHeights=40, style = style)      
             table.wrapOn(p, 200, 400)
-            table.drawOn(p,50, 950)
+            table.drawOn(p,50, 840)
 
-        data=[['', 'Invoice', '']]
-        table = Table(data, colWidths=[230, 90, 100], rowHeights=50, style = style)      
-
-        table.wrapOn(p, 200, 400)
-        table.drawOn(p,50, 900)
+        
 
 
         x=850
