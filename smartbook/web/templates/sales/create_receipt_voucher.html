@@ -3,7 +3,7 @@
 {% block body_id %}create_receipt_voucher{% endblock %}
 
 {% block title %}Receipt_Voucher{% endblock title %}
-{% block controller %}ng-controller="SalesQNDNController" ng-init="init('{{csrf_token}}', '{{sales_invoice_number}}')"{% endblock controller %}
+{% block controller %}ng-controller="ReceiptVoucherController" ng-init="init('{{csrf_token}}')"{% endblock controller %}
 {% block dialogue_popup %}
 	{% include 'add_new_customer.html' %} 
 	              	
@@ -61,6 +61,25 @@
 							<input type="text" name="sales_invoice_date"  id="sales_invoice_date" value="{{current_date}}" ng-readonly="payment_mode_selection_check">
 						</div>
 					</div>
+
+
+					<!-- <div class="formrow_sales">
+						<div class="formtext_sales">
+							<label for="customer">Customer Name</label>
+						</div>
+						<div class="forminput_sales">
+							<select name="customer" ng-model="sales.customer" ng-change="add_customer()" >
+								<option value="select">Select</option>
+								<option ng-repeat="customer in customers" value="[[customer.customer_name]]" ng-selected="customer.customer_name == sales.customer">[[customer.customer_name]]
+								</option>
+								<option value="other">Other</option>
+							</select>
+							
+						</div>
+					</div> -->
+
+
+
 					<div class="formrow_sales">
 						<div class="formtext_sales">
 							<label for="customer">Customer Name</label>
@@ -79,48 +98,12 @@
 						<div class="forminput_sales">
 							<input type="text" name="sales_invoice_number" ng-model="sales.sales_invoice_number" readonly/>
 						</div>
-
-
-						<!-- <div class="formtext_sales">
-							<label for="sales_invoice_number">Invoice Number </label>
-						</div>
-						<div class="forminput_sales">
-							<input type="text" name="sales_invoice_number"  ng-model="sales.sales_invoice_number"  readonly / >
-						</div> -->
 					</div>
-				</div>		
-				
-   				<!-- <div class="purchase_items_list" ng-show="sales.sales_items.length > 0">
-   					<div class="purchase_item_list">
-   						
-   						<div class="item_list_row header">
-							<span class="small_column"> Item Code </span>
-							<span> Item Name </span>
-							<span> Barcode </span>
-							<span> Stock </span>
-							<span> Unit Price </span>
-							<span> Qty  </span>
-							<span> UOM  </span>
-							<span> Dis Given </span>	
-							<span> Net Amount </span>
-						</div>
-						<div ng-repeat="item in sales.sales_items" class="item_list_row">
-							<span class="small_column">[[item.item_code]] </span>
-							<span>[[item.item_name]] </span>
-							<span>[[item.barcode]] </span>
-							<span>[[item.current_stock]] </span>
-							<span>[[item.unit_price]] </span> -->
-							<!-- <span> [[item.qty_sold]]</span>  -->
-							<!-- <span> <input type="text" ng-model="item.qty_sold" ng-change="calculate_net_amount_sale(item)" /> </span>
-							<span>[[item.uom]] </span>
-							<span> <input type="text" ng-model="item.disc_given" ng-change="calculate_net_amount_sale(item)"/> </span> 
-							<span>[[item.net_amount]] </span>
-							 
-						</div> -->
-						
-					<!-- 	<div class="clear"></div>
+				</div>	
+
+					<!-- <div class="clear"></div>
    					</div> -->
-   					<div class="clear"></div>
+   				<div class="clear"></div>
    				<!-- </div> -->
 
    				<div class="clear"></div>
@@ -142,14 +125,14 @@
 							<label for="cheque_no">Cheque No</label>
 						</div>
 						<div class="forminput_sales">
-							<input type="text" name="cheque_no" ng-model="vendor_account.cheque_no" ng-readonly="cash"/>						
+							<input type="text" name="cheque_no" ng-model="sales.cheque_no" ng-readonly="cash"/>						
 						</div>		
 					
 						<div class="formtext_sales">
 							<label for="cheque_date">Cheque date</label>
 						</div>
 						<div class="forminput_sales">
-							<input type="text" name="cheque_date" id="cheque_date" ng-model="vendor_account.cheque_date" ng-readonly="cash"/>						
+							<input type="text" name="cheque_date" id="cheque_date" ng-model="sales.cheque_date" ng-readonly="cash"/>						
 						</div>				
 
 					</div>
@@ -172,16 +155,14 @@
 						</div>
 						<div class="forminput_sales">
 							<input type="text" name="Settlement" ng-model="sales.Settlement">
-						</div>
-
-						
+						</div>						
 					</div>
 				</div>
 			</div>
 			<div  align="Center">
 				<div class="buttons">
-					<p class="error_message"> [[validation_error]] </p>
-					<input type="button" value="Submit" ng-click="">
+					<!-- <p class="error_message"> [[validation_error]] </p> -->
+					<input type="button" value="Submit" ng-click=""/>
 					<a href="{% url 'home' %}"><input type="button" value="Cancel"></a>
 				</div>
 			</div>			

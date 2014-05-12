@@ -2958,5 +2958,13 @@ function DeliveryNoteController($scope, $element, $http, $timeout, share, $locat
 
 }
 
+function ReceiptVoucherController($scope, $element, $http, $timeout, share, $location) {
+
+    $scope.sales.customer = '';
+    $scope.sales.sales_invoice_number = '';
+    $scope.sales.cheque_no = '';
+
+}
+
 
 
