@@ -162,9 +162,7 @@ class PurchaseEntry(View):
         expense.amount = purchase_dict['purchase_expense']
         expense.payment_mode = 'cash'
         expense.narration = 'By purchase'
-        expense.save()
-
-        
+        expense.save()        
 
         purchase_items = purchase_dict['purchase_items']
         deleted_items = purchase_dict['deleted_items']

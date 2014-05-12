@@ -1,0 +1,172 @@
+{% extends 'base.html' %}
+
+{% block body_id %}create_receipt_voucher{% endblock %}
+
+{% block title %}Receipt Voucher{% endblock title %}
+{% block controller %} ng-controller="ReceiptVoucherController" ng-init="init('{{csrf_token}}')"{% endblock controller %}
+
+{% block content %}
+
+<div id="main-title">
+		<div class="alert alert-info" align="Center"><h4>Receipt Voucher</h4></div>
+	</div>
+
+	<div class="sales_form_container">
+		<form name="receipt_voucher" method="post">
+			<div class="form_contents_sales">
+				<div class="section_1_sales">
+					<!-- <div class="formrow_sales">
+						<div class="formtext_sales">
+							<label for="customer"> Invoice No.</label>
+						</div>
+						<div class="forminput_sales">
+							<input type='text' id="invoice_no" ng-model="invoice_no" ng-change=""/>
+							<p> [[message]] </p>
+						</div>
+						<div class="item_list quotation_list" ng-show='selecting_quotation' ng-hide="quotation_selected">
+							<div ng-repeat="quotation in quotations" ng-click="add_quotation(quotation)" class="item_list_row">
+								<span>[[quotation.ref_no]]</span>
+							</div>
+							<div class="clear"></div>
+						</div>
+					</div> -->
+					
+					<!-- <div class="formrow_sales">
+						<div class="formtext_sales">
+							<label for="customer">Delivery No</label>
+						</div>
+
+						<div class="forminput_sales">
+							<input type='text' id="delivery_no" ng-model="delivery_no" ng-change="get_delivery_note_details()"/>
+							<p> [[dn_message]] </p>
+						</div>
+						
+					</div> -->
+
+					<div class="formrow_sales">
+
+						<div class="formtext_sales">
+							<label for="invoice_number">Invoice Number</label>
+						</div>
+						<div class="forminput_sales">
+							<input type="text" name="invoice_number" ng-model="invoice_no" ng-change="get_sales_invoice_details();" />
+						</div>
+						<div class="item_list delivery_note" ng-show='selecting_invoice' ng-hide="invoice_selected">
+							<div ng-repeat="invoice in invoices" ng-click="add_invoice(invoice)" class="item_list_row">
+								<span>[[invoice.invoice_no]]</span>
+							</div>
+							<div class="clear"></div>
+						</div>
+					</div>
+
+					<div class="formrow_sales">
+						<div class="formtext_sales	">
+							<label for="Date ">Date </label>
+						</div>
+
+						<div class="forminput_sales">
+							
+							<input type="text" name="receipt_voucher_date"  id="receipt_voucher_date" value="{{current_date}}" readonly>
+						</div>
+					</div>
+
+
+					<!-- <div class="formrow_sales">
+						<div class="formtext_sales">
+							<label for="customer">Customer Name</label>
+						</div>
+						<div class="forminput_sales">
+							<select name="customer" ng-model="sales.customer" ng-change="add_customer()" >
+								<option value="select">Select</option>
+								<option ng-repeat="customer in customers" value="[[customer.customer_name]]" ng-selected="customer.customer_name == sales.customer">[[customer.customer_name]]
+								</option>
+								<option value="other">Other</option>
+							</select>
+							
+						</div>
+					</div> -->
+
+
+
+					<div class="formrow_sales">
+						<div class="formtext_sales">
+							<label for="customer">Customer Name</label>
+						</div>
+						<div class="forminput_sales">
+							<input type="text" name="customer" id="customer" ng-model="receiptvoucher.customer">
+						</div>
+					</div>
+
+				</div>	
+
+					<!-- <div class="clear"></div>
+   					</div> -->
+   				<div class="clear"></div>
+   				<!-- </div> -->
+
+   				<div class="clear"></div>
+
+				<div class="section_1_sales">
+					<div class="formrow_sales">									
+
+						<!-- <div class="formtext_sales" id="radio">
+							<label for="payment_mode">Payment Mode</label>
+						</div>
+						<div class="forminput_sales" id="radio_input">
+							<input type="radio" name="payment_mode" ng-model="receipt_voucher.payment_mode" value="cash" ng-change="payment_mode_change_sales('cash')"><label>Cash</label>
+							<input type="radio" name="payment_mode" ng-model="sales.payment_mode" value="cheque" ng-change="payment_mode_change_sales('cheque')"><label>Cheque</label>
+							<input type="radio" name="payment_mode" ng-model="sales.payment_mode" value="card" ng-change="payment_mode_change_sales('card')"><label>Card</label>
+
+						</div> -->
+						
+						<div class="formtext_sales">
+							<label for="cheque_no">Cheque No</label>
+						</div>
+						<div class="forminput_sales">
+							<input type="text" name="cheque_no"/>						
+						</div>		
+					
+						<div class="formtext_sales">
+							<label for="cheque_date">Cheque date</label>
+						</div>
+						<div class="forminput_sales">
+							<input type="text" name="cheque_date" id="cheque_date"/>						
+						</div>				
+
+					</div>
+					
+
+					<div class="formrow_sales">						
+
+						<div class="formtext_sales">
+							<label for="Amount">Sum of</label>
+						</div>
+						<div class="forminput_sales">
+							<input type="text" name="amount" readonly/>
+						</div>						
+					</div>
+
+					<div class="formrow_sales">						
+
+						<div class="formtext_sales">
+							<label for="Settlement">On Settlement Of</label>
+						</div>
+						<div class="forminput_sales">
+							<input type="text" name="Settlement" ng-model="receipt_voucher.settlement">
+						</div>						
+					</div>
+				</div>
+			</div>
+			<div  align="Center">
+				<div class="buttons">
+					<p class="error_message"> [[validation_error]] </p>
+					<input type="button" value="Submit" ng-click=""/>
+					<a href="{% url 'home' %}"><input type="button" value="Cancel"></a>
+				</div>
+			</div>			
+		</form>
+		<div class="clear"></div>
+	</div>
+
+
+{% endblock content %}

@@ -72,7 +72,7 @@ class Customer(models.Model):
     customer_id = models.CharField('Customer Id(Email id)', max_length=75)
 
     def __unicode__(self):
-        return "customer - "+self.customer_name
+        return "customer - "+ str(self.customer_name)
 
     # def save(self, *args, **kwargs):
     #     profile = self.user.userprofile_set.all()

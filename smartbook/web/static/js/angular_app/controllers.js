@@ -3,19 +3,20 @@ function validateEmail(email) {
     return re.test(email);
 }
 
-add_new_customer = function($http, $scope) { 
+add_new_customer = function($http, $scope) {
+    console.log($scope.email_id.length); 
     if($scope.customer_name == '') {
         $scope.error_message = "Please enter customer name";
         $scope.error_flag = true;
-    } else if($scope.email_id == '') {
-        $scope.error_message = "Please enter email";
-        $scope.error_flag = true;
-    } else if(!validateEmail($scope.email_id)){
-        $scope.error_message = "Please enter correct email";
-        $scope.error_flag = true;
-    }else {
+    } else if($scope.email_id.length > 0 && $scope.email_id != undefined) {
+        if (!validateEmail($scope.email_id)){
+
+            $scope.error_message = "Please enter a valid email id";
+            $scope.error_flag = true;
+        }
+    } else {
         params = { 
-            'name':$scope.customer_name,
+            'name': $scope.customer_name,
             'house': $scope.house_name,
             'street': $scope.street,
             'city': $scope.city,
@@ -47,6 +48,26 @@ add_new_customer = function($http, $scope) {
         });
     } 
 }       
+get_quotation_details = function($http, $scope){
+
+    var ref_no = $scope.quotation_no;
+    $scope.quotations = []
+    $http.get('/sales/quotation_details/?reference_no='+ref_no+'&sales_invoice=true').success(function(data)
+    {
+        console.log(data.quotations.length);
+        if(data.quotations.length > 0){
+            $scope.selecting_quotation = true;
+            $scope.quotation_selected = false;
+            $scope.quotations = data.quotations;
+        } else {
+            $scope.message = "There is no quotations with this number";
+        }
+        
+    }).error(function(data, status)
+    {
+        console.log(data || "Request failed");
+    });
+}
 
 
 function ExpenseController($scope, $element, $http, $timeout, $location) {
@@ -195,9 +216,9 @@ function AddEditUserController($scope, $element, $http, $timeout, $location) {
         if ($scope.user_type == 'staff'){
             $scope.get_designation_list();
             $scope.designation = salesman;
-        }
-        
+        } 
     }
+
     $scope.get_designation_list = function() {
         $http.get('/designation_list/').success(function(data)
         {
@@ -785,7 +806,7 @@ function PurchaseController($scope, $element, $http, $timeout, share, $location)
     }
 }
 
-function CreateSalesEntryController($scope, $element, $http, $timeout, share, $location) {
+function SalesQNDNController($scope, $element, $http, $timeout, share, $location) {
 
     $scope.items = [];
     $scope.selected_item = '';
@@ -950,18 +971,7 @@ function CreateSalesEntryController($scope, $element, $http, $timeout, share, $l
     }
 
     $scope.get_quotation_details = function(){
-
-        var ref_no = $scope.quotation_no;
-        $scope.quotations = []
-        $http.get('/sales/quotation_details/?reference_no='+ref_no+'&sales_invoice=true').success(function(data)
-        {
-            $scope.selecting_quotation = true;
-            $scope.quotation_selected = false;
-            $scope.quotations = data.quotations;
-        }).error(function(data, status)
-        {
-            console.log(data || "Request failed");
-        });
+        get_quotation_details($http, $scope);        
     }
     $scope.add_quotation = function(quotation) {
         $scope.selecting_quotation = false;
@@ -1012,9 +1022,14 @@ function CreateSalesEntryController($scope, $element, $http, $timeout, share, $l
         $scope.delivery_notes = []
         $http.get('/sales/delivery_note_details/?delivery_no='+delivery_no).success(function(data)
         {
-            $scope.selecting_delivery_note = true;
-            $scope.delivery_note_selected = false;
-            $scope.delivery_notes = data.delivery_notes;
+            if(data.delivery_notes.length > 0){
+               $scope.selecting_delivery_note = true;
+                $scope.delivery_note_selected = false;
+                $scope.delivery_notes = data.delivery_notes; 
+            } else {
+                $scope.dn_message = "There is no delivery note with this number";
+            }
+            
         }).error(function(data, status)
         {
             console.log(data || "Request failed");
@@ -1196,7 +1211,7 @@ function CreateSalesEntryController($scope, $element, $http, $timeout, share, $l
             }
             $http({
                 method : 'post',
-                url : "/sales/create_sales_entry/",
+                url : "/sales/quotaion_deliverynote_sales/",
                 data : $.param(params),
                 headers : {
                     'Content-Type' : 'application/x-www-form-urlencoded'
@@ -1526,7 +1541,7 @@ function SalesController($scope, $element, $http, $timeout, share, $location) {
                     'Content-Type' : 'application/x-www-form-urlencoded'
                 }
             }).success(function(data, status) {
-                document.location.href = '/sales/entry/';               
+                document.location.href = '/sales/sales_invoice_pdf/'+data.sales_invoice_id+'/';                
             }).error(function(data, success){
                 
             });
@@ -2215,9 +2230,15 @@ function SalesReturnController($scope, $element, $http, $timeout, share, $locati
         {
             $scope.selecting_item = true;
             $scope.item_selected = false;
-            $scope.sales = data.sales;
-            $scope.sales.deleted_items = [];
-            $scope.sales.sales_invoice_number = invoice;
+            if(data.sales) {
+                $scope.sales = data.sales;
+                $scope.sales.deleted_items = [];
+                $scope.sales.sales_invoice_number = invoice;
+                $scope.message = ''
+            } else {
+                $scope.message = data.result;
+            }
+                
         }).error(function(data, status)
         {
             console.log(data || "Request failed");
@@ -2647,6 +2668,7 @@ function QuotationController($scope, $element, $http, $timeout, share, $location
             var height = $(document).height();
             $scope.popup.set_overlay_height(height);
             $scope.popup.show_content();
+            $scope.email_id = '';
         }
     }
 
@@ -2655,6 +2677,7 @@ function QuotationController($scope, $element, $http, $timeout, share, $location
     }
 
     $scope.add_new_customer = function() { 
+
         add_new_customer($http, $scope);
         $scope.quotation.customer = $scope.customer_name;      
     }
@@ -2768,7 +2791,10 @@ function QuotationController($scope, $element, $http, $timeout, share, $location
         } else if($scope.quotation.sales_items.length == 0){
             $scope.validation_error = "Choose Item";
             return false;
-        } 
+        } else if($scope.quotation.sales_items.length == 0){
+            $scope.validation_error = "Choose Item";
+            return false;
+        }  
         return true;
     }
     $scope.create_quotation = function() {
@@ -2831,18 +2857,7 @@ function DeliveryNoteController($scope, $element, $http, $timeout, share, $locat
     $scope.quotation_selected = false;
 
     $scope.get_quotation_details = function(){
-
-        var ref_no = $scope.quotation_no;
-        $scope.quotations = []
-        $http.get('/sales/quotation_details/?reference_no='+ref_no).success(function(data)
-        {
-            $scope.selecting_quotation = true;
-            $scope.quotation_selected = false;
-            $scope.quotations = data.quotations;
-        }).error(function(data, status)
-        {
-            console.log(data || "Request failed");
-        });
+        get_quotation_details($http, $scope);
     }
     $scope.add_quotation = function(quotation) {
         $scope.selecting_quotation = false;
@@ -2939,6 +2954,83 @@ function DeliveryNoteController($scope, $element, $http, $timeout, share, $locat
                 
             });
         }
+    }
+
+}
+
+function ReceiptVoucherController($scope, $element, $http, $timeout, share, $location) {
+
+    // $scope.receipt_voucher = {
+    //     'date': '',
+    //     'sum_of': '',
+    //     'customer': '',
+    //     'invoice_number': 'ggg',
+    //     'settlement': '',
+    //     'amount': '',
+    //     'cheque_date': '',
+    // }
+    $scope.receiptvoucher = {
+        'customer': ''
+    }
+    console.log($scope.receipt_voucher);
+
+    $scope.init = function(csrf_token) {
+        $scope.csrf_token = csrf_token;
+
+    }
+
+    $scope.receipt_validation = function(){
+
+        $scope.receiptvoucher.date = $$('#receipt_voucher_date')[0].get('value');
+        // $scope.receiptvoucher.reference_no = $$('#reference_number')[0].get('value');
+
+        if ($scope.receiptvoucher.date == '' || $scope.receiptvoucher.date == undefined) {
+            $scope.validation_error = "Enter the Date" ;
+            return false;
+        } else if ($scope.receiptvoucher.customer == '' || $scope.receiptvoucher.customer == undefined) {
+            $scope.validation_error = "Enter Customer Name";
+            return false;
+        } else if ($scope.receiptvoucher.sales_invoice == '' || $scope.receiptvoucher.sales_invoice == undefined) {
+            $scope.validation_error = "Enter the Sales Invoice no.";
+            return false;
+        } else if ($scope.receiptvoucher.check_no == '' || $scope.receiptvoucher.check_no == undefined) {
+            $scope.validation_error = "Enter Check no.";
+            return false;
+        } else if ($scope.receiptvoucher.dated == '' || $scope.receiptvoucher.dated == undefined) {
+            $scope.validation_error = "Enter Check Date";
+            return false;
+        } else if ($scope.receiptvoucher.settlement_amount == '' || $scope.receiptvoucher.settlement_amount == undefined) {
+            $scope.validation_error = "Enter Settlement Amount";
+            return false;
+        }
+        
+        return true;
+    }
+    $scope.get_sales_invoice_details = function(){
+        
+        var invoice_no = $scope.invoice_no;
+        $scope.delivery_notes = []
+        $http.get('/sales/invoice_details/?invoice_no='+invoice_no).success(function(data)
+        {
+            if(data.invoice_details.length > 0){
+                $scope.selecting_invoice = true;
+                $scope.invoice_selected = false;
+                $scope.invoices = data.invoice_details; 
+            } else {
+                $scope.dn_message = "There is no invoice with this number";
+            }
+            
+        }).error(function(data, status)
+        {
+            console.log(data || "Request failed");
+        });
+    }
+    $scope.add_invoice = function(invoice) {
+        $scope.selecting_invoice = false;
+        $scope.invoice_selected = true;
+        $scope.invoice_no = invoice.invoice_no;
+        $scope.receiptvoucher.customer = invoice.customer;
+
     }
 
 }

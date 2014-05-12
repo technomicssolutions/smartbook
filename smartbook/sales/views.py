@@ -4,6 +4,8 @@ import ast
 import simplejson
 import datetime as dt
 from datetime import datetime
+from decimal import *
+from num2words import num2words
 
 from django.db import IntegrityError
 from django.db.models import Max
@@ -70,8 +72,7 @@ class SalesEntry(View):
         sales.grant_total = sales_dict['grant_total']
 
         sales.customer = customer
-        sales.salesman = salesman
-        
+        sales.salesman = salesman        
         sales.save()
         sales_items = sales_dict['sales_items']
         for sales_item in sales_items:
@@ -83,11 +84,9 @@ class SalesEntry(View):
 
                 inventory.quantity = inventory.quantity - int(sales_item['qty_sold'])
             else:
-                inventory.quantity = inventory.quantity + s_item.quantity_sold - int(sales_item['qty_sold'])
-                
+                inventory.quantity = inventory.quantity + s_item.quantity_sold - int(sales_item['qty_sold'])      
 
             inventory.save()
-
                     
             s_item, item_created = SalesItem.objects.get_or_create(item=item, sales=sales)
             s_item.sales = sales
@@ -96,9 +95,17 @@ class SalesEntry(View):
             s_item.discount_given = sales_item['disc_given']
             s_item.net_amount = sales_item['net_amount']
             s_item.save()
+
+        sales_invoice = SalesInvoice.objects.create(sales=sales)
+        sales.save()
+        sales_invoice.date = sales.sales_invoice_date
+        sales_invoice.customer = sales.customer
+        sales_invoice.invoice_no = sales.sales_invoice_number
+        sales_invoice.save()
                     
         res = {
             'result': 'Ok',
+            'sales_invoice_id': sales_invoice.id,
         }
         response = simplejson.dumps(res)
         status_code = 200
@@ -127,9 +134,7 @@ class SalesReturnView(View):
         sales_return, created = SalesReturn.objects.get_or_create(sales=sales, return_invoice_number = post_dict['invoice_number'])
         sales_return.date = datetime.strptime(post_dict['sales_return_date'], '%d/%m/%Y')
         sales_return.net_amount = post_dict['net_return_total']
-        sales_return.save()
-        
-        
+        sales_return.save()        
 
         return_items = post_dict['sales_items']
 
@@ -158,40 +163,48 @@ class SalesDetails(View):
     def get(self, request, *args, **kwargs):
         if request.is_ajax():
             invoice_number = request.GET['invoice_no']
-            sales = Sales.objects.get(sales_invoice_number=invoice_number)
-            sales_items = SalesItem.objects.filter(sales=sales)
+            try:
+                sales = Sales.objects.get(sales_invoice_number=invoice_number)
+            except:
+                sales = None
+            if sales:
+                sales_items = SalesItem.objects.filter(sales=sales)
 
-            sl_items = []
+                sl_items = []
 
-            for item in sales_items:
-                sl_items.append({
-                    'item_code': item.item.code,
-                    'item_name': item.item.name,
-                    'barcode': item.item.barcode,
-                    'stock': item.item.inventory_set.all()[0].quantity,
-                    'unit_price': item.item.inventory_set.all()[0].selling_price,
-                    'tax': item.item.tax,
-                    'uom': item.item.uom.uom,
-                    'quantity_sold': item.quantity_sold,
-                    'discount_given': item.discount_given,
+                for item in sales_items:
+                    sl_items.append({
+                        'item_code': item.item.code,
+                        'item_name': item.item.name,
+                        'barcode': item.item.barcode,
+                        'stock': item.item.inventory_set.all()[0].quantity,
+                        'unit_price': item.item.inventory_set.all()[0].selling_price,
+                        'tax': item.item.tax,
+                        'uom': item.item.uom.uom,
+                        'quantity_sold': item.quantity_sold,
+                        'discount_given': item.discount_given,
 
 
-                })
-            sales_dict = {
-                'invoice_number': sales.sales_invoice_number,
-                'sales_invoice_date': sales.sales_invoice_date.strftime('%d/%m/%Y'),
-                'customer': sales.customer.user.first_name,
-                'sales_man': sales.salesman.user.first_name,
-                'net_amount': sales.net_amount,
-                'round_off': sales.round_off,
-                'grant_total': sales.grant_total,
-                'discount': sales.discount,
-                'sales_items': sl_items
-            }
-            res = {
-                'result': 'Ok',
-                'sales': sales_dict
-            }
+                    })
+                sales_dict = {
+                    'invoice_number': sales.sales_invoice_number,
+                    'sales_invoice_date': sales.sales_invoice_date.strftime('%d/%m/%Y'),
+                    'customer': sales.customer.customer_name,
+                    'sales_man': sales.salesman.user.first_name,
+                    'net_amount': sales.net_amount,
+                    'round_off': sales.round_off,
+                    'grant_total': sales.grant_total,
+                    'discount': sales.discount,
+                    'sales_items': sl_items
+                }
+                res = {
+                    'result': 'Ok',
+                    'sales': sales_dict
+                }
+            else:
+                res = {
+                    'result': 'No Sales entry for this invoice number',
+                }
             response = simplejson.dumps(res)
             status_code = 200
             return HttpResponse(response, status = status_code, mimetype="application/json")
@@ -240,10 +253,7 @@ class CreateQuotation(View):
                 item = Item.objects.get(code=quotation_item['item_code'])
                 quotation_item_obj, item_created = QuotationItem.objects.get_or_create(item=item, quotation=quotation)
                 inventory, created = Inventory.objects.get_or_create(item=item)
-                if quotation_created:
-                    inventory.quantity = inventory.quantity - int(quotation_item['qty_sold'])
-                else:
-                    inventory.quantity = inventory.quantity + quotation_item_obj.quantity_sold - int(sales_item['qty_sold'])
+                inventory.quantity = inventory.quantity - int(quotation_item['qty_sold'])
                 inventory.save()
                 quotation_item_obj.net_amount = float(quotation_item['net_amount'])
                 quotation_item_obj.quantity_sold = int(quotation_item['qty_sold'])
@@ -263,13 +273,10 @@ class DeliveryNotePDF(View):
         delivery_note_id = kwargs['delivery_note_id']
         delivery_note = DeliveryNote.objects.get(id=delivery_note_id)
 
-
         response = HttpResponse(content_type='application/pdf')
         p = canvas.Canvas(response, pagesize=(1000, 1000))
 
         status_code = 200
-
-        y=850
 
         # p.drawString(100, 950, "SUNLIGHT STATIONARY")
         # p.drawString(100, 930, "Colour Printing, Photo Copy, Spiral Binding")
@@ -299,13 +306,13 @@ class DeliveryNotePDF(View):
         # table.wrapOn(p, 200, 400)
         # table.drawOn(p,105,500)
 
-        x=500
+        y=700
 
         i = 0
         i = i + 1
         for q_item in delivery_note.quotation.quotationitem_set.all():
                    
-            x=x-40
+            y=y-40
 
             data1=[[i, q_item.item.name, q_item.quantity_sold, '']]
             table = Table(data1, colWidths=[100, 400, 100, 150], rowHeights=40)
@@ -315,8 +322,8 @@ class DeliveryNotePDF(View):
             #                            ('BOX', (0,0), (-1,-1), 0.25, colors.black),
             #                            # ('BACKGROUND',(0,0),(1,0),colors.lightgrey)
             #                            ]))
-            table.wrapOn(p, 200, 400)
-            table.drawOn(p,105,x)
+            table.wrapOn(p, 200, 600)
+            table.drawOn(p, 105, y)
             i = i + 1
 
 
@@ -338,9 +345,13 @@ class CreateQuotationPdf(View):
         y = 850
 
         # p.drawInlineImage(self, 1.jpg, 80,y, width=None,height=None)
-        owner_company = OwnerCompany.objects.latest('id')
-        path = settings.PROJECT_ROOT+"/media/"+owner_company.logo.name
-        p.drawImage(path, 7*cm, 30*cm, width=20*cm, preserveAspectRatio=True)
+        try:
+            owner_company = OwnerCompany.objects.latest('id')
+            if owner_company.logo:
+                path = settings.PROJECT_ROOT.replace("\\", "/")+"/media/"+owner_company.logo.name
+                p.drawImage(path, 7*cm, 30*cm, width=20*cm, preserveAspectRatio=True)
+        except:
+            pass
 
 
         p.roundRect(80, y-130, 840, 0.5*inch, 10, stroke=1, fill=0)
@@ -516,7 +527,7 @@ class QuotationDetails(View):
 
     def get(self, request, *args, **kwargs):
 
-        ref_number = request.GET.get('reference_no', '')
+        
         in_sales_invoice_creation = ''
         sales_invoice_creation = request.GET.get('sales_invoice', '')
 
@@ -604,7 +615,7 @@ class DeliveryNoteDetails(View):
         response = simplejson.dumps(res)
         return HttpResponse(response, status=200, mimetype='application/json')
 
-class CreateSalesEntry(View):
+class QuotationDeliverynoteSales(View):
 
     def get(self, request, *args, **kwargs):
 
@@ -746,52 +757,152 @@ class CreateSalesInvoicePDF(View):
 
         sales_invoice_id = kwargs['sales_invoice_id']
         sales_invoice = SalesInvoice.objects.get(id=sales_invoice_id)
-
+        sales = sales_invoice.sales
 
         response = HttpResponse(content_type='application/pdf')
-        p = canvas.Canvas(response, pagesize=(1000, 1000))
+        p = canvas.Canvas(response, pagesize=(1000, 1050))
 
         status_code = 200
 
-        y=850
+        y = 1000
+        style = [
+            ('FONTSIZE', (0,0), (-1, -1), 20),
+            ('FONTNAME',(0,0),(-1,-1),'Helvetica') 
+        ]
+
+        new_style = [
+            ('FONTSIZE', (0,0), (-1, -1), 30),
+            ('FONTNAME',(0,0),(-1,-1),'Helvetica') 
+        ]
+
+        data=[['', '', 'INVOICE', '']]
+        table = Table(data, colWidths=[30, 310, 540, 100], rowHeights=50, style = new_style)      
+        table.wrapOn(p, 200, 400)
+        table.drawOn(p,50, 860)
 
         data=[['', sales_invoice.date.strftime('%d-%m-%Y'), '', sales_invoice.invoice_no]]
-        table = Table(data, colWidths=[0, 100, 650, 100], rowHeights=40)      
+        table = Table(data, colWidths=[30, 60, 710, 100], rowHeights=50, style = style)      
         table.wrapOn(p, 200, 400)
-        table.drawOn(p,100, 750)
+        table.drawOn(p,50, 820)
 
         quotation = sales_invoice.quotation
 
-        data=[['', '', sales_invoice.delivery_note.lpo_number if sales_invoice.delivery_note else '' ]]
-        table = Table(data, colWidths=[450, 60, 100], rowHeights=40)      
+        customer_name = ''
+        if sales_invoice.customer:
+            customer_name = sales_invoice.customer.customer_name
+
+        data=[['', customer_name, sales_invoice.delivery_note.lpo_number if sales_invoice.delivery_note else '' ]]
+        # data=[['', customer_name, 'Lpo']]
+
+        table = Table(data, colWidths=[30, 510, 100], rowHeights=40, style = style)      
         table.wrapOn(p, 200, 400)
-        table.drawOn(p,100, 700)
+        table.drawOn(p,50, 790)
 
         data=[['', '', sales_invoice.date.strftime('%d-%m-%Y')]]
-        table = Table(data, colWidths=[450, 30, 100], rowHeights=40)      
-        table.wrapOn(p, 200, 400)
-        table.drawOn(p,100, 650)
 
-        data=[['', '', sales_invoice.delivery_note.delivery_note_number if sales_invoice.delivery_note else sales_invoice.quotation.reference_id]]
-        table = Table(data, colWidths=[450, 30, 100], rowHeights=40)      
-        table.wrapOn(p, 200, 400)
-        table.drawOn(p,150, 620)
+        # table = Table(data, colWidths=[450, 60, 100], rowHeights=40, style = style)      
 
-        x=600
+        table = Table(data, colWidths=[450, 90, 100], rowHeights=50, style = style)      
+
+        table.wrapOn(p, 200, 400)
+        table.drawOn(p,50, 760)
+
+        if sales_invoice.quotation or sales_invoice.delivery_note:            
+            data=[['', '', sales_invoice.delivery_note.delivery_note_number if sales_invoice.delivery_note else sales_invoice.quotation.reference_id]]
+
+            # table = Table(data, colWidths=[450, 60, 100], rowHeights=40, style = style)      
+            # table.wrapOn(p, 200, 400)
+            # table.drawOn(p,100, 620)
+
+            table = Table(data, colWidths=[450, 90, 100], rowHeights=40, style = style)      
+            table.wrapOn(p, 200, 400)
+            table.drawOn(p,50, 730)
+
+        
+
+
+        x=660
 
         i = 0
         i = i + 1
-        for q_item in quotation.quotationitem_set.all():
+
+        TWOPLACES = Decimal(10) ** -2
+        total_amount = 0
+        for s_item in sales.salesitem_set.all():
                    
-            x=x-40
-
-            data1=[[i, q_item.item.code, q_item.item.name, q_item.quantity_sold,q_item.item.uom.uom, q_item.item.inventory_set.all()[0].unit_price, q_item.net_amount]]
-            table = Table(data1, colWidths=[50, 100, 400, 70, 90, 100, 50], rowHeights=40)
+            x=x-30
+            
+            item_price = s_item.item.inventory_set.all()[0].selling_price
+            total_amount = total_amount + (item_price*s_item.quantity_sold)
+            # final_price = item_price+(item_price*(s_item.item.tax/100))
+            # data1=[[i, s_item.item.code, s_item.item.name, s_item.quantity_sold, s_item.item.uom.uom, s_item.item.inventory_set.all()[0].unit_price, Decimal((final_price*s_item.quantity_sold)).quantize(TWOPLACES)]]
+            data1=[[i, s_item.item.code, s_item.item.name, s_item.quantity_sold, s_item.item.uom.uom, s_item.item.inventory_set.all()[0].unit_price, (item_price*s_item.quantity_sold)]]
+            table = Table(data1, colWidths=[50, 100, 440, 80, 90, 100, 50], rowHeights=40, style=style)
             table.wrapOn(p, 200, 400)
-            table.drawOn(p,50,x)
+            table.drawOn(p,10,x)
             i = i + 1
+        x=600
 
+        total_amount_in_words = num2words(total_amount).title() + ' Only'
+        data=[[total_amount_in_words, total_amount]]
+
+        # table = Table(data, colWidths=[450, 60, 100], rowHeights=40, style = style)      
+
+        table = Table(data, colWidths=[500, 50], rowHeights=40, style = style)      
+
+        table.wrapOn(p, 200, 400)
+        table.drawOn(p, 400, 10)
 
         p.showPage()
         p.save()
         return response
+
+
+class ReceiptVoucher(View):
+
+    def get(self, request, *args, **kwargs):
+
+        current_date = dt.datetime.now().date()
+
+        # inv_number = SalesInvoice.objects.aggregate(Max('id'))['id__max']
+        
+        # if not inv_number:
+        #     inv_number = 1
+        #     prefix = 'SI'
+        # else:
+        #     inv_number = inv_number + 1
+        #     prefix = SalesInvoice.objects.latest('id').prefix
+        # invoice_number = prefix + str(inv_number)
+
+        return render(request, 'sales/create_receipt_voucher.html',{
+            # 'sales_invoice_number': invoice_number,
+            'current_date': current_date.strftime('%d/%m/%Y'),
+        })
+
+class InvoiceDetails(View):
+
+
+    def get(self, request, *args, **kwargs):
+
+
+        invoice_no = request.GET.get('invoice_no', '')
+        sales_invoice_details = SalesInvoice.objects.filter(invoice_no__istartswith=invoice_no)
+        ctx_invoice_details = []
+        if sales_invoice_details.count() > 0:
+            for sales_invoice in sales_invoice_details:
+                ctx_invoice_details.append({
+                    'invoice_no': sales_invoice.invoice_no,
+                    'dated': sales_invoice.date.strftime('%d-%m-%Y'),
+                    'customer': sales_invoice.customer.customer_name,
+                    'amount': sales_invoice.sales.quotation.net_total if sales_invoice.sales else sales_invoice.sales.net_amount
+                })
+        res = {
+            'result': 'ok',
+            'invoice_details': ctx_invoice_details, 
+        }
+
+        response = simplejson.dumps(res)
+
+        return HttpResponse(response, status=200, mimetype='application/json')
+
+

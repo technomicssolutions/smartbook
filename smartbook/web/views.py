@@ -563,7 +563,7 @@ class CreateCustomer(View):
                 }
                 context.update(request.POST)
                 return render(request, 'register_user.html',context)
-        customer, created = Customer.objects.get_or_create(customer_id = request.POST['email'])
+        customer, created = Customer.objects.get_or_create(customer_id = request.POST['email'], customer_name = request.POST['name'])
         if not created:
             if request.is_ajax():
                 res = {

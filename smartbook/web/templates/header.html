@@ -21,7 +21,7 @@
 					</span>
 					<ul>
 						<li> <a href="{% url 'backup' %}"> DB Backup </a> </li>
-						<li> <a href="{% url 'clear_backup' %}"> Clear Backup Folder </a> </li>
+						<li> <a href="{% url 'clear_backup' %}"> Backup Folder </a> </li>
 						<li> <a href="{% url 'users' user_type='vendor' %}"> Vendors </a> </li>
 						<li> <a href="{% url 'users' user_type='staff' %}"> Staff </a> </li>
 						<li> <a href="{% url 'register_salesman' user_type='staff' %}"> Sales Man </a> </li>
@@ -46,17 +46,18 @@
 				</li>
 				<li class="menu"> <a href=""> Sales </a>
 					<ul>
-						<li><a href="{% url 'create_quotation' %}">Create Quotation</a></li>
-						<li><a href="{% url 'create_delivery_note' %}">Create Delivery Note</a></li>
-						<li><a href="{% url 'create_sales_entry' %}">Create Sales Invoice</a></li>
-						<li> <a href="{% url 'sales' %}"> Sales Entry </a> </li>
+						<li><a href="{% url 'create_quotation' %}"> Quotation</a></li>
+						<li><a href="{% url 'create_delivery_note' %}"> Delivery Note</a></li>
+						<li><a href="{% url 'create_sales_entry' %}"> Sales (Qn/ DN)</a></li>
+						<li> <a href="{% url 'sales' %}"> Direct Sales </a> </li>
 						<li> <a href="{% url 'return_entry' %}"> Return Entry</a> </li>
+						<li> <a href="{% url 'receipt_voucher' %}"> Receipt Voucher</a> </li>
 					</ul>
 				</li>
 				<li class="menu"> <a href="{% url 'new_expense' %}"> Expenses </a> 
 					<ul>
 						<li><a href="{% url 'new_expense' %}">Expenses</a></li>
-						<li><a href="{% url 'new_expense_head' %}">New Expense Head</a></li>
+						<li><a href="{% url 'new_expense_head' %}"> Expense Head</a></li>
 					</ul>
 				</li>
 
