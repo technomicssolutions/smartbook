@@ -527,7 +527,7 @@ class QuotationDetails(View):
 
     def get(self, request, *args, **kwargs):
 
-        ref_number = request.GET.get('reference_no', '')
+        
         in_sales_invoice_creation = ''
         sales_invoice_creation = request.GET.get('sales_invoice', '')
 
@@ -873,5 +873,31 @@ class ReceiptVoucher(View):
             # 'sales_invoice_number': invoice_number,
             'current_date': current_date.strftime('%d/%m/%Y'),
         })
+
+class InvoiceDetails(View):
+
+
+    def get(self, request, *args, **kwargs):
+
+
+        invoice_no = request.GET.get('invoice_no', '')
+        sales_invoice_details = SalesInvoice.objects.filter(invoice_no__istartswith=invoice_no)
+        ctx_invoice_details = []
+        if sales_invoice_details.count() > 0:
+            for sales_invoice in sales_invoice_details:
+                ctx_invoice_details.append({
+                    'invoice_no': sales_invoice.invoice_no,
+                    'dated': sales_invoice.date.strftime('%d-%m-%Y'),
+                    'customer': sales_invoice.customer.customer_name,
+                    'amount': sales_invoice.sales.quotation.net_total if sales_invoice.sales else sales_invoice.sales.net_amount
+                })
+        res = {
+            'result': 'ok',
+            'invoice_details': ctx_invoice_details, 
+        }
+
+        response = simplejson.dumps(res)
+
+        return HttpResponse(response, status=200, mimetype='application/json')
 
 

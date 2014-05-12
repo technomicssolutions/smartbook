@@ -2984,7 +2984,7 @@ function ReceiptVoucherController($scope, $element, $http, $timeout, share, $loc
         if ($scope.receiptvoucher.date == '' || $scope.receiptvoucher.date == undefined) {
             $scope.validation_error = "Enter the Date" ;
             return false;
-        } else if ($scope.receiptvoucher.customer == '' || $scope.receiptvoucher.customer == undefined)) {
+        } else if ($scope.receiptvoucher.customer == '' || $scope.receiptvoucher.customer == undefined) {
             $scope.validation_error = "Enter Customer Name";
             return false;
         } else if ($scope.receiptvoucher.sales_invoice == '' || $scope.receiptvoucher.sales_invoice == undefined) {
