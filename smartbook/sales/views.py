@@ -857,7 +857,7 @@ class ReceiptVoucher(View):
 
     def get(self, request, *args, **kwargs):
 
-        # current_date = dt.datetime.now().date()
+        current_date = dt.datetime.now().date()
 
         # inv_number = SalesInvoice.objects.aggregate(Max('id'))['id__max']
         
@@ -871,7 +871,7 @@ class ReceiptVoucher(View):
 
         return render(request, 'sales/create_receipt_voucher.html',{
             # 'sales_invoice_number': invoice_number,
-            # 'current_date': current_date.strftime('%d/%m/%Y'),
+            'current_date': current_date.strftime('%d/%m/%Y'),
         })
 
 

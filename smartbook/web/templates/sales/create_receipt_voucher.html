@@ -51,6 +51,17 @@
 							<div class="clear"></div>
 						</div>
 					</div> -->
+
+					<div class="formrow_sales">
+
+						<div class="formtext_sales">
+							<label for="invoice_number">Invoice Number</label>
+						</div>
+						<div class="forminput_sales">
+							<input type="text" name="invoice_number" ng-change="get_sales_invoice_details()" />
+						</div>
+					</div>
+
 					<div class="formrow_sales">
 						<div class="formtext_sales	">
 							<label for="Date ">Date </label>
@@ -58,7 +69,7 @@
 
 						<div class="forminput_sales">
 							
-							<input type="text" name="sales_invoice_date"  id="sales_invoice_date" value="{{current_date}}" ng-readonly="payment_mode_selection_check">
+							<input type="text" name="receipt_voucher_date"  id="receipt_voucher_date" value="{{current_date}}" readonly>
 						</div>
 					</div>
 
@@ -85,20 +96,10 @@
 							<label for="customer">Customer Name</label>
 						</div>
 						<div class="forminput_sales">
-							<input type="text" name="customer"  id="customer" ng-model="sales.customer" >
+							<input type="text" name="customer"  id="customer" >
 						</div>
 					</div>
 
-
-					<div class="formrow_sales">
-
-						<div class="formtext_sales">
-							<label for="sales_invoice_number">Invoice Number</label>
-						</div>
-						<div class="forminput_sales">
-							<input type="text" name="sales_invoice_number" ng-model="sales.sales_invoice_number" readonly/>
-						</div>
-					</div>
 				</div>	
 
 					<!-- <div class="clear"></div>
@@ -111,28 +112,28 @@
 				<div class="section_1_sales">
 					<div class="formrow_sales">									
 
-						<div class="formtext_sales" id="radio">
+						<!-- <div class="formtext_sales" id="radio">
 							<label for="payment_mode">Payment Mode</label>
 						</div>
 						<div class="forminput_sales" id="radio_input">
-							<input type="radio" name="payment_mode" ng-model="sales.payment_mode" value="cash" ng-change="payment_mode_change_sales('cash')"><label>Cash</label>
+							<input type="radio" name="payment_mode" ng-model="receipt_voucher.payment_mode" value="cash" ng-change="payment_mode_change_sales('cash')"><label>Cash</label>
 							<input type="radio" name="payment_mode" ng-model="sales.payment_mode" value="cheque" ng-change="payment_mode_change_sales('cheque')"><label>Cheque</label>
 							<input type="radio" name="payment_mode" ng-model="sales.payment_mode" value="card" ng-change="payment_mode_change_sales('card')"><label>Card</label>
 
-						</div>
+						</div> -->
 						
 						<div class="formtext_sales">
 							<label for="cheque_no">Cheque No</label>
 						</div>
 						<div class="forminput_sales">
-							<input type="text" name="cheque_no" ng-model="sales.cheque_no" ng-readonly="cash"/>						
+							<input type="text" name="cheque_no"/>						
 						</div>		
 					
 						<div class="formtext_sales">
 							<label for="cheque_date">Cheque date</label>
 						</div>
 						<div class="forminput_sales">
-							<input type="text" name="cheque_date" id="cheque_date" ng-model="sales.cheque_date" ng-readonly="cash"/>						
+							<input type="text" name="cheque_date" id="cheque_date"/>						
 						</div>				
 
 					</div>
@@ -141,10 +142,10 @@
 					<div class="formrow_sales">						
 
 						<div class="formtext_sales">
-							<label for="Amount">Amount</label>
+							<label for="Amount">Sum of</label>
 						</div>
 						<div class="forminput_sales">
-							<input type="text" name="amount" ng-model="sales.amount" readonly/>
+							<input type="text" name="amount" readonly/>
 						</div>						
 					</div>
 
@@ -154,7 +155,7 @@
 							<label for="Settlement">On Settlement Of</label>
 						</div>
 						<div class="forminput_sales">
-							<input type="text" name="Settlement" ng-model="sales.Settlement">
+							<input type="text" name="Settlement" ng-model="receipt_voucher.settlement">
 						</div>						
 					</div>
 				</div>

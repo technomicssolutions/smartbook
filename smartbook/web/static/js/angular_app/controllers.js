@@ -2960,9 +2960,24 @@ function DeliveryNoteController($scope, $element, $http, $timeout, share, $locat
 
 function ReceiptVoucherController($scope, $element, $http, $timeout, share, $location) {
 
-    $scope.sales.customer = '';
-    $scope.sales.sales_invoice_number = '';
-    $scope.sales.cheque_no = '';
+    $scope.receipt_voucher = {
+        'date': '',
+        'sum_of': '',
+        'customer': '',
+        'invoice_number': 'ggg',
+        'settlement': '',
+        'amount': '',
+        'cheque_date': '',
+    }
+    console.log($scope.receipt_voucher);
+
+    $scope.init = function(csrf_token) {
+        $scope.csrf_token = csrf_token;
+
+    }
+    $scope.get_sales_invoice_details = function(){
+
+    }
 
 }
 
