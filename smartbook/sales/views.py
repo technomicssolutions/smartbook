@@ -821,7 +821,7 @@ class CreateSalesInvoicePDF(View):
         
 
 
-        x=800
+        x=680
 
         i = 0
         i = i + 1
@@ -830,7 +830,7 @@ class CreateSalesInvoicePDF(View):
         total_amount = 0
         for s_item in sales.salesitem_set.all():
                    
-            x=x-40
+            x=x-30
             
             item_price = s_item.item.inventory_set.all()[0].selling_price
             total_amount = total_amount + (item_price*s_item.quantity_sold)
