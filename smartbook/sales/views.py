@@ -855,3 +855,4 @@ class CreateSalesInvoicePDF(View):
         p.save()
         return response
 
+
