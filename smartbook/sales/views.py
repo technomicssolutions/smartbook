@@ -772,7 +772,7 @@ class CreateSalesInvoicePDF(View):
         data=[['', sales_invoice.date.strftime('%d-%m-%Y'), '', sales_invoice.invoice_no]]
         table = Table(data, colWidths=[30, 60, 700, 100], rowHeights=50, style = style)      
         table.wrapOn(p, 200, 400)
-        table.drawOn(p,50, 980)
+        table.drawOn(p,50, 840)
 
         quotation = sales_invoice.quotation
 
@@ -788,7 +788,7 @@ class CreateSalesInvoicePDF(View):
 
         table = Table(data, colWidths=[30, 510, 100], rowHeights=40, style = style)      
         table.wrapOn(p, 200, 400)
-        table.drawOn(p,50, 930)
+        table.drawOn(p,50, 790)
 
         data=[['', '', sales_invoice.date.strftime('%d-%m-%Y')]]
 
@@ -797,13 +797,13 @@ class CreateSalesInvoicePDF(View):
         table = Table(data, colWidths=[450, 90, 100], rowHeights=50, style = style)      
 
         table.wrapOn(p, 200, 400)
-        table.drawOn(p,50, 900)
+        table.drawOn(p,50, 760)
 
         data=[['', 'Invoice', '']]
         table = Table(data, colWidths=[230, 90, 100], rowHeights=50, style = style)      
 
         table.wrapOn(p, 200, 400)
-        table.drawOn(p,50, 860)
+        table.drawOn(p,50, 720)
 
         if sales_invoice.quotation or sales_invoice.delivery_note:            
             data=[['', '', sales_invoice.delivery_note.delivery_note_number if sales_invoice.delivery_note else sales_invoice.quotation.reference_id]]
@@ -814,12 +814,12 @@ class CreateSalesInvoicePDF(View):
 
             table = Table(data, colWidths=[450, 90, 100], rowHeights=40, style = style)      
             table.wrapOn(p, 200, 400)
-            table.drawOn(p,50, 840)
+            table.drawOn(p,50, 700)
 
         
 
 
-        x=850
+        x=710
 
         i = 0
         i = i + 1
@@ -839,7 +839,7 @@ class CreateSalesInvoicePDF(View):
             table.wrapOn(p, 200, 400)
             table.drawOn(p,10,x)
             i = i + 1
-        x=600
+        x=460
 
         total_amount_in_words = num2words(total_amount).title() + ' Only'
         data=[[total_amount_in_words, total_amount]]
