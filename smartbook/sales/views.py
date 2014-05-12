@@ -760,7 +760,7 @@ class CreateSalesInvoicePDF(View):
         sales = sales_invoice.sales
 
         response = HttpResponse(content_type='application/pdf')
-        p = canvas.Canvas(response, pagesize=(1000, 1000))
+        p = canvas.Canvas(response, pagesize=(1000, 1050))
 
         status_code = 200
 
@@ -778,12 +778,12 @@ class CreateSalesInvoicePDF(View):
         data=[['', '', 'Invoice', '']]
         table = Table(data, colWidths=[30, 310, 540, 100], rowHeights=50, style = new_style)      
         table.wrapOn(p, 200, 400)
-        table.drawOn(p,50, 940)
+        table.drawOn(p,50, 830)
 
         data=[['', sales_invoice.date.strftime('%d-%m-%Y'), '', sales_invoice.invoice_no]]
         table = Table(data, colWidths=[30, 60, 710, 100], rowHeights=50, style = style)      
         table.wrapOn(p, 200, 400)
-        table.drawOn(p,50, 920)
+        table.drawOn(p,50, 785)
 
         quotation = sales_invoice.quotation
 
@@ -796,7 +796,7 @@ class CreateSalesInvoicePDF(View):
 
         table = Table(data, colWidths=[30, 510, 100], rowHeights=40, style = style)      
         table.wrapOn(p, 200, 400)
-        table.drawOn(p,50, 890)
+        table.drawOn(p,50, 750)
 
         data=[['', '', sales_invoice.date.strftime('%d-%m-%Y')]]
 
@@ -805,7 +805,7 @@ class CreateSalesInvoicePDF(View):
         table = Table(data, colWidths=[450, 90, 100], rowHeights=50, style = style)      
 
         table.wrapOn(p, 200, 400)
-        table.drawOn(p,50, 860)
+        table.drawOn(p,50, 720)
 
         if sales_invoice.quotation or sales_invoice.delivery_note:            
             data=[['', '', sales_invoice.delivery_note.delivery_note_number if sales_invoice.delivery_note else sales_invoice.quotation.reference_id]]
@@ -816,7 +816,7 @@ class CreateSalesInvoicePDF(View):
 
             table = Table(data, colWidths=[450, 90, 100], rowHeights=40, style = style)      
             table.wrapOn(p, 200, 400)
-            table.drawOn(p,50, 840)
+            table.drawOn(p,50, 640)
 
         
 
@@ -851,7 +851,7 @@ class CreateSalesInvoicePDF(View):
         table = Table(data, colWidths=[500, 50], rowHeights=40, style = style)      
 
         table.wrapOn(p, 200, 400)
-        table.drawOn(p, 400, 60)
+        table.drawOn(p, 400, 10)
 
         p.showPage()
         p.save()
