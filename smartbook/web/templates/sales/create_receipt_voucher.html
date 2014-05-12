@@ -2,12 +2,8 @@
 
 {% block body_id %}create_receipt_voucher{% endblock %}
 
-{% block title %}Receipt_Voucher{% endblock title %}
-{% block controller %}ng-controller="ReceiptVoucherController" ng-init="init('{{csrf_token}}')"{% endblock controller %}
-{% block dialogue_popup %}
-	{% include 'add_new_customer.html' %} 
-	              	
-{% endblock %}
+{% block title %}Receipt Voucher{% endblock title %}
+{% block controller %} ng-controller="ReceiptVoucherController" ng-init="init('{{csrf_token}}')"{% endblock controller %}
 
 {% block content %}
 
@@ -44,12 +40,7 @@
 							<input type='text' id="delivery_no" ng-model="delivery_no" ng-change="get_delivery_note_details()"/>
 							<p> [[dn_message]] </p>
 						</div>
-						<div class="item_list delivery_note" ng-show='selecting_delivery_note' ng-hide="delivery_note_selected">
-							<div ng-repeat="delivery_note in delivery_notes" ng-click="add_delivery_note(delivery_note)" class="item_list_row">
-								<span>[[delivery_note.delivery_no]]</span>
-							</div>
-							<div class="clear"></div>
-						</div>
+						
 					</div> -->
 
 					<div class="formrow_sales">
@@ -58,7 +49,13 @@
 							<label for="invoice_number">Invoice Number</label>
 						</div>
 						<div class="forminput_sales">
-							<input type="text" name="invoice_number" ng-change="get_sales_invoice_details()" />
+							<input type="text" name="invoice_number" ng-model="invoice_no" ng-change="get_sales_invoice_details();" />
+						</div>
+						<div class="item_list delivery_note" ng-show='selecting_invoice' ng-hide="invoice_selected">
+							<div ng-repeat="invoice in invoices" ng-click="add_invoice(invoice)" class="item_list_row">
+								<span>[[invoice.invoice_no]]</span>
+							</div>
+							<div class="clear"></div>
 						</div>
 					</div>
 
@@ -96,7 +93,7 @@
 							<label for="customer">Customer Name</label>
 						</div>
 						<div class="forminput_sales">
-							<input type="text" name="customer"  id="customer" >
+							<input type="text" name="customer" id="customer" ng-model="receiptvoucher.customer">
 						</div>
 					</div>
 

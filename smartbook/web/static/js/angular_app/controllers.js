@@ -2960,14 +2960,17 @@ function DeliveryNoteController($scope, $element, $http, $timeout, share, $locat
 
 function ReceiptVoucherController($scope, $element, $http, $timeout, share, $location) {
 
-    $scope.receipt_voucher = {
-        'date': '',
-        'sum_of': '',
-        'customer': '',
-        'invoice_number': 'ggg',
-        'settlement': '',
-        'amount': '',
-        'cheque_date': '',
+    // $scope.receipt_voucher = {
+    //     'date': '',
+    //     'sum_of': '',
+    //     'customer': '',
+    //     'invoice_number': 'ggg',
+    //     'settlement': '',
+    //     'amount': '',
+    //     'cheque_date': '',
+    // }
+    $scope.receiptvoucher = {
+        'customer': ''
     }
     console.log($scope.receipt_voucher);
 
@@ -2984,7 +2987,7 @@ function ReceiptVoucherController($scope, $element, $http, $timeout, share, $loc
         if ($scope.receiptvoucher.date == '' || $scope.receiptvoucher.date == undefined) {
             $scope.validation_error = "Enter the Date" ;
             return false;
-        } else if ($scope.receiptvoucher.customer == '' || $scope.receiptvoucher.customer == undefined)) {
+        } else if ($scope.receiptvoucher.customer == '' || $scope.receiptvoucher.customer == undefined) {
             $scope.validation_error = "Enter Customer Name";
             return false;
         } else if ($scope.receiptvoucher.sales_invoice == '' || $scope.receiptvoucher.sales_invoice == undefined) {
@@ -3004,7 +3007,29 @@ function ReceiptVoucherController($scope, $element, $http, $timeout, share, $loc
         return true;
     }
     $scope.get_sales_invoice_details = function(){
-        // get_sales_invoice_details($http, $scope);
+        
+        var invoice_no = $scope.invoice_no;
+        $scope.delivery_notes = []
+        $http.get('/sales/invoice_details/?invoice_no='+invoice_no).success(function(data)
+        {
+            if(data.invoice_details.length > 0){
+                $scope.selecting_invoice = true;
+                $scope.invoice_selected = false;
+                $scope.invoices = data.invoice_details; 
+            } else {
+                $scope.dn_message = "There is no invoice with this number";
+            }
+            
+        }).error(function(data, status)
+        {
+            console.log(data || "Request failed");
+        });
+    }
+    $scope.add_invoice = function(invoice) {
+        $scope.selecting_invoice = false;
+        $scope.invoice_selected = true;
+        $scope.invoice_no = invoice.invoice_no;
+        $scope.receiptvoucher.customer = invoice.customer;
 
     }
 

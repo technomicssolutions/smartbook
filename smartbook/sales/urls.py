@@ -18,4 +18,5 @@ urlpatterns = patterns('',
 	url(r'^delivery_note_pdf/(?P<delivery_note_id>\d+)/$', DeliveryNotePDF.as_view(), name='delivery_note_pdf'),
 	url(r'^sales_invoice_pdf/(?P<sales_invoice_id>\d+)/$', CreateSalesInvoicePDF.as_view(), name='sales_invoice_pdf'),
 	url(r'receipt_voucher/$', ReceiptVoucher.as_view(), name='receipt_voucher'),
+	url(r'invoice_details/$', InvoiceDetails.as_view(), name='invoice_details'),
 )
