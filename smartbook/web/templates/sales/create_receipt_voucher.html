@@ -66,7 +66,7 @@
 							<label for="customer">Customer Name</label>
 						</div>
 						<div class="forminput_sales">
-							<input type="text" name="customer"  id="customer" ng-model="sales.customer" 
+							<input type="text" name="customer"  id="customer" ng-model="sales.customer" >
 						</div>
 					</div>
 
@@ -118,16 +118,15 @@
 							 
 						</div> -->
 						
-						<div class="clear"></div>
-   					</div>
+					<!-- 	<div class="clear"></div>
+   					</div> -->
    					<div class="clear"></div>
-   				</div>
+   				<!-- </div> -->
 
    				<div class="clear"></div>
 
 				<div class="section_1_sales">
-					<div class="formrow_sales">
-										
+					<div class="formrow_sales">									
 
 						<div class="formtext_sales" id="radio">
 							<label for="payment_mode">Payment Mode</label>
@@ -145,41 +144,28 @@
 						<div class="forminput_sales">
 							<input type="text" name="cheque_no" ng-model="vendor_account.cheque_no" ng-readonly="cash"/>						
 						</div>		
-
-					
-						<div class="formtext_sales">
-							<label for="narration">Narration</label>
-						</div>
-						<div class="forminput_sales">
-							<textarea rows="4" cols="25" ng-model="vendor_account.narration"></textarea>
-						</div>
-					
 					
 						<div class="formtext_sales">
 							<label for="cheque_date">Cheque date</label>
 						</div>
 						<div class="forminput_sales">
 							<input type="text" name="cheque_date" id="cheque_date" ng-model="vendor_account.cheque_date" ng-readonly="cash"/>						
-						</div>
-					
+						</div>				
 
 					</div>
 					
 
-					<div class="formrow_sales">
-						
+					<div class="formrow_sales">						
 
 						<div class="formtext_sales">
-							<label for="Sum Of">Amount</label>
+							<label for="Amount">Amount</label>
 						</div>
 						<div class="forminput_sales">
-							<input type="text" name="sum_of" ng-model="sales.sum_of" readonly/>
-						</div>
-
-						
+							<input type="text" name="amount" ng-model="sales.amount" readonly/>
+						</div>						
 					</div>
-					<div class="formrow_sales">
-						
+
+					<div class="formrow_sales">						
 
 						<div class="formtext_sales">
 							<label for="Settlement">On Settlement Of</label>
