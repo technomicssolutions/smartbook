@@ -760,11 +760,11 @@ class CreateSalesInvoicePDF(View):
         sales = sales_invoice.sales
 
         response = HttpResponse(content_type='application/pdf')
-        p = canvas.Canvas(response, pagesize=(1000, 1050))
+        p = canvas.Canvas(response, pagesize=(1000, 1000))
 
         status_code = 200
 
-        y=1000
+        y = 995
         style = [
             ('FONTSIZE', (0,0), (-1, -1), 20),
             ('FONTNAME',(0,0),(-1,-1),'Helvetica') 
@@ -772,7 +772,7 @@ class CreateSalesInvoicePDF(View):
         data=[['', sales_invoice.date.strftime('%d-%m-%Y'), '', sales_invoice.invoice_no]]
         table = Table(data, colWidths=[30, 60, 700, 100], rowHeights=50, style = style)      
         table.wrapOn(p, 200, 400)
-        table.drawOn(p,50, 1050)
+        table.drawOn(p,50, 980)
 
         quotation = sales_invoice.quotation
 
@@ -849,3 +849,4 @@ class CreateSalesInvoicePDF(View):
         p.showPage()
         p.save()
         return response
+
