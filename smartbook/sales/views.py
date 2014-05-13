@@ -908,7 +908,7 @@ class PrintReceiptVoucher(View):
 
     def get(self, request, *args, **kwargs):
 
-        print "in pdf"
+        
         response = HttpResponse(content_type='application/pdf')
         p = canvas.Canvas(response, pagesize=(1000, 1000))
 
@@ -916,13 +916,16 @@ class PrintReceiptVoucher(View):
 
         y = 850
 
-        p.drawString(60, 950, "SUNLIGHT STATIONARY")
-        p.drawString(60, 930, "P.O.Box : 48296")
-        p.drawString(60, 910, "Behind Russian Embassy")
-        p.drawString(60, 890, "Ziyani, Abu Dhabi, U.A.E.")
-        p.drawString(60, 870, "Tel. : +971-2-6763571")
-        p.drawString(60, 850, "Fax : +971-2-6763581")
-        p.drawString(60, 830, "E-mail : sunlight.stationary@yahoo.com")
+
+        p.setFont("Helvetica-Bold", 15)
+        p.drawString(30, 950, "SUNLIGHT STATIONARY")
+        p.setFont("Helvetica", 10)
+        p.drawString(30, 930, "P.O.Box : 48296")
+        p.drawString(30, 910, "Behind Russian Embassy")
+        p.drawString(30, 890, "Ziyani, Abu Dhabi, U.A.E.")
+        p.drawString(30, 870, "Tel. : +971-2-6763571")
+        p.drawString(30, 850, "Fax : +971-2-6763581")
+        p.drawString(30, 830, "E-mail : sunlight.stationary@yahoo.com")
 
         try:
             owner_company = OwnerCompany.objects.latest('id')
@@ -932,7 +935,19 @@ class PrintReceiptVoucher(View):
         except:
             pass  
 
-        
+        p.line(30,790,970,790)
+        p.setFont("Helvetica", 20)
+        p.drawString(440, 740, "Receipt Voucher")
+        p.drawString(840, 740, 'No.')
+
+        p.setFont("Times-BoldItalic", 15)
+        p.drawString(30, 700, "Amount")
+
+        p.drawString(840, 700, "Date")
+        p.drawString(870, 700, "........................")
+
+        p.drawString(30, 660, "Received from Mr./M/s.")
+        p.drawString(180, 660, "......................................................................................")
 
 
         p.showPage()
