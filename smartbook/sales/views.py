@@ -782,12 +782,12 @@ class CreateSalesInvoicePDF(View):
             ('FONTNAME',(0,0),(-1,-1),'Helvetica') 
         ]
 
-        para_style = ParagraphStyle('fancy')
-        para_style.fontSize = 20
-        para_style.fontName = 'Helvetica'
-        para = Paragraph('<b> INVOICE </b>', para_style)
+        # para_style = ParagraphStyle('fancy')
+        # para_style.fontSize = 20
+        # para_style.fontName = 'Helvetica'
+        # para = Paragraph('<b> INVOICE </b>', para_style)
 
-        data =[['', sales_invoice.date.strftime('%d-%m-%Y'), para, sales_invoice.invoice_no]]
+        data =[['', sales_invoice.date.strftime('%d-%m-%Y'), 'INVOICE' , sales_invoice.invoice_no]]
         
         table = Table(data, colWidths=[30, 360, 420, 100], rowHeights=50, style=style) 
         # table.setStyle(TableStyle([
