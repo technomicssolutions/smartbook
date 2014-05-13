@@ -3051,6 +3051,45 @@ function ReceiptVoucherController($scope, $element, $http, $timeout, share, $loc
     }
 
 
+    $scope.save_receipt = function(){
+        $scope.is_valid = $scope.receipt_validation();
+        if ($scope.is_valid) {
+            $scope.error_flag = false;
+            $scope.error_message = '';
+            params = { 
+                'sales_invoice':$scope.invoice_no,
+                'date': $scope.receipt_voucher_date,
+                'sum_of': $scope.amount,
+                'customer': $scope.customer,
+                'settlement_amount': $scope.settlement,
+                'check_no':$scope.cheque_no,
+                'dated': $scope.cheque_date,                
+                "csrfmiddlewaretoken" : $scope.csrf_token
+            }
+            $http({
+                method : 'post',
+                url : "/sales/create_receipt_voucher/",
+                data : $.param(params),
+                headers : {
+                    'Content-Type' : 'application/x-www-form-urlencoded'
+                }
+            }).success(function(data, status) {
+                
+                if (data.result == 'error'){
+                    $scope.error_flag=true;
+                    $scope.message = data.message;
+                } else {
+                    $scope.error_flag=false;
+                    $scope.message = '';
+                    document.location.href ='/sales/receipt_voucher_pdf/';
+                }
+            }).error(function(data, status){
+                console.log(data);
+            });
+        }
+    }
+
+
     $scope.create_receipt = function() {
         $scope.is_valid = $scope.receipt_validation();
         if($scope.is_valid) {
