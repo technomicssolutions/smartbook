@@ -2970,21 +2970,21 @@ function DeliveryNoteController($scope, $element, $http, $timeout, share, $locat
 
 function ReceiptVoucherController($scope, $element, $http, $timeout, share, $location) {
 
-    // $scope.receipt_voucher = {
-    //     'date': '',
-    //     'sum_of': '',
-    //     'customer': '',
-    //     'invoice_number': 'ggg',
-    //     'settlement': '',
-    //     'amount': '',
-    //     'cheque_date': '',
-    // }
     $scope.receiptvoucher = {
         'customer': '',
         'payment_mode': 'cash',
         'bank_name': '',
+        'receipt_voucher_date': '',
+        'cheque_no': '',
+        'cheque_date': '',
+        'amount': '',
+
     }
-    console.log($scope.receipt_voucher);
+    $scope.receiptvoucher.customer = '';
+    $scope.receiptvoucher.receipt_voucher_date = '';
+    $scope.receiptvoucher.cheque_no = '';
+    $scope.receiptvoucher.cheque_date = '';
+    $scope.receipt_voucher.settlement = '';
 
     $scope.init = function(csrf_token) {
         $scope.csrf_token = csrf_token;
@@ -3018,6 +3018,7 @@ function ReceiptVoucherController($scope, $element, $http, $timeout, share, $loc
         
         return true;
     }
+
     $scope.get_sales_invoice_details = function(){
 
         $scope.invoice_message = '';
@@ -3040,6 +3041,7 @@ function ReceiptVoucherController($scope, $element, $http, $timeout, share, $loc
             console.log(data || "Request failed");
         });
     }
+
     $scope.add_invoice = function(invoice) {
         $scope.selecting_invoice = false;
         $scope.invoice_selected = true;
@@ -3048,7 +3050,44 @@ function ReceiptVoucherController($scope, $element, $http, $timeout, share, $loc
 
     }
 
+
+    $scope.create_receipt = function() {
+        $scope.is_valid = $scope.receipt_validation();
+        if($scope.is_valid) {
+            // console.log($scope.quotation);
+            params = { 
+                'invoice': angular.toJson($scope.invoice), 
+                'receipt_voucher': angular.toJson($scope.receipt_voucher),
+                'receiptvoucher': angular.toJson($scope.receiptvoucher),
+                "csrfmiddlewaretoken" : $scope.csrf_token
+            }
+            $http({
+                method : 'post',
+                url : "/sales/create_receipt_voucher/",
+                data : $.param(params),
+                headers : {
+                    'Content-Type' : 'application/x-www-form-urlencoded'
+                }
+            }).success(function(data, status) {
+                
+                if (data.result == 'error'){
+                    $scope.error_flag=true;
+                    $scope.message = data.message;
+                } else {
+                    document.location.href = '/sales/receipt_voucher_pdf/'+data.delivery_note_id+'/';
+                }
+            }).error(function(data, success){
+                
+            });
+        }
+    }
+
 }
+
+
+
+
+
 
 
 
