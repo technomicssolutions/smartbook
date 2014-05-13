@@ -6,6 +6,7 @@ import datetime as dt
 from datetime import datetime
 from decimal import *
 from num2words import num2words
+import math
 
 from django.db import IntegrityError
 from django.db.models import Max
@@ -834,14 +835,15 @@ class CreateSalesInvoicePDF(View):
             item_price = s_item.selling_price
             total_amount = total_amount + (item_price*s_item.quantity_sold)
             
-            data1=[[i, s_item.item.code, s_item.item.name, s_item.quantity_sold, s_item.item.uom.uom, s_item.selling_price, (item_price*s_item.quantity_sold)]]
+            data1=[[i, s_item.item.code, s_item.item.name, s_item.quantity_sold, s_item.item.uom.uom, s_item.selling_price.quantize(TWOPLACES), (item_price*s_item.quantity_sold).quantize(TWOPLACES)]]
             table = Table(data1, colWidths=[50, 100, 440, 80, 90, 100, 50], rowHeights=40, style=style)
             table.wrapOn(p, 200, 400)
             table.drawOn(p,10,x)
             i = i + 1
         x=600
-
+        total_amount = total_amount.quantize(TWOPLACES)
         total_amount_in_words = num2words(total_amount).title() + ' Only'
+       
         data=[[total_amount_in_words, total_amount]]  
 
         table = Table(data, colWidths=[500, 50], rowHeights=40, style = style)      
