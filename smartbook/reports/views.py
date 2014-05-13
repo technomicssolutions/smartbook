@@ -501,6 +501,7 @@ class SalesReports(View):
                             total_sp = total_sp + selling_price
                             grant_total = grant_total + total
 
+                            avg_cp = math.ceil(avg_cp*100)/100
                             y = y - 30
                             p.drawString(50, y, dates.strftime('%d-%m-%Y'))
                             p.drawString(150, y, str(invoice_no))
