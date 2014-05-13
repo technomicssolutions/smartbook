@@ -80,7 +80,7 @@
 							<span class="small_column"> Item Code </span>
 							<span> Item Name </span>
 							<span> Barcode </span>
-							<span> Description </span>
+							<span> Current Stock </span>
 							<span> Qty  </span>	
 							<span> Dis Given </span>
 							<span> Net Amount </span>
@@ -90,7 +90,7 @@
 							<span class="small_column">[[item.item_code]] </span>
 							<span>[[item.item_name]] </span>
 							<span>[[item.barcode]] </span>
-							<span>[[item.item_description]] </span>
+							<span>[[item.current_stock]] </span>
 							<span> <input type="text" ng-model="item.qty_sold" ng-change="calculate_net_amount_sale(item)" /> </span>
 							<span> <input type="text" ng-model="item.disc_given" ng-change="calculate_net_amount_sale(item)"/> </span>  
 							<span>[[item.net_amount]] </span>

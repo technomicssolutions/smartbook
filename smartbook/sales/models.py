@@ -122,7 +122,8 @@ class SalesItem(models.Model):
     item = models.ForeignKey(Item)
     sales = models.ForeignKey(Sales)
     quantity_sold = models.IntegerField('Quantity Sold', default=0)
-    discount_given = models.DecimalField('Discount Given',max_digits=14, decimal_places=3, default=0)   
+    discount_given = models.DecimalField('Discount Given',max_digits=14, decimal_places=3, default=0)  
+    selling_price = models.DecimalField('Selling Price', max_digits=14, decimal_places=3, default=0) 
     
     
     def __unicode__(self):

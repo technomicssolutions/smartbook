@@ -24,9 +24,10 @@ from web.models import Customer, Staff, OwnerCompany
 
 from reportlab.lib.units import cm
 from reportlab.pdfgen.canvas import Canvas
-from reportlab.platypus import Frame, Image, Table, TableStyle
+from reportlab.platypus import Frame, Image, Table, TableStyle, Paragraph
 from reportlab.lib import colors
 from reportlab.lib.pagesizes import letter, A4
+from reportlab.lib.styles import ParagraphStyle
 
 try:
     from cStringIO import StringIO
@@ -95,6 +96,7 @@ class SalesEntry(View):
             s_item.quantity_sold = sales_item['qty_sold']
             s_item.discount_given = sales_item['disc_given']
             s_item.net_amount = sales_item['net_amount']
+            s_item.selling_price = sales_item['unit_price']
             s_item.save()
 
         sales_invoice = SalesInvoice.objects.create(sales=sales)
@@ -665,6 +667,7 @@ class QuotationDeliverynoteSales(View):
                     if q_item.net_amount != float(item_data['net_amount']):
                         q_item.net_amount = item_data['net_amount']
                         q_item.save()
+
         if quotation.net_total != float(sales_dict['net_total']):
             quotation.net_total = sales_dict['net_total']
             quotation.save()
@@ -706,6 +709,7 @@ class QuotationDeliverynoteSales(View):
             sales.bank_name = sales_dict['bank_name']
         sales.save()
         sales_items = sales_dict['sales_items']
+        print sales_items
         for sales_item in sales_items:
            
             item = Item.objects.get(code=sales_item['item_code'])
@@ -716,6 +720,8 @@ class QuotationDeliverynoteSales(View):
             s_item.quantity_sold = sales_item['qty_sold']
             s_item.discount_given = sales_item['disc_given']
             s_item.net_amount = sales_item['net_amount']
+            s_item.selling_price = sales_item['unit_price']
+            # unit price is actually the selling price
             s_item.save()
 
 
@@ -751,6 +757,7 @@ class QuotationDeliverynoteSales(View):
 
 
 class CreateSalesInvoicePDF(View):
+
     def get(self, request, *args, **kwargs):
 
         sales_invoice_id = kwargs['sales_invoice_id']
@@ -758,7 +765,7 @@ class CreateSalesInvoicePDF(View):
         sales = sales_invoice.sales
 
         response = HttpResponse(content_type='application/pdf')
-        p = canvas.Canvas(response, pagesize=(1000, 1100))
+        p = canvas.Canvas(response, pagesize=(1000, 1200))
 
         status_code = 200
 
@@ -773,15 +780,19 @@ class CreateSalesInvoicePDF(View):
             ('FONTNAME',(0,0),(-1,-1),'Helvetica') 
         ]
 
-        data=[['', sales_invoice.date.strftime('%d-%m-%Y'), 'INVOICE', sales_invoice.invoice_no]]
-        table = Table(data, colWidths=[30, 310, 500, 100], rowHeights=50, style = style)      
-        table.wrapOn(p, 200, 400)
-        table.drawOn(p,50, 930)
+        para_style = ParagraphStyle('fancy')
+        para_style.fontSize = 20
+        para_style.fontName = 'Helvetica'
+        para = Paragraph('<b> INVOICE </b>', para_style)
 
-        # data=[['',  '', ]]
-        # table = Table(data, colWidths=[30, 60, 710, 100], rowHeights=50, style = style)      
-        # table.wrapOn(p, 200, 400)
-        # table.drawOn(p,50, 830)
+        data =[['', sales_invoice.date.strftime('%d-%m-%Y'), para, sales_invoice.invoice_no]]
+        
+        table = Table(data, colWidths=[30, 360, 420, 100], rowHeights=50, style=style) 
+        # table.setStyle(TableStyle([
+        #                ('FONTSIZE', (2,0), (2,0), 30),
+        #                ]))     
+        table.wrapOn(p, 200, 400)
+        table.drawOn(p,50, 980)
 
         quotation = sales_invoice.quotation
 
@@ -790,33 +801,26 @@ class CreateSalesInvoicePDF(View):
             customer_name = sales_invoice.customer.customer_name
 
         data=[['', customer_name, sales_invoice.sales.lpo_number if sales_invoice.sales else '' ]]
-        # data=[['', customer_name, 'Lpo']]
 
-        table = Table(data, colWidths=[30, 510, 100], rowHeights=40, style = style)      
+        table = Table(data, colWidths=[30, 540, 60], rowHeights=30, style = style)      
         table.wrapOn(p, 200, 400)
-        table.drawOn(p,50, 890)
+        table.drawOn(p, 50, 935)
 
         data=[['', '', sales_invoice.date.strftime('%d-%m-%Y')]]
 
-        # table = Table(data, colWidths=[450, 60, 100], rowHeights=40, style = style)      
-
-        table = Table(data, colWidths=[450, 90, 100], rowHeights=50, style = style)      
+        table = Table(data, colWidths=[450, 120, 70], rowHeights=50, style = style)      
 
         table.wrapOn(p, 200, 400)
-        table.drawOn(p,50, 860)
+        table.drawOn(p,50, 910)
 
         if sales_invoice.quotation or sales_invoice.delivery_note:            
             data=[['', '', sales_invoice.delivery_note.delivery_note_number if sales_invoice.delivery_note else sales_invoice.quotation.reference_id]]
 
-            # table = Table(data, colWidths=[450, 60, 100], rowHeights=40, style = style)      
-            # table.wrapOn(p, 200, 400)
-            # table.drawOn(p,100, 620)
-
-            table = Table(data, colWidths=[450, 90, 100], rowHeights=40, style = style)      
+            table = Table(data, colWidths=[450, 120, 70], rowHeights=40, style = style)      
             table.wrapOn(p, 200, 400)
-            table.drawOn(p,50, 830)
+            table.drawOn(p,50, 860)
 
-        x=760
+        x=790
 
         i = 0
         i = i + 1
@@ -827,11 +831,10 @@ class CreateSalesInvoicePDF(View):
                    
             x=x-30
             
-            item_price = s_item.item.inventory_set.all()[0].selling_price
+            item_price = s_item.selling_price
             total_amount = total_amount + (item_price*s_item.quantity_sold)
-            # final_price = item_price+(item_price*(s_item.item.tax/100))
-            # data1=[[i, s_item.item.code, s_item.item.name, s_item.quantity_sold, s_item.item.uom.uom, s_item.item.inventory_set.all()[0].unit_price, Decimal((final_price*s_item.quantity_sold)).quantize(TWOPLACES)]]
-            data1=[[i, s_item.item.code, s_item.item.name, s_item.quantity_sold, s_item.item.uom.uom, s_item.item.inventory_set.all()[0].unit_price, (item_price*s_item.quantity_sold)]]
+            
+            data1=[[i, s_item.item.code, s_item.item.name, s_item.quantity_sold, s_item.item.uom.uom, s_item.selling_price, (item_price*s_item.quantity_sold)]]
             table = Table(data1, colWidths=[50, 100, 440, 80, 90, 100, 50], rowHeights=40, style=style)
             table.wrapOn(p, 200, 400)
             table.drawOn(p,10,x)
@@ -839,9 +842,7 @@ class CreateSalesInvoicePDF(View):
         x=600
 
         total_amount_in_words = num2words(total_amount).title() + ' Only'
-        data=[[total_amount_in_words, total_amount]]
-
-        # table = Table(data, colWidths=[450, 60, 100], rowHeights=40, style = style)      
+        data=[[total_amount_in_words, total_amount]]  
 
         table = Table(data, colWidths=[500, 50], rowHeights=40, style = style)      
 
@@ -851,7 +852,6 @@ class CreateSalesInvoicePDF(View):
         p.showPage()
         p.save()
         return response
-
 
 class ReceiptVoucher(View):
 

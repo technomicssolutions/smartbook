@@ -892,20 +892,21 @@ function SalesQNDNController($scope, $element, $http, $timeout, share, $location
         } else if($scope.sales.sales_items.length == 0){
             $scope.validation_error = "Choose Item";
             return false;
-        }
-        else if( $scope.sales.payment_mode == 'card' && ($scope.sales.card_number == '' )) {
-            
-            
+        } else if($scope.sales.sales_items.length > 0){
+            for (var i=0; i < $scope.sales.sales_items.length; i++){
+                if (parseInt($scope.sales.sales_items[i].current_stock) < parseInt($scope.sales.sales_items[i].qty_sold)){
+                    $scope.validation_error = "Quantity not in stock for item "+$scope.sales.sales_items[i].item_name;
+                    return false;
+                }
+            }
+        } else if( $scope.sales.payment_mode == 'card' && ($scope.sales.card_number == '' )) {
             $scope.validation_error = 'Please Enter Card Number';
             return false;
-        } else if( $scope.sales.payment_mode == 'card' && ($scope.sales.bank_name == '' )) {
-           
+        } else if( $scope.sales.payment_mode == 'card' && ($scope.sales.bank_name == '' )) {   
             $scope.validation_error = 'Please Enter Bank Name';
             return false; 
-        }
-        else {
-            return true;
-        }        
+        } 
+        return true;       
     }
 
     $scope.get_staff = function() {
@@ -1154,6 +1155,8 @@ function SalesQNDNController($scope, $element, $http, $timeout, share, $location
         if(parseInt(item.qty_sold) > parseInt(item.current_stock)) {
             $scope.validation_error = "Qauntity not in stock";
             return false;
+        } else {
+            $scope.validation_error = "";
         }
         if(item.qty_sold != '' && item.unit_price != ''){
             item.net_amount = ((parseFloat(item.qty_sold)*parseFloat(item.unit_price))-parseFloat(item.disc_given)).toFixed(2);
@@ -1303,6 +1306,13 @@ function SalesController($scope, $element, $http, $timeout, share, $location) {
         } else if($scope.sales.sales_items.length == 0){
             $scope.validation_error = "Choose Item";
             return false;
+        } else if($scope.sales.sales_items.length > 0){
+            for (var i=0; i < $scope.sales.sales_items.length; i++){
+                if (parseInt($scope.sales.sales_items[i].current_stock) < parseInt($scope.sales.sales_items[i].qty_sold)){
+                    $scope.validation_error = "Quantity not in stock for item "+$scope.sales.sales_items[i].item_name;
+                    return false;
+                }
+            }
         } 
         return true;
     }
@@ -1481,11 +1491,17 @@ function SalesController($scope, $element, $http, $timeout, share, $location) {
     
     
     $scope.calculate_net_amount_sale = function(item) {
-        if(item.qty_sold != '' && item.unit_price != ''){
-            item.net_amount = ((parseFloat(item.qty_sold)*parseFloat(item.unit_price))+(parseFloat(item.tax_amount)*parseFloat(item.qty_sold))-parseFloat(item.disc_given)).toFixed(2);
-            $scope.calculate_net_discount_sale();
+        $scope.validation_error = "";
+        if(parseInt(item.qty_sold) > parseInt(item.current_stock)) {
+            $scope.validation_error = "Qauntity not in stock";
+            return false;
+        } else {
+            if(item.qty_sold != '' && item.unit_price != ''){
+                item.net_amount = ((parseFloat(item.qty_sold)*parseFloat(item.unit_price))+(parseFloat(item.tax_amount)*parseFloat(item.qty_sold))-parseFloat(item.disc_given)).toFixed(2);
+                $scope.calculate_net_discount_sale();
+            }
+            $scope.calculate_net_total_sale();
         }
-        $scope.calculate_net_total_sale();
     }
     $scope.calculate_tax_amount_sale = function(item) {
         if(item.tax != '' && item.unit_price != ''){
@@ -2803,6 +2819,13 @@ function QuotationController($scope, $element, $http, $timeout, share, $location
         } else if($scope.quotation.sales_items.length == 0){
             $scope.validation_error = "Choose Item";
             return false;
+        } else if($scope.quotation.sales_items.length > 0){
+            for (var i=0; i < $scope.quotation.sales_items.length; i++){
+                if (parseInt($scope.quotation.sales_items[i].current_stock) < parseInt($scope.quotation.sales_items[i].qty_sold)){
+                    $scope.validation_error = "Quantity not in stock for item "+$scope.quotation.sales_items[i].item_name;
+                    return false;
+                }
+            }
         }  
         return true;
     }
@@ -2901,6 +2924,7 @@ function DeliveryNoteController($scope, $element, $http, $timeout, share, $locat
             return false;
         }
         if(item.qty_sold != '' && item.unit_price != ''){
+            $scope.validation_error = "";
             item.net_amount = ((parseFloat(item.qty_sold)*parseFloat(item.unit_price))-parseFloat(item.disc_given)).toFixed(2);
             $scope.calculate_net_discount_sale();
         }
@@ -2933,7 +2957,14 @@ function DeliveryNoteController($scope, $element, $http, $timeout, share, $locat
         } else if ($scope.delivery_note.lpo_no == '') {
             $scope.validation_error = "Enter LPO No";
             return false;
-        }
+        } else if($scope.quotation.sales_items.length > 0){
+            for (var i=0; i < $scope.quotation.sales_items.length; i++){
+                if (parseInt($scope.quotation.sales_items[i].current_stock) < parseInt($scope.quotation.sales_items[i].qty_sold)){
+                    $scope.validation_error = "Quantity not in stock for item "+$scope.quotation.sales_items[i].item_name;
+                    return false;
+                }
+            }
+        } 
         return true;
     }
     $scope.create_delivery_note = function() {
