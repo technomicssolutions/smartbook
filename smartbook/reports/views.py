@@ -347,7 +347,7 @@ class SalesReports(View):
                 y = 850
 
                 
-                customer = Customer.objects.get(user__first_name = customer_name)
+                customer = Customer.objects.get(customer_name = customer_name)
                 sales = Sales.objects.filter(sales_invoice_date__gte=start_date,sales_invoice_date__lte=end_date,customer=customer)
                 if sales.count()>0:
                     for sale in sales:
@@ -374,8 +374,8 @@ class SalesReports(View):
                                     i = i + 1
                                 avg_cp = cost_price/i
                             # profit = (selling_price - avg_cp)*qty
-
-                            profit = math.ceil((selling_price - avg_cp)*qty) - discount
+                           
+                            profit = math.ceil((selling_price - avg_cp)*qty) - float(discount)
 
                             total_profit = total_profit + profit
                             total_discount = total_discount + discount                            
