@@ -834,7 +834,8 @@ function SalesQNDNController($scope, $element, $http, $timeout, share, $location
         'paid': 0,
         'balance': 0,
         'quotation_ref_no':'',
-        'delivery_no': '',   
+        'delivery_no': '',  
+        'lpo_number': '', 
     }
     $scope.sales.staff = 'select';
     $scope.sales.customer = '';
@@ -881,6 +882,9 @@ function SalesQNDNController($scope, $element, $http, $timeout, share, $location
             return false;
         } else if($scope.sales.customer =='select'){
             $scope.validation_error = "Enter Customer Name";
+            return false;
+        } else if($scope.sales.lpo_number == '') {
+            $scope.validation_error = "Enter LPO Number" ;
             return false;
         } else if($scope.sales.staff =='select') {
             $scope.validation_error = "Enter Salesman Name";
@@ -984,6 +988,7 @@ function SalesQNDNController($scope, $element, $http, $timeout, share, $location
         $scope.sales.delivery_no = $scope.delivery_no
         $scope.sales.customer = quotation.customer; 
         $scope.sales.net_total = quotation.net_total;
+        $scope.sales.lpo_number = quotation.lpo_number;
         if(quotation.items.length > 0){
             for(var i=0; i< quotation.items.length; i++){
                 var selected_item = {
@@ -1249,6 +1254,7 @@ function SalesController($scope, $element, $http, $timeout, share, $location) {
         'grant_total': 0,
         'paid': 0,
         'balance': 0,
+        'lpo_number': '',
         
     }
     $scope.sales.staff = 'select';
@@ -1287,6 +1293,9 @@ function SalesController($scope, $element, $http, $timeout, share, $location) {
             return false;
         } else if($scope.sales.customer =='select'){
             $scope.validation_error = "Enter Customer Name";
+            return false;
+        } else if($scope.sales.lpo_number ==''){
+            $scope.validation_error = "Enter LPO Number";
             return false;
         } else if($scope.sales.staff =='select') {
             $scope.validation_error = "Enter Salesman Name";
@@ -2866,8 +2875,6 @@ function DeliveryNoteController($scope, $element, $http, $timeout, share, $locat
         $scope.quotation.sales_items = []
         $scope.quotation_no = quotation.ref_no; 
         $scope.quotation.customer = quotation.customer; 
-        console.log(quotation);
-        console.log($scope.quotation);
         $scope.quotation.net_total = quotation.net_total;
 
         if(quotation.items.length > 0){
@@ -2923,7 +2930,10 @@ function DeliveryNoteController($scope, $element, $http, $timeout, share, $locat
         } else if ($scope.delivery_note.quotation_no == '') {
             $scope.validation_error = "Enter Quotation Reference No";
             return false;
-        } 
+        } else if ($scope.delivery_note.lpo_no == '') {
+            $scope.validation_error = "Enter LPO No";
+            return false;
+        }
         return true;
     }
     $scope.create_delivery_note = function() {
@@ -2960,18 +2970,10 @@ function DeliveryNoteController($scope, $element, $http, $timeout, share, $locat
 
 function ReceiptVoucherController($scope, $element, $http, $timeout, share, $location) {
 
-    $scope.receipt_voucher = {
-        'settlement': '',
-    //     'date': '',
-    //     'sum_of': '',
-    //     'customer': '',
-    //     'invoice_number': 'ggg',
-    //     'settlement': '',
-    //     'amount': '',
-    //     'cheque_date': '',
-    }
     $scope.receiptvoucher = {
         'customer': '',
+        'payment_mode': 'cash',
+        'bank_name': '',
         'receipt_voucher_date': '',
         'cheque_no': '',
         'cheque_date': '',
@@ -2983,11 +2985,6 @@ function ReceiptVoucherController($scope, $element, $http, $timeout, share, $loc
     $scope.receiptvoucher.cheque_no = '';
     $scope.receiptvoucher.cheque_date = '';
     $scope.receipt_voucher.settlement = '';
-
-
-    console.log($scope.receipt_voucher);
-    console.log($scope.receiptvoucher);
-
 
     $scope.init = function(csrf_token) {
         $scope.csrf_token = csrf_token;
@@ -3023,9 +3020,11 @@ function ReceiptVoucherController($scope, $element, $http, $timeout, share, $loc
     }
 
     $scope.get_sales_invoice_details = function(){
+
+        $scope.invoice_message = '';
         
         var invoice_no = $scope.invoice_no;
-        $scope.delivery_notes = []
+        $scope.invoices = []
         $http.get('/sales/invoice_details/?invoice_no='+invoice_no).success(function(data)
         {
             if(data.invoice_details.length > 0){
@@ -3033,7 +3032,8 @@ function ReceiptVoucherController($scope, $element, $http, $timeout, share, $loc
                 $scope.invoice_selected = false;
                 $scope.invoices = data.invoice_details; 
             } else {
-                $scope.dn_message = "There is no invoice with this number";
+                console.log('in else');
+                $scope.invoice_message = "There is no invoice with this number";
             }
             
         }).error(function(data, status)

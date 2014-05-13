@@ -72,7 +72,8 @@ class SalesEntry(View):
         sales.grant_total = sales_dict['grant_total']
 
         sales.customer = customer
-        sales.salesman = salesman        
+        sales.salesman = salesman  
+        sales.lpo_number = sales_dict['lpo_number']      
         sales.save()
         sales_items = sales_dict['sales_items']
         for sales_item in sales_items:
@@ -531,6 +532,8 @@ class QuotationDetails(View):
         in_sales_invoice_creation = ''
         sales_invoice_creation = request.GET.get('sales_invoice', '')
 
+        ref_number = request.GET.get('reference_number', '')
+
         if sales_invoice_creation == 'true':
             quotations = Quotation.objects.filter(reference_id__istartswith=ref_number, is_sales_invoice_created=False)
         else:
@@ -563,6 +566,7 @@ class QuotationDetails(View):
                 'items': item_list,
                 'net_total': quotation.net_total,
                 'delivery_no': quotation.deliverynote_set.all()[0].delivery_note_number if quotation.deliverynote_set.all().count() > 0 else 0,
+                'lpo_number': quotation.deliverynote_set.all()[0].lpo_number if quotation.deliverynote_set.all().count() > 0 else '',
             })
         res = {
             'quotations': quotation_list,
@@ -684,6 +688,9 @@ class QuotationDeliverynoteSales(View):
 
             sales.delivery_note = delivery_note
         sales.customer = quotation.to
+
+        sales.lpo_number = sales_dict['lpo_number']
+
         sales.save()
 
         salesman = Staff.objects.get(user__first_name=sales_dict['staff']) 
@@ -702,16 +709,6 @@ class QuotationDeliverynoteSales(View):
         for sales_item in sales_items:
            
             item = Item.objects.get(code=sales_item['item_code'])
-            s_item, item_created = SalesItem.objects.get_or_create(item=item, sales=sales)
-            # inventory, created = Inventory.objects.get_or_create(item=item)
-            # if sales_created:
-            #     inventory.quantity = inventory.quantity - int(sales_item['qty_sold'])
-            # else:
-            #     inventory.quantity = inventory.quantity + s_item.quantity_sold - int(sales_item['qty_sold'])
-                
-
-            # inventory.save()
-
                     
             s_item, item_created = SalesItem.objects.get_or_create(item=item, sales=sales)
             s_item.sales = sales
@@ -792,7 +789,7 @@ class CreateSalesInvoicePDF(View):
         if sales_invoice.customer:
             customer_name = sales_invoice.customer.customer_name
 
-        data=[['', customer_name, sales_invoice.delivery_note.lpo_number if sales_invoice.delivery_note else '' ]]
+        data=[['', customer_name, sales_invoice.sales.lpo_number if sales_invoice.sales else '' ]]
         # data=[['', customer_name, 'Lpo']]
 
         table = Table(data, colWidths=[30, 510, 100], rowHeights=40, style = style)      
@@ -862,20 +859,14 @@ class ReceiptVoucher(View):
 
         current_date = dt.datetime.now().date()
 
-        # inv_number = SalesInvoice.objects.aggregate(Max('id'))['id__max']
-        
-        # if not inv_number:
-        #     inv_number = 1
-        #     prefix = 'SI'
-        # else:
-        #     inv_number = inv_number + 1
-        #     prefix = SalesInvoice.objects.latest('id').prefix
-        # invoice_number = prefix + str(inv_number)
-
         return render(request, 'sales/create_receipt_voucher.html',{
-            # 'sales_invoice_number': invoice_number,
             'current_date': current_date.strftime('%d/%m/%Y'),
         })
+
+    def post(self, request, *args, **kwargs):
+
+        return render(request, 'sales/create_receipt_voucher.html', {})
+
 
 class InvoiceDetails(View):
 
@@ -902,5 +893,7 @@ class InvoiceDetails(View):
         response = simplejson.dumps(res)
 
         return HttpResponse(response, status=200, mimetype='application/json')
+
+
 
 
