@@ -18,7 +18,7 @@ from django.core.urlresolvers import reverse
 from django.contrib.auth.models import User
 from django.conf import settings
 
-from sales.models import Sales, SalesItem, SalesReturn, SalesReturnItem, Quotation, QuotationItem, DeliveryNote, SalesInvoice
+from sales.models import Sales, SalesItem, SalesReturn, SalesReturnItem, Quotation, QuotationItem, DeliveryNote, SalesInvoice, ReceiptVoucher
 from inventory.models import Item, Inventory
 from web.models import Customer, Staff, OwnerCompany
 
@@ -853,7 +853,7 @@ class CreateSalesInvoicePDF(View):
         p.save()
         return response
 
-class ReceiptVoucher(View):
+class ReceiptVoucherCreation(View):
 
     def get(self, request, *args, **kwargs):
 
@@ -867,16 +867,18 @@ class ReceiptVoucher(View):
 
         if request.is_ajax():
             receiptvoucher = ast.literal_eval(request.POST['receiptvoucher'])
-            receipt_voucher, receipt_voucher_created = ReceiptVoucher.objects.get_or_create(invoice_no=receiptvoucher['invoice_no'])
-            receipt_voucher.sales_invoice = receiptvoucher['invoice_no']
-         
-            receipt_voucher.date = datetime.strptime(receiptvoucher['date'], '%d-%m-%Y')
+            sales_invoice_obj = SalesInvoice.objects.get(invoice_no=receiptvoucher['invoice_no'])
+            receipt_voucher = ReceiptVoucher.objects.create(sales_invoice=sales_invoice_obj)
+            sales_invoice_obj.is_processed = True
+            receipt_voucher.date = datetime.strptime(receiptvoucher['date'], '%d/%m/%Y')
             
             receipt_voucher.sum_of = receiptvoucher['amount']
             receipt_voucher.settlement_amount = receiptvoucher['settlement']
-            receipt_voucher.bank_name = receiptvoucher['bank']
+            receipt_voucher.payment_mode = receiptvoucher['payment_mode']
+            receipt_voucher.bank_name = receiptvoucher['bank_name']
             receipt_voucher.cheque_no = receiptvoucher['cheque_no']
-            receipt_voucher.dated = receiptvoucher['cheque_date']
+            if receiptvoucher['cheque_date']:   
+                receipt_voucher.dated = receiptvoucher['cheque_date']
             receipt_voucher.save()
             customer = Customer.objects.get(customer_name=receiptvoucher['customer'])
             receipt_voucher.customer = customer
@@ -885,7 +887,7 @@ class ReceiptVoucher(View):
            
             res = {
                 'result': 'OK',
-                'quotation_id': quotation.id,
+                'receiptvoucher_id': receipt_voucher.id,
             }
 
             response = simplejson.dumps(res)
@@ -902,7 +904,7 @@ class InvoiceDetails(View):
 
 
         invoice_no = request.GET.get('invoice_no', '')
-        sales_invoice_details = SalesInvoice.objects.filter(invoice_no__istartswith=invoice_no)
+        sales_invoice_details = SalesInvoice.objects.filter(invoice_no__istartswith=invoice_no, is_processed=False)
         ctx_invoice_details = []
         if sales_invoice_details.count() > 0:
             for sales_invoice in sales_invoice_details:
@@ -910,7 +912,7 @@ class InvoiceDetails(View):
                     'invoice_no': sales_invoice.invoice_no,
                     'dated': sales_invoice.date.strftime('%d-%m-%Y'),
                     'customer': sales_invoice.customer.customer_name,
-                    'amount': sales_invoice.sales.quotation.net_total if sales_invoice.sales else sales_invoice.sales.net_amount
+                    'amount': sales_invoice.sales.quotation.net_total if sales_invoice.sales.quotation else sales_invoice.sales.net_amount
                 })
         res = {
             'result': 'ok',
