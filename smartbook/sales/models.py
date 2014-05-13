@@ -85,6 +85,7 @@ class Sales(models.Model):
     discount = models.DecimalField('Total Discount',max_digits=14, decimal_places=3, default=0)
     quotation = models.ForeignKey(Quotation, null=True, blank=True)
     delivery_note = models.ForeignKey(DeliveryNote, null=True, blank=True)
+    lpo_number = models.CharField('LPO Number', null=True, blank=True, max_length=30)
 
     def __unicode__(self):
 
@@ -169,6 +170,11 @@ class ReceiptVoucher(models.Model):
     def __unicode__(self):
 
         return str(self.sales_invoice.invoice_no)
+
+    class Meta:
+
+        verbose_name = 'Receipt Voucher'
+        verbose_name_plural = 'Receipt Voucher'
 
 
 
