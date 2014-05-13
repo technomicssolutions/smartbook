@@ -3042,19 +3042,6 @@ function ReceiptVoucherController($scope, $element, $http, $timeout, share, $loc
         if ($scope.receiptvoucher.invoice_no == '' || $scope.receiptvoucher.invoice_no == undefined) {
             $scope.validation_error = "Enter the Sales Invoice no.";
             return false;             
-        // } else if ($scope.receiptvoucher.date == '' || $scope.receiptvoucher.date == undefined) {
-        //     $scope.validation_error = "Enter the Date" ;
-        //     return false;
-        // } else if ($scope.receiptvoucher.customer == '' || $scope.receiptvoucher.customer == undefined) {
-        //     $scope.validation_error = "Enter Customer Name";
-        //     return false;
-            
-        // } else if ($scope.receiptvoucher.check_no == '' || $scope.receiptvoucher.check_no == undefined) {
-        //     $scope.validation_error = "Enter Check no.";
-        //     return false;
-        // } else if ($scope.receiptvoucher.dated == '' || $scope.receiptvoucher.dated == undefined) {
-        //     $scope.validation_error = "Enter Check Date";
-        //     return false;
         } else if ($scope.receiptvoucher.settlement == '' || $scope.receiptvoucher.settlement == undefined) {
             $scope.validation_error = "Enter Settlement Amount";
             return false;
@@ -3063,11 +3050,11 @@ function ReceiptVoucherController($scope, $element, $http, $timeout, share, $loc
         if($scope.receiptvoucher.payment_mode == 'cash') {
             
             if(!$scope.receiptvoucher.bank_name)
-                $scope.receiptvoucher.bank_name = "null";
+                $scope.receiptvoucher.bank_name = '';
             if(!$scope.receiptvoucher.cheque_no)
-                $scope.receiptvoucher.cheque_no = "null";
+                $scope.receiptvoucher.cheque_no = '';
             if(!$scope.receiptvoucher.cheque_date)
-                $scope.receiptvoucher.cheque_date = "null";
+                $scope.receiptvoucher.cheque_date = '';
         } else {
             
             if(!$scope.receiptvoucher.bank_name){
@@ -3148,7 +3135,7 @@ function ReceiptVoucherController($scope, $element, $http, $timeout, share, $loc
                     $scope.error_flag=false;
                     $scope.message = '';
                     // console.log('test');
-                    document.location.href ='/sales/receipt_voucher_pdf/';
+                    document.location.href ='/sales/pdf_receipt_voucher/'+data.receiptvoucher_id+'/';
                 }
             }).error(function(data, status){
                 console.log(data);
@@ -3158,47 +3145,12 @@ function ReceiptVoucherController($scope, $element, $http, $timeout, share, $loc
 
     $scope.payment_mode_change = function(payment_mode) {
         if(payment_mode == 'cheque') {
-            // $scope.payment_mode_selection = false;
-
-            // if($scope.vendor_account.payment_mode == 'cheque') {
             $scope.cash = false;
         } else {
             $scope.cash = true;
         }     
        
     }
-
-    // $scope.create_receipt = function() {
-    //     $scope.is_valid = $scope.receipt_validation();
-    //     if($scope.is_valid) {
-    //         // console.log($scope.quotation);
-    //         params = { 
-    //             'invoice': angular.toJson($scope.invoice), 
-    //             'receipt_voucher': angular.toJson($scope.receipt_voucher),
-    //             'receiptvoucher': angular.toJson($scope.receiptvoucher),
-    //             "csrfmiddlewaretoken" : $scope.csrf_token
-    //         }
-    //         $http({
-    //             method : 'post',
-    //             url : "/sales/create_receipt_voucher/",
-    //             data : $.param(params),
-    //             headers : {
-    //                 'Content-Type' : 'application/x-www-form-urlencoded'
-    //             }
-    //         }).success(function(data, status) {
-                
-    //             if (data.result == 'error'){
-    //                 $scope.error_flag=true;
-    //                 $scope.message = data.message;
-    //             } else {
-    //                 document.location.href = '/sales/receipt_voucher_pdf/'+data.delivery_note_id+'/';
-    //             }
-    //         }).error(function(data, success){
-                
-    //         });
-    //     }
-    // }
-
 }
 
 
