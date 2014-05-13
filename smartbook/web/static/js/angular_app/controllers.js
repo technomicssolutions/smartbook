@@ -2819,6 +2819,13 @@ function QuotationController($scope, $element, $http, $timeout, share, $location
         } else if($scope.quotation.sales_items.length == 0){
             $scope.validation_error = "Choose Item";
             return false;
+        } else if($scope.quotation.sales_items.length > 0){
+            for (var i=0; i < $scope.quotation.sales_items.length; i++){
+                if (parseInt($scope.quotation.sales_items[i].current_stock) < parseInt($scope.quotation.sales_items[i].qty_sold)){
+                    $scope.validation_error = "Quantity not in stock for item "+$scope.quotation.sales_items[i].item_name;
+                    return false;
+                }
+            }
         }  
         return true;
     }
@@ -2917,6 +2924,7 @@ function DeliveryNoteController($scope, $element, $http, $timeout, share, $locat
             return false;
         }
         if(item.qty_sold != '' && item.unit_price != ''){
+            $scope.validation_error = "";
             item.net_amount = ((parseFloat(item.qty_sold)*parseFloat(item.unit_price))-parseFloat(item.disc_given)).toFixed(2);
             $scope.calculate_net_discount_sale();
         }
@@ -2949,7 +2957,14 @@ function DeliveryNoteController($scope, $element, $http, $timeout, share, $locat
         } else if ($scope.delivery_note.lpo_no == '') {
             $scope.validation_error = "Enter LPO No";
             return false;
-        }
+        } else if($scope.quotation.sales_items.length > 0){
+            for (var i=0; i < $scope.quotation.sales_items.length; i++){
+                if (parseInt($scope.quotation.sales_items[i].current_stock) < parseInt($scope.quotation.sales_items[i].qty_sold)){
+                    $scope.validation_error = "Quantity not in stock for item "+$scope.quotation.sales_items[i].item_name;
+                    return false;
+                }
+            }
+        } 
         return true;
     }
     $scope.create_delivery_note = function() {
