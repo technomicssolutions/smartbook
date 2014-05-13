@@ -3009,16 +3009,27 @@ function ReceiptVoucherController($scope, $element, $http, $timeout, share, $loc
         'cheque_no': '',
         'cheque_date': '',
         'amount': '',
+        'settlement': '',
 
     }
     $scope.receiptvoucher.customer = '';
     $scope.receiptvoucher.receipt_voucher_date = '';
     $scope.receiptvoucher.cheque_no = '';
     $scope.receiptvoucher.cheque_date = '';
-    $scope.receipt_voucher.settlement = '';
+    $scope.receiptvoucher.settlement = '';
+    $scope.receiptvoucher.payment_mode = 'cash';
+    $scope.cash = 'true';
 
     $scope.init = function(csrf_token) {
         $scope.csrf_token = csrf_token;
+
+        $scope.date_picker_cheque = new Picker.Date($$('#cheque_date'), {
+            timePicker: false,
+            positionOffset: {x: 5, y: 0},
+            pickerClass: 'datepicker_bootstrap',
+            useFadeInOut: !Browser.ie,
+            format: '%d/%m/%Y',
+        });
 
     }
 
@@ -3027,26 +3038,54 @@ function ReceiptVoucherController($scope, $element, $http, $timeout, share, $loc
         $scope.receiptvoucher.date = $$('#receipt_voucher_date')[0].get('value');
         // $scope.receiptvoucher.reference_no = $$('#reference_number')[0].get('value');
 
-        if ($scope.receiptvoucher.date == '' || $scope.receiptvoucher.date == undefined) {
-            $scope.validation_error = "Enter the Date" ;
-            return false;
-        } else if ($scope.receiptvoucher.customer == '' || $scope.receiptvoucher.customer == undefined) {
-            $scope.validation_error = "Enter Customer Name";
-            return false;
-        } else if ($scope.receiptvoucher.sales_invoice == '' || $scope.receiptvoucher.sales_invoice == undefined) {
+        if ($scope.receiptvoucher.sales_invoice == '' || $scope.receiptvoucher.sales_invoice == undefined) {
             $scope.validation_error = "Enter the Sales Invoice no.";
-            return false;
-        } else if ($scope.receiptvoucher.check_no == '' || $scope.receiptvoucher.check_no == undefined) {
-            $scope.validation_error = "Enter Check no.";
-            return false;
-        } else if ($scope.receiptvoucher.dated == '' || $scope.receiptvoucher.dated == undefined) {
-            $scope.validation_error = "Enter Check Date";
-            return false;
+            return false;             
+        // } else if ($scope.receiptvoucher.date == '' || $scope.receiptvoucher.date == undefined) {
+        //     $scope.validation_error = "Enter the Date" ;
+        //     return false;
+        // } else if ($scope.receiptvoucher.customer == '' || $scope.receiptvoucher.customer == undefined) {
+        //     $scope.validation_error = "Enter Customer Name";
+        //     return false;
+            
+        // } else if ($scope.receiptvoucher.check_no == '' || $scope.receiptvoucher.check_no == undefined) {
+        //     $scope.validation_error = "Enter Check no.";
+        //     return false;
+        // } else if ($scope.receiptvoucher.dated == '' || $scope.receiptvoucher.dated == undefined) {
+        //     $scope.validation_error = "Enter Check Date";
+        //     return false;
         } else if ($scope.receiptvoucher.settlement_amount == '' || $scope.receiptvoucher.settlement_amount == undefined) {
             $scope.validation_error = "Enter Settlement Amount";
             return false;
         }
-        
+
+        if($scope.receiptvoucher.payment_mode == 'cash') {
+            if(!$scope.receiptvoucher.branch_name)
+                $scope.receiptvoucher.branch_name = "null";
+            if(!$scope.receiptvoucher.bank_name)
+                $scope.receiptvoucher.bank_name = "null";
+            if(!$scope.receiptvoucher.cheque_no)
+                $scope.receiptvoucher.cheque_no = "null";
+            if(!$scope.receiptvoucher.cheque_date)
+                $scope.receiptvoucher.cheque_date = "null";
+        } else {
+            if(!$scope.receiptvoucher.branch_name){
+                $scope.validation_error = "Please enter branch name";
+                return false;
+            } else if(!$scope.receiptvoucher.bank_name){
+                $scope.validation_error = "Please enter bank name";
+                return false;
+            }else if(!$scope.receiptvoucher.cheque_no){
+                $scope.validation_error = "Please enter cheque no";
+                return false;
+            }else if($$('#cheque_date')[0].get('value') == ''){
+                $scope.validation_error = "Please enter cheque date";
+                return false;
+            }
+            if($$('#cheque_date')[0].get('value') != '') {
+                $scope.receiptvoucher.cheque_date = $$('#cheque_date')[0].get('value');
+            }
+        }        
         return true;
     }
 
@@ -3078,20 +3117,20 @@ function ReceiptVoucherController($scope, $element, $http, $timeout, share, $loc
         $scope.invoice_selected = true;
         $scope.invoice_no = invoice.invoice_no;
         $scope.receiptvoucher.customer = invoice.customer;
-
     }
 
-
-    $scope.create_receipt = function() {
+    $scope.save_receipt = function(){
         $scope.is_valid = $scope.receipt_validation();
-        if($scope.is_valid) {
-            // console.log($scope.quotation);
+        if ($scope.is_valid) {
+            $scope.error_flag = false;
+            $scope.error_message = '';
             params = { 
-                'invoice': angular.toJson($scope.invoice), 
-                'receipt_voucher': angular.toJson($scope.receipt_voucher),
-                'receiptvoucher': angular.toJson($scope.receiptvoucher),
+
+                'receiptvoucher': angular.toJson($scope.receiptvoucher),   
                 "csrfmiddlewaretoken" : $scope.csrf_token
             }
+            // console.log('test');
+
             $http({
                 method : 'post',
                 url : "/sales/create_receipt_voucher/",
@@ -3105,13 +3144,59 @@ function ReceiptVoucherController($scope, $element, $http, $timeout, share, $loc
                     $scope.error_flag=true;
                     $scope.message = data.message;
                 } else {
-                    document.location.href = '/sales/receipt_voucher_pdf/'+data.delivery_note_id+'/';
+                    $scope.error_flag=false;
+                    $scope.message = '';
+                    // console.log('test');
+                    document.location.href ='/sales/receipt_voucher_pdf/';
                 }
-            }).error(function(data, success){
-                
+            }).error(function(data, status){
+                console.log(data);
             });
         }
     }
+
+    $scope.payment_mode_change = function(payment_mode) {
+        if(payment_mode == 'cheque') {
+            // $scope.payment_mode_selection = false;
+
+            // if($scope.vendor_account.payment_mode == 'cheque') {
+            $scope.cash = false;
+        } else {
+            $scope.cash = true;
+        }     
+       
+    }
+
+    // $scope.create_receipt = function() {
+    //     $scope.is_valid = $scope.receipt_validation();
+    //     if($scope.is_valid) {
+    //         // console.log($scope.quotation);
+    //         params = { 
+    //             'invoice': angular.toJson($scope.invoice), 
+    //             'receipt_voucher': angular.toJson($scope.receipt_voucher),
+    //             'receiptvoucher': angular.toJson($scope.receiptvoucher),
+    //             "csrfmiddlewaretoken" : $scope.csrf_token
+    //         }
+    //         $http({
+    //             method : 'post',
+    //             url : "/sales/create_receipt_voucher/",
+    //             data : $.param(params),
+    //             headers : {
+    //                 'Content-Type' : 'application/x-www-form-urlencoded'
+    //             }
+    //         }).success(function(data, status) {
+                
+    //             if (data.result == 'error'){
+    //                 $scope.error_flag=true;
+    //                 $scope.message = data.message;
+    //             } else {
+    //                 document.location.href = '/sales/receipt_voucher_pdf/'+data.delivery_note_id+'/';
+    //             }
+    //         }).error(function(data, success){
+                
+    //         });
+    //     }
+    // }
 
 }
 

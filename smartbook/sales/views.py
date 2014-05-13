@@ -865,6 +865,16 @@ class ReceiptVoucher(View):
 
     def post(self, request, *args, **kwargs):
 
+
+        
+
+
+
+
+
+
+        
+
         return render(request, 'sales/create_receipt_voucher.html', {})
 
 
@@ -930,8 +940,6 @@ class PrintReceiptVoucher(View):
 
         
         return response
-
-
 
 
 
