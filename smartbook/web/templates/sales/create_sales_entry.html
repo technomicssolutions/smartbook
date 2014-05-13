@@ -70,17 +70,25 @@
 						</div>
 					</div>
 
-
-					<div class="formrow_sales">
-						<div class="formtext_sales">
-							<label for="sales_invoice_number">Invoice Number </label>
-						</div>
-						<div class="forminput_sales">
-							<input type="text" name="sales_invoice_number"  ng-model="sales.sales_invoice_number"  readonly / >
-						</div>
+				</div>	
+				<div class="formrow_sales">
+					<div class="formtext_sales">
+						<label for="sales_invoice_number">Invoice Number </label>
 					</div>
-				</div>		
-				
+					<div class="forminput_sales">
+						<input type="text" name="sales_invoice_number"  ng-model="sales.sales_invoice_number"  readonly / >
+					</div>
+				</div>	
+
+				<div class="formrow_sales">
+					<div class="formtext_sales">
+						<label for="lpo_number">LPO Number </label>
+					</div>
+					<div class="forminput_sales">
+						<input type="text" name="lpo_number"  ng-model="sales.lpo_number"/ >
+					</div>
+				</div>
+			
    				<div class="purchase_items_list" ng-show="sales.sales_items.length > 0">
    					<div class="purchase_item_list">
    						
