@@ -613,6 +613,7 @@ class DeliveryNoteDetails(View):
                 'items': item_list,
                 'net_total': delivery_note.quotation.net_total,
                 'delivery_no': delivery_note.delivery_note_number,
+                'lpo_number': delivery_note.lpo_number if delivery_note.lpo_number else ''
             })
         res = {
             'delivery_notes': delivery_note_list,
@@ -709,7 +710,6 @@ class QuotationDeliverynoteSales(View):
             sales.bank_name = sales_dict['bank_name']
         sales.save()
         sales_items = sales_dict['sales_items']
-        print sales_items
         for sales_item in sales_items:
            
             item = Item.objects.get(code=sales_item['item_code'])

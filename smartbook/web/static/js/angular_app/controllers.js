@@ -1052,6 +1052,7 @@ function SalesQNDNController($scope, $element, $http, $timeout, share, $location
         $scope.sales.delivery_no = $scope.delivery_no
         $scope.sales.customer = delivery_note.customer; 
         $scope.sales.net_total = delivery_note.net_total;
+        $scope.sales.lpo_number = delivery_note.lpo_number;
         if(delivery_note.items.length > 0){
             for(var i=0; i< delivery_note.items.length; i++){
                 var selected_item = {
@@ -2938,6 +2939,18 @@ function DeliveryNoteController($scope, $element, $http, $timeout, share, $locat
         $scope.quotation.net_total = net_total;
         
     }
+
+    $scope.calculate_net_discount_sale = function(){
+        
+        var net_discount = 0;
+        for(i=0; i<$scope.quotation.sales_items.length; i++){
+           
+            net_discount = net_discount + parseFloat($scope.quotation.sales_items[i].disc_given);
+
+        }
+        $scope.quotation.net_discount = net_discount;
+    }
+
     $scope.delivery_note_validation = function(){
 
         $scope.delivery_note.date = $$('#delivery_note_date')[0].get('value');
