@@ -10,6 +10,11 @@ from web.models import Customer, Staff
 
 # Create your models here. 
 
+PAYMENT_MODE = (
+    ('cash', 'Cash'),
+    ('cheque', 'Cheque'),
+)
+
 class Quotation(models.Model):
 
     to = models.ForeignKey(Customer, null=True, blank=True)
@@ -106,6 +111,7 @@ class SalesInvoice(models.Model):
     date = models.DateField('Date', null=True, blank=True)
     invoice_no = models.CharField('Invoice Number',null=True, blank=True, max_length=20)
     prefix =  models.CharField('Prefix', max_length=20, default='SI')
+    is_processed = models.BooleanField('Processed', default=False)
 
 
     def __unicode__(self):
@@ -158,6 +164,7 @@ class SalesReturnItem(models.Model):
 class ReceiptVoucher(models.Model):
 
     sales_invoice = models.ForeignKey(SalesInvoice, null=True, blank=True)
+    receipt_voucher_no = models.CharField('Receipt Voucher No', null=True, blank=True, max_length=30)
     date = models.DateField('Date', null=True, blank=True)
     amount = models.DecimalField('Amount',max_digits=14, decimal_places=2, default=0)
     customer = models.ForeignKey(Customer, null=True, blank=True)
@@ -167,6 +174,7 @@ class ReceiptVoucher(models.Model):
     cash = models.DecimalField('Cash', max_digits=14, decimal_places=2, default=0)
     bank = models.CharField('Bank', null=True, blank=True, max_length=100)
     dated = models.DateField('Dated', null=True, blank=True)
+    payment_mode = models.CharField('Payment Mode', null=True, blank=True, max_length=40, choices=PAYMENT_MODE)
 
     def __unicode__(self):
 
