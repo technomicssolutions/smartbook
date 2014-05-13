@@ -873,12 +873,15 @@ class ReceiptVoucherCreation(View):
             sales_invoice_obj = SalesInvoice.objects.get(invoice_no=receiptvoucher['invoice_no'])
             receipt_voucher, created = ReceiptVoucher.objects.get_or_create(sales_invoice=sales_invoice_obj)
             sales_invoice_obj.is_processed = True
+            sales_invoice_obj.save()
             receipt_voucher.date = datetime.strptime(receiptvoucher['date'], '%d/%m/%Y')
             
             receipt_voucher.sum_of = receiptvoucher['amount']
+            receipt_voucher.cash = receiptvoucher['amount']
+            receipt_voucher.amount = receiptvoucher['amount']
             receipt_voucher.settlement_amount = receiptvoucher['settlement']
             receipt_voucher.payment_mode = receiptvoucher['payment_mode']
-            receipt_voucher.bank_name = receiptvoucher['bank_name']
+            receipt_voucher.bank = receiptvoucher['bank_name']
             receipt_voucher.cheque_no = receiptvoucher['cheque_no']
             if receiptvoucher['cheque_date']:   
                 receipt_voucher.dated = datetime.strptime(receiptvoucher['cheque_date'], '%d/%m/%Y')
@@ -1002,7 +1005,7 @@ class PrintReceiptVoucher(View):
 
         p.drawString(450, 540, "Cash")
         if receipt_voucher.cash:
-            p.drawString(500, 545,receipt_voucher.cash)
+            p.drawString(500, 545,str(receipt_voucher.cash))
         p.drawString(490, 540, ".............................................................................................................................")
 
         p.drawString(30, 500, "Bank")
