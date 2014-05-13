@@ -894,6 +894,45 @@ class InvoiceDetails(View):
 
         return HttpResponse(response, status=200, mimetype='application/json')
 
+class PrintReceiptVoucher(View):
+
+    def get(self, request, *args, **kwargs):
+
+        print "in pdf"
+        response = HttpResponse(content_type='application/pdf')
+        p = canvas.Canvas(response, pagesize=(1000, 1000))
+
+        status_code = 200
+
+        y = 850
+
+        p.drawString(60, 950, "SUNLIGHT STATIONARY")
+        p.drawString(60, 930, "P.O.Box : 48296")
+        p.drawString(60, 910, "Behind Russian Embassy")
+        p.drawString(60, 890, "Ziyani, Abu Dhabi, U.A.E.")
+        p.drawString(60, 870, "Tel. : +971-2-6763571")
+        p.drawString(60, 850, "Fax : +971-2-6763581")
+        p.drawString(60, 830, "E-mail : sunlight.stationary@yahoo.com")
+
+        try:
+            owner_company = OwnerCompany.objects.latest('id')
+            if owner_company.logo:
+                path = settings.PROJECT_ROOT.replace("\\", "/")+"/media/"+owner_company.logo.name
+                p.drawImage(path, 400, 810, width=20*cm, preserveAspectRatio=True)
+        except:
+            pass  
+
+        
+
+
+        p.showPage()
+        p.save()
+
+        
+        return response
+
+
+
 
 
 
