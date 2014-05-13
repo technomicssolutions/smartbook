@@ -623,6 +623,7 @@ class DeliveryNoteDetails(View):
         response = simplejson.dumps(res)
         return HttpResponse(response, status=200, mimetype='application/json')
 
+
 class QuotationDeliverynoteSales(View):
 
     def get(self, request, *args, **kwargs):
@@ -870,7 +871,7 @@ class ReceiptVoucherCreation(View):
         if request.is_ajax():
             receiptvoucher = ast.literal_eval(request.POST['receiptvoucher'])
             sales_invoice_obj = SalesInvoice.objects.get(invoice_no=receiptvoucher['invoice_no'])
-            receipt_voucher = ReceiptVoucher.objects.create(sales_invoice=sales_invoice_obj)
+            receipt_voucher, created = ReceiptVoucher.objects.get_or_create(sales_invoice=sales_invoice_obj)
             sales_invoice_obj.is_processed = True
             receipt_voucher.date = datetime.strptime(receiptvoucher['date'], '%d/%m/%Y')
             
@@ -880,7 +881,7 @@ class ReceiptVoucherCreation(View):
             receipt_voucher.bank_name = receiptvoucher['bank_name']
             receipt_voucher.cheque_no = receiptvoucher['cheque_no']
             if receiptvoucher['cheque_date']:   
-                receipt_voucher.dated = receiptvoucher['cheque_date']
+                receipt_voucher.dated = datetime.strptime(receiptvoucher['cheque_date'], '%d/%m/%Y')
             receipt_voucher.save()
             customer = Customer.objects.get(customer_name=receiptvoucher['customer'])
             receipt_voucher.customer = customer

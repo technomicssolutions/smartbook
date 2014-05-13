@@ -3050,8 +3050,7 @@ function ReceiptVoucherController($scope, $element, $http, $timeout, share, $loc
     $scope.receipt_validation = function(){
 
         $scope.receiptvoucher.date = $$('#receipt_voucher_date')[0].get('value');
-        // $scope.receiptvoucher.reference_no = $$('#reference_number')[0].get('value');
-
+        
         if ($scope.receiptvoucher.invoice_no == '' || $scope.receiptvoucher.invoice_no == undefined) {
             $scope.validation_error = "Enter the Sales Invoice no.";
             return false;             
@@ -3061,19 +3060,17 @@ function ReceiptVoucherController($scope, $element, $http, $timeout, share, $loc
         }
 
         if($scope.receiptvoucher.payment_mode == 'cash') {
-            
-            if(!$scope.receiptvoucher.bank_name)
-                $scope.receiptvoucher.bank_name = '';
-            if(!$scope.receiptvoucher.cheque_no)
-                $scope.receiptvoucher.cheque_no = '';
-            if(!$scope.receiptvoucher.cheque_date)
-                $scope.receiptvoucher.cheque_date = '';
+            $scope.receiptvoucher.bank_name = '';
+            $scope.receiptvoucher.cheque_no = '';
+            $scope.receiptvoucher.cheque_date = '';
         } else {
+
+            console.log($scope.receiptvoucher);
             
-            if(!$scope.receiptvoucher.bank_name){
+            if($scope.receiptvoucher.bank_name =='' || $scope.receiptvoucher.bank_name==undefined){
                 $scope.validation_error = "Please enter bank name";
                 return false;
-            }else if(!$scope.receiptvoucher.cheque_no){
+            }else if($scope.receiptvoucher.cheque_no == '' || $scope.receiptvoucher.cheque_no == undefined){
                 $scope.validation_error = "Please enter cheque no";
                 return false;
             }else if($$('#cheque_date')[0].get('value') == ''){
