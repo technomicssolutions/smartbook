@@ -43,7 +43,7 @@
 
 						<div class="forminput_sales">
 							
-							<input type="text" name="receipt_voucher_date"  id="receipt_voucher_date" ng-model="receiptvoucher.receipt_voucher_date" value="{{current_date}}" readonly>
+							<input type="text" name="receipt_voucher_date"  id="receipt_voucher_date" value="{{current_date}}" readonly>
 						</div>
 					</div>
 
@@ -83,21 +83,21 @@
 							<label for="bank_name">Bank Name</label>
 						</div>
 						<div class="forminput_sales">
-							<input type="text" name="receiptvoucher.bank_name"/>						
+							<input type="text" name="receiptvoucher.bank_name" ng-readonly="cash"/>						
 						</div>
 						
 						<div class="formtext_sales">
 							<label for="cheque_no">Cheque No</label>
 						</div>
 						<div class="forminput_sales">
-							<input type="text" name="cheque_no" ng-model="receiptvoucher.cheque_no"/>	
+							<input type="text" name="cheque_no" ng-model="receiptvoucher.cheque_no" ng-readonly="cash"/>	
 						</div>		
 					
 						<div class="formtext_sales">
 							<label for="cheque_date">Cheque date</label>
 						</div>
 						<div class="forminput_sales">
-							<input type="text" name="cheque_date" id="cheque_date" ng-model="receiptvoucher.cheque_date"/>						
+							<input type="text" name="cheque_date" id="cheque_date" ng-model="receiptvoucher.cheque_date" value="{{current_date}}" ng-readonly="cash"/>			
 						</div>				
 
 					</div>
@@ -109,7 +109,7 @@
 							<label for="Amount">Sum of</label>
 						</div>
 						<div class="forminput_sales">
-							<input type="text" name="amount" ng-model="receiptvoucher.amount"readonly/>
+							<input type="text" name="amount" ng-model="receiptvoucher.amount" readonly/>
 						</div>						
 					</div>
 
@@ -119,7 +119,7 @@
 							<label for="Settlement">On Settlement Of</label>
 						</div>
 						<div class="forminput_sales">
-							<input type="text" name="Settlement" ng-model="receipt_voucher.settlement">
+							<input type="text" name="Settlement" ng-model="receiptvoucher.settlement">
 						</div>						
 					</div>
 				</div>
