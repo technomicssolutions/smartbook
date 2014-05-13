@@ -937,6 +937,7 @@ class PrintReceiptVoucher(View):
 
         y = 850
 
+        receipt_voucher = ReceiptVoucher.objects.get(id=kwargs['receipt_voucher_id'])
 
         p.setFont("Helvetica-Bold", 15)
         p.drawString(30, 950, "SUNLIGHT STATIONARY")
@@ -964,40 +965,53 @@ class PrintReceiptVoucher(View):
         p.setFont("Times-BoldItalic", 15)
         p.drawString(30, 700, "Amount")
 
-        data=[['','']]
+        data=[[receipt_voucher.sum_of,'']]
 
         table = Table(data, colWidths=[150,50], rowHeights=30) 
 
         table.setStyle(TableStyle([
            ('BOX', (0,0), (-1,-1), 0.25, colors.black),
-           ('INNERGRID', (0,0), (-1,-1), 0.25, colors.black),                           
+           ('INNERGRID', (0,0), (-1,-1), 0.25, colors.black),  
+           ('FONTSIZE', (0,0), (-1, -1), 14),                         
            ]))     
 
         table.wrapOn(p, 200, 400)
         table.drawOn(p,120, 700)
 
         p.drawString(840, 700, "Date")
+        p.drawString(880, 705, receipt_voucher.date.strftime('%d/%m/%Y'))
         p.drawString(870, 700, "........................")
 
         p.drawString(30, 660, "Received from Mr./M/s.")
+        p.drawString(190, 665,receipt_voucher.customer.customer_name)
         p.drawString(180, 660, "...............................................................................................................................................................................................................")
 
         p.drawString(30, 620, "The Sum of")
+        p.drawString(150, 625,str(receipt_voucher.sum_of))
         p.drawString(110, 620, "..................................................................................................................................................................................................................................")
 
         p.drawString(30, 580, "On Settlement of")
+        p.drawString(180, 585,str(receipt_voucher.settlement_amount))
         p.drawString(140, 580, "..........................................................................................................................................................................................................................")
 
         p.drawString(30, 540, "Cheque No")
+        if receipt_voucher.cheque_no:
+            p.drawString(110, 545,receipt_voucher.cheque_no)
         p.drawString(100, 540, " ..........................................................................................")
 
         p.drawString(450, 540, "Cash")
+        if receipt_voucher.cash:
+            p.drawString(500, 545,receipt_voucher.cash)
         p.drawString(490, 540, ".............................................................................................................................")
 
         p.drawString(30, 500, "Bank")
+        if receipt_voucher.bank:
+            p.drawString(75, 505, receipt_voucher.bank)
         p.drawString(65, 500, " ...................................................................................................")
 
         p.drawString(450, 500, "Dated")
+        if receipt_voucher.dated:
+            p.drawString(500, 505,receipt_voucher.dated.strftime('%d/%m/%Y'))
         p.drawString(490, 500, " ............................................................................................................................")
 
         p.drawString(30, 420, "Accountant")

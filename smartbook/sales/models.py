@@ -170,7 +170,7 @@ class ReceiptVoucher(models.Model):
     customer = models.ForeignKey(Customer, null=True, blank=True)
     sum_of = models.DecimalField('Sum of', max_digits=14, decimal_places=2, default=0)
     settlement_amount = models.DecimalField('Settlement amount', max_digits=14, decimal_places=2, default=0)
-    check_no = models.CharField('Check Number', null=True, blank=True, max_length=50)
+    cheque_no = models.CharField('Check Number', null=True, blank=True, max_length=50)
     cash = models.DecimalField('Cash', max_digits=14, decimal_places=2, default=0)
     bank = models.CharField('Bank', null=True, blank=True, max_length=100)
     dated = models.DateField('Dated', null=True, blank=True)
