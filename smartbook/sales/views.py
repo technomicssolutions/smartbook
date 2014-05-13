@@ -24,9 +24,10 @@ from web.models import Customer, Staff, OwnerCompany
 
 from reportlab.lib.units import cm
 from reportlab.pdfgen.canvas import Canvas
-from reportlab.platypus import Frame, Image, Table, TableStyle
+from reportlab.platypus import Frame, Image, Table, TableStyle, Paragraph
 from reportlab.lib import colors
 from reportlab.lib.pagesizes import letter, A4
+from reportlab.lib.styles import ParagraphStyle
 
 try:
     from cStringIO import StringIO
@@ -779,8 +780,17 @@ class CreateSalesInvoicePDF(View):
             ('FONTNAME',(0,0),(-1,-1),'Helvetica') 
         ]
 
-        data=[['', sales_invoice.date.strftime('%d-%m-%Y'), 'INVOICE', sales_invoice.invoice_no]]
-        table = Table(data, colWidths=[30, 360, 420, 100], rowHeights=50, style = style)      
+        para_style = ParagraphStyle('fancy')
+        para_style.fontSize = 20
+        para_style.fontName = 'Helvetica'
+        para = Paragraph('<b> INVOICE </b>', para_style)
+
+        data =[['', sales_invoice.date.strftime('%d-%m-%Y'), para, sales_invoice.invoice_no]]
+        
+        table = Table(data, colWidths=[30, 360, 420, 100], rowHeights=50, style=style) 
+        # table.setStyle(TableStyle([
+        #                ('FONTSIZE', (2,0), (2,0), 30),
+        #                ]))     
         table.wrapOn(p, 200, 400)
         table.drawOn(p,50, 980)
 
@@ -792,13 +802,13 @@ class CreateSalesInvoicePDF(View):
 
         data=[['', customer_name, sales_invoice.sales.lpo_number if sales_invoice.sales else '' ]]
 
-        table = Table(data, colWidths=[30, 510, 100], rowHeights=30, style = style)      
+        table = Table(data, colWidths=[30, 540, 60], rowHeights=30, style = style)      
         table.wrapOn(p, 200, 400)
         table.drawOn(p, 50, 935)
 
         data=[['', '', sales_invoice.date.strftime('%d-%m-%Y')]]
 
-        table = Table(data, colWidths=[450, 90, 100], rowHeights=50, style = style)      
+        table = Table(data, colWidths=[450, 120, 70], rowHeights=50, style = style)      
 
         table.wrapOn(p, 200, 400)
         table.drawOn(p,50, 910)
@@ -806,7 +816,7 @@ class CreateSalesInvoicePDF(View):
         if sales_invoice.quotation or sales_invoice.delivery_note:            
             data=[['', '', sales_invoice.delivery_note.delivery_note_number if sales_invoice.delivery_note else sales_invoice.quotation.reference_id]]
 
-            table = Table(data, colWidths=[450, 90, 100], rowHeights=40, style = style)      
+            table = Table(data, colWidths=[450, 120, 70], rowHeights=40, style = style)      
             table.wrapOn(p, 200, 400)
             table.drawOn(p,50, 860)
 
