@@ -865,17 +865,75 @@ class ReceiptVoucher(View):
 
     def post(self, request, *args, **kwargs):
 
+        if request.is_ajax():
+            receiptvoucher = ast.literal_eval(request.POST['receiptvoucher'])
+            receipt_voucher, receipt_voucher_created = ReceiptVoucher.objects.get_or_create(invoice_no=receiptvoucher['invoice_no'])
+            receipt_voucher.sales_invoice = receiptvoucher['invoice_no']
+         
+            receipt_voucher.date = datetime.strptime(receiptvoucher['date'], '%d-%m-%Y')
+            
+            receipt_voucher.sum_of = receiptvoucher['amount']
+            receipt_voucher.settlement_amount = receiptvoucher['settlement']
+            receipt_voucher.bank_name = receiptvoucher['bank']
+            receipt_voucher.cheque_no = receiptvoucher['cheque_no']
+            receipt_voucher.dated = receiptvoucher['cheque_date']
+            receipt_voucher.save()
+            customer = Customer.objects.get(customer_name=receiptvoucher['customer'])
+            receipt_voucher.customer = customer
+            receipt_voucher.save()
+
+            # quotation_data_items = quotation_data['sales_items']
+            # for quotation_item in quotation_data_items:
+            #     item = Item.objects.get(code=quotation_item['item_code'])
+            #     quotation_item_obj, item_created = QuotationItem.objects.get_or_create(item=item, quotation=quotation)
+            #     inventory, created = Inventory.objects.get_or_create(item=item)
+            #     inventory.quantity = inventory.quantity - int(quotation_item['qty_sold'])
+            #     inventory.save()
+            #     quotation_item_obj.net_amount = float(quotation_item['net_amount'])
+            #     quotation_item_obj.quantity_sold = int(quotation_item['qty_sold'])
+            #     quotation_item_obj.save()
+            res = {
+                'result': 'OK',
+                'quotation_id': quotation.id,
+            }
+
+            response = simplejson.dumps(res)
+
+            return HttpResponse(response, status=200, mimetype='application/json')
+
+
+
+
+
+
+
+        # invoice_no = request.GET.get('invoice_no', '')
+        # sales_invoice_details = SalesInvoice.objects.filter(invoice_no__istartswith=invoice_no)
+        # ctx_invoice_details = []
+        # if sales_invoice_details.count() > 0:
+        #     for sales_invoice in sales_invoice_details:
+        #         receiptvoucher.receipt_voucher_date = datetime.strptime('date', '%d/%m/%Y')
+        #         receiptvoucher.customer = receiptvoucher.customer
+        #         receiptvoucher.sales_invoice = sales_invoice_details['sales_invoice']
+        #         receiptvoucher.bank_name = receiptvoucher.bank
+        #         receiptvoucher.cheque_no = receiptvoucher.cheque_no
+        #         receiptvoucher.dated = receiptvoucher.cheque_date
+        #         receiptvoucher.amount = receiptvoucher.sum_of
+        #         receiptvoucher.Settlement = receiptvoucher.settlement_amount
+        #         receiptvoucher.save() 
+
+        #         res = {
+        #             'result': 'Ok',
+        #             'sales_invoice': sales_invoice.id,
+        #         }
+        # response = simplejson.dumps(res)
+        # status_code = 200
+        # return HttpResponse(response, status = status_code, mimetype="application/json")  
+
 
         
 
-
-
-
-
-
-        
-
-        return render(request, 'sales/create_receipt_voucher.html', {})
+        # return render(request, 'sales/create_receipt_voucher.html', {})
 
 
 class InvoiceDetails(View):
