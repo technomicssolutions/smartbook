@@ -752,6 +752,7 @@ class QuotationDeliverynoteSales(View):
         status_code = 200
         return HttpResponse(response, status = status_code, mimetype="application/json")
 
+
 class CreateSalesInvoicePDF(View):
     def get(self, request, *args, **kwargs):
 
@@ -812,9 +813,6 @@ class CreateSalesInvoicePDF(View):
             table = Table(data, colWidths=[450, 90, 100], rowHeights=40, style = style)      
             table.wrapOn(p, 200, 400)
             table.drawOn(p,50, 640)
-
-        
-
 
         x=650
 
