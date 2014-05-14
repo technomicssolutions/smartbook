@@ -338,15 +338,26 @@ class DeliveryNotePDF(View):
 
         i = 0
         i = i + 1
-        for q_item in delivery_note.quotation.quotationitem_set.all():
-                   
-            y = y-40
+        if delivery_note.quotation:
+            for q_item in delivery_note.quotation.quotationitem_set.all():
+                       
+                y = y-40
 
-            data1 = [[i, q_item.item.code, q_item.item.name, q_item.quantity_sold, '']]
-            table = Table(data1, colWidths=[100, 400, 100, 150], rowHeights=40, style = style)
-            table.wrapOn(p, 200, 600)
-            table.drawOn(p, 105, y)
-            i = i + 1
+                data1 = [[i, q_item.item.code, q_item.item.name, q_item.quantity_sold, '']]
+                table = Table(data1, colWidths=[100, 400, 100, 150], rowHeights=40, style = style)
+                table.wrapOn(p, 200, 600)
+                table.drawOn(p, 105, y)
+                i = i + 1
+        else:
+            for delivery_item in delivery_note.deliverynoteitem_set.all():
+                       
+                y = y-40
+
+                data1 = [[i, delivery_item.item.code, delivery_item.item.name, delivery_item.quantity_sold, '']]
+                table = Table(data1, colWidths=[100, 400, 100, 150], rowHeights=40, style = style)
+                table.wrapOn(p, 200, 600)
+                table.drawOn(p, 105, y)
+                i = i + 1
 
 
         p.showPage()
