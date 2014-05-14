@@ -1550,6 +1550,12 @@ function SalesController($scope, $element, $http, $timeout, share, $location) {
     $scope.calculate_balance_sale = function () {
         $scope.sales.balance = $scope.sales.grant_total - $scope.sales.paid;
     }
+
+    $scope.remove_from_item_list = function(item) {
+        var index = $scope.sales.sales_items.indexOf(item);
+        $scope.sales.sales_items.splice(index, 1);
+    }
+
     $scope.save_sales = function() {
 
         if($scope.validate_sales()){
@@ -2831,11 +2837,8 @@ function QuotationController($scope, $element, $http, $timeout, share, $location
         return true;
     }
     $scope.remove_from_item_list = function(item) {
-        alert('Hii');
-        console.log($scope.quotation);
         var index = $scope.quotation.sales_items.indexOf(item);
         $scope.quotation.sales_items.splice(index, 1);
-        console.log($scope.quotation);
     }
 
     $scope.create_quotation = function() {
@@ -2958,6 +2961,7 @@ function DeliveryNoteController($scope, $element, $http, $timeout, share, $locat
         }
         $scope.quotation.net_discount = net_discount;
     }
+
 
     $scope.delivery_note_validation = function(){
 
