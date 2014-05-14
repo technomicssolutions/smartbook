@@ -272,7 +272,8 @@ class CreateQuotation(View):
             return HttpResponse(response, status=200, mimetype='application/json')
 
 class DeliveryNotePDF(View):
-     def get(self, request, *args, **kwargs):
+
+    def get(self, request, *args, **kwargs):
 
         delivery_note_id = kwargs['delivery_note_id']
         delivery_note = DeliveryNote.objects.get(id=delivery_note_id)
@@ -317,21 +318,22 @@ class DeliveryNotePDF(View):
 
         table = Table(data, colWidths=[30, 540, 60], rowHeights=30, style = style)      
         table.wrapOn(p, 200, 400)
-        table.drawOn(p, 50, 935)
+        table.drawOn(p, 50, 940)
 
         data=[['', '', delivery_note.date.strftime('%d-%m-%Y')]]
 
         table = Table(data, colWidths=[450, 120, 70], rowHeights=50, style = style)      
 
         table.wrapOn(p, 200, 400)
-        table.drawOn(p,50, 910)
+        table.drawOn(p,50, 915)
 
         if delivery_note.quotation:            
             data=[['', '', delivery_note.quotation.reference_id]]
 
             table = Table(data, colWidths=[450, 120, 70], rowHeights=40, style = style)      
             table.wrapOn(p, 200, 400)
-            table.drawOn(p,50, 860)       
+            table.drawOn(p,50, 885)
+         
 
         y = 800
 
@@ -342,22 +344,20 @@ class DeliveryNotePDF(View):
                        
                 y = y-40
 
-                data1 = [[i, q_item.item.code, q_item.item.name, q_item.quantity_sold, '']]
-                table = Table(data1, colWidths=[100, 400, 100, 150], rowHeights=40, style = style)
+                data1 = [[i, q_item.item.code, q_item.item.name, q_item.quantity_sold, q_item.item.uom.uom]]
+                table = Table(data1, colWidths=[80, 120, 400, 90, 100], rowHeights=40, style = style)
                 table.wrapOn(p, 200, 600)
-                table.drawOn(p, 105, y)
+                table.drawOn(p, 10, y)
                 i = i + 1
         else:
             for delivery_item in delivery_note.deliverynoteitem_set.all():
-                       
                 y = y-40
 
-                data1 = [[i, delivery_item.item.code, delivery_item.item.name, delivery_item.quantity_sold, '']]
-                table = Table(data1, colWidths=[100, 400, 100, 150], rowHeights=40, style = style)
+                data1 = [[i, delivery_item.item.code, delivery_item.item.name, delivery_item.quantity_sold, delivery_item.item.uom.uom]]
+                table = Table(data1, colWidths=[80, 120, 400, 90, 100], rowHeights=40, style = style)
                 table.wrapOn(p, 200, 600)
-                table.drawOn(p, 105, y)
+                table.drawOn(p, 10, y)
                 i = i + 1
-
 
         p.showPage()
         p.save()
