@@ -15,6 +15,27 @@
 		<form name="receipt_voucher" method="post">
 			<div class="form_contents_sales">
 				<div class="section_1_sales">
+
+					<div class="formrow_sales">						
+
+						<div class="formtext_sales">
+							<label for="voucher_no">Receipt Voucher No.</label>
+						</div>
+						<div class="forminput_sales">
+							<input type="text" name="voucher_no" ng-model="receiptvoucher.voucher_no" readonly/>
+						</div>						
+					</div>
+
+					<div class="formrow_sales">
+						<div class="formtext_sales">
+							<label for="Date ">Date </label>
+						</div>
+
+						<div class="forminput_sales">
+							
+							<input type="text" name="receipt_voucher_date"  id="receipt_voucher_date" value="{{current_date}}" readonly>
+						</div>
+					</div>
 					
 					<div class="formrow_sales">
 
@@ -36,16 +57,7 @@
 						</div>
 					</div>
 
-					<div class="formrow_sales">
-						<div class="formtext_sales">
-							<label for="Date ">Date </label>
-						</div>
-
-						<div class="forminput_sales">
-							
-							<input type="text" name="receipt_voucher_date"  id="receipt_voucher_date" value="{{current_date}}" readonly>
-						</div>
-					</div>
+					
 
 
 					<div class="formrow_sales">
@@ -113,7 +125,7 @@
 						</div>						
 					</div>
 
-					<div class="formrow_sales">						
+					<!-- <div class="formrow_sales">						
 
 						<div class="formtext_sales">
 							<label for="Settlement">On Settlement Of</label>
@@ -121,7 +133,7 @@
 						<div class="forminput_sales">
 							<input type="text" name="Settlement" ng-model="receiptvoucher.settlement">
 						</div>						
-					</div>
+					</div> -->
 				</div>
 			</div>
 			<div  align="Center">

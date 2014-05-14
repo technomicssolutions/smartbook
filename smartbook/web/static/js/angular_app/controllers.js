@@ -3054,10 +3054,7 @@ function ReceiptVoucherController($scope, $element, $http, $timeout, share, $loc
         if ($scope.receiptvoucher.invoice_no == '' || $scope.receiptvoucher.invoice_no == undefined) {
             $scope.validation_error = "Enter the Sales Invoice no.";
             return false;             
-        } else if ($scope.receiptvoucher.settlement == '' || $scope.receiptvoucher.settlement == undefined) {
-            $scope.validation_error = "Enter Settlement Amount";
-            return false;
-        }
+        } 
 
         if($scope.receiptvoucher.payment_mode == 'cash') {
             $scope.receiptvoucher.bank_name = '';
