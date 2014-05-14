@@ -486,24 +486,31 @@ class CreateDeliveryNote(View):
             quotation_details = ast.literal_eval(request.POST['quotation'])
             delivery_note_details = ast.literal_eval(request.POST['delivery_note'])
             quotation = Quotation.objects.get(reference_id=delivery_note_details['quotation_no'])
+            
             for q_item in quotation.quotationitem_set.all():
+                quotation_item_names = []
                 for item_data in quotation_details['sales_items']:
-                    if q_item.item.code == item_data['item_code']:
-                        if q_item.quantity_sold != int(item_data['qty_sold']):
-                            item = q_item.item
-                            inventory, created = Inventory.objects.get_or_create(item=item)
-                            inventory.quantity = inventory.quantity + int(q_item.quantity_sold)
-                            inventory.save()
-                            inventory.quantity = inventory.quantity - int(item_data['qty_sold'])
-                            inventory.save()
-                            q_item.quantity_sold = int(item_data['qty_sold'])
-                            q_item.save()
-                        if q_item.discount != float(item_data['disc_given']):
-                            q_item.discount = item_data['disc_given']
-                            q_item.save()
-                        if q_item.net_amount != float(item_data['net_amount']):
-                            q_item.net_amount = item_data['net_amount']
-                            q_item.save()
+                    quotation_item_names.append(item_data['item_name'])
+                if q_item.item.name not in quotation_item_names:
+                    q_item.delete()
+                else:
+                    for item_data in quotation_details['sales_items']:
+                        if q_item.item.code == item_data['item_code']:
+                            if q_item.quantity_sold != int(item_data['qty_sold']):
+                                item = q_item.item
+                                inventory, created = Inventory.objects.get_or_create(item=item)
+                                inventory.quantity = inventory.quantity + int(q_item.quantity_sold)
+                                inventory.save()
+                                inventory.quantity = inventory.quantity - int(item_data['qty_sold'])
+                                inventory.save()
+                                q_item.quantity_sold = int(item_data['qty_sold'])
+                                q_item.save()
+                            if q_item.discount != float(item_data['disc_given']):
+                                q_item.discount = item_data['disc_given']
+                                q_item.save()
+                            if q_item.net_amount != float(item_data['net_amount']):
+                                q_item.net_amount = item_data['net_amount']
+                                q_item.save()
             if quotation.net_total != float(quotation_details['net_total']):
                 quotation.net_total = quotation_details['net_total']
                 quotation.save()
@@ -520,7 +527,7 @@ class CreateDeliveryNote(View):
 
             res = {
                 'result': 'ok',
-                'delivery_note_id': delivery_note.id
+                'delivery_note_id': 11
             }
 
             response = simplejson.dumps(res)
