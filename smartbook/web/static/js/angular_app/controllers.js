@@ -1064,6 +1064,11 @@ function SalesQNDNController($scope, $element, $http, $timeout, share, $location
     $scope.hide_sales_details = function(){
         $scope.sales_deatils = false;
     }
+     $scope.remove_from_item_list = function(item) {
+        var index = $scope.sales.sales_items.indexOf(item);
+        $scope.sales.sales_items.splice(index, 1);
+    }
+    
     $scope.add_delivery_note = function(delivery_note) {
         $scope.selecting_delivery_note = false;
         $scope.delivery_note_selected = true;
@@ -3075,6 +3080,11 @@ function DeliveryNoteController($scope, $element, $http, $timeout, share, $locat
         }
     }
 
+    $scope.remove_from_item_list = function(item) {
+        var index = $scope.quotation.sales_items.indexOf(item);
+        $scope.quotation.sales_items.splice(index, 1);
+    }
+
 }
 
 function ReceiptVoucherController($scope, $element, $http, $timeout, share, $location) {
@@ -3087,7 +3097,7 @@ function ReceiptVoucherController($scope, $element, $http, $timeout, share, $loc
         'cheque_no': '',
         'cheque_date': '',
         'amount': '',
-        'settlement': '',
+        // 'settlement': '',
         'invoice_no': '',
         'voucher_no': '',
 
@@ -3096,7 +3106,7 @@ function ReceiptVoucherController($scope, $element, $http, $timeout, share, $loc
     $scope.receiptvoucher.receipt_voucher_date = '';
     $scope.receiptvoucher.cheque_no = '';
     $scope.receiptvoucher.cheque_date = '';
-    $scope.receiptvoucher.settlement = '';
+    // $scope.receiptvoucher.settlement = '';
     $scope.receiptvoucher.payment_mode = 'cash';
     $scope.cash = 'true';
 
@@ -3113,7 +3123,8 @@ function ReceiptVoucherController($scope, $element, $http, $timeout, share, $loc
 
     }
 
-    $scope.receipt_validation = function(){
+    $sc
+    ope.receipt_validation = function(){
 
         $scope.receiptvoucher.date = $$('#receipt_voucher_date')[0].get('value');
         $scope.receiptvoucher.voucher_no = $$('#voucher_no')[0].get('value');
