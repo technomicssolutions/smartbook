@@ -2830,6 +2830,14 @@ function QuotationController($scope, $element, $http, $timeout, share, $location
         }  
         return true;
     }
+    $scope.remove_from_item_list = function(item) {
+        alert('Hii');
+        console.log($scope.quotation);
+        var index = $scope.quotation.sales_items.indexOf(item);
+        $scope.quotation.sales_items.splice(index, 1);
+        console.log($scope.quotation);
+    }
+
     $scope.create_quotation = function() {
         $scope.is_valid = $scope.quotation_validation();
         if($scope.is_valid) {
