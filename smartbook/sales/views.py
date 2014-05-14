@@ -293,7 +293,7 @@ class DeliveryNotePDF(View):
         # p.drawString(100, 790, "Ziyani, Abu Dhabi, U.A.E.")
         # p.drawString(100, 700, "No.  ")
         # p.drawString(700, 700, "Date : ....................................")
-        # p.drawString(700, 680, "L.P.O. No : ............................")
+        # p.drawString(700, 680, "L.P.O. No : ............................")        
         # p.drawString(100, 650, "Mr.M/s.......................................................................................................................................................................................................................")
 
         # data=[['Sl.No:', 'Description', 'Qty', 'Remarks']]
@@ -1028,7 +1028,7 @@ class PrintReceiptVoucher(View):
 
         p.showPage()
         p.save()
-
         
         return response
 
+        

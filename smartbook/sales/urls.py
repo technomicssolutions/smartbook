@@ -20,5 +20,6 @@ urlpatterns = patterns('',
 	url(r'pdf_receipt_voucher/(?P<receipt_voucher_id>\d+)/$', PrintReceiptVoucher.as_view(), name="pdf_receipt_voucher"),
 	url(r'receipt_voucher/$', ReceiptVoucherCreation.as_view(), name='receipt_voucher'),
 	url(r'invoice_details/$', InvoiceDetails.as_view(), name='invoice_details'),
+	url(r'direct_delivery_note/$', DirectDeliveryNote.as_view(), name='direct_delivery_note'),
 
 )
