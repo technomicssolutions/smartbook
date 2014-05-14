@@ -377,8 +377,15 @@ class CreateQuotationPdf(View):
         y = 915
 
         style = [
-            ('FONTSIZE', (0,0), (-1, -1), 13),
+            ('FONTSIZE', (0,0), (-1, -1), 16),
             ('FONTNAME',(0,0),(-1,-1),'Helvetica') 
+            # ('INNERGRID', (0,0), (0,1), 0.25, colors.black),
+        ]
+
+        style1 = [
+            ('FONTSIZE', (0,0), (-1, -1), 18),
+            ('FONTNAME',(0,0),(-1,-1),'Helvetica') 
+            # ('INNERGRID', (0,0), (0,1), 0.25, colors.black),
         ]
 
         try:
@@ -391,48 +398,50 @@ class CreateQuotationPdf(View):
 
 
         p.roundRect(80, y-130, 840, 0.5*inch, 10, stroke=1, fill=0)
+        p.setFont("Helvetica-Bold", 20)
         p.drawString(400, 800, "QUOTATION")
         p.roundRect(80, y-250, 840, 120, 20, stroke=1, fill=0)   
 
 
-        data=[['To                         :', quotation.to.customer_name]]
+        data=[['To                     :', quotation.to.customer_name]]
         table = Table(data, colWidths=[125, 400], rowHeights=40, style = style)      
         table.wrapOn(p, 200, 400)
         table.drawOn(p,160, 745)
 
-        data=[['Attention               :', quotation.attention]]
+        data=[['Attention           :', quotation.attention]]
         table = Table(data, colWidths=[125, 400], rowHeights=40, style = style)       
         table.wrapOn(p, 200, 400)
         table.drawOn(p,160, 715)
 
-        data=[['Subject                 :', quotation.subject]]
+        data=[['Subject             :', quotation.subject]]
         table = Table(data, colWidths=[125, 400], rowHeights=40, style = style)       
         table.wrapOn(p, 200, 400)
         table.drawOn(p,160, 685)
 
 
-        data=[['Date           :', quotation.date.strftime('%d-%m-%Y')]]
-        table = Table(data, colWidths=[80, 400], rowHeights=40, style = style)       
+        data=[['Date            :', quotation.date.strftime('%d-%m-%Y')]]
+        table = Table(data, colWidths=[100, 400], rowHeights=40, style = style)       
         table.wrapOn(p, 200, 400)
         table.drawOn(p,700, 745)
 
-        data=[['Ref. id        :', quotation.reference_id]]
-        table = Table(data, colWidths=[80, 400], rowHeights=40, style = style)        
+        data=[['Ref. id         :', quotation.reference_id]]
+        table = Table(data, colWidths=[100, 400], rowHeights=40, style = style)        
         table.wrapOn(p, 200, 400)
         table.drawOn(p,700, 715)
 
 
         data=[['Sl.No:', 'Description', 'Qty', 'Unit Price', 'Amount(AED)']]
 
-        table = Table(data, colWidths=[100, 350, 100, 125, 125], rowHeights=40, style = style)
+        table = Table(data, colWidths=[100, 350, 100, 125, 125], rowHeights=40, style = style1)
         table.setStyle(TableStyle([                                  
                                    ('BOX', (0,0), (-1,-1), 0.25, colors.black),
-                                   ('LINEBEFORE',(1,0), (0,-1),1,colors.black),                                  
+                                   ('VALIGN',(0,-1),(-1,-1),'MIDDLE'),
+                                   # ('LINEBEFORE',(1,0), (0,-1),1,colors.black),                                  
                                    ]))
         table.wrapOn(p, 200, 400)
-        table.drawOn(p,105,600)
+        table.drawOn(p,105,575)
 
-        x=600
+        x=575
 
         i = 0 
         i = i + 1
@@ -447,6 +456,9 @@ class CreateQuotationPdf(View):
                                        # ('INNERGRID', (0,0), (0,0), 0.25, colors.black),
                                        # ('INNERGRID', (0,1), (-1,-1), 0.25, colors.black),
                                        ('BOX', (0,0), (-1,-1), 0.25, colors.black),
+                                       ('VALIGN',(0,-1),(-1,-1),'MIDDLE'),
+                                       # ('ALIGN', (0,0), (-1,-1),'RIGHT'),
+                                       # ('SPACEBELOW', (0,0), (-1,-1), 10),
                                        # ('BACKGROUND',(0,0),(1,0),colors.lightgrey)
                                        ]))
             # table.wrapOn(p, 300, 200)
@@ -455,35 +467,38 @@ class CreateQuotationPdf(View):
             table.drawOn(p,105, x)
             i = i + 1
 
-        data=[['Total', quotation.net_total]]
+        data=[['', quotation.net_total]]
 
         table = Table(data, colWidths=[650, 150], rowHeights=40, style = style)
         table.setStyle(TableStyle([
                                    # ('INNERGRID', (0,0), (0,0), 0.25, colors.black),
                                    # ('INNERGRID', (0,1), (-1,-1), 0.25, colors.black),
                                    ('BOX', (0,0), (-1,-1), 0.25, colors.black),
+                                   ('VALIGN',(0,-1),(-1,-1),'MIDDLE'),
                                    # ('BACKGROUND',(0,0),(1,0),colors.lightgrey),
                                    ('ALIGN', (0,0), (-1,-1),'RIGHT'),
                                    ]))
         table.wrapOn(p, 200, 400)
         table.drawOn(p,105,x-40)
 
-        p.drawString(160, x-80, "Hope the above quoted prices will meet your satisfaction and for further information please do not hesitate to contact us.")
-        p.drawString(160, x-120, "Delivery :-")
-        p.drawString(160, x-140, "Proof :-")
-        p.drawString(160, x-160, "Payment :-")
-        p.drawString(160, x-180, "Validity :-")
+        p.setFont("Helvetica", 15)
+
+        p.drawString(110, x-80, "Hope the above quoted prices will meet your satisfaction and for further information please do not hesitate to contact us.")
+        p.drawString(110, x-120, "Delivery :-")
+        p.drawString(110, x-140, "Proof :-")
+        p.drawString(110, x-160, "Payment :-")
+        p.drawString(110, x-180, "Validity :-")
         
-        if x >= 270:
-            p.drawString(160, 90, "For")
-            p.drawString(160, 70, "Sunlight Stationary")
-            p.drawString(160, 10, "Authorized Signatory")
-            p.drawString(700, 10, "Prepared By")
-        else:           
-            p.drawString(160, x-190, "For")
-            p.drawString(160, x-200, "Sunlight Stationary")
-            p.drawString(160, x-210, "Authorized Signatory")
-            p.drawString(700, x-210, "Prepared By")
+        # if x >= 270:
+        p.drawString(110, 150, "For")
+        p.drawString(110, 130, "Sunlight Stationary")
+        p.drawString(110, 70, "Authorized Signatory")
+        p.drawString(700, 70, "Prepared By")
+        # else:           
+        #     p.drawString(160, x-190, "For")
+        #     p.drawString(160, x-200, "Sunlight Stationary")
+        #     p.drawString(160, x-210, "Authorized Signatory")
+        #     p.drawString(700, x-210, "Prepared By")
 
 
         # data=[['Tel: +971-2-6763571, Fax : +971-2-6763581,P.O.Box : 48296, Abu Dhabi, United Arab Emirates']]
