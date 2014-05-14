@@ -278,54 +278,72 @@ class DeliveryNotePDF(View):
         delivery_note = DeliveryNote.objects.get(id=delivery_note_id)
 
         response = HttpResponse(content_type='application/pdf')
-        p = canvas.Canvas(response, pagesize=(1000, 1000))
+        p = canvas.Canvas(response, pagesize=(1000, 1200))
 
         status_code = 200
+        y = 1100
+        style = [
+            ('FONTSIZE', (0,0), (-1, -1), 20),
+            ('FONTNAME',(0,0),(-1,-1),'Helvetica') 
+        ]
 
-        # p.drawString(100, 950, "SUNLIGHT STATIONARY")
-        # p.drawString(100, 930, "Colour Printing, Photo Copy, Spiral Binding")
-        # p.drawString(100, 910, "Tender Document and Printing Service")
-        # p.drawString(100, 890, "Tel. : +971-2-6763571")
-        # p.drawString(100, 870, "Fax : +971-2-6763581")
-        # p.drawString(100, 850, "E-mail : sunlight.stationary@yahoo.com")
-        # p.drawString(100, 830, "P.O.Box : 48296")
-        # p.drawString(100, 810, "Behind Russian Embassy")
-        # p.drawString(100, 790, "Ziyani, Abu Dhabi, U.A.E.")
-        # p.drawString(100, 700, "No.  ")
-        # p.drawString(700, 700, "Date : ....................................")
-        # p.drawString(700, 680, "L.P.O. No : ............................")        
-        # p.drawString(100, 650, "Mr.M/s.......................................................................................................................................................................................................................")
+        new_style = [
+            ('FONTSIZE', (0,0), (-1, -1), 30),
+            ('FONTNAME',(0,0),(-1,-1),'Helvetica') 
+        ]
 
-        # data=[['Sl.No:', 'Description', 'Qty', 'Remarks']]
+        para_style = ParagraphStyle('fancy')
+        para_style.fontSize = 20
+        para_style.fontName = 'Helvetica'
+        para = Paragraph('<b> DELIVERY NOTE </b>', para_style)
 
-        # table = Table(data, colWidths=[100, 400, 100, 150], rowHeights=40)
+        data =[['', delivery_note.date.strftime('%d-%m-%Y'), para , delivery_note.delivery_note_number]]
+        
+        table = Table(data, colWidths=[30, 360, 420, 100], rowHeights=50, style=style) 
+
         # table.setStyle(TableStyle([
-        #                            # ('INNERGRID', (0,0), (0,0), 0.25, colors.black),
-        #                            # ('INNERGRID', (0,1), (-1,-1), 0.25, colors.black),
-        #                            ('BOX', (0,0), (-1,-1), 0.25, colors.black),
-        #                            # ('LINEBEFORE',(1,1), (-1,-1),1,colors.black),
-        #                            # ('BACKGROUND',(0,0),(1,0),colors.lightgrey),
-        #                            # ('ALIGN', (1,1), (-1,-1),'CENTRE'),
-        #                            ]))
-        # table.wrapOn(p, 200, 400)
-        # table.drawOn(p,105,500)
+        #                ('FONTSIZE', (2,0), (2,0), 30),
+        #                ]))     
+        table.wrapOn(p, 200, 400)
+        table.drawOn(p,50, 980)
 
-        y=700
+        quotation = delivery_note.quotation
+
+        customer_name = ''
+        if delivery_note.customer:
+            customer_name = delivery_note.customer.customer_name
+
+        data=[['', customer_name, delivery_note.lpo_number if delivery_note.lpo_number else '' ]]
+
+        table = Table(data, colWidths=[30, 540, 60], rowHeights=30, style = style)      
+        table.wrapOn(p, 200, 400)
+        table.drawOn(p, 50, 935)
+
+        data=[['', '', delivery_note.date.strftime('%d-%m-%Y')]]
+
+        table = Table(data, colWidths=[450, 120, 70], rowHeights=50, style = style)      
+
+        table.wrapOn(p, 200, 400)
+        table.drawOn(p,50, 910)
+
+        if delivery_note.quotation:            
+            data=[['', '', delivery_note.quotation.reference_id]]
+
+            table = Table(data, colWidths=[450, 120, 70], rowHeights=40, style = style)      
+            table.wrapOn(p, 200, 400)
+            table.drawOn(p,50, 860)
+         
+
+        y = 800
 
         i = 0
         i = i + 1
         for q_item in delivery_note.quotation.quotationitem_set.all():
                    
-            y=y-40
+            y = y-40
 
-            data1=[[i, q_item.item.name, q_item.quantity_sold, '']]
-            table = Table(data1, colWidths=[100, 400, 100, 150], rowHeights=40)
-            # table.setStyle(TableStyle([
-            #                            # ('INNERGRID', (0,0), (0,0), 0.25, colors.black),
-            #                            # ('INNERGRID', (0,1), (-1,-1), 0.25, colors.black),
-            #                            ('BOX', (0,0), (-1,-1), 0.25, colors.black),
-            #                            # ('BACKGROUND',(0,0),(1,0),colors.lightgrey)
-            #                            ]))
+            data1 = [[i, q_item.item.code, q_item.item.name, q_item.quantity_sold, '']]
+            table = Table(data1, colWidths=[100, 400, 100, 150], rowHeights=40, style = style)
             table.wrapOn(p, 200, 600)
             table.drawOn(p, 105, y)
             i = i + 1
@@ -789,12 +807,12 @@ class CreateSalesInvoicePDF(View):
             ('FONTNAME',(0,0),(-1,-1),'Helvetica') 
         ]
 
-        # para_style = ParagraphStyle('fancy')
-        # para_style.fontSize = 20
-        # para_style.fontName = 'Helvetica'
-        # para = Paragraph('<b> INVOICE </b>', para_style)
+        para_style = ParagraphStyle('fancy')
+        para_style.fontSize = 20
+        para_style.fontName = 'Helvetica'
+        para = Paragraph('<b> INVOICE </b>', para_style)
 
-        data =[['', sales_invoice.date.strftime('%d-%m-%Y'), 'INVOICE' , sales_invoice.invoice_no]]
+        data =[['', sales_invoice.date.strftime('%d-%m-%Y'), para , sales_invoice.invoice_no]]
         
         table = Table(data, colWidths=[30, 360, 420, 100], rowHeights=50, style=style) 
         # table.setStyle(TableStyle([
@@ -862,6 +880,7 @@ class CreateSalesInvoicePDF(View):
         p.showPage()
         p.save()
         return response
+
 
 class ReceiptVoucherCreation(View):
 
