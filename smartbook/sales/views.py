@@ -623,6 +623,7 @@ class DeliveryNoteDetails(View):
         response = simplejson.dumps(res)
         return HttpResponse(response, status=200, mimetype='application/json')
 
+
 class QuotationDeliverynoteSales(View):
 
     def get(self, request, *args, **kwargs):
@@ -781,12 +782,12 @@ class CreateSalesInvoicePDF(View):
             ('FONTNAME',(0,0),(-1,-1),'Helvetica') 
         ]
 
-        para_style = ParagraphStyle('fancy')
-        para_style.fontSize = 20
-        para_style.fontName = 'Helvetica'
-        para = Paragraph('<b> INVOICE </b>', para_style)
+        # para_style = ParagraphStyle('fancy')
+        # para_style.fontSize = 20
+        # para_style.fontName = 'Helvetica'
+        # para = Paragraph('<b> INVOICE </b>', para_style)
 
-        data =[['', sales_invoice.date.strftime('%d-%m-%Y'), para, sales_invoice.invoice_no]]
+        data =[['', sales_invoice.date.strftime('%d-%m-%Y'), 'INVOICE' , sales_invoice.invoice_no]]
         
         table = Table(data, colWidths=[30, 360, 420, 100], rowHeights=50, style=style) 
         # table.setStyle(TableStyle([
@@ -870,17 +871,20 @@ class ReceiptVoucherCreation(View):
         if request.is_ajax():
             receiptvoucher = ast.literal_eval(request.POST['receiptvoucher'])
             sales_invoice_obj = SalesInvoice.objects.get(invoice_no=receiptvoucher['invoice_no'])
-            receipt_voucher = ReceiptVoucher.objects.create(sales_invoice=sales_invoice_obj)
+            receipt_voucher, created = ReceiptVoucher.objects.get_or_create(sales_invoice=sales_invoice_obj)
             sales_invoice_obj.is_processed = True
+            sales_invoice_obj.save()
             receipt_voucher.date = datetime.strptime(receiptvoucher['date'], '%d/%m/%Y')
             
             receipt_voucher.sum_of = receiptvoucher['amount']
+            receipt_voucher.cash = receiptvoucher['amount']
+            receipt_voucher.amount = receiptvoucher['amount']
             receipt_voucher.settlement_amount = receiptvoucher['settlement']
             receipt_voucher.payment_mode = receiptvoucher['payment_mode']
-            receipt_voucher.bank_name = receiptvoucher['bank_name']
+            receipt_voucher.bank = receiptvoucher['bank_name']
             receipt_voucher.cheque_no = receiptvoucher['cheque_no']
             if receiptvoucher['cheque_date']:   
-                receipt_voucher.dated = receiptvoucher['cheque_date']
+                receipt_voucher.dated = datetime.strptime(receiptvoucher['cheque_date'], '%d/%m/%Y')
             receipt_voucher.save()
             customer = Customer.objects.get(customer_name=receiptvoucher['customer'])
             receipt_voucher.customer = customer
@@ -1001,7 +1005,7 @@ class PrintReceiptVoucher(View):
 
         p.drawString(450, 540, "Cash")
         if receipt_voucher.cash:
-            p.drawString(500, 545,receipt_voucher.cash)
+            p.drawString(500, 545,str(receipt_voucher.cash))
         p.drawString(490, 540, ".............................................................................................................................")
 
         p.drawString(30, 500, "Bank")
