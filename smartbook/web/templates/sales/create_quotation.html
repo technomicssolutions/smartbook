@@ -123,6 +123,7 @@
 							<span> Unit Price </span>
 							<span> Qty  </span>		
 							<span> Net Amount </span>
+							<span> &nbsp;&nbsp; </span>
 						</div>
 						<div ng-repeat="item in quotation.sales_items" class="item_list_row">
 							<span>[[item.sl_no]]</span>
@@ -134,6 +135,7 @@
 							<span> <input type="text" ng-model="item.qty_sold" ng-change="calculate_net_amount_sale(item)" /> </span> 
 							
 							<span>[[item.net_amount]] </span>
+							<span><a href="" ng-click="remove_from_item_list(item)">Remove</a> </span>
 							 
 							
 						</div>
