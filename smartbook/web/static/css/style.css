@@ -581,7 +581,7 @@ th {
 	width: 32%;
 }
 .purchase_item_list .item_list_row span {
-	width: 5%;
+	width: 5.5%;
 }
 .purchase_item_list .item_list_row span input {
 	width: 70%;
@@ -765,4 +765,12 @@ a {
 
 #create_sales .purchase_item_list .item_list_row span {
 	width: 9.5%;
+}
+
+#latest_sales_details span {
+	width: 23% !important;
+}
+
+.align_top {
+	margin-top: -21px !important;
 }

@@ -56,7 +56,7 @@ class QuotationItem(models.Model):
 
 class DeliveryNote(models.Model):
 
-    quotation = models.ForeignKey(Quotation)
+    quotation = models.ForeignKey(Quotation, null=True, blank=True)
     customer = models.ForeignKey(Customer, null=True, blank=True)
     delivery_note_number = models.CharField('Delivery Note Serial number', max_length=50, null=True, blank=True)
     date = models.DateField('Date', null=True, blank=True)
@@ -73,6 +73,24 @@ class DeliveryNote(models.Model):
 
         verbose_name = 'Delivery Note'
         verbose_name_plural = 'Delivery Note'
+
+
+class DeliveryNoteItem(models.Model):
+
+    item = models.ForeignKey(Item, null=True, blank=True)
+    delivery_note = models.ForeignKey(DeliveryNote, null=True, blank=True)
+    net_amount = models.DecimalField('Net Amount',max_digits=14, decimal_places=2, default=0)
+    quantity_sold = models.IntegerField('Quantity Sold', default=0)
+    discount = models.DecimalField('Total Discount',max_digits=14, decimal_places=3, default=0)
+
+    def __unicode__(self):
+
+        return str(self.delivery_note.delivery_note_number)
+
+    class Meta:
+
+        verbose_name = 'Delivery Note Item'
+        verbose_name_plural = 'Delivery Note Item'
 
 
 class Sales(models.Model): 
@@ -166,15 +184,13 @@ class ReceiptVoucher(models.Model):
     sales_invoice = models.ForeignKey(SalesInvoice, null=True, blank=True)
     receipt_voucher_no = models.CharField('Receipt Voucher No', null=True, blank=True, max_length=30)
     date = models.DateField('Date', null=True, blank=True)
-    
     customer = models.ForeignKey(Customer, null=True, blank=True)
     sum_of = models.DecimalField('Sum of', max_digits=14, decimal_places=2, default=0)
-    
     cheque_no = models.CharField('Check Number', null=True, blank=True, max_length=50)
-    
     bank = models.CharField('Bank', null=True, blank=True, max_length=100)
     dated = models.DateField('Dated', null=True, blank=True)
     payment_mode = models.CharField('Payment Mode', null=True, blank=True, max_length=40, choices=PAYMENT_MODE)
+    prefix = models.CharField('Prefix', null=True, blank=True, max_length=20, default='RV')
 
     def __unicode__(self):
 
