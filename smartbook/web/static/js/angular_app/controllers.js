@@ -3387,8 +3387,8 @@ function DirectDeliveryNoteController($scope, $element, $http, $timeout, share, 
     $scope.delivery_note_validation = function(){
 
         $scope.delivery_note.date = $$('#delivery_date')[0].get('value');
-        $scope.delivery_no = $$('#delivery_note_no')[0].get('value');
-
+        $scope.delivery_note.delivery_note_no = $$('#delivery_note_no')[0].get('value');
+        console.log($scope.delivery_note.delivery_note_no);
         if ($scope.delivery_note.date == '' || $scope.delivery_note.date == undefined) {
             $scope.validation_error = "Enter Delivery Date" ;
             return false;
@@ -3442,8 +3442,7 @@ function DirectDeliveryNoteController($scope, $element, $http, $timeout, share, 
                     $scope.error_flag=true;
                     $scope.message = data.message;
                 } else {
-                    // console.log('created')
-                    document.location.href = '/sales/direct_delivery_note_pdf/'+data.delivery_note_no+'/';
+                    document.location.href = '/sales/delivery_note_pdf/'+data.delivery_note_id+'/';
 
                 }
             }).error(function(data, success){
