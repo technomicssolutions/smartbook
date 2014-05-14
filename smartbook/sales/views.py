@@ -430,16 +430,79 @@ class CreateQuotationPdf(View):
         table.drawOn(p,700, 715)
 
 
-        data=[['Sl.No:', 'Description', 'Qty', 'Unit Price', 'Amount(AED)']]
+        # data=[['Sl.No:', 'Description', 'Qty', 'Unit Price', 'Amount(AED)']]
 
-        table = Table(data, colWidths=[100, 350, 100, 125, 125], rowHeights=40, style = style1)
+        # table = Table(data, colWidths=[100, 350, 100, 125, 125], rowHeights=40, style = style1)
+        # table.setStyle(TableStyle([                                  
+        #                            ('BOX', (0,0), (-1,-1), 0.25, colors.black),
+        #                            ('VALIGN',(0,-1),(-1,-1),'MIDDLE'),
+        #                            # ('LINEBEFORE',(1,0), (0,-1),1,colors.black),                                  
+        #                            ]))
+        # table.wrapOn(p, 200, 400)
+        # table.drawOn(p,105,575)
+
+
+        data=[['Sl.No:']]
+
+        table = Table(data, colWidths=[100], rowHeights=40, style = style1)
         table.setStyle(TableStyle([                                  
                                    ('BOX', (0,0), (-1,-1), 0.25, colors.black),
                                    ('VALIGN',(0,-1),(-1,-1),'MIDDLE'),
+                                   ('ALIGN',(0,-1),(-1,-1),'CENTRE'),
                                    # ('LINEBEFORE',(1,0), (0,-1),1,colors.black),                                  
                                    ]))
         table.wrapOn(p, 200, 400)
         table.drawOn(p,105,575)
+
+        data=[['Description']]
+
+        table = Table(data, colWidths=[350], rowHeights=40, style = style1)
+        table.setStyle(TableStyle([                                  
+                                   ('BOX', (0,0), (-1,-1), 0.25, colors.black),
+                                   ('VALIGN',(0,-1),(-1,-1),'MIDDLE'),
+                                   ('ALIGN',(0,-1),(-1,-1),'CENTRE'),
+                                   # ('LINEBEFORE',(1,0), (0,-1),1,colors.black),                                  
+                                   ]))
+        table.wrapOn(p, 200, 400)
+        table.drawOn(p,205,575)
+
+        data=[['Qty']]
+
+        table = Table(data, colWidths=[100], rowHeights=40, style = style1)
+        table.setStyle(TableStyle([                                  
+                                   ('BOX', (0,0), (-1,-1), 0.25, colors.black),
+                                   ('VALIGN',(0,-1),(-1,-1),'MIDDLE'),
+                                   ('ALIGN',(0,-1),(-1,-1),'CENTRE'),
+                                   # ('LINEBEFORE',(1,0), (0,-1),1,colors.black),                                  
+                                   ]))
+        table.wrapOn(p, 200, 400)
+        table.drawOn(p,555,575)
+
+
+        data=[['Unit Price']]
+
+        table = Table(data, colWidths=[125], rowHeights=40, style = style1)
+        table.setStyle(TableStyle([                                  
+                                   ('BOX', (0,0), (-1,-1), 0.25, colors.black),
+                                   ('VALIGN',(0,-1),(-1,-1),'MIDDLE'),
+                                   ('ALIGN',(0,-1),(-1,-1),'CENTRE'),
+                                   # ('LINEBEFORE',(1,0), (0,-1),1,colors.black),                                  
+                                   ]))
+        table.wrapOn(p, 200, 400)
+        table.drawOn(p,655,575)
+
+
+        data=[['Amount(AED)']]
+
+        table = Table(data, colWidths=[135], rowHeights=40, style = style1)
+        table.setStyle(TableStyle([                                  
+                                   ('BOX', (0,0), (-1,-1), 0.25, colors.black),
+                                   ('VALIGN',(0,-1),(-1,-1),'MIDDLE'),
+                                   ('ALIGN',(0,-1),(-1,-1),'CENTRE'),
+                                   # ('LINEBEFORE',(1,0), (0,-1),1,colors.black),                                  
+                                   ]))
+        table.wrapOn(p, 200, 400)
+        table.drawOn(p,780,575)
 
         x=575
 
@@ -450,8 +513,42 @@ class CreateQuotationPdf(View):
 
             x=x-40
 
-            data1=[[i, q_item.item.name, q_item.quantity_sold, q_item.item.inventory_set.all()[0].selling_price, q_item.net_amount]]
-            table = Table(data1, colWidths=[100, 350, 100, 125, 125], rowHeights=40, style = style)
+            # data1=[[i, q_item.item.name, q_item.quantity_sold, q_item.item.inventory_set.all()[0].selling_price, q_item.net_amount]]
+            # table = Table(data1, colWidths=[100, 350, 100, 125, 125], rowHeights=40, style = style)
+            # table.setStyle(TableStyle([
+            #                            # ('INNERGRID', (0,0), (0,0), 0.25, colors.black),
+            #                            # ('INNERGRID', (0,1), (-1,-1), 0.25, colors.black),
+            #                            ('BOX', (0,0), (-1,-1), 0.25, colors.black),
+            #                            ('VALIGN',(0,-1),(-1,-1),'MIDDLE'),
+            #                            # ('ALIGN', (0,0), (-1,-1),'RIGHT'),
+            #                            # ('SPACEBELOW', (0,0), (-1,-1), 10),
+            #                            # ('BACKGROUND',(0,0),(1,0),colors.lightgrey)
+            #                            ]))
+            # # table.wrapOn(p, 300, 200)
+            # table.wrapOn(p, 200, 400)
+            # # table.drawOn(p,105,460)
+            # table.drawOn(p,105, x)
+
+
+            data1=[[i]]
+            table = Table(data1, colWidths=[100], rowHeights=40, style = style)
+            table.setStyle(TableStyle([
+                                       # ('INNERGRID', (0,0), (0,0), 0.25, colors.black),
+                                       # ('INNERGRID', (0,1), (-1,-1), 0.25, colors.black),
+                                       ('BOX', (0,0), (-1,-1), 0.25, colors.black),
+                                       ('VALIGN',(0,-1),(-1,-1),'MIDDLE'),
+                                       ('ALIGN', (0,0), (-1,-1),'CENTRE'),
+                                       # ('SPACEBELOW', (0,0), (-1,-1), 10),
+                                       # ('BACKGROUND',(0,0),(1,0),colors.lightgrey)
+                                       ]))
+            # table.wrapOn(p, 300, 200)
+            table.wrapOn(p, 200, 400)
+            # table.drawOn(p,105,460)
+            table.drawOn(p,105, x)
+
+
+            data1=[[q_item.item.name]]
+            table = Table(data1, colWidths=[350], rowHeights=40, style = style)
             table.setStyle(TableStyle([
                                        # ('INNERGRID', (0,0), (0,0), 0.25, colors.black),
                                        # ('INNERGRID', (0,1), (-1,-1), 0.25, colors.black),
@@ -464,12 +561,64 @@ class CreateQuotationPdf(View):
             # table.wrapOn(p, 300, 200)
             table.wrapOn(p, 200, 400)
             # table.drawOn(p,105,460)
-            table.drawOn(p,105, x)
+            table.drawOn(p,205, x)
+
+
+            data1=[[q_item.quantity_sold]]
+            table = Table(data1, colWidths=[100], rowHeights=40, style = style)
+            table.setStyle(TableStyle([
+                                       # ('INNERGRID', (0,0), (0,0), 0.25, colors.black),
+                                       # ('INNERGRID', (0,1), (-1,-1), 0.25, colors.black),
+                                       ('BOX', (0,0), (-1,-1), 0.25, colors.black),
+                                       ('VALIGN',(0,-1),(-1,-1),'MIDDLE'),
+                                       ('ALIGN', (0,0), (-1,-1),'CENTRE'),
+                                       # ('SPACEBELOW', (0,0), (-1,-1), 10),
+                                       # ('BACKGROUND',(0,0),(1,0),colors.lightgrey)
+                                       ]))
+            # table.wrapOn(p, 300, 200)
+            table.wrapOn(p, 200, 400)
+            # table.drawOn(p,105,460)
+            table.drawOn(p,555, x)
+
+
+            data1=[[q_item.item.inventory_set.all()[0].selling_price]]
+            table = Table(data1, colWidths=[125], rowHeights=40, style = style)
+            table.setStyle(TableStyle([
+                                       # ('INNERGRID', (0,0), (0,0), 0.25, colors.black),
+                                       # ('INNERGRID', (0,1), (-1,-1), 0.25, colors.black),
+                                       ('BOX', (0,0), (-1,-1), 0.25, colors.black),
+                                       ('VALIGN',(0,-1),(-1,-1),'MIDDLE'),
+                                       ('ALIGN', (0,0), (-1,-1),'RIGHT'),
+                                       # ('SPACEBELOW', (0,0), (-1,-1), 10),
+                                       # ('BACKGROUND',(0,0),(1,0),colors.lightgrey)
+                                       ]))
+            # table.wrapOn(p, 300, 200)
+            table.wrapOn(p, 200, 400)
+            # table.drawOn(p,105,460)
+            table.drawOn(p,655, x)
+
+
+            data1=[[q_item.net_amount]]
+            table = Table(data1, colWidths=[135], rowHeights=40, style = style)
+            table.setStyle(TableStyle([
+                                       # ('INNERGRID', (0,0), (0,0), 0.25, colors.black),
+                                       # ('INNERGRID', (0,1), (-1,-1), 0.25, colors.black),
+                                       ('BOX', (0,0), (-1,-1), 0.25, colors.black),
+                                       ('VALIGN',(0,-1),(-1,-1),'MIDDLE'),
+                                       ('ALIGN', (0,0), (-1,-1),'RIGHT'),
+                                       # ('SPACEBELOW', (0,0), (-1,-1), 10),
+                                       # ('BACKGROUND',(0,0),(1,0),colors.lightgrey)
+                                       ]))
+            # table.wrapOn(p, 300, 200)
+            table.wrapOn(p, 200, 400)
+            # table.drawOn(p,105,460)
+            table.drawOn(p,780, x)
+
             i = i + 1
 
         data=[['', quotation.net_total]]
 
-        table = Table(data, colWidths=[650, 150], rowHeights=40, style = style)
+        table = Table(data, colWidths=[650, 160], rowHeights=40, style = style)
         table.setStyle(TableStyle([
                                    # ('INNERGRID', (0,0), (0,0), 0.25, colors.black),
                                    # ('INNERGRID', (0,1), (-1,-1), 0.25, colors.black),
