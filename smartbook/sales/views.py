@@ -19,7 +19,7 @@ from django.core.urlresolvers import reverse
 from django.contrib.auth.models import User
 from django.conf import settings
 
-from sales.models import Sales, SalesItem, SalesReturn, SalesReturnItem, Quotation, QuotationItem, DeliveryNote, SalesInvoice, ReceiptVoucher
+from sales.models import Sales, SalesItem, SalesReturn, SalesReturnItem, Quotation, QuotationItem, DeliveryNote, SalesInvoice, ReceiptVoucher, DeliveryNoteItem
 from inventory.models import Item, Inventory
 from web.models import Customer, Staff, OwnerCompany
 
@@ -861,9 +861,19 @@ class ReceiptVoucherCreation(View):
     def get(self, request, *args, **kwargs):
 
         current_date = dt.datetime.now().date()
+        voucher_no = ReceiptVoucher.objects.aggregate(Max('id'))['id__max']
+        
+        if not voucher_no:
+            voucher_no = 1
+            prefix = 'RV'
+        else:
+            voucher_no = voucher_no + 1
+            prefix = ReceiptVoucher.objects.latest('id').prefix
+        voucher_no = prefix + str(voucher_no)
 
         return render(request, 'sales/create_receipt_voucher.html',{
             'current_date': current_date.strftime('%d/%m/%Y'),
+            'voucher_no': voucher_no,
         })
 
     def post(self, request, *args, **kwargs):
@@ -877,9 +887,7 @@ class ReceiptVoucherCreation(View):
             receipt_voucher.date = datetime.strptime(receiptvoucher['date'], '%d/%m/%Y')
             
             receipt_voucher.sum_of = receiptvoucher['amount']
-            receipt_voucher.cash = receiptvoucher['amount']
-            receipt_voucher.amount = receiptvoucher['amount']
-            receipt_voucher.settlement_amount = receiptvoucher['settlement']
+            receipt_voucher.receipt_voucher_no = receiptvoucher['voucher_no']
             receipt_voucher.payment_mode = receiptvoucher['payment_mode']
             receipt_voucher.bank = receiptvoucher['bank_name']
             receipt_voucher.cheque_no = receiptvoucher['cheque_no']
@@ -900,9 +908,7 @@ class ReceiptVoucherCreation(View):
 
             return HttpResponse(response, status=200, mimetype='application/json')         
 
-        # return render(request, 'sales/create_receipt_voucher.html', {})
-
-
+       
 class InvoiceDetails(View):
 
 
@@ -935,6 +941,7 @@ class PrintReceiptVoucher(View):
 
         
         response = HttpResponse(content_type='application/pdf')
+        response['Content-Disposition'] = 'filename=ReceiptVoucher.pdf'
         p = canvas.Canvas(response, pagesize=(1000, 1000))
 
         status_code = 200
@@ -965,6 +972,8 @@ class PrintReceiptVoucher(View):
         p.setFont("Helvetica", 20)
         p.drawString(440, 740, "Receipt Voucher")
         p.drawString(840, 740, 'No.')
+        p.setFont("Helvetica", 15)
+        p.drawString(880, 740, str(receipt_voucher.receipt_voucher_no))
 
         p.setFont("Times-BoldItalic", 15)
         p.drawString(30, 700, "Amount")
@@ -976,7 +985,8 @@ class PrintReceiptVoucher(View):
         table.setStyle(TableStyle([
            ('BOX', (0,0), (-1,-1), 0.25, colors.black),
            ('INNERGRID', (0,0), (-1,-1), 0.25, colors.black),  
-           ('FONTSIZE', (0,0), (-1, -1), 14),                         
+           ('FONTSIZE', (0,0), (-1, -1), 14),    
+           ('FONTNAME', (0,0), (-1,-1), 'Times-BoldItalic')                     
            ]))     
 
         table.wrapOn(p, 200, 400)
@@ -987,7 +997,7 @@ class PrintReceiptVoucher(View):
         p.drawString(870, 700, "........................")
 
         p.drawString(30, 660, "Received from Mr./M/s.")
-        p.drawString(190, 665,receipt_voucher.customer.customer_name)
+        p.drawString(210, 665,receipt_voucher.customer.customer_name)
         p.drawString(180, 660, "...............................................................................................................................................................................................................")
 
         p.drawString(30, 620, "The Sum of")
@@ -995,7 +1005,7 @@ class PrintReceiptVoucher(View):
         p.drawString(110, 620, "..................................................................................................................................................................................................................................")
 
         p.drawString(30, 580, "On Settlement of")
-        p.drawString(180, 585,str(receipt_voucher.sales_invoice))
+        p.drawString(180, 585,str(receipt_voucher.sales_invoice.invoice_no))
         p.drawString(140, 580, "..........................................................................................................................................................................................................................")
 
         p.drawString(30, 540, "Cheque No")
@@ -1004,8 +1014,8 @@ class PrintReceiptVoucher(View):
         p.drawString(100, 540, " ..........................................................................................")
 
         p.drawString(450, 540, "Cash")
-        # if receipt_voucher.cash:
-            # p.drawString(500, 545,str(receipt_voucher.cash))
+        if receipt_voucher.sum_of:
+            p.drawString(500, 545,str(receipt_voucher.sum_of))
         p.drawString(490, 540, ".............................................................................................................................")
 
         p.drawString(30, 500, "Bank")
@@ -1031,4 +1041,81 @@ class PrintReceiptVoucher(View):
         
         return response
 
+class LatestSalesDetails(View):
+
+    def get(self, request, *args, **kwargs):
+
+        customer_name = request.GET.get('customer', '')
+        item_name = request.GET.get('item_name', '')
+        sales_details = (SalesItem.objects.filter(item__name=item_name, sales__customer__customer_name=customer_name).order_by('-id'))[:3]
         
+        ctx_sales_details = []
+        for sale_item in sales_details:
+            ctx_sales_details.append({
+                'selling_price': sale_item.selling_price,
+                'discount_given': sale_item.discount_given,
+                'qty_sold': sale_item.quantity_sold,
+                'date': sale_item.sales.sales_invoice_date.strftime('%d/%m/%Y'),
+            })
+        res = {
+            'result': 'ok',
+            'latest_sales_details': ctx_sales_details 
+        }
+        response = simplejson.dumps(res)
+        return HttpResponse(response, status=200, mimetype='application/json')
+
+class DirectDeliveryNote(View):
+
+    def get(self, request, *args, **kwargs):
+
+        current_date = dt.datetime.now().date()
+
+        ref_number = DeliveryNote.objects.aggregate(Max('id'))['id__max']
+        
+        if not ref_number:
+            ref_number = 1
+            prefix = 'DN'
+        else:
+            ref_number = ref_number + 1
+            prefix = DeliveryNote.objects.latest('id').prefix
+        delivery_no = prefix + str(ref_number)
+
+        context = {
+            'current_date': current_date.strftime('%d-%m-%Y'),
+            'delivery_no': delivery_no,
+        }
+
+        return render(request, 'sales/direct_delivery_note.html', context)
+
+    def post(self, request, *args, **kwargs):
+
+        if request.is_ajax():
+            delivery_note_details = ast.literal_eval(request.POST['delivery_note'])
+            
+            customer = Customer.objects.get(customer_name=delivery_note_details['customer'])
+            delivery_note = DeliveryNote()
+            delivery_note.customer = customer
+            delivery_note.date = datetime.strptime(delivery_note_details['date'], '%d-%m-%Y')
+            delivery_note.lpo_number = delivery_note_details['lpo_no']
+            delivery_note.delivery_note_number = delivery_note_details['delivery_note_no']
+            delivery_note.save()
+
+            delivery_note_data_items = quotation_data['sales_items']
+            for delivery_note_item in delivery_note_data_items:
+                item = Item.objects.get(code=delivery_note_item['item_code'])
+                delivery_note_item_obj, item_created = DeliveryNoteItem.objects.get_or_create(item=item, delivery_note=delivery_note)
+                inventory, created = Inventory.objects.get_or_create(item=item)
+                inventory.quantity = inventory.quantity - int(delivery_note_item['qty_sold'])
+                inventory.save()
+                delivery_note_item_obj.net_amount = float(delivery_note_item['net_amount'])
+                delivery_note_item_obj.quantity_sold = int(delivery_note_item['qty_sold'])
+                delivery_note_item_obj.save()
+
+            res = {
+                'result': 'ok',
+                'delivery_note_id': delivery_note.id
+            }
+
+            response = simplejson.dumps(res)
+
+            return HttpResponse(response, status=200, mimetype='application/json')

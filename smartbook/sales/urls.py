@@ -21,5 +21,5 @@ urlpatterns = patterns('',
 	url(r'receipt_voucher/$', ReceiptVoucherCreation.as_view(), name='receipt_voucher'),
 	url(r'invoice_details/$', InvoiceDetails.as_view(), name='invoice_details'),
 	url(r'direct_delivery_note/$', DirectDeliveryNote.as_view(), name='direct_delivery_note'),
-
+	url(r'latest_sales_details/$', LatestSalesDetails.as_view(), name='latest_sales_details'),
 )
