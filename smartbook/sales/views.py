@@ -425,7 +425,7 @@ class CreateQuotationPdf(View):
 
         data=[['Sl.No:', 'Description', 'Qty', 'Unit Price', 'Amount(AED)']]
 
-        table = Table(data, colWidths=[100, 400, 100, 100, 100], rowHeights=40, style = style)
+        table = Table(data, colWidths=[100, 350, 100, 125, 125], rowHeights=40, style = style)
         table.setStyle(TableStyle([                                  
                                    ('BOX', (0,0), (-1,-1), 0.25, colors.black),
                                    ('LINEBEFORE',(1,0), (0,-1),1,colors.black),                                  
@@ -443,7 +443,7 @@ class CreateQuotationPdf(View):
             x=x-40
 
             data1=[[i, q_item.item.name, q_item.quantity_sold, q_item.item.inventory_set.all()[0].selling_price, q_item.net_amount]]
-            table = Table(data1, colWidths=[100, 400, 100, 100, 100], rowHeights=40, style = style)
+            table = Table(data1, colWidths=[100, 350, 100, 125, 125], rowHeights=40, style = style)
             table.setStyle(TableStyle([
                                        # ('INNERGRID', (0,0), (0,0), 0.25, colors.black),
                                        # ('INNERGRID', (0,1), (-1,-1), 0.25, colors.black),
@@ -458,7 +458,7 @@ class CreateQuotationPdf(View):
 
         data=[['Total', quotation.net_total]]
 
-        table = Table(data, colWidths=[700, 100], rowHeights=40, style = style)
+        table = Table(data, colWidths=[650, 150], rowHeights=40, style = style)
         table.setStyle(TableStyle([
                                    # ('INNERGRID', (0,0), (0,0), 0.25, colors.black),
                                    # ('INNERGRID', (0,1), (-1,-1), 0.25, colors.black),
@@ -476,13 +476,11 @@ class CreateQuotationPdf(View):
         p.drawString(160, x-180, "Validity :-")
         
         if x >= 270:
-            print "in if"
             p.drawString(160, 90, "For")
             p.drawString(160, 70, "Sunlight Stationary")
             p.drawString(160, 10, "Authorized Signatory")
             p.drawString(700, 10, "Prepared By")
-        else:
-            print "in else"
+        else:           
             p.drawString(160, x-190, "For")
             p.drawString(160, x-200, "Sunlight Stationary")
             p.drawString(160, x-210, "Authorized Signatory")
