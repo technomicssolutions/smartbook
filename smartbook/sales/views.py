@@ -19,7 +19,7 @@ from django.core.urlresolvers import reverse
 from django.contrib.auth.models import User
 from django.conf import settings
 
-from sales.models import Sales, SalesItem, SalesReturn, SalesReturnItem, Quotation, QuotationItem, DeliveryNote, SalesInvoice, ReceiptVoucher
+from sales.models import Sales, SalesItem, SalesReturn, SalesReturnItem, Quotation, QuotationItem, DeliveryNote, SalesInvoice, ReceiptVoucher, DeliveryNoteItem
 from inventory.models import Item, Inventory
 from web.models import Customer, Staff, OwnerCompany
 
@@ -1065,3 +1065,58 @@ class LatestSalesDetails(View):
         response = simplejson.dumps(res)
         return HttpResponse(response, status=200, mimetype='application/json')
 
+class DirectDeliveryNote(View):
+
+    def get(self, request, *args, **kwargs):
+
+        current_date = dt.datetime.now().date()
+
+        ref_number = DeliveryNote.objects.aggregate(Max('id'))['id__max']
+        
+        if not ref_number:
+            ref_number = 1
+            prefix = 'DN'
+        else:
+            ref_number = ref_number + 1
+            prefix = DeliveryNote.objects.latest('id').prefix
+        delivery_no = prefix + str(ref_number)
+
+        context = {
+            'current_date': current_date.strftime('%d-%m-%Y'),
+            'delivery_no': delivery_no,
+        }
+
+        return render(request, 'sales/direct_delivery_note.html', context)
+
+    def post(self, request, *args, **kwargs):
+
+        if request.is_ajax():
+            delivery_note_details = ast.literal_eval(request.POST['delivery_note'])
+            
+            customer = Customer.objects.get(customer_name=delivery_note_details['customer'])
+            delivery_note = DeliveryNote()
+            delivery_note.customer = customer
+            delivery_note.date = datetime.strptime(delivery_note_details['date'], '%d-%m-%Y')
+            delivery_note.lpo_number = delivery_note_details['lpo_no']
+            delivery_note.delivery_note_number = delivery_note_details['delivery_note_no']
+            delivery_note.save()
+
+            delivery_note_data_items = quotation_data['sales_items']
+            for delivery_note_item in delivery_note_data_items:
+                item = Item.objects.get(code=delivery_note_item['item_code'])
+                delivery_note_item_obj, item_created = DeliveryNoteItem.objects.get_or_create(item=item, delivery_note=delivery_note)
+                inventory, created = Inventory.objects.get_or_create(item=item)
+                inventory.quantity = inventory.quantity - int(delivery_note_item['qty_sold'])
+                inventory.save()
+                delivery_note_item_obj.net_amount = float(delivery_note_item['net_amount'])
+                delivery_note_item_obj.quantity_sold = int(delivery_note_item['qty_sold'])
+                delivery_note_item_obj.save()
+
+            res = {
+                'result': 'ok',
+                'delivery_note_id': delivery_note.id
+            }
+
+            response = simplejson.dumps(res)
+
+            return HttpResponse(response, status=200, mimetype='application/json')
