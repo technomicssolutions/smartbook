@@ -3093,7 +3093,6 @@ function DeliveryNoteController($scope, $element, $http, $timeout, share, $locat
         var index = $scope.quotation.sales_items.indexOf(item);
         $scope.quotation.sales_items.splice(index, 1);
     }
-
 }
 
 function ReceiptVoucherController($scope, $element, $http, $timeout, share, $location) {
@@ -3129,7 +3128,6 @@ function ReceiptVoucherController($scope, $element, $http, $timeout, share, $loc
             useFadeInOut: !Browser.ie,
             format: '%d/%m/%Y',
         });
-
     }
 
     
@@ -3240,8 +3238,7 @@ function ReceiptVoucherController($scope, $element, $http, $timeout, share, $loc
             $scope.cash = false;
         } else {
             $scope.cash = true;
-        }     
-       
+        }       
     }
 }
 
