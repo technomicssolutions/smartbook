@@ -20,5 +20,5 @@ urlpatterns = patterns('',
 	url(r'pdf_receipt_voucher/(?P<receipt_voucher_id>\d+)/$', PrintReceiptVoucher.as_view(), name="pdf_receipt_voucher"),
 	url(r'receipt_voucher/$', ReceiptVoucherCreation.as_view(), name='receipt_voucher'),
 	url(r'invoice_details/$', InvoiceDetails.as_view(), name='invoice_details'),
-
+	url(r'latest_sales_details/$', LatestSalesDetails.as_view(), name='latest_sales_details'),
 )

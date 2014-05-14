@@ -1041,6 +1041,29 @@ function SalesQNDNController($scope, $element, $http, $timeout, share, $location
             console.log(data || "Request failed");
         });
     }
+
+    $scope.get_latest_sales_details = function(item) {
+        var customer_name = $scope.sales.customer;
+        var item_name = item.item_name;
+        $scope.latest_sales = []
+        $http.get('/sales/latest_sales_details/?customer='+customer_name+'&item_name='+item_name).success(function(data)
+        {   
+            console.log(data.latest_sales_details);
+            if(data.latest_sales_details.length > 0){
+                $scope.sales_deatils = true;
+                $scope.latest_sales = data.latest_sales_details; 
+            } else {
+                $scope.sales_deatils = false;
+            }
+            
+        }).error(function(data, status)
+        {
+            console.log(data || "Request failed");
+        });
+    }
+    $scope.hide_sales_details = function(){
+        $scope.sales_deatils = false;
+    }
     $scope.add_delivery_note = function(delivery_note) {
         $scope.selecting_delivery_note = false;
         $scope.delivery_note_selected = true;
@@ -1555,7 +1578,37 @@ function SalesController($scope, $element, $http, $timeout, share, $location) {
         var index = $scope.sales.sales_items.indexOf(item);
         $scope.sales.sales_items.splice(index, 1);
     }
+    $scope.get_latest_sales_details = function(item) {
+        $scope.no_customer_error_flag = false;
+        var customer_name = $scope.sales.customer;
+        var item_name = item.item_name;
+        $scope.latest_sales = []
+        if (customer_name != 'select'){
+            $scope.no_customer_error_flag = false;
+            $http.get('/sales/latest_sales_details/?customer='+customer_name+'&item_name='+item_name).success(function(data)
+            {   
+                if(data.latest_sales_details.length > 0){
+                    $scope.sales_deatils = true;
+                    $scope.latest_sales = data.latest_sales_details; 
+                } else {
+                    $scope.sales_deatils = false;
+                    $scope.no_customer_error = 'No sales';
+                    $scope.no_customer_error_flag = true;
+                }
+                
+            }).error(function(data, status)
+            {
+                console.log(data || "Request failed");
+            });
+        } else {
+            $scope.no_customer_error = 'Enter Customer Name';
+            $scope.no_customer_error_flag = true;
+        }
+    } 
 
+    $scope.hide_sales_details = function(){
+        $scope.sales_deatils = false;
+    }
     $scope.save_sales = function() {
 
         if($scope.validate_sales()){
@@ -3036,6 +3089,7 @@ function ReceiptVoucherController($scope, $element, $http, $timeout, share, $loc
         'amount': '',
         'settlement': '',
         'invoice_no': '',
+        'voucher_no': '',
 
     }
     $scope.receiptvoucher.customer = '';
@@ -3062,6 +3116,7 @@ function ReceiptVoucherController($scope, $element, $http, $timeout, share, $loc
     $scope.receipt_validation = function(){
 
         $scope.receiptvoucher.date = $$('#receipt_voucher_date')[0].get('value');
+        $scope.receiptvoucher.voucher_no = $$('#voucher_no')[0].get('value');
         
         if ($scope.receiptvoucher.invoice_no == '' || $scope.receiptvoucher.invoice_no == undefined) {
             $scope.validation_error = "Enter the Sales Invoice no.";
@@ -3073,8 +3128,6 @@ function ReceiptVoucherController($scope, $element, $http, $timeout, share, $loc
             $scope.receiptvoucher.cheque_no = '';
             $scope.receiptvoucher.cheque_date = '';
         } else {
-
-            console.log($scope.receiptvoucher);
             
             if($scope.receiptvoucher.bank_name =='' || $scope.receiptvoucher.bank_name==undefined){
                 $scope.validation_error = "Please enter bank name";
