@@ -63,6 +63,7 @@ class DeliveryNote(models.Model):
     lpo_number = models.CharField('LPO Number', null=True, blank=True, max_length=20)
     prefix = models.CharField('Prefix', null=True, blank=True, max_length=20, default='DN')
     processed = models.BooleanField('Is Processed', default=False)
+    net_total = models.DecimalField('Net Total',max_digits=14, decimal_places=2, default=0)
 
 
     def __unicode__(self):

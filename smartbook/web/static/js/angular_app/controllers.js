@@ -843,6 +843,7 @@ function SalesQNDNController($scope, $element, $http, $timeout, share, $location
         'delivery_no': '',  
         'lpo_number': '', 
     }
+    $scope.sales.quotation_ref_no = '';
     $scope.sales.staff = 'select';
     $scope.sales.customer = '';
     $scope.init = function(csrf_token, sales_invoice_number)
@@ -879,9 +880,9 @@ function SalesQNDNController($scope, $element, $http, $timeout, share, $location
         }
     }
     $scope.validate_sales = function() {
-
-        if ($scope.sales.quotation_ref_no == ''){
-            $scope.validation_error = "Enter Quotation Reference No" ;
+        console.log($scope.sales.quotation_ref_no);
+        if ($scope.sales.quotation_ref_no == '' && $scope.sales.delivery_no == ''){
+            $scope.validation_error = "Enter Quotation Reference No or Delivery No" ;
             return false;
         } else if($scope.sales.sales_invoice_date == '') {
             $scope.validation_error = "Enter Sales invoice Date" ;
@@ -1073,6 +1074,7 @@ function SalesQNDNController($scope, $element, $http, $timeout, share, $location
      $scope.remove_from_item_list = function(item) {
         var index = $scope.sales.sales_items.indexOf(item);
         $scope.sales.sales_items.splice(index, 1);
+        $scope.calculate_net_total_sale();
     }
 
     $scope.add_delivery_note = function(delivery_note) {
@@ -1588,6 +1590,7 @@ function SalesController($scope, $element, $http, $timeout, share, $location) {
     $scope.remove_from_item_list = function(item) {
         var index = $scope.sales.sales_items.indexOf(item);
         $scope.sales.sales_items.splice(index, 1);
+        $scope.calculate_net_total_sale();
     }
     $scope.get_latest_sales_details = function(item) {
         $scope.no_customer_error_flag = false;
@@ -3386,7 +3389,7 @@ function DirectDeliveryNoteController($scope, $element, $http, $timeout, share, 
         for(var i=0; i< $scope.delivery_note.sales_items.length; i++){
             total_amount = (parseFloat(total_amount) + parseFloat($scope.delivery_note.sales_items[i].net_amount)).toFixed(2);
         }
-        $scope.delivery_note.total_amount = total_amount;
+        $scope.delivery_note.net_total = total_amount;
         console.log($scope.delivery_note.total_amount);
     }
 
@@ -3426,6 +3429,7 @@ function DirectDeliveryNoteController($scope, $element, $http, $timeout, share, 
     $scope.remove_from_item_list = function(item) {
         var index = $scope.delivery_note.sales_items.indexOf(item);
         $scope.delivery_note.sales_items.splice(index, 1);
+        $scope.calculate_net_total_amount();
     }
 
     $scope.create_delivery_note = function() {
