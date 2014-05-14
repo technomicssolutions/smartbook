@@ -3249,8 +3249,8 @@ function DirectDeliveryNoteController($scope, $element, $http, $timeout, share, 
         'date': '',
         'customer':'',
         'net_total': 0,
-        'reference_no': '',
         'total_amount': '',
+        'delivery_note_no': '',
         
     }
     $scope.delivery_note.customer = 'select';
@@ -3264,7 +3264,6 @@ function DirectDeliveryNoteController($scope, $element, $http, $timeout, share, 
     $scope.get_customers = function() {
         $http.get('/customer/list/').success(function(data)
         {   
-
             $scope.customers = data.customers;
 
         }).error(function(data, status)
@@ -3391,7 +3390,7 @@ function DirectDeliveryNoteController($scope, $element, $http, $timeout, share, 
     $scope.delivery_note_validation = function(){
 
         $scope.delivery_note.date = $$('#delivery_date')[0].get('value');
-        $scope.quotation.reference_no = $$('#reference_number')[0].get('value');
+        $scope.delivery_no = $$('#delivery_note_no')[0].get('value');
 
         if ($scope.delivery_note.date == '' || $scope.delivery_note.date == undefined) {
             $scope.validation_error = "Enter Delivery Date" ;
@@ -3399,10 +3398,10 @@ function DirectDeliveryNoteController($scope, $element, $http, $timeout, share, 
         } else if ($scope.delivery_note.customer == 'select') {
             $scope.validation_error = "Enter Customer Name";
             return false;
-        } else if ($scope.delivery_note.reference_no == '' || $scope.delivery_note.reference_no == undefined) {
-            $scope.validation_error = "Enter Reference number";
-            return false;
-        } else if ($scope.delivery_date.lpo_no == '' || $scope.delivery_date.lpo_no == undefined) {
+        // } else if ($scope.delivery_note.reference_no == '' || $scope.delivery_note.reference_no == undefined) {
+        //     $scope.validation_error = "Enter Reference number";
+        //     return false;
+        } else if ($scope.delivery_note.lpo_no == '' || $scope.delivery_note.lpo_no == undefined) {
             $scope.validation_error = "Enter Lpo No.";
             return false;
         } else if($scope.delivery_note.sales_items.length == 0){
@@ -3422,20 +3421,20 @@ function DirectDeliveryNoteController($scope, $element, $http, $timeout, share, 
         return true;
     }
     $scope.remove_from_item_list = function(item) {
-        var index = $scope.quotation.sales_items.indexOf(item);
-        $scope.quotation.sales_items.splice(index, 1);
+        var index = $scope.delivery_note.sales_items.indexOf(item);
+        $scope.delivery_note.sales_items.splice(index, 1);
     }
 
-    $scope.create_quotation = function() {
-        $scope.is_valid = $scope.quotation_validation();
+    $scope.create_delivery_note = function() {
+        $scope.is_valid = $scope.delivery_note_validation();
         if($scope.is_valid) {
             params = { 
-                'quotation': angular.toJson($scope.quotation),
+                'delivery_note': angular.toJson($scope.delivery_note),
                 "csrfmiddlewaretoken" : $scope.csrf_token
             }
             $http({
                 method : 'post',
-                url : "/sales/create_quotation/",
+                url : "/sales/direct_delivery_note/",
                 data : $.param(params),
                 headers : {
                     'Content-Type' : 'application/x-www-form-urlencoded'
@@ -3447,7 +3446,7 @@ function DirectDeliveryNoteController($scope, $element, $http, $timeout, share, 
                     $scope.message = data.message;
                 } else {
                     // console.log('created')
-                    document.location.href = '/sales/create_quotation_pdf/'+data.quotation_id+'/';
+                    document.location.href = '/sales/direct_delivery_note_pdf/'+data.delivery_note_no+'/';
 
                 }
             }).error(function(data, success){

@@ -1126,7 +1126,7 @@ class DirectDeliveryNote(View):
             delivery_note.delivery_note_number = delivery_note_details['delivery_note_no']
             delivery_note.save()
 
-            delivery_note_data_items = quotation_data['sales_items']
+            delivery_note_data_items = delivery_note_details['sales_items']
             for delivery_note_item in delivery_note_data_items:
                 item = Item.objects.get(code=delivery_note_item['item_code'])
                 delivery_note_item_obj, item_created = DeliveryNoteItem.objects.get_or_create(item=item, delivery_note=delivery_note)
@@ -1141,6 +1141,7 @@ class DirectDeliveryNote(View):
                 'result': 'ok',
                 'delivery_note_id': delivery_note.id
             }
+            print res
 
             response = simplejson.dumps(res)
 
