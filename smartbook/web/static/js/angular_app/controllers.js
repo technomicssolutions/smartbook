@@ -48,11 +48,17 @@ add_new_customer = function($http, $scope) {
         });
     } 
 }       
-get_quotation_details = function($http, $scope){
+get_quotation_details = function($http, $scope, from){
 
     var ref_no = $scope.quotation_no;
-    $scope.quotations = []
-    $http.get('/sales/quotation_details/?reference_no='+ref_no+'&sales_invoice=true').success(function(data)
+    $scope.quotations = [];
+    var url = '';
+    if (from == 'quotation') {
+        url = '/sales/quotation_details/?reference_no='+ref_no+'&sales_invoice=true';
+    } else {
+        url = '/sales/quotation_details/?reference_no='+ref_no;
+    }
+    $http.get(url).success(function(data)
     {
         console.log(data.quotations.length);
         if(data.quotations.length > 0){
@@ -976,7 +982,7 @@ function SalesQNDNController($scope, $element, $http, $timeout, share, $location
     }
 
     $scope.get_quotation_details = function(){
-        get_quotation_details($http, $scope);        
+        get_quotation_details($http, $scope, 'quotation');        
     }
     $scope.add_quotation = function(quotation) {
         $scope.selecting_quotation = false;
@@ -2959,7 +2965,7 @@ function DeliveryNoteController($scope, $element, $http, $timeout, share, $locat
     $scope.quotation_selected = false;
 
     $scope.get_quotation_details = function(){
-        get_quotation_details($http, $scope);
+        get_quotation_details($http, $scope, 'delivery_note');
     }
     $scope.add_quotation = function(quotation) {
         $scope.selecting_quotation = false;
