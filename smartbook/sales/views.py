@@ -1126,7 +1126,11 @@ class CreateSalesInvoicePDF(View):
             table.drawOn(p,10,x)
             i = i + 1
         x=600
-        total_amount = total_amount.quantize(TWOPLACES)
+        total_amount = sales.net_amount
+        try:
+            total_amount = total_amount.quantize(TWOPLACES)
+        except:
+            total_amount = total_amount
         total_amount_in_words = num2words(total_amount).title() + ' Only'
        
         data=[[total_amount_in_words, total_amount]]  
@@ -1202,8 +1206,10 @@ class InvoiceDetails(View):
 
         invoice_no = request.GET.get('invoice_no', '')
         sales_invoice_details = SalesInvoice.objects.filter(invoice_no__istartswith=invoice_no, is_processed=False)
+        invoices = SalesInvoice.objects.filter(invoice_no__istartswith=invoice_no)
         ctx_invoice_details = []
         ctx_sales_invoices = []
+        ctx_sales_item  = []
         if sales_invoice_details.count() > 0:
             for sales_invoice in sales_invoice_details:
                 ctx_invoice_details.append({
@@ -1212,12 +1218,49 @@ class InvoiceDetails(View):
                     'customer': sales_invoice.customer.customer_name,
                     'amount': sales_invoice.sales.quotation.net_total if sales_invoice.sales.quotation else sales_invoice.sales.net_amount
                 })
+        i = 0
+        i = i + 1
+        if invoices.count() > 0:
+            for sales_invoice in invoices:
+                net_amount = 0
+                for sale in sales_invoice.sales.salesitem_set.all():
+                    net_amount = float(sale.selling_price) * int(sale.quantity_sold)
+                    ctx_sales_item.append({
+                        'sl_no': i,
+                        'item_name': sale.item.name,
+                        'item_code': sale.item.code,
+                        'barcode': sale.item.barcode,
+                        'item_description': sale.item.description,
+                        'qty_sold': sale.quantity_sold,
+                        'tax': sale.item.tax,
+                        'uom': sale.item.uom.uom,
+                        'current_stock': sale.item.inventory_set.all()[0].quantity if sale.item.inventory_set.count() > 0  else 0 ,
+                        'selling_price': sale.selling_price,
+                        'discount_permit': sale.item.inventory_set.all()[0].discount_permit_percentage if sale.item.inventory_set.count() > 0 else 0,
+                        'net_amount': net_amount,
+                        'discount_given': sale.discount_given,
+
+                    }) 
+                    net_amount = 0
+                    i = i + 1
                 ctx_sales_invoices.append({
                     'invoice_no': sales_invoice.invoice_no,
-                    'reference_no': sales_invoice.quotation.reference_id if sales_invoice.quotation else '',
+                    'reference_no': sales_invoice.quotation.reference_id if sales_invoice.quotation else 0,
                     'date': sales_invoice.date.strftime('%d/%m/%Y'),
                     'customer': sales_invoice.customer.customer_name,
+                    'delivery_note_no': sales_invoice.delivery_note.delivery_note_number if sales_invoice.delivery_note else 0,
+                    'lpo_number': sales_invoice.delivery_note.lpo_number if sales_invoice.delivery_note else sales_invoice.sales.lpo_number,
+                    'items': ctx_sales_item,
+                    'salesman': sales_invoice.sales.salesman.user.first_name if sales_invoice.sales.salesman else '',
+                    'payment_mode': sales_invoice.sales.payment_mode,
+                    'card_number': sales_invoice.sales.card_number,
+                    'bank_name': sales_invoice.sales.bank_name,
+                    'net_total': sales_invoice.sales.net_amount,
+                    'round_off': sales_invoice.sales.round_off if sales_invoice.sales.round_off else 0,
+                    'grant_total': sales_invoice.sales.grant_total,
+                    'discount': sales_invoice.sales.discount,
                 })
+                ctx_sales_item = []
         res = {
             'result': 'ok',
             'invoice_details': ctx_invoice_details, 
@@ -1418,3 +1461,83 @@ class EditSalesInvoice(View):
     def get(self, request, *args, **kwargs):
 
         return render(request, 'sales/edit_sales_invoice.html', {})
+
+    def post(self, request, *args, **kwargs):
+        sales_invoice_details = ast.literal_eval(request.POST['invoice'])
+        sales_invoice = SalesInvoice.objects.get(invoice_no = sales_invoice_details['invoice_no'])
+        sales = sales_invoice.sales
+        stored_item_names = []
+        for s_item in sales.salesitem_set.all():
+            stored_item_names.append(s_item.item.name)
+
+        # Editing and Removing the Existing details of the sales item
+        for s_item in sales.salesitem_set.all():
+            s_item_names = []
+            for item_data in sales_invoice_details['sales_items']:
+                s_item_names.append(item_data['item_name'])
+
+            # Removing the sales item object that is not in inputed sales items list
+            if s_item.item.name not in s_item_names:
+                item = s_item.item 
+                inventory, created = Inventory.objects.get_or_create(item=item)
+                inventory.quantity = inventory.quantity + int(s_item.quantity_sold)
+                inventory.save()
+                s_item.delete()
+            else:
+                for item_data in sales_invoice_details['sales_items']:
+                    item = Item.objects.get(code=item_data['item_code'])
+                    s_item, item_created = SalesItem.objects.get_or_create(item=item, sales=sales)
+                    inventory, created = Inventory.objects.get_or_create(item=item)
+                    if item_created:
+
+                        inventory.quantity = inventory.quantity - int(item_data['qty_sold'])
+                    else:
+                        inventory.quantity = inventory.quantity + s_item.quantity_sold - int(item_data['qty_sold'])      
+
+                    inventory.save()
+                    s_item.sales = sales
+                    s_item.item = item
+                    s_item.quantity_sold = item_data['qty_sold']
+                    s_item.discount_given = item_data['disc_given']
+                    s_item.net_amount = item_data['net_amount']
+                    s_item.selling_price = item_data['unit_price']
+                    s_item.save()
+
+        # Create new sales item for the newly added item
+        for item_data in sales_invoice_details['sales_items']:
+
+            if item_data['item_name'] not in stored_item_names:
+                item = Item.objects.get(code=item_data['item_code'])
+                s_item, item_created = SalesItem.objects.get_or_create(item=item, sales=sales)
+                inventory, created = Inventory.objects.get_or_create(item=item)
+                if item_created:
+
+                    inventory.quantity = inventory.quantity - int(item_data['qty_sold'])
+                else:
+                    inventory.quantity = inventory.quantity + s_item.quantity_sold - int(item_data['qty_sold'])      
+
+                inventory.save()
+                s_item.sales = sales
+                s_item.item = item
+                s_item.quantity_sold = item_data['qty_sold']
+                s_item.discount_given = item_data['disc_given']
+                s_item.net_amount = item_data['net_amount']
+                s_item.selling_price = item_data['unit_price']
+                s_item.save()
+        if sales.net_amount != sales_invoice_details['net_total']:
+            sales.net_amount = sales_invoice_details['net_total']
+        if sales.round_off != sales_invoice_details['roundoff']:
+            sales.round_off = sales_invoice_details['roundoff']
+        if sales.grant_total != sales_invoice_details['grant_total']:
+            sales.grant_total = sales_invoice_details['grant_total']
+        if sales.discount != sales_invoice_details['net_discount']:
+            sales.discount != sales_invoice_details['net_discount']
+
+        sales.save()
+
+        res = {
+            'result': 'ok',
+            'sales_invoice_id': sales_invoice.id
+        }
+        response = simplejson.dumps(res)
+        return HttpResponse(response, status=200, mimetype='application/json')

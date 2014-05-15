@@ -58,7 +58,7 @@
 
 						<div class="forminput_sales">
 							
-							<input type="text" name="sales_invoice_date"  id="sales_invoice_date" value="{{current_date}}" ng-readonly="payment_mode_selection_check">
+							<input type="text" name="sales_invoice_date"  id="sales_invoice_date" value="{{current_date}}" readonly>
 						</div>
 					</div>
 					<div class="formrow_sales">
@@ -182,7 +182,7 @@
 							<label for="bank_name">Bank Name</label>
 						</div>
 						<div class="forminput_sales">
-							<input type="text" name="bank_name"ng-model="sales.bank_name" ng-readonly="payment_mode_selection">
+							<input type="text" name="bank_name"ng-model="sales.bank_name" ng-readonly="payment_mode_selection_check">
 						</div>
 
 					</div>

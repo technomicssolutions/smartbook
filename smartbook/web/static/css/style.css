@@ -416,7 +416,9 @@ form {
 }
 .formtext_purchase {
 	float: left;
-    width: 100%;
+
+    width: 248px;
+
 }
 .forminput_purchase {
 	float: left;
@@ -483,10 +485,11 @@ form {
 }
 .formtext_sales {
 	float: left;
-    width: 200px;
+    width: 206px;
 }
 .forminput_sales {
 	float: left;
+
 }
 .search_sales{
 	width: 100%;
@@ -766,10 +769,10 @@ a {
 }
 
 #create_sales .purchase_item_list .item_list_row span {
-/*<<<<<<< HEAD
-	width: 11%;
-}
-=======*/
+
+
+
+
 	width: 9.5%;
 }
 
@@ -783,4 +786,11 @@ a {
 #direct_delivery_note .purchase_item_list .item_list_row span {
     width: 9.5%;
 }
-/*>>>>>>> df375a0885a21ba1f8a62c05290af6bd930719bc*/
+
+
+
+
+#edit_sales_invoice .purchase_item_list .item_list_row span {
+    width: 9.5%;
+}
+
