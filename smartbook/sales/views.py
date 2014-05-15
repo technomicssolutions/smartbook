@@ -245,8 +245,13 @@ class CreateQuotation(View):
             quotation, quotation_created = Quotation.objects.get_or_create(reference_id=quotation_data['reference_no'])
             quotation.date = datetime.strptime(quotation_data['date'], '%d-%m-%Y')
             quotation.attention = quotation_data['attention']
-            quotation.subject = quotation_data['subject']
+            quotation.subject = quotation_data['subject']           
             quotation.net_total = quotation_data['total_amount']
+
+            quotation.delivery = quotation_data['delivery']
+            quotation.proof = quotation_data['proof']
+            quotation.payment = quotation_data['payment']
+            quotation.validity = quotation_data['validity']
             quotation.save()
             customer = Customer.objects.get(customer_name=quotation_data['customer'])
             quotation.to = customer
@@ -633,10 +638,10 @@ class CreateQuotationPdf(View):
         p.setFont("Helvetica", 15)
 
         p.drawString(110, x-80, "Hope the above quoted prices will meet your satisfaction and for further information please do not hesitate to contact us.")
-        p.drawString(110, x-120, "Delivery :-")
-        p.drawString(110, x-140, "Proof :-")
-        p.drawString(110, x-160, "Payment :-")
-        p.drawString(110, x-180, "Validity :-")
+        p.drawString(110, x-120, "Delivery     : " + quotation.delivery)
+        p.drawString(110, x-140, "Proof          : " + quotation.proof)
+        p.drawString(110, x-160, "Payment    : " + quotation.payment)
+        p.drawString(110, x-180, "Validity       : " + quotation.validity)
         
         # if x >= 270:
         p.drawString(110, 150, "For")

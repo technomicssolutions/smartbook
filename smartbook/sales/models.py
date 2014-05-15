@@ -28,7 +28,7 @@ class Quotation(models.Model):
     is_sales_invoice_created = models.BooleanField('Is Sales Invoice Created', default=False)
     delivery = models.CharField('Delivery', max_length=10, null=True, blank=True)
     proof = models.CharField('Proof', max_length=10, null=True, blank=True)
-    Payment = models.CharField('Payment', max_length=10, null=True, blank=True)
+    payment = models.CharField('Payment', max_length=10, null=True, blank=True)
     validity = models.CharField('Validity', max_length=10, null=True, blank=True)
 
     def __unicode__(self):
