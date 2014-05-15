@@ -414,7 +414,7 @@ form {
 }
 .formtext_purchase {
 	float: left;
-    width: 200px;
+    width: 248px;
 }
 .forminput_purchase {
 	float: left;
@@ -481,10 +481,11 @@ form {
 }
 .formtext_sales {
 	float: left;
-    width: 200px;
+    width: 206px;
 }
 .forminput_sales {
 	float: left;
+
 }
 .search_sales{
 	width: 100%;
