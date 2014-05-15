@@ -858,7 +858,6 @@ function SalesQNDNController($scope, $element, $http, $timeout, share, $location
             
     }
     $scope.payment_mode_change_sales = function(payment_mode) {
-        $scope.payment_mode_change_sales = function(payment_mode) {
         if(payment_mode == 'cheque') {
             $scope.payment_mode_selection = true;
             $scope.payment_mode_selection_check = false;
@@ -872,7 +871,6 @@ function SalesQNDNController($scope, $element, $http, $timeout, share, $location
             $scope.payment_mode_selection = true;
             $scope.payment_mode_selection_check = true;
         }
-    }
     }
     $scope.validate_sales = function() {
         console.log($scope.sales.quotation_ref_no);
