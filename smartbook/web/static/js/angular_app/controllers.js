@@ -1509,7 +1509,7 @@ function SalesController($scope, $element, $http, $timeout, share, $location) {
             'unit_price': item.selling_price,
             'tax': item.tax,
             'tax_amount':0,
-            'qty_sold': 0,
+            'qty_sold': 1,
             'uom': item.uom,
             'discount_permit': item.discount_permit,
             'discount_permit_amount':0,
@@ -1518,11 +1518,14 @@ function SalesController($scope, $element, $http, $timeout, share, $location) {
             'net_amount': 0,
             
         }
+        $scope.calculate_net_amount_sale(selected_item);
         $scope.calculate_tax_amount_sale(selected_item);
         $scope.calculate_discount_amount_sale(selected_item);
         $scope.calculate_unit_cost_sale(selected_item);
-       
+        
         $scope.sales.sales_items.push(selected_item);
+        $scope.calculate_net_total_sale();
+        $scope.calculate_grant_total_sale();
     }
     
     
@@ -2831,16 +2834,17 @@ function QuotationController($scope, $element, $http, $timeout, share, $location
             'unit_price': item.selling_price,
             'tax': item.tax,
             'tax_amount':0,
-            'qty_sold': 0,
+            'qty_sold': 1,
             'uom': item.uom,
             'discount_permit': item.discount_permit,
             'discount_permit_amount':0,
             'disc_given': 0,
             'unit_cost':0,
-            'net_amount': 0,    
+            'net_amount': parseFloat(item.selling_price).toFixed(2),    
         }
        
         $scope.quotation.sales_items.push(selected_item);
+        $scope.calculate_net_total_amount();
     }
     
     

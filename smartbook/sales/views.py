@@ -46,14 +46,18 @@ class SalesEntry(View):
         
         current_date = dt.datetime.now().date()
 
-        sales_invoice_number = Sales.objects.aggregate(Max('id'))['id__max']
-        
-        if not sales_invoice_number:
-            sales_invoice_number = 1
+        inv_number = SalesInvoice.objects.aggregate(Max('id'))['id__max']
+
+        if not inv_number:
+            inv_number = 1
+            prefix = 'INV'
         else:
-            sales_invoice_number = sales_invoice_number + 1
+            inv_number = inv_number + 1
+            prefix = SalesInvoice.objects.latest('id').prefix
+        
+        invoice_number = prefix + str(inv_number)
         return render(request, 'sales/sales_entry.html',{
-            'sales_invoice_number': sales_invoice_number,
+            'sales_invoice_number': invoice_number,
             'current_date': current_date.strftime('%d/%m/%Y'),
         })
 
@@ -100,7 +104,7 @@ class SalesEntry(View):
             s_item.selling_price = sales_item['unit_price']
             s_item.save()
 
-        sales_invoice = SalesInvoice.objects.create(sales=sales)
+        sales_invoice, created = SalesInvoice.objects.get_or_create(sales=sales)
         sales.save()
         sales_invoice.date = sales.sales_invoice_date
         sales_invoice.customer = sales.customer
@@ -585,12 +589,8 @@ class CreateQuotationPdf(View):
             table.wrapOn(p, 200, 400)
             # table.drawOn(p,105,460)
             table.drawOn(p,555, x)
-            if q_item.selling_price:
-                selling_price = q_item.selling_price
-            else:
-                q_item.item.inventory_set.all()[0].selling_price
-
-            data1=[[selling_price]]
+            
+            data1=[[q_item.selling_price]]
             table = Table(data1, colWidths=[125], rowHeights=40, style = style)
             table.setStyle(TableStyle([
                                        # ('INNERGRID', (0,0), (0,0), 0.25, colors.black),
@@ -884,13 +884,13 @@ class QuotationDeliverynoteSales(View):
         
         if not inv_number:
             inv_number = 1
-            prefix = 'SI'
+            prefix = 'INV'
         else:
             inv_number = inv_number + 1
             prefix = SalesInvoice.objects.latest('id').prefix
         invoice_number = prefix + str(inv_number)
 
-        return render(request, 'sales/create_sales_entry.html',{
+        return render(request, 'sales/QNDN_sales_entry.html',{
             'sales_invoice_number': invoice_number,
             'current_date': current_date.strftime('%d/%m/%Y'),
         })
@@ -1013,7 +1013,7 @@ class QuotationDeliverynoteSales(View):
 
         # Creating sales invoice 
 
-        sales_invoice = SalesInvoice.objects.create(sales=sales)
+        sales_invoice, created = SalesInvoice.objects.get_or_create(sales=sales)
         if quotation:
             sales_invoice.quotation = quotation
             quotation.is_sales_invoice_created = True
@@ -1120,7 +1120,7 @@ class CreateSalesInvoicePDF(View):
             item_price = s_item.selling_price
             total_amount = total_amount + (item_price*s_item.quantity_sold)
             
-            data1=[[i, s_item.item.code, s_item.item.name, s_item.quantity_sold, s_item.item.uom.uom, s_item.selling_price.quantize(TWOPLACES), (item_price*s_item.quantity_sold).quantize(TWOPLACES)]]
+            data1=[[i, s_item.item.code, s_item.item.name, s_item.quantity_sold, s_item.item.uom.uom, s_item.selling_price.quantize(TWOPLACES), s_item.net_amount]]
             table = Table(data1, colWidths=[50, 100, 440, 80, 90, 100, 50], rowHeights=40, style=style)
             table.wrapOn(p, 200, 400)
             table.drawOn(p,10,x)
