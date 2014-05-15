@@ -48,11 +48,17 @@ add_new_customer = function($http, $scope) {
         });
     } 
 }       
-get_quotation_details = function($http, $scope){
+get_quotation_details = function($http, $scope, from){
 
     var ref_no = $scope.quotation_no;
-    $scope.quotations = []
-    $http.get('/sales/quotation_details/?reference_no='+ref_no+'&sales_invoice=true').success(function(data)
+    $scope.quotations = [];
+    var url = '';
+    if (from == 'quotation') {
+        url = '/sales/quotation_details/?reference_no='+ref_no+'&sales_invoice=true';
+    } else {
+        url = '/sales/quotation_details/?reference_no='+ref_no;
+    }
+    $http.get(url).success(function(data)
     {
         console.log(data.quotations.length);
         if(data.quotations.length > 0){
@@ -817,6 +823,7 @@ function SalesQNDNController($scope, $element, $http, $timeout, share, $location
     $scope.payment_mode = 'cash';
     $scope.payment_mode_selection = true;
     $scope.payment_mode_selection_check = true;
+    $scope.hide_selling_price = 0;
 
     $scope.sales = {
         'sales_items': [],
@@ -834,8 +841,10 @@ function SalesQNDNController($scope, $element, $http, $timeout, share, $location
         'paid': 0,
         'balance': 0,
         'quotation_ref_no':'',
-        'delivery_no': '',   
+        'delivery_no': '',  
+        'lpo_number': '', 
     }
+    $scope.sales.quotation_ref_no = '';
     $scope.sales.staff = 'select';
     $scope.sales.customer = '';
     $scope.init = function(csrf_token, sales_invoice_number)
@@ -872,9 +881,9 @@ function SalesQNDNController($scope, $element, $http, $timeout, share, $location
         }
     }
     $scope.validate_sales = function() {
-
-        if ($scope.sales.quotation_ref_no == ''){
-            $scope.validation_error = "Enter Quotation Reference No" ;
+        console.log($scope.sales.quotation_ref_no);
+        if ($scope.sales.quotation_ref_no == '' && $scope.sales.delivery_no == ''){
+            $scope.validation_error = "Enter Quotation Reference No or Delivery No" ;
             return false;
         } else if($scope.sales.sales_invoice_date == '') {
             $scope.validation_error = "Enter Sales invoice Date" ;
@@ -882,26 +891,30 @@ function SalesQNDNController($scope, $element, $http, $timeout, share, $location
         } else if($scope.sales.customer =='select'){
             $scope.validation_error = "Enter Customer Name";
             return false;
+        } else if($scope.sales.lpo_number == '') {
+            $scope.validation_error = "Enter LPO Number" ;
+            return false;
         } else if($scope.sales.staff =='select') {
             $scope.validation_error = "Enter Salesman Name";
             return false;
         } else if($scope.sales.sales_items.length == 0){
             $scope.validation_error = "Choose Item";
             return false;
-        }
-        else if( $scope.sales.payment_mode == 'card' && ($scope.sales.card_number == '' )) {
-            
-            
+        } else if($scope.sales.sales_items.length > 0){
+            for (var i=0; i < $scope.sales.sales_items.length; i++){
+                if (parseInt($scope.sales.sales_items[i].current_stock) < parseInt($scope.sales.sales_items[i].qty_sold)){
+                    $scope.validation_error = "Quantity not in stock for item "+$scope.sales.sales_items[i].item_name;
+                    return false;
+                }
+            }
+        } else if( $scope.sales.payment_mode == 'card' && ($scope.sales.card_number == '' )) {
             $scope.validation_error = 'Please Enter Card Number';
             return false;
-        } else if( $scope.sales.payment_mode == 'card' && ($scope.sales.bank_name == '' )) {
-           
+        } else if( $scope.sales.payment_mode == 'card' && ($scope.sales.bank_name == '' )) {   
             $scope.validation_error = 'Please Enter Bank Name';
             return false; 
-        }
-        else {
-            return true;
-        }        
+        } 
+        return true;       
     }
 
     $scope.get_staff = function() {
@@ -971,7 +984,7 @@ function SalesQNDNController($scope, $element, $http, $timeout, share, $location
     }
 
     $scope.get_quotation_details = function(){
-        get_quotation_details($http, $scope);        
+        get_quotation_details($http, $scope, 'quotation');        
     }
     $scope.add_quotation = function(quotation) {
         $scope.selecting_quotation = false;
@@ -984,6 +997,7 @@ function SalesQNDNController($scope, $element, $http, $timeout, share, $location
         $scope.sales.delivery_no = $scope.delivery_no
         $scope.sales.customer = quotation.customer; 
         $scope.sales.net_total = quotation.net_total;
+        $scope.sales.lpo_number = quotation.lpo_number;
         if(quotation.items.length > 0){
             for(var i=0; i< quotation.items.length; i++){
                 var selected_item = {
@@ -1035,6 +1049,35 @@ function SalesQNDNController($scope, $element, $http, $timeout, share, $location
             console.log(data || "Request failed");
         });
     }
+
+    $scope.get_latest_sales_details = function(item) {
+        var customer_name = $scope.sales.customer;
+        var item_name = item.item_name;
+        $scope.latest_sales = []
+        $http.get('/sales/latest_sales_details/?customer='+customer_name+'&item_name='+item_name).success(function(data)
+        {   
+            
+            if(data.latest_sales_details.length > 0){
+                $scope.sales_deatils = true;
+                $scope.latest_sales = data.latest_sales_details; 
+            } else {
+                $scope.sales_deatils = false;
+            }
+            
+        }).error(function(data, status)
+        {
+            console.log(data || "Request failed");
+        });
+    }
+    $scope.hide_sales_details = function(){
+        $scope.sales_deatils = false;
+    }
+     $scope.remove_from_item_list = function(item) {
+        var index = $scope.sales.sales_items.indexOf(item);
+        $scope.sales.sales_items.splice(index, 1);
+        $scope.calculate_net_total_sale();
+    }
+
     $scope.add_delivery_note = function(delivery_note) {
         $scope.selecting_delivery_note = false;
         $scope.delivery_note_selected = true;
@@ -1046,6 +1089,7 @@ function SalesQNDNController($scope, $element, $http, $timeout, share, $location
         $scope.sales.delivery_no = $scope.delivery_no
         $scope.sales.customer = delivery_note.customer; 
         $scope.sales.net_total = delivery_note.net_total;
+        $scope.sales.lpo_number = delivery_note.lpo_number;
         if(delivery_note.items.length > 0){
             for(var i=0; i< delivery_note.items.length; i++){
                 var selected_item = {
@@ -1149,6 +1193,8 @@ function SalesQNDNController($scope, $element, $http, $timeout, share, $location
         if(parseInt(item.qty_sold) > parseInt(item.current_stock)) {
             $scope.validation_error = "Qauntity not in stock";
             return false;
+        } else {
+            $scope.validation_error = "";
         }
         if(item.qty_sold != '' && item.unit_price != ''){
             item.net_amount = ((parseFloat(item.qty_sold)*parseFloat(item.unit_price))-parseFloat(item.disc_given)).toFixed(2);
@@ -1249,6 +1295,7 @@ function SalesController($scope, $element, $http, $timeout, share, $location) {
         'grant_total': 0,
         'paid': 0,
         'balance': 0,
+        'lpo_number': '',
         
     }
     $scope.sales.staff = 'select';
@@ -1288,12 +1335,22 @@ function SalesController($scope, $element, $http, $timeout, share, $location) {
         } else if($scope.sales.customer =='select'){
             $scope.validation_error = "Enter Customer Name";
             return false;
+        } else if($scope.sales.lpo_number ==''){
+            $scope.validation_error = "Enter LPO Number";
+            return false;
         } else if($scope.sales.staff =='select') {
             $scope.validation_error = "Enter Salesman Name";
             return false;
         } else if($scope.sales.sales_items.length == 0){
             $scope.validation_error = "Choose Item";
             return false;
+        } else if($scope.sales.sales_items.length > 0){
+            for (var i=0; i < $scope.sales.sales_items.length; i++){
+                if (parseInt($scope.sales.sales_items[i].current_stock) < parseInt($scope.sales.sales_items[i].qty_sold)){
+                    $scope.validation_error = "Quantity not in stock for item "+$scope.sales.sales_items[i].item_name;
+                    return false;
+                }
+            }
         } 
         return true;
     }
@@ -1472,11 +1529,17 @@ function SalesController($scope, $element, $http, $timeout, share, $location) {
     
     
     $scope.calculate_net_amount_sale = function(item) {
-        if(item.qty_sold != '' && item.unit_price != ''){
-            item.net_amount = ((parseFloat(item.qty_sold)*parseFloat(item.unit_price))+(parseFloat(item.tax_amount)*parseFloat(item.qty_sold))-parseFloat(item.disc_given)).toFixed(2);
-            $scope.calculate_net_discount_sale();
+        $scope.validation_error = "";
+        if(parseInt(item.qty_sold) > parseInt(item.current_stock)) {
+            $scope.validation_error = "Qauntity not in stock";
+            return false;
+        } else {
+            if(item.qty_sold != '' && item.unit_price != ''){
+                item.net_amount = ((parseFloat(item.qty_sold)*parseFloat(item.unit_price))+(parseFloat(item.tax_amount)*parseFloat(item.qty_sold))-parseFloat(item.disc_given)).toFixed(2);
+                $scope.calculate_net_discount_sale();
+            }
+            $scope.calculate_net_total_sale();
         }
-        $scope.calculate_net_total_sale();
     }
     $scope.calculate_tax_amount_sale = function(item) {
         if(item.tax != '' && item.unit_price != ''){
@@ -1523,6 +1586,43 @@ function SalesController($scope, $element, $http, $timeout, share, $location) {
     }
     $scope.calculate_balance_sale = function () {
         $scope.sales.balance = $scope.sales.grant_total - $scope.sales.paid;
+    }
+
+    $scope.remove_from_item_list = function(item) {
+        var index = $scope.sales.sales_items.indexOf(item);
+        $scope.sales.sales_items.splice(index, 1);
+        $scope.calculate_net_total_sale();
+    }
+    $scope.get_latest_sales_details = function(item) {
+        $scope.no_customer_error_flag = false;
+        var customer_name = $scope.sales.customer;
+        var item_name = item.item_name;
+        $scope.latest_sales = []
+        if (customer_name != 'select'){
+            $scope.no_customer_error_flag = false;
+            $http.get('/sales/latest_sales_details/?customer='+customer_name+'&item_name='+item_name).success(function(data)
+            {   
+                if(data.latest_sales_details.length > 0){
+                    $scope.sales_deatils = true;
+                    $scope.latest_sales = data.latest_sales_details; 
+                } else {
+                    $scope.sales_deatils = false;
+                    $scope.no_customer_error = 'No sales';
+                    $scope.no_customer_error_flag = true;
+                }
+                
+            }).error(function(data, status)
+            {
+                console.log(data || "Request failed");
+            });
+        } else {
+            $scope.no_customer_error = 'Enter Customer Name';
+            $scope.no_customer_error_flag = true;
+        }
+    } 
+
+    $scope.hide_sales_details = function(){
+        $scope.sales_deatils = false;
     }
     $scope.save_sales = function() {
 
@@ -2794,9 +2894,21 @@ function QuotationController($scope, $element, $http, $timeout, share, $location
         } else if($scope.quotation.sales_items.length == 0){
             $scope.validation_error = "Choose Item";
             return false;
+        } else if($scope.quotation.sales_items.length > 0){
+            for (var i=0; i < $scope.quotation.sales_items.length; i++){
+                if (parseInt($scope.quotation.sales_items[i].current_stock) < parseInt($scope.quotation.sales_items[i].qty_sold)){
+                    $scope.validation_error = "Quantity not in stock for item "+$scope.quotation.sales_items[i].item_name;
+                    return false;
+                }
+            }
         }  
         return true;
     }
+    $scope.remove_from_item_list = function(item) {
+        var index = $scope.quotation.sales_items.indexOf(item);
+        $scope.quotation.sales_items.splice(index, 1);
+    }
+
     $scope.create_quotation = function() {
         $scope.is_valid = $scope.quotation_validation();
         if($scope.is_valid) {
@@ -2857,7 +2969,7 @@ function DeliveryNoteController($scope, $element, $http, $timeout, share, $locat
     $scope.quotation_selected = false;
 
     $scope.get_quotation_details = function(){
-        get_quotation_details($http, $scope);
+        get_quotation_details($http, $scope, 'delivery_note');
     }
     $scope.add_quotation = function(quotation) {
         $scope.selecting_quotation = false;
@@ -2866,8 +2978,6 @@ function DeliveryNoteController($scope, $element, $http, $timeout, share, $locat
         $scope.quotation.sales_items = []
         $scope.quotation_no = quotation.ref_no; 
         $scope.quotation.customer = quotation.customer; 
-        console.log(quotation);
-        console.log($scope.quotation);
         $scope.quotation.net_total = quotation.net_total;
 
         if(quotation.items.length > 0){
@@ -2894,6 +3004,7 @@ function DeliveryNoteController($scope, $element, $http, $timeout, share, $locat
             return false;
         }
         if(item.qty_sold != '' && item.unit_price != ''){
+            $scope.validation_error = "";
             item.net_amount = ((parseFloat(item.qty_sold)*parseFloat(item.unit_price))-parseFloat(item.disc_given)).toFixed(2);
             $scope.calculate_net_discount_sale();
         }
@@ -2907,6 +3018,19 @@ function DeliveryNoteController($scope, $element, $http, $timeout, share, $locat
         $scope.quotation.net_total = net_total;
         
     }
+
+    $scope.calculate_net_discount_sale = function(){
+        
+        var net_discount = 0;
+        for(i=0; i<$scope.quotation.sales_items.length; i++){
+           
+            net_discount = net_discount + parseFloat($scope.quotation.sales_items[i].disc_given);
+
+        }
+        $scope.quotation.net_discount = net_discount;
+    }
+
+
     $scope.delivery_note_validation = function(){
 
         $scope.delivery_note.date = $$('#delivery_note_date')[0].get('value');
@@ -2923,6 +3047,16 @@ function DeliveryNoteController($scope, $element, $http, $timeout, share, $locat
         } else if ($scope.delivery_note.quotation_no == '') {
             $scope.validation_error = "Enter Quotation Reference No";
             return false;
+        } else if ($scope.delivery_note.lpo_no == '') {
+            $scope.validation_error = "Enter LPO No";
+            return false;
+        } else if($scope.quotation.sales_items.length > 0){
+            for (var i=0; i < $scope.quotation.sales_items.length; i++){
+                if (parseInt($scope.quotation.sales_items[i].current_stock) < parseInt($scope.quotation.sales_items[i].qty_sold)){
+                    $scope.validation_error = "Quantity not in stock for item "+$scope.quotation.sales_items[i].item_name;
+                    return false;
+                }
+            }
         } 
         return true;
     }
@@ -2956,60 +3090,87 @@ function DeliveryNoteController($scope, $element, $http, $timeout, share, $locat
         }
     }
 
+    $scope.remove_from_item_list = function(item) {
+        var index = $scope.quotation.sales_items.indexOf(item);
+        $scope.quotation.sales_items.splice(index, 1);
+    }
 }
 
 function ReceiptVoucherController($scope, $element, $http, $timeout, share, $location) {
 
-    // $scope.receipt_voucher = {
-    //     'date': '',
-    //     'sum_of': '',
-    //     'customer': '',
-    //     'invoice_number': 'ggg',
-    //     'settlement': '',
-    //     'amount': '',
-    //     'cheque_date': '',
-    // }
     $scope.receiptvoucher = {
-        'customer': ''
+        'customer': '',
+        'payment_mode': 'cash',
+        'bank_name': '',
+        'receipt_voucher_date': '',
+        'cheque_no': '',
+        'cheque_date': '',
+        'amount': '',
+        // 'settlement': '',
+        'invoice_no': '',
+        'voucher_no': '',
+
     }
-    console.log($scope.receipt_voucher);
+    $scope.receiptvoucher.customer = '';
+    $scope.receiptvoucher.receipt_voucher_date = '';
+    $scope.receiptvoucher.cheque_no = '';
+    $scope.receiptvoucher.cheque_date = '';
+    // $scope.receiptvoucher.settlement = '';
+    $scope.receiptvoucher.payment_mode = 'cash';
+    $scope.cash = 'true';
 
     $scope.init = function(csrf_token) {
         $scope.csrf_token = csrf_token;
 
+        $scope.date_picker_cheque = new Picker.Date($$('#cheque_date'), {
+            timePicker: false,
+            positionOffset: {x: 5, y: 0},
+            pickerClass: 'datepicker_bootstrap',
+            useFadeInOut: !Browser.ie,
+            format: '%d/%m/%Y',
+        });
     }
 
+    
     $scope.receipt_validation = function(){
 
         $scope.receiptvoucher.date = $$('#receipt_voucher_date')[0].get('value');
-        // $scope.receiptvoucher.reference_no = $$('#reference_number')[0].get('value');
-
-        if ($scope.receiptvoucher.date == '' || $scope.receiptvoucher.date == undefined) {
-            $scope.validation_error = "Enter the Date" ;
-            return false;
-        } else if ($scope.receiptvoucher.customer == '' || $scope.receiptvoucher.customer == undefined) {
-            $scope.validation_error = "Enter Customer Name";
-            return false;
-        } else if ($scope.receiptvoucher.sales_invoice == '' || $scope.receiptvoucher.sales_invoice == undefined) {
-            $scope.validation_error = "Enter the Sales Invoice no.";
-            return false;
-        } else if ($scope.receiptvoucher.check_no == '' || $scope.receiptvoucher.check_no == undefined) {
-            $scope.validation_error = "Enter Check no.";
-            return false;
-        } else if ($scope.receiptvoucher.dated == '' || $scope.receiptvoucher.dated == undefined) {
-            $scope.validation_error = "Enter Check Date";
-            return false;
-        } else if ($scope.receiptvoucher.settlement_amount == '' || $scope.receiptvoucher.settlement_amount == undefined) {
-            $scope.validation_error = "Enter Settlement Amount";
-            return false;
-        }
+        $scope.receiptvoucher.voucher_no = $$('#voucher_no')[0].get('value');
         
+        if ($scope.receiptvoucher.invoice_no == '' || $scope.receiptvoucher.invoice_no == undefined) {
+            $scope.validation_error = "Enter the Sales Invoice no.";
+            return false;             
+        } 
+
+        if($scope.receiptvoucher.payment_mode == 'cash') {
+            $scope.receiptvoucher.bank_name = '';
+            $scope.receiptvoucher.cheque_no = '';
+            $scope.receiptvoucher.cheque_date = '';
+        } else {
+            
+            if($scope.receiptvoucher.bank_name =='' || $scope.receiptvoucher.bank_name==undefined){
+                $scope.validation_error = "Please enter bank name";
+                return false;
+            }else if($scope.receiptvoucher.cheque_no == '' || $scope.receiptvoucher.cheque_no == undefined){
+                $scope.validation_error = "Please enter cheque no";
+                return false;
+            }else if($$('#cheque_date')[0].get('value') == ''){
+                $scope.validation_error = "Please enter cheque date";
+                return false;
+            }
+            if($$('#cheque_date')[0].get('value') != '') {
+                $scope.receiptvoucher.cheque_date = $$('#cheque_date')[0].get('value');
+            }
+        }        
         return true;
     }
+
     $scope.get_sales_invoice_details = function(){
+
+        $scope.invoice_message = '';
         
         var invoice_no = $scope.invoice_no;
-        $scope.delivery_notes = []
+        $scope.invoices = []
         $http.get('/sales/invoice_details/?invoice_no='+invoice_no).success(function(data)
         {
             if(data.invoice_details.length > 0){
@@ -3017,7 +3178,8 @@ function ReceiptVoucherController($scope, $element, $http, $timeout, share, $loc
                 $scope.invoice_selected = false;
                 $scope.invoices = data.invoice_details; 
             } else {
-                $scope.dn_message = "There is no invoice with this number";
+                console.log('in else');
+                $scope.invoice_message = "There is no invoice with this number";
             }
             
         }).error(function(data, status)
@@ -3025,14 +3187,310 @@ function ReceiptVoucherController($scope, $element, $http, $timeout, share, $loc
             console.log(data || "Request failed");
         });
     }
+
     $scope.add_invoice = function(invoice) {
         $scope.selecting_invoice = false;
         $scope.invoice_selected = true;
         $scope.invoice_no = invoice.invoice_no;
+        $scope.receiptvoucher.invoice_no =  $scope.invoice_no;
         $scope.receiptvoucher.customer = invoice.customer;
+        $scope.receiptvoucher.amount = invoice.amount;
 
     }
 
+    $scope.save_receipt = function(){
+        $scope.is_valid = $scope.receipt_validation();
+        if ($scope.is_valid) {
+            $scope.error_flag = false;
+            $scope.error_message = '';
+            params = { 
+
+                'receiptvoucher': angular.toJson($scope.receiptvoucher),   
+                "csrfmiddlewaretoken" : $scope.csrf_token
+            }
+            // console.log('test');
+
+            $http({
+                method : 'post',
+                url : "/sales/create_receipt_voucher/",
+                data : $.param(params),
+                headers : {
+                    'Content-Type' : 'application/x-www-form-urlencoded'
+                }
+            }).success(function(data, status) {
+                
+                if (data.result == 'error'){
+                    $scope.error_flag=true;
+                    $scope.message = data.message;
+                } else {
+                    $scope.error_flag=false;
+                    $scope.message = '';
+                    // console.log('test');
+                    document.location.href ='/sales/pdf_receipt_voucher/'+data.receiptvoucher_id+'/';
+                }
+            }).error(function(data, status){
+                console.log(data);
+            });
+        }
+    }
+
+    $scope.payment_mode_change = function(payment_mode) {
+        if(payment_mode == 'cheque') {
+            $scope.cash = false;
+        } else {
+            $scope.cash = true;
+        }       
+    }
+}
+
+function DirectDeliveryNoteController($scope, $element, $http, $timeout, share, $location) {
+
+    $scope.items = [];
+    $scope.selected_item = '';
+    $scope.customer = '';
+    $scope.selecting_item = false;
+    $scope.item_selected = false;
+    $scope.customer_name = '';
+    $scope.delivery_note = {
+        'sales_items': [],
+        'date': '',
+        'customer':'',
+        'net_total': 0,
+        'total_amount': '',
+        'delivery_note_no': '',
+        
+    }
+    $scope.delivery_note.customer = 'select';
+    $scope.init = function(csrf_token, sales_invoice_number)
+    {
+        $scope.csrf_token = csrf_token;
+        $scope.popup = '';        
+        $scope.get_customers();            
+    }
+
+    $scope.get_customers = function() {
+        $http.get('/customer/list/').success(function(data)
+        {   
+            $scope.customers = data.customers;
+
+        }).error(function(data, status)
+        {
+            console.log(data || "Request failed");
+        });
+    }
+
+    $scope.add_customer = function() {
+
+        if($scope.delivery_note.customer == 'other') {
+
+            $scope.popup = new DialogueModelWindow({
+                'dialogue_popup_width': '36%',
+                'message_padding': '0px',
+                'left': '28%',
+                'top': '40px',
+                'height': 'auto',
+                'content_div': '#add_customer'
+            });
+            var height = $(document).height();
+            $scope.popup.set_overlay_height(height);
+            $scope.popup.show_content();
+            $scope.email_id = '';
+        }
+    }
+
+    $scope.close_popup = function(){
+        $scope.popup.hide_popup();
+    }
+
+    $scope.add_new_customer = function() { 
+
+        add_new_customer($http, $scope);
+        $scope.delivery_note.customer = $scope.customer_name;      
+    }
+
+    $scope.items = [];
+    $scope.selected_item = '';
+    $scope.selecting_item = false;
+    $scope.item_selected = false;
+    $scope.sales_items = [];
+    
+    $scope.getItems = function(parameter){
+
+        if(parameter == 'item_code')
+            var param = $scope.item_code;
+        else if(parameter == 'item_name')
+            var param = $scope.item_name;
+        else if (parameter == 'barcode')
+            var param = $scope.barcode;
+        $http.get('/inventory/items/?'+parameter+'='+param).success(function(data)
+        {
+            $scope.selecting_item = true;
+            $scope.item_selected = false;
+            $scope.items = data.items;
+        }).error(function(data, status)
+        {
+            console.log(data || "Request failed");
+        });
+    }
+
+    $scope.addSalesItem = function(item) {
+        $scope.selecting_item = false;
+        $scope.item_selected = true;
+        $scope.item_code = '';
+        $scope.item_name = '';
+        $scope.barcode = '';
+
+        $scope.item_select_error = '';
+        
+        if($scope.delivery_note.sales_items.length > 0) {
+            for(var i=0; i< $scope.delivery_note.sales_items.length; i++) {
+                if($scope.delivery_note.sales_items[i].item_code == item.item_code) {
+                    $scope.item_select_error = "Item already selected";
+                    return false;
+                }
+            }
+        } 
+        var selected_item = {
+            'sl_no': item.sl_no,
+            'item_code': item.item_code,
+            'item_name': item.item_name,
+            'barcode': item.barcode,
+            'current_stock': item.current_stock,
+            'unit_price': item.selling_price,
+            'tax': item.tax,
+            'tax_amount':0,
+            'qty_sold': 0,
+            'uom': item.uom,
+            'discount_permit': item.discount_permit,
+            'discount_permit_amount':0,
+            'disc_given': 0,
+            'unit_cost':0,
+            'net_amount': 0,    
+        }
+       
+        $scope.delivery_note.sales_items.push(selected_item);
+    }
+    
+    
+    $scope.calculate_net_amount_sale = function(item) {
+        $scope.validation_error = "";
+        if(parseInt(item.qty_sold) > parseInt(item.current_stock)) {
+            $scope.validation_error = "Qauntity not in stock";
+            return false;
+        } else {
+            if(item.qty_sold != '' && item.unit_price != ''){
+                item.net_amount = ((parseFloat(item.qty_sold)*parseFloat(item.unit_price))).toFixed(2);
+            }
+            $scope.calculate_net_total_amount();
+        }
+    }
+
+    $scope.calculate_net_total_amount = function() {
+        var total_amount = 0
+        for(var i=0; i< $scope.delivery_note.sales_items.length; i++){
+            total_amount = (parseFloat(total_amount) + parseFloat($scope.delivery_note.sales_items[i].net_amount)).toFixed(2);
+        }
+        $scope.delivery_note.net_total = total_amount;
+        console.log($scope.delivery_note.total_amount);
+    }
+
+    $scope.delivery_note_validation = function(){
+
+        $scope.delivery_note.date = $$('#delivery_date')[0].get('value');
+        $scope.delivery_note.delivery_note_no = $$('#delivery_note_no')[0].get('value');
+        console.log($scope.delivery_note.delivery_note_no);
+        if ($scope.delivery_note.date == '' || $scope.delivery_note.date == undefined) {
+            $scope.validation_error = "Enter Delivery Date" ;
+            return false;
+        } else if ($scope.delivery_note.customer == 'select') {
+            $scope.validation_error = "Enter Customer Name";
+            return false;
+        // } else if ($scope.delivery_note.reference_no == '' || $scope.delivery_note.reference_no == undefined) {
+        //     $scope.validation_error = "Enter Reference number";
+        //     return false;
+        } else if ($scope.delivery_note.lpo_no == '' || $scope.delivery_note.lpo_no == undefined) {
+            $scope.validation_error = "Enter Lpo No.";
+            return false;
+        } else if($scope.delivery_note.sales_items.length == 0){
+            $scope.validation_error = "Choose Item";
+            return false;
+        } else if($scope.delivery_note.sales_items.length == 0){
+            $scope.validation_error = "Choose Item";
+            return false;
+        } else if($scope.delivery_note.sales_items.length > 0){
+            for (var i=0; i < $scope.delivery_note.sales_items.length; i++){
+                if (parseInt($scope.delivery_note.sales_items[i].current_stock) < parseInt($scope.delivery_note.sales_items[i].qty_sold)){
+                    $scope.validation_error = "Quantity not in stock for item "+$scope.delivery_note.sales_items[i].item_name;
+                    return false;
+                }
+            }
+        }  
+        return true;
+    }
+    $scope.remove_from_item_list = function(item) {
+        var index = $scope.delivery_note.sales_items.indexOf(item);
+        $scope.delivery_note.sales_items.splice(index, 1);
+        $scope.calculate_net_total_amount();
+    }
+
+    $scope.create_delivery_note = function() {
+        $scope.is_valid = $scope.delivery_note_validation();
+        if($scope.is_valid) {
+            params = { 
+                'delivery_note': angular.toJson($scope.delivery_note),
+                "csrfmiddlewaretoken" : $scope.csrf_token
+            }
+            $http({
+                method : 'post',
+                url : "/sales/direct_delivery_note/",
+                data : $.param(params),
+                headers : {
+                    'Content-Type' : 'application/x-www-form-urlencoded'
+                }
+            }).success(function(data, status) {
+                
+                if (data.result == 'error'){
+                    $scope.error_flag=true;
+                    $scope.message = data.message;
+                } else {
+                    document.location.href = '/sales/delivery_note_pdf/'+data.delivery_note_id+'/';
+
+                }
+            }).error(function(data, success){
+                
+            });
+        }
+    }
+
+}
+
+function EditSalesInvoiceController($scope, $element, $location, $http){
+
+    $scope.init = function(csrf_token) {
+        $scope.csrf_token = csrf_token;
+    }
+    $scope.get_sales_invoice_details = function() {
+
+        $scope.invoice_message = '';
+        
+        var invoice_no = $scope.invoice_no;
+        $scope.invoices = []
+        $http.get('/sales/invoice_details/?invoice_no='+invoice_no).success(function(data)
+        {
+            if(data.invoice_details.length > 0){
+                $scope.selecting_invoice = true;
+                $scope.invoice_selected = false;
+                $scope.invoices = data.invoice_details; 
+            } else {
+                console.log('in else');
+                $scope.invoice_message = "There is no invoice with this number";
+            }
+            
+        }).error(function(data, status)
+        {
+            console.log(data || "Request failed");
+        });
+    }
 }
 
 

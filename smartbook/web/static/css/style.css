@@ -583,7 +583,7 @@ th {
 	width: 32%;
 }
 .purchase_item_list .item_list_row span {
-	width: 5%;
+	width: 5.5%;
 }
 .purchase_item_list .item_list_row span input {
 	width: 70%;
@@ -745,14 +745,14 @@ a {
 	margin: auto;
 }
 #create_delivery_note .purchase_item_list .item_list_row span {
-	width: 12%;
+	width: 11%;
 }
 
 #create_quotation .purchase_items_list .purchase_item_list {
 	margin: auto;
 }
 #create_quotation .purchase_item_list .item_list_row span {
-	width: 14%;
+	width: 10%;
 }
 .delivery_note {
 	width: 17%;
@@ -766,5 +766,21 @@ a {
 }
 
 #create_sales .purchase_item_list .item_list_row span {
+/*<<<<<<< HEAD
 	width: 11%;
 }
+=======*/
+	width: 9.5%;
+}
+
+#latest_sales_details span {
+	width: 23% !important;
+}
+
+.align_top {
+	margin-top: -21px !important;
+}
+#direct_delivery_note .purchase_item_list .item_list_row span {
+    width: 9.5%;
+}
+/*>>>>>>> df375a0885a21ba1f8a62c05290af6bd930719bc*/

@@ -123,10 +123,13 @@ class SalesReports(View):
                             qty = item.quantity_sold
                             item_name = item.item.name
                             inventorys = item.item.inventory_set.all()
-                            selling_price = 0                            
-                            if inventorys.count()>0:
-                            	inventory = inventorys[0]                            
-                            	selling_price = inventory.selling_price
+                            selling_price = 0  
+                            if item.selling_price:
+                                selling_price = item.selling_price
+                            else:
+                                inventory = inventorys[0]                            
+                                selling_price = inventory.selling_price
+                            	
 
                             purchases = item.item.purchaseitem_set.all()
                             avg_cp = 0
@@ -344,7 +347,7 @@ class SalesReports(View):
                 y = 850
 
                 
-                customer = Customer.objects.get(user__first_name = customer_name)
+                customer = Customer.objects.get(customer_name = customer_name)
                 sales = Sales.objects.filter(sales_invoice_date__gte=start_date,sales_invoice_date__lte=end_date,customer=customer)
                 if sales.count()>0:
                     for sale in sales:
@@ -371,8 +374,8 @@ class SalesReports(View):
                                     i = i + 1
                                 avg_cp = cost_price/i
                             # profit = (selling_price - avg_cp)*qty
-
-                            profit = math.ceil((selling_price - avg_cp)*qty) - discount
+                           
+                            profit = math.ceil((selling_price - avg_cp)*qty) - float(discount)
 
                             total_profit = total_profit + profit
                             total_discount = total_discount + discount                            
@@ -498,6 +501,7 @@ class SalesReports(View):
                             total_sp = total_sp + selling_price
                             grant_total = grant_total + total
 
+                            avg_cp = math.ceil(avg_cp*100)/100
                             y = y - 30
                             p.drawString(50, y, dates.strftime('%d-%m-%Y'))
                             p.drawString(150, y, str(invoice_no))
