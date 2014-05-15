@@ -1032,6 +1032,7 @@ class InvoiceDetails(View):
         invoice_no = request.GET.get('invoice_no', '')
         sales_invoice_details = SalesInvoice.objects.filter(invoice_no__istartswith=invoice_no, is_processed=False)
         ctx_invoice_details = []
+        ctx_sales_invoices = []
         if sales_invoice_details.count() > 0:
             for sales_invoice in sales_invoice_details:
                 ctx_invoice_details.append({
@@ -1040,9 +1041,16 @@ class InvoiceDetails(View):
                     'customer': sales_invoice.customer.customer_name,
                     'amount': sales_invoice.sales.quotation.net_total if sales_invoice.sales.quotation else sales_invoice.sales.net_amount
                 })
+                ctx_sales_invoices.append({
+                    'invoice_no': sales_invoice.invoice_no,
+                    'reference_no': sales_invoice.quotation.reference_id if sales_invoice.quotation else '',
+                    'date': sales_invoice.date.strftime('%d/%m/%Y'),
+                    'customer': sales_invoice.customer.customer_name,
+                })
         res = {
             'result': 'ok',
             'invoice_details': ctx_invoice_details, 
+            'sales_invoices': ctx_sales_invoices,
         }
 
         response = simplejson.dumps(res)
@@ -1233,3 +1241,9 @@ class DirectDeliveryNote(View):
             response = simplejson.dumps(res)
 
             return HttpResponse(response, status=200, mimetype='application/json')
+
+class EditSalesInvoice(View):
+
+    def get(self, request, *args, **kwargs):
+
+        return render(request, 'sales/edit_sales_invoice.html', {})
