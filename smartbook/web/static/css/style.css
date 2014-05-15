@@ -750,7 +750,7 @@ a {
 	margin: auto;
 }
 #create_quotation .purchase_item_list .item_list_row span {
-	width: 11%;
+	width: 10%;
 }
 .delivery_note {
 	width: 17%;
@@ -773,4 +773,7 @@ a {
 
 .align_top {
 	margin-top: -21px !important;
+}
+#direct_delivery_note .purchase_item_list .item_list_row span {
+    width: 9.5%;
 }

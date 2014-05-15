@@ -272,7 +272,8 @@ class CreateQuotation(View):
             return HttpResponse(response, status=200, mimetype='application/json')
 
 class DeliveryNotePDF(View):
-     def get(self, request, *args, **kwargs):
+
+    def get(self, request, *args, **kwargs):
 
         delivery_note_id = kwargs['delivery_note_id']
         delivery_note = DeliveryNote.objects.get(id=delivery_note_id)
@@ -317,21 +318,22 @@ class DeliveryNotePDF(View):
 
         table = Table(data, colWidths=[30, 540, 60], rowHeights=30, style = style)      
         table.wrapOn(p, 200, 400)
-        table.drawOn(p, 50, 935)
+        table.drawOn(p, 50, 940)
 
         data=[['', '', delivery_note.date.strftime('%d-%m-%Y')]]
 
         table = Table(data, colWidths=[450, 120, 70], rowHeights=50, style = style)      
 
         table.wrapOn(p, 200, 400)
-        table.drawOn(p,50, 910)
+        table.drawOn(p,50, 915)
 
         if delivery_note.quotation:            
             data=[['', '', delivery_note.quotation.reference_id]]
 
             table = Table(data, colWidths=[450, 120, 70], rowHeights=40, style = style)      
             table.wrapOn(p, 200, 400)
-            table.drawOn(p,50, 860)       
+            table.drawOn(p,50, 885)
+         
 
         y = 800
 
@@ -342,22 +344,20 @@ class DeliveryNotePDF(View):
                        
                 y = y-40
 
-                data1 = [[i, q_item.item.code, q_item.item.name, q_item.quantity_sold, '']]
-                table = Table(data1, colWidths=[100, 400, 100, 150], rowHeights=40, style = style)
+                data1 = [[i, q_item.item.code, q_item.item.name, q_item.quantity_sold, q_item.item.uom.uom]]
+                table = Table(data1, colWidths=[80, 120, 400, 90, 100], rowHeights=40, style = style)
                 table.wrapOn(p, 200, 600)
-                table.drawOn(p, 105, y)
+                table.drawOn(p, 10, y)
                 i = i + 1
         else:
             for delivery_item in delivery_note.deliverynoteitem_set.all():
-                       
                 y = y-40
 
-                data1 = [[i, delivery_item.item.code, delivery_item.item.name, delivery_item.quantity_sold, '']]
-                table = Table(data1, colWidths=[100, 400, 100, 150], rowHeights=40, style = style)
+                data1 = [[i, delivery_item.item.code, delivery_item.item.name, delivery_item.quantity_sold, delivery_item.item.uom.uom]]
+                table = Table(data1, colWidths=[80, 120, 400, 90, 100], rowHeights=40, style = style)
                 table.wrapOn(p, 200, 600)
-                table.drawOn(p, 105, y)
+                table.drawOn(p, 10, y)
                 i = i + 1
-
 
         p.showPage()
         p.save()
@@ -377,8 +377,15 @@ class CreateQuotationPdf(View):
         y = 915
 
         style = [
-            ('FONTSIZE', (0,0), (-1, -1), 13),
+            ('FONTSIZE', (0,0), (-1, -1), 16),
             ('FONTNAME',(0,0),(-1,-1),'Helvetica') 
+            # ('INNERGRID', (0,0), (0,1), 0.25, colors.black),
+        ]
+
+        style1 = [
+            ('FONTSIZE', (0,0), (-1, -1), 18),
+            ('FONTNAME',(0,0),(-1,-1),'Helvetica') 
+            # ('INNERGRID', (0,0), (0,1), 0.25, colors.black),
         ]
 
         try:
@@ -391,48 +398,113 @@ class CreateQuotationPdf(View):
 
 
         p.roundRect(80, y-130, 840, 0.5*inch, 10, stroke=1, fill=0)
+        p.setFont("Helvetica-Bold", 20)
         p.drawString(400, 800, "QUOTATION")
         p.roundRect(80, y-250, 840, 120, 20, stroke=1, fill=0)   
 
 
-        data=[['To                         :', quotation.to.customer_name]]
+        data=[['To                     :', quotation.to.customer_name]]
         table = Table(data, colWidths=[125, 400], rowHeights=40, style = style)      
         table.wrapOn(p, 200, 400)
         table.drawOn(p,160, 745)
 
-        data=[['Attention               :', quotation.attention]]
+        data=[['Attention           :', quotation.attention]]
         table = Table(data, colWidths=[125, 400], rowHeights=40, style = style)       
         table.wrapOn(p, 200, 400)
         table.drawOn(p,160, 715)
 
-        data=[['Subject                 :', quotation.subject]]
+        data=[['Subject             :', quotation.subject]]
         table = Table(data, colWidths=[125, 400], rowHeights=40, style = style)       
         table.wrapOn(p, 200, 400)
         table.drawOn(p,160, 685)
 
 
-        data=[['Date           :', quotation.date.strftime('%d-%m-%Y')]]
-        table = Table(data, colWidths=[80, 400], rowHeights=40, style = style)       
+        data=[['Date            :', quotation.date.strftime('%d-%m-%Y')]]
+        table = Table(data, colWidths=[100, 400], rowHeights=40, style = style)       
         table.wrapOn(p, 200, 400)
         table.drawOn(p,700, 745)
 
-        data=[['Ref. id        :', quotation.reference_id]]
-        table = Table(data, colWidths=[80, 400], rowHeights=40, style = style)        
+        data=[['Ref. id         :', quotation.reference_id]]
+        table = Table(data, colWidths=[100, 400], rowHeights=40, style = style)        
         table.wrapOn(p, 200, 400)
         table.drawOn(p,700, 715)
 
 
-        data=[['Sl.No:', 'Description', 'Qty', 'Unit Price', 'Amount(AED)']]
+        # data=[['Sl.No:', 'Description', 'Qty', 'Unit Price', 'Amount(AED)']]
 
-        table = Table(data, colWidths=[100, 400, 100, 100, 100], rowHeights=40, style = style)
+        # table = Table(data, colWidths=[100, 350, 100, 125, 125], rowHeights=40, style = style1)
+        # table.setStyle(TableStyle([                                  
+        #                            ('BOX', (0,0), (-1,-1), 0.25, colors.black),
+        #                            ('VALIGN',(0,-1),(-1,-1),'MIDDLE'),
+        #                            # ('LINEBEFORE',(1,0), (0,-1),1,colors.black),                                  
+        #                            ]))
+        # table.wrapOn(p, 200, 400)
+        # table.drawOn(p,105,575)
+
+
+        data=[['Sl.No:']]
+
+        table = Table(data, colWidths=[100], rowHeights=40, style = style1)
         table.setStyle(TableStyle([                                  
                                    ('BOX', (0,0), (-1,-1), 0.25, colors.black),
-                                   ('LINEBEFORE',(1,0), (0,-1),1,colors.black),                                  
+                                   ('VALIGN',(0,-1),(-1,-1),'MIDDLE'),
+                                   ('ALIGN',(0,-1),(-1,-1),'CENTRE'),
+                                   # ('LINEBEFORE',(1,0), (0,-1),1,colors.black),                                  
                                    ]))
         table.wrapOn(p, 200, 400)
-        table.drawOn(p,105,600)
+        table.drawOn(p,105,575)
 
-        x=600
+        data=[['Description']]
+
+        table = Table(data, colWidths=[350], rowHeights=40, style = style1)
+        table.setStyle(TableStyle([                                  
+                                   ('BOX', (0,0), (-1,-1), 0.25, colors.black),
+                                   ('VALIGN',(0,-1),(-1,-1),'MIDDLE'),
+                                   ('ALIGN',(0,-1),(-1,-1),'CENTRE'),
+                                   # ('LINEBEFORE',(1,0), (0,-1),1,colors.black),                                  
+                                   ]))
+        table.wrapOn(p, 200, 400)
+        table.drawOn(p,205,575)
+
+        data=[['Qty']]
+
+        table = Table(data, colWidths=[100], rowHeights=40, style = style1)
+        table.setStyle(TableStyle([                                  
+                                   ('BOX', (0,0), (-1,-1), 0.25, colors.black),
+                                   ('VALIGN',(0,-1),(-1,-1),'MIDDLE'),
+                                   ('ALIGN',(0,-1),(-1,-1),'CENTRE'),
+                                   # ('LINEBEFORE',(1,0), (0,-1),1,colors.black),                                  
+                                   ]))
+        table.wrapOn(p, 200, 400)
+        table.drawOn(p,555,575)
+
+
+        data=[['Unit Price']]
+
+        table = Table(data, colWidths=[125], rowHeights=40, style = style1)
+        table.setStyle(TableStyle([                                  
+                                   ('BOX', (0,0), (-1,-1), 0.25, colors.black),
+                                   ('VALIGN',(0,-1),(-1,-1),'MIDDLE'),
+                                   ('ALIGN',(0,-1),(-1,-1),'CENTRE'),
+                                   # ('LINEBEFORE',(1,0), (0,-1),1,colors.black),                                  
+                                   ]))
+        table.wrapOn(p, 200, 400)
+        table.drawOn(p,655,575)
+
+
+        data=[['Amount(AED)']]
+
+        table = Table(data, colWidths=[135], rowHeights=40, style = style1)
+        table.setStyle(TableStyle([                                  
+                                   ('BOX', (0,0), (-1,-1), 0.25, colors.black),
+                                   ('VALIGN',(0,-1),(-1,-1),'MIDDLE'),
+                                   ('ALIGN',(0,-1),(-1,-1),'CENTRE'),
+                                   # ('LINEBEFORE',(1,0), (0,-1),1,colors.black),                                  
+                                   ]))
+        table.wrapOn(p, 200, 400)
+        table.drawOn(p,780,575)
+
+        x=575
 
         i = 0 
         i = i + 1
@@ -441,51 +513,141 @@ class CreateQuotationPdf(View):
 
             x=x-40
 
-            data1=[[i, q_item.item.name, q_item.quantity_sold, q_item.item.inventory_set.all()[0].selling_price, q_item.net_amount]]
-            table = Table(data1, colWidths=[100, 400, 100, 100, 100], rowHeights=40, style = style)
+            # data1=[[i, q_item.item.name, q_item.quantity_sold, q_item.item.inventory_set.all()[0].selling_price, q_item.net_amount]]
+            # table = Table(data1, colWidths=[100, 350, 100, 125, 125], rowHeights=40, style = style)
+            # table.setStyle(TableStyle([
+            #                            # ('INNERGRID', (0,0), (0,0), 0.25, colors.black),
+            #                            # ('INNERGRID', (0,1), (-1,-1), 0.25, colors.black),
+            #                            ('BOX', (0,0), (-1,-1), 0.25, colors.black),
+            #                            ('VALIGN',(0,-1),(-1,-1),'MIDDLE'),
+            #                            # ('ALIGN', (0,0), (-1,-1),'RIGHT'),
+            #                            # ('SPACEBELOW', (0,0), (-1,-1), 10),
+            #                            # ('BACKGROUND',(0,0),(1,0),colors.lightgrey)
+            #                            ]))
+            # # table.wrapOn(p, 300, 200)
+            # table.wrapOn(p, 200, 400)
+            # # table.drawOn(p,105,460)
+            # table.drawOn(p,105, x)
+
+
+            data1=[[i]]
+            table = Table(data1, colWidths=[100], rowHeights=40, style = style)
             table.setStyle(TableStyle([
                                        # ('INNERGRID', (0,0), (0,0), 0.25, colors.black),
                                        # ('INNERGRID', (0,1), (-1,-1), 0.25, colors.black),
                                        ('BOX', (0,0), (-1,-1), 0.25, colors.black),
+                                       ('VALIGN',(0,-1),(-1,-1),'MIDDLE'),
+                                       ('ALIGN', (0,0), (-1,-1),'CENTRE'),
+                                       # ('SPACEBELOW', (0,0), (-1,-1), 10),
                                        # ('BACKGROUND',(0,0),(1,0),colors.lightgrey)
                                        ]))
             # table.wrapOn(p, 300, 200)
             table.wrapOn(p, 200, 400)
             # table.drawOn(p,105,460)
             table.drawOn(p,105, x)
+
+
+            data1=[[q_item.item.name]]
+            table = Table(data1, colWidths=[350], rowHeights=40, style = style)
+            table.setStyle(TableStyle([
+                                       # ('INNERGRID', (0,0), (0,0), 0.25, colors.black),
+                                       # ('INNERGRID', (0,1), (-1,-1), 0.25, colors.black),
+                                       ('BOX', (0,0), (-1,-1), 0.25, colors.black),
+                                       ('VALIGN',(0,-1),(-1,-1),'MIDDLE'),
+                                       # ('ALIGN', (0,0), (-1,-1),'RIGHT'),
+                                       # ('SPACEBELOW', (0,0), (-1,-1), 10),
+                                       # ('BACKGROUND',(0,0),(1,0),colors.lightgrey)
+                                       ]))
+            # table.wrapOn(p, 300, 200)
+            table.wrapOn(p, 200, 400)
+            # table.drawOn(p,105,460)
+            table.drawOn(p,205, x)
+
+
+            data1=[[q_item.quantity_sold]]
+            table = Table(data1, colWidths=[100], rowHeights=40, style = style)
+            table.setStyle(TableStyle([
+                                       # ('INNERGRID', (0,0), (0,0), 0.25, colors.black),
+                                       # ('INNERGRID', (0,1), (-1,-1), 0.25, colors.black),
+                                       ('BOX', (0,0), (-1,-1), 0.25, colors.black),
+                                       ('VALIGN',(0,-1),(-1,-1),'MIDDLE'),
+                                       ('ALIGN', (0,0), (-1,-1),'CENTRE'),
+                                       # ('SPACEBELOW', (0,0), (-1,-1), 10),
+                                       # ('BACKGROUND',(0,0),(1,0),colors.lightgrey)
+                                       ]))
+            # table.wrapOn(p, 300, 200)
+            table.wrapOn(p, 200, 400)
+            # table.drawOn(p,105,460)
+            table.drawOn(p,555, x)
+
+
+            data1=[[q_item.item.inventory_set.all()[0].selling_price]]
+            table = Table(data1, colWidths=[125], rowHeights=40, style = style)
+            table.setStyle(TableStyle([
+                                       # ('INNERGRID', (0,0), (0,0), 0.25, colors.black),
+                                       # ('INNERGRID', (0,1), (-1,-1), 0.25, colors.black),
+                                       ('BOX', (0,0), (-1,-1), 0.25, colors.black),
+                                       ('VALIGN',(0,-1),(-1,-1),'MIDDLE'),
+                                       ('ALIGN', (0,0), (-1,-1),'RIGHT'),
+                                       # ('SPACEBELOW', (0,0), (-1,-1), 10),
+                                       # ('BACKGROUND',(0,0),(1,0),colors.lightgrey)
+                                       ]))
+            # table.wrapOn(p, 300, 200)
+            table.wrapOn(p, 200, 400)
+            # table.drawOn(p,105,460)
+            table.drawOn(p,655, x)
+
+
+            data1=[[q_item.net_amount]]
+            table = Table(data1, colWidths=[135], rowHeights=40, style = style)
+            table.setStyle(TableStyle([
+                                       # ('INNERGRID', (0,0), (0,0), 0.25, colors.black),
+                                       # ('INNERGRID', (0,1), (-1,-1), 0.25, colors.black),
+                                       ('BOX', (0,0), (-1,-1), 0.25, colors.black),
+                                       ('VALIGN',(0,-1),(-1,-1),'MIDDLE'),
+                                       ('ALIGN', (0,0), (-1,-1),'RIGHT'),
+                                       # ('SPACEBELOW', (0,0), (-1,-1), 10),
+                                       # ('BACKGROUND',(0,0),(1,0),colors.lightgrey)
+                                       ]))
+            # table.wrapOn(p, 300, 200)
+            table.wrapOn(p, 200, 400)
+            # table.drawOn(p,105,460)
+            table.drawOn(p,780, x)
+
             i = i + 1
 
-        data=[['Total', quotation.net_total]]
+        data=[['', quotation.net_total]]
 
-        table = Table(data, colWidths=[700, 100], rowHeights=40, style = style)
+        table = Table(data, colWidths=[650, 160], rowHeights=40, style = style)
         table.setStyle(TableStyle([
                                    # ('INNERGRID', (0,0), (0,0), 0.25, colors.black),
                                    # ('INNERGRID', (0,1), (-1,-1), 0.25, colors.black),
                                    ('BOX', (0,0), (-1,-1), 0.25, colors.black),
+                                   ('VALIGN',(0,-1),(-1,-1),'MIDDLE'),
                                    # ('BACKGROUND',(0,0),(1,0),colors.lightgrey),
                                    ('ALIGN', (0,0), (-1,-1),'RIGHT'),
                                    ]))
         table.wrapOn(p, 200, 400)
         table.drawOn(p,105,x-40)
 
-        p.drawString(160, x-80, "Hope the above quoted prices will meet your satisfaction and for further information please do not hesitate to contact us.")
-        p.drawString(160, x-120, "Delivery :-")
-        p.drawString(160, x-140, "Proof :-")
-        p.drawString(160, x-160, "Payment :-")
-        p.drawString(160, x-180, "Validity :-")
+        p.setFont("Helvetica", 15)
+
+        p.drawString(110, x-80, "Hope the above quoted prices will meet your satisfaction and for further information please do not hesitate to contact us.")
+        p.drawString(110, x-120, "Delivery :-")
+        p.drawString(110, x-140, "Proof :-")
+        p.drawString(110, x-160, "Payment :-")
+        p.drawString(110, x-180, "Validity :-")
         
-        if x >= 270:
-            print "in if"
-            p.drawString(160, 90, "For")
-            p.drawString(160, 70, "Sunlight Stationary")
-            p.drawString(160, 10, "Authorized Signatory")
-            p.drawString(700, 10, "Prepared By")
-        else:
-            print "in else"
-            p.drawString(160, x-190, "For")
-            p.drawString(160, x-200, "Sunlight Stationary")
-            p.drawString(160, x-210, "Authorized Signatory")
-            p.drawString(700, x-210, "Prepared By")
+        # if x >= 270:
+        p.drawString(110, 150, "For")
+        p.drawString(110, 130, "Sunlight Stationary")
+        p.drawString(110, 70, "Authorized Signatory")
+        p.drawString(700, 70, "Prepared By")
+        # else:           
+        #     p.drawString(160, x-190, "For")
+        #     p.drawString(160, x-200, "Sunlight Stationary")
+        #     p.drawString(160, x-210, "Authorized Signatory")
+        #     p.drawString(700, x-210, "Prepared By")
 
 
         # data=[['Tel: +971-2-6763571, Fax : +971-2-6763581,P.O.Box : 48296, Abu Dhabi, United Arab Emirates']]
