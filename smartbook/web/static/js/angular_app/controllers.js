@@ -858,27 +858,21 @@ function SalesQNDNController($scope, $element, $http, $timeout, share, $location
             
     }
     $scope.payment_mode_change_sales = function(payment_mode) {
+        $scope.payment_mode_change_sales = function(payment_mode) {
         if(payment_mode == 'cheque') {
             $scope.payment_mode_selection = true;
             $scope.payment_mode_selection_check = false;
             
-            var date_picker = new Picker.Date($$('#sales_invoice_date'), {
-            timePicker: false,
-            positionOffset: {x: 5, y: 0},
-            pickerClass: 'datepicker_bootstrap',
-            useFadeInOut: !Browser.ie,
-            format:'%d/%m/%Y',
-        });
-            
         }
         else if(payment_mode == 'card'){
             $scope.payment_mode_selection = false;
+            $scope.payment_mode_selection_check = false;
         }
         else {
-            
             $scope.payment_mode_selection = true;
             $scope.payment_mode_selection_check = true;
         }
+    }
     }
     $scope.validate_sales = function() {
         console.log($scope.sales.quotation_ref_no);
@@ -1524,7 +1518,6 @@ function SalesController($scope, $element, $http, $timeout, share, $location) {
             'disc_given': 0,
             'unit_cost':0,
             'net_amount': 0,
-
             
         }
         $scope.calculate_tax_amount_sale(selected_item);
