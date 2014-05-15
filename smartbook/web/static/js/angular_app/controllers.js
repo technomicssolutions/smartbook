@@ -823,6 +823,7 @@ function SalesQNDNController($scope, $element, $http, $timeout, share, $location
     $scope.payment_mode = 'cash';
     $scope.payment_mode_selection = true;
     $scope.payment_mode_selection_check = true;
+    $scope.hide_selling_price = 0;
 
     $scope.sales = {
         'sales_items': [],
@@ -1055,7 +1056,7 @@ function SalesQNDNController($scope, $element, $http, $timeout, share, $location
         $scope.latest_sales = []
         $http.get('/sales/latest_sales_details/?customer='+customer_name+'&item_name='+item_name).success(function(data)
         {   
-            console.log(data.latest_sales_details);
+            
             if(data.latest_sales_details.length > 0){
                 $scope.sales_deatils = true;
                 $scope.latest_sales = data.latest_sales_details; 
@@ -3461,6 +3462,35 @@ function DirectDeliveryNoteController($scope, $element, $http, $timeout, share, 
         }
     }
 
+}
+
+function EditSalesInvoiceController($scope, $element, $location, $http){
+
+    $scope.init = function(csrf_token) {
+        $scope.csrf_token = csrf_token;
+    }
+    $scope.get_sales_invoice_details = function() {
+
+        $scope.invoice_message = '';
+        
+        var invoice_no = $scope.invoice_no;
+        $scope.invoices = []
+        $http.get('/sales/invoice_details/?invoice_no='+invoice_no).success(function(data)
+        {
+            if(data.invoice_details.length > 0){
+                $scope.selecting_invoice = true;
+                $scope.invoice_selected = false;
+                $scope.invoices = data.invoice_details; 
+            } else {
+                console.log('in else');
+                $scope.invoice_message = "There is no invoice with this number";
+            }
+            
+        }).error(function(data, status)
+        {
+            console.log(data || "Request failed");
+        });
+    }
 }
 
 
