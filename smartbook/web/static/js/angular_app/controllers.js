@@ -3682,16 +3682,8 @@ function EditSalesInvoiceController($scope, $element, $location, $http){
     }
     $scope.payment_mode_change_sales = function(payment_mode) {
         if(payment_mode == 'cheque') {
-            $scope.payment_mode_sdelection = true;
+            $scope.payment_mode_selection = true;
             $scope.payment_mode_selection_check = false;
-            
-            var date_picker = new Picker.Date($$('#sales_invoice_date'), {
-            timePicker: false,
-            positionOffset: {x: 5, y: 0},
-            pickerClass: 'datepicker_bootstrap',
-            useFadeInOut: !Browser.ie,
-            format:'%d/%m/%Y',
-        });
             
         }
         else if(payment_mode == 'card'){
@@ -3700,7 +3692,7 @@ function EditSalesInvoiceController($scope, $element, $location, $http){
         }
         else {
             $scope.payment_mode_selection = true;
-            $scope.payment_mode_selection_check = false;
+            $scope.payment_mode_selection_check = true;
         }
     }
     $scope.edit_sales_invoice = function() {
@@ -3710,6 +3702,9 @@ function EditSalesInvoiceController($scope, $element, $location, $http){
             }
             if ($scope.invoice_details.bank_name == null) {
                 $scope.invoice_details.bank_name = '';
+            }
+            if($scope.invoice_details.payment_mode == null) {
+                $scope.invoice_details.payment_mode = 'cash';
             }
             params = { 
                 'invoice': angular.toJson($scope.invoice_details),
