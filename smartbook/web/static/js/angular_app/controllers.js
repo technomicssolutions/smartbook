@@ -3576,20 +3576,20 @@ function EditSalesInvoiceController($scope, $element, $location, $http){
         var customer_name = $scope.invoice_details.customer;
         var item_name = item.item_name;
         $scope.latest_sales = []
-        // $http.get('/sales/latest_sales_details/?customer='+customer_name+'&item_name='+item_name).success(function(data)
-        // {   
+        $http.get('/sales/latest_sales_details/?customer='+customer_name+'&item_name='+item_name).success(function(data)
+        {   
             
-        //     if(data.latest_sales_details.length > 0){
-        //         $scope.sales_deatils = true;
-        //         $scope.latest_sales = data.latest_sales_details; 
-        //     } else {
-        //         $scope.sales_deatils = false;
-        //     }
+            if(data.latest_sales_details.length > 0){
+                $scope.sales_deatils = true;
+                $scope.latest_sales = data.latest_sales_details; 
+            } else {
+                $scope.sales_deatils = false;
+            }
             
-        // }).error(function(data, status)
-        // {
-        //     console.log(data || "Request failed");
-        // });
+        }).error(function(data, status)
+        {
+            console.log(data || "Request failed");
+        });
     }
     $scope.hide_sales_details = function(){
         $scope.sales_deatils = false;
@@ -3643,8 +3643,8 @@ function EditSalesInvoiceController($scope, $element, $location, $http){
     }
     $scope.validate_sales = function() {
 
-        if($scope.invoice_details.sales_invoice_date == '') {
-            $scope.validation_error = "Enter Sales invoice Date" ;
+        if($scope.invoice_details.invoice_no == '') {
+            $scope.validation_error = "Enter Sales Invoice No" ;
             return false;
         } else if($scope.invoice_details.sales_items.length == 0){
             $scope.validation_error = "Choose Item";

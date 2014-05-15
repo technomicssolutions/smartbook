@@ -3,7 +3,7 @@
 {% block body_id %}edit_sales_invoice{% endblock %}
 
 {% block title %} Edit Sale Invoice {% endblock title %}
-{% block controller %}ng-controller="EditSalesInvoiceController" ng-init="init('{{csrf_token}}')"{% endblock controller %}
+{% block controller %}ng-controller="EditSalesInvoiceController" ng-init="init('{{csrf_token}}')" ng-click="hide_sales_details()"{% endblock controller %}
 
 {% block content %}
 
