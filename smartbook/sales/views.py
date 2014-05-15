@@ -699,34 +699,10 @@ class CreateQuotationPdf(View):
         doc = SimpleDocTemplate(response, showBoundary=0, pagesize=A4)
         frameT = Frame(doc.leftMargin, doc.bottomMargin, doc.width, doc.height, id='normal')
 
-        # dirs = os.path.dirname(file_name)
-        # if not os.path.exists(dirs):
-        #     os.makedirs(dirs)
-        # with open(file_name, 'w') as file_object:
-
-        # response = HttpResponse(content_type='application/pdf')
-        # doc = SimpleDocTemplate("simple_table.pdf", pagesize=A4)
-        # p = canvas.Canvas(response, pagesize=(1000, 1000))
-
         status_code = 200
         y = 915
 
         elements = []
-
-        # styleSheet = getSampleStyleSheet()
-
-        # I = Image('1.gif')
-        # I.drawHeight = 1.25*inch*I.drawHeight / I.drawWidth
-        # I.drawWidth = 1.25*inch
-        # P0 = Paragraph('''
-        #                <b>A pa<font color=red>r</font>a<i>graph</i></b>
-        #                <super><font color=yellow>1</font></super>''',
-        #                styleSheet["BodyText"])
-        # P = Paragraph('''
-        #     <para align=center spaceb=3>The <b>ReportLab Left
-        #     <font color=red>Logo</font></b>
-        #     Image</para>''',
-        #     styleSheet["BodyText"])
 
         style = [
             ('FONTSIZE', (0,0), (-1, -1), 12),
@@ -840,21 +816,24 @@ class CreateQuotationPdf(View):
 
         i = 0 
         i = i + 1
+        TWOPLACES = Decimal(10) ** -2
 
         for q_item in quotation.quotationitem_set.all():            
 
             x=x-40
 
-            data1=[[i, q_item.item.name, q_item.quantity_sold, q_item.item.inventory_set.all()[0].selling_price, q_item.net_amount]]
+            if q_item.selling_price:
+                selling_price = q_item.selling_price.quantize(TWOPLACES)
+            else:
+                selling_price = q_item.item.inventory_set.all()[0].selling_price.quantize(TWOPLACES)
+
+            data1=[[i, q_item.item.name, q_item.quantity_sold, selling_price, q_item.net_amount]]
             table = Table(data1, colWidths=[50, 250, 50, 100, 100], rowHeights=30, style = style2)
             table.setStyle(TableStyle([
-                                       # ('INNERGRID', (0,0), (0,0), 0.25, colors.black),
                                        # ('INNERGRID', (0,1), (-1,-1), 0.25, colors.black),
                                        ('BOX', (0,0), (-1,-1), 0.25, colors.black),
                                        ('VALIGN',(0,-1),(-1,-1),'MIDDLE'),
                                        # ('ALIGN', (0,0), (-1,-1),'RIGHT'),
-                                       # ('SPACEBELOW', (0,0), (-1,-1), 10),
-                                       # ('BACKGROUND',(0,0),(1,0),colors.lightgrey)
                                        ]))
             
             # table.wrapOn(p, 200, 400)            
@@ -902,14 +881,14 @@ class CreateQuotationPdf(View):
         elements.append(table)
 
         data=[['Authorized Signatory']]
-        table = Table(data, colWidths=[50], rowHeights=30, style = style3)
+        table = Table(data, colWidths=[550], rowHeights=30, style = style3)
         # table.setStyle(TableStyle([
         #                         ('ALIGN', (0,0), (-1,-1),'LEFT'),
         #                         ]))
         elements.append(table)
 
         data=[['Prepared By']]
-        table = Table(data, colWidths=[100], rowHeights=30, style = style3)
+        table = Table(data, colWidths=[550], rowHeights=30, style = style3)
         # table.setStyle(TableStyle([
         #                         ('ALIGN', (0,0), (-1,-1),'RIGHT'),
         #                         ]))
