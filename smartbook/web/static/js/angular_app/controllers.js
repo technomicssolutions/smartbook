@@ -1072,9 +1072,16 @@ function SalesQNDNController($scope, $element, $http, $timeout, share, $location
     $scope.hide_sales_details = function(){
         $scope.sales_deatils = false;
     }
-     $scope.remove_from_item_list = function(item) {
+    $scope.remove_from_item_list = function(item) {
         var index = $scope.sales.sales_items.indexOf(item);
         $scope.sales.sales_items.splice(index, 1);
+        for (var i=0; i< $scope.invoice_details.sales_items.length; i++) {
+            item = $scope.invoice_details.sales_items[i]
+            if(item.qty_sold != '' && item.unit_price != ''){
+                item.net_amount = ((parseFloat(item.qty_sold)*parseFloat(item.unit_price))-parseFloat(item.disc_given)).toFixed(2);
+                $scope.calculate_net_discount_sale();
+            }
+        }
         $scope.calculate_net_total_sale();
     }
 
@@ -2907,6 +2914,14 @@ function QuotationController($scope, $element, $http, $timeout, share, $location
     $scope.remove_from_item_list = function(item) {
         var index = $scope.quotation.sales_items.indexOf(item);
         $scope.quotation.sales_items.splice(index, 1);
+        for (var i=0; i< $scope.quotation.sales_items.length; i++) {
+            item = $scope.quotation.sales_items[i]
+            if(item.qty_sold != '' && item.unit_price != ''){
+                item.net_amount = ((parseFloat(item.qty_sold)*parseFloat(item.unit_price))-parseFloat(item.disc_given)).toFixed(2);
+            }
+        }
+            
+        $scope.calculate_net_total_amount();
     }
 
     $scope.create_quotation = function() {
