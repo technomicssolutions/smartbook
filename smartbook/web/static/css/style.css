@@ -777,3 +777,7 @@ a {
 #direct_delivery_note .purchase_item_list .item_list_row span {
     width: 9.5%;
 }
+
+#edit_sales_invoice .purchase_item_list .item_list_row span {
+    width: 9.5%;
+}
