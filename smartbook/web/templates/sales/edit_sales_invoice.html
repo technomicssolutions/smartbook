@@ -1,33 +1,14 @@
 {% extends 'base.html' %}
 
-{% block body_id %}Sales{% endblock %}
+{% block body_id %}edit_sales_invoice{% endblock %}
 
-{% block title %}Sales Entry{% endblock title %}
-{% block controller %}ng-controller="SalesController" ng-init="init('{{csrf_token}}', '{{sales_invoice_number}}')" ng-click="hide_sales_details()"{% endblock controller %}
-{% block dialogue_popup %}
-	{% include 'add_new_customer.html' %} 
-	              	
-{% endblock %}
-{% block extrahead %}
-	<script type="text/javascript">
-		window.addEvent('domready',function() {
-		
-		 	// Hide best selling price on click anywhere in the page
+{% block title %} Edit Sale Invoice {% endblock title %}
+{% block controller %}ng-controller="EditSalesInvoiceController" ng-init="init('{{csrf_token}}')"{% endblock controller %}
 
-		 	$$('#create_quotation').each(function(el){
-
-				el.addEvent('click', function(ev){
-					ev.stop();
-		            
-				});
-			});
-		});
-	</script>
-{% endblock extrahead %}
 {% block content %}
 
 	<div id="main-title">
-		<div class="alert alert-info" align="Center"><h4>Direct Sales Entry</h4></div>
+		<div class="alert alert-info" align="Center"><h4>Edit Sales Invoice</h4></div>
 	</div>
 
 	<div class="sales_form_container">
@@ -35,85 +16,90 @@
 			<div class="form_contents_sales">
 				<div class="section_1_sales">
 					<div class="formrow_sales">
+						<div class="formtext_sales">
+							<label for="customer">Sales Invoice No</label>
+						</div>
+						<div class="forminput_sales">
+							<input type='text' id="invoice_no" ng-model="invoice_no" ng-change="get_sales_invoice_details()"/>
+							<p> [[message]] </p>
+						</div>
+						<div class="item_list quotation_list" ng-show='selecting_invoice' ng-hide="invoice_selected">
+							<div ng-repeat="invoice in invoices" ng-click="add_invoice(invoice)" class="item_list_row">
+								<span>[[invoice.invoice_no]]</span>
+							</div>
+							<div class="clear"></div>
+						</div>
+					</div>
+					<div class="formrow_sales">
+						<div class="formtext_sales">
+							<label for="customer">Quotation Reference No</label>
+						</div>
+						<div class="forminput_sales">
+							<input type='text' id="quotation_no" ng-model="quotation_no" ng-change="get_quotation_details()"/>
+							<p> [[message]] </p>
+						</div>
+						<div class="item_list quotation_list" ng-show='selecting_quotation' ng-hide="quotation_selected">
+							<div ng-repeat="quotation in quotations" ng-click="add_quotation(quotation)" class="item_list_row">
+								<span>[[quotation.ref_no]]</span>
+							</div>
+							<div class="clear"></div>
+						</div>
+					</div>
+					
+					<div class="formrow_sales">
+						<div class="formtext_sales">
+							<label for="customer">Delivery No</label>
+						</div>
+
+						<div class="forminput_sales">
+							<input type='text' id="delivery_no" ng-model="delivery_no" ng-change="get_delivery_note_details()"/>
+							<p> [[dn_message]] </p>
+						</div>
+						<div class="item_list delivery_note" ng-show='selecting_delivery_note' ng-hide="delivery_note_selected">
+							<div ng-repeat="delivery_note in delivery_notes" ng-click="add_delivery_note(delivery_note)" class="item_list_row">
+								<span>[[delivery_note.delivery_no]]</span>
+							</div>
+							<div class="clear"></div>
+						</div>
+					</div>
+					<div class="formrow_sales">
 						<div class="formtext_sales	">
 							<label for="Date ">Date </label>
 						</div>
 
 						<div class="forminput_sales">
 							
-							<input type="text" name="sales_invoice_date"  id="sales_invoice_date" value="{{current_date}}" ng-readonly="payment_mode_selection">
+							<input type="text" name="sales_invoice_date"  id="sales_invoice_date" value="{{current_date}}" ng-readonly="payment_mode_selection_check">
 						</div>
 					</div>
-
 					<div class="formrow_sales">
 						<div class="formtext_sales">
 							<label for="customer">Customer Name</label>
 						</div>
 						<div class="forminput_sales">
-							<select name="customer" ng-model="sales.customer" ng-change="add_customer()" >
-								<option value="select">Select</option>
-								<option ng-repeat="customer in customers" value="[[customer.customer_name]]" ng-selected="customer.customer_name == sales.customer">[[customer.customer_name]]
-								</option>
-								<option value="other">Other</option>
-							</select>
-							
+							<input type="text" name="customer"  id="customer" ng-model="sales.customer" 
 						</div>
 					</div>
-
-
-					<div class="formrow_sales">
-						<div class="formtext_sales">
-							<label for="sales_invoice_number">Invoice Number </label>
-						</div>
-						<div class="forminput_sales">
-							<input type="text" name="sales_invoice_number"  ng-model="sales.sales_invoice_number"  readonly / >
-						</div>
-					</div>
-					
-					<div class="formrow_sales">
-						<div class="formtext_sales">
-							<label for="lpo_number">LPO Number </label>
-						</div>
-						<div class="forminput_sales">
-							<input type="text" name="lpo_number"  ng-model="sales.lpo_number"/ >
-						</div>
-					</div>	
 
 				</div>	
-		
-				<div class="section_3_sales">
-					<div class="search_sales">
-						<div class="control">
-							<label> Item Code </label>
-   							<input type='text' id="item_code" ng-model="item_code" ng-change="getItems('item_code')"/>
-   						</div>
-   						<div class="control">
-   							<label> Item name </label>
-   							<input type="text" id='item_name' ng-model="item_name" ng-change="getItems('item_name')"/>
-   						</div>
-   						<div class="control">
-   							<label> Barcode </label>
-   							<input type="text" id='barcode' ng-model="barcode" ng-change="getItems('barcode')"/>
-   						</div>
-   						<div class="clear"></div>
-	   					<div class="item_list" ng-show='selecting_item' ng-hide="item_selected">
-							<div class="item_list_row header">
-								<span> Item Code </span>
-								<span> Item name </span>
-								<span> Barcode </span>
-							</div>
-							<div ng-repeat="item in items" ng-click="addSalesItem(item)" class="item_list_row">
-								<span>[[item.item_code]]</span>
-								<span>[[item.item_name]]</span>
-								<span>[[item.barcode]] </span>
-							</div>
-							<div class="clear"></div>
-						</div>
-    				</div>
-    				<div class="clear"></div>
-   				</div>
+				<div class="formrow_sales">
+					<div class="formtext_sales">
+						<label for="sales_invoice_number">Invoice Number </label>
+					</div>
+					<div class="forminput_sales">
+						<input type="text" name="sales_invoice_number"  ng-model="sales.sales_invoice_number"  readonly / >
+					</div>
+				</div>	
 
-
+				<div class="formrow_sales">
+					<div class="formtext_sales">
+						<label for="lpo_number">LPO Number </label>
+					</div>
+					<div class="forminput_sales">
+						<input type="text" name="lpo_number"  ng-model="sales.lpo_number"/ >
+					</div>
+				</div>
+			
    				<div class="purchase_items_list" ng-show="sales.sales_items.length > 0">
    					<div class="purchase_item_list">
    						
@@ -123,14 +109,9 @@
 							<span> Barcode </span>
 							<span> Stock </span>
 							<span> Unit Price </span>
-							<span> Tax(%) </span>
-							<span> Tax Amount </span>
 							<span> Qty  </span>
 							<span> UOM  </span>
-							<span> Dis(%) </span>
-							<span> Dis Amt</span>
-							<span> Dis Given </span>
-							<span> Unit Cost </span>		
+							<span> Dis Given </span>	
 							<span> Net Amount </span>
 							<span> &nbsp;&nbsp; </span>
 						</div>
@@ -139,18 +120,14 @@
 							<span>[[item.item_name]] </span>
 							<span>[[item.barcode]] </span>
 							<span>[[item.current_stock]] </span>
-							<span><input type="text" ng-model="item.unit_price" ng-change="calculate_net_amount_sale(item)" ng-click="get_latest_sales_details(item)"/></span>
-							<span>[[item.tax]] </span>
-							<span> [[item.tax_amount]] </span> 
-							<span> <input type="text" ng-model="item.qty_sold" ng-change="calculate_net_amount_sale(item)" /> </span> 
+							<span><input type="text" ng-model="item.unit_price" ng-click="get_latest_sales_details(item)" ng-change="calculate_net_amount_sale(item)" /></span>
+							<!-- <span> [[item.qty_sold]]</span>  -->
+							<span> <input type="text" ng-model="item.qty_sold" ng-change="calculate_net_amount_sale(item)" /> </span>
 							<span>[[item.uom]] </span>
-							<span>[[item.discount_permit]] </span>
-							<span>[[item.discount_permit_amount]] </span>
 							<span> <input type="text" ng-model="item.disc_given" ng-change="calculate_net_amount_sale(item)"/> </span> 
-							<span>[[item.unit_cost]] </span>
 							<span>[[item.net_amount]] </span>
-							<span><a href="" ng-click="remove_from_item_list(item)">X</a> </span>
-							
+							<span><a href="" ng-click="remove_from_item_list(item)">Remove</a> </span>
+							 
 						</div>
 						
 						<div class="clear"></div>
@@ -160,8 +137,8 @@
 
    				<div class="section_3_sales align_top">
 					<div class="search_sales">
-						<p ng-show="no_customer_error_flag" class="error_message"> [[no_customer_error]] </p>
-	   					<div class="item_list" ng-show='sales_deatils' id="latest_sales_details" ng-click="hide_sales_details()" ng-hide="no_customer_error_flag">
+						
+	   					<div class="item_list" ng-show='sales_deatils' id="latest_sales_details" ng-click="hide_sales_details()">
 							<div class="item_list_row header" ng-click="hide_sales_details()">
 								<span> Date </span>
 								<span> Unit Price </span>
@@ -202,9 +179,24 @@
 							<label for="payment_mode">Payment Mode</label>
 						</div>
 						<div class="forminput_sales" id="radio_input">
-							<input type="radio" name="payment_mode" ng-model="payment_mode" value="cash" ng-change="payment_mode_change_sales('cash')"><label>Cash</label>
-							<input type="radio" name="payment_mode" ng-model="payment_mode" value="cheque" ng-change="payment_mode_change_sales('cheque')"><label>Cheque</label>
+							<input type="radio" name="payment_mode" ng-model="sales.payment_mode" value="cash" ng-change="payment_mode_change_sales('cash')"><label>Cash</label>
+							<input type="radio" name="payment_mode" ng-model="sales.payment_mode" value="cheque" ng-change="payment_mode_change_sales('cheque')"><label>Cheque</label>
+							<input type="radio" name="payment_mode" ng-model="sales.payment_mode" value="card" ng-change="payment_mode_change_sales('card')"><label>Card</label>
+
 						</div>
+						<div class="formtext_sales">
+							<label for="card_number">Card Number</label>
+						</div>
+						<div class="forminput_sales">
+							<input type="text" name="card_number"ng-model="sales.card_number" ng-readonly="payment_mode_selection">
+						</div>
+						<div class="formtext_sales">
+							<label for="bank_name">Bank Name</label>
+						</div>
+						<div class="forminput_sales">
+							<input type="text" name="bank_name"ng-model="sales.bank_name" ng-readonly="payment_mode_selection">
+						</div>
+
 					</div>
 					
 
@@ -265,43 +257,3 @@
 	</div>
 
 {% endblock content %}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
