@@ -1206,9 +1206,7 @@ class InvoiceDetails(View):
 
         invoice_no = request.GET.get('invoice_no', '')
         sales_invoice_details = SalesInvoice.objects.filter(invoice_no__istartswith=invoice_no, is_processed=False)
-        print "not processed == ", sales_invoice_details.count()
         invoices = SalesInvoice.objects.filter(invoice_no__istartswith=invoice_no)
-        print "count == ", invoices.count()
         ctx_invoice_details = []
         ctx_sales_invoices = []
         ctx_sales_item  = []

@@ -3099,6 +3099,7 @@ function DeliveryNoteController($scope, $element, $http, $timeout, share, $locat
     $scope.remove_from_item_list = function(item) {
         var index = $scope.quotation.sales_items.indexOf(item);
         $scope.quotation.sales_items.splice(index, 1);
+        $scope.calculate_net_total_sale();
     }
 }
 
