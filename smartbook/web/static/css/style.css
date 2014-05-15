@@ -259,7 +259,7 @@ textarea{
 	width: 50%;
 }
 .form_container input[type="button"]{
-	width: auto;
+	width: 20%;
 }
 .form_container select{
 	float: left;
@@ -304,7 +304,8 @@ form {
 }
 .section_1 {
 	float: left;
-	width: 50%;
+	width: 48%;
+	padding-left: 2%;
 }
 .section_2 {
 	float: left;
@@ -334,10 +335,11 @@ form {
 }
 .buttons {
 	margin: auto;
-    width: 42%;
+    width: 100%;
 }
 .buttons .btn {
-	margin-right: 10px;
+	margin-left: 2%;
+/*	width: 20%; */
 }
 .buttons a {
 	float: left;
@@ -414,7 +416,7 @@ form {
 }
 .formtext_purchase {
 	float: left;
-    width: 200px;
+    width: 100%;
 }
 .forminput_purchase {
 	float: left;
@@ -496,7 +498,7 @@ form {
 .search_sales .control {
 	background-color: #ADD8E6;
     float: left;
-    padding: 13px;
+    padding: 1%;
     width: 31%;
 }
 
@@ -553,10 +555,10 @@ th {
 
 .item_list {
 	background-color: #FFFFFF;
-    border: 1px solid #ADD8E6;
-    position: absolute;
-    margin-top: -10px;
-    width: 89%;
+/*    border: 1px solid #ADD8E6; */
+    position: relative;
+    margin-top: 1px;
+    width: 98.7%;
     border-top-color: #FFFFFF;
 }
 
