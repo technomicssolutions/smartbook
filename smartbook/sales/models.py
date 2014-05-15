@@ -26,6 +26,10 @@ class Quotation(models.Model):
     processed = models.BooleanField('Is Processed', default=False)
     net_total = models.DecimalField('Net Total',max_digits=14, decimal_places=2, default=0)
     is_sales_invoice_created = models.BooleanField('Is Sales Invoice Created', default=False)
+    delivery = models.CharField('Delivery', max_length=10, null=True, blank=True)
+    proof = models.CharField('Proof', max_length=10, null=True, blank=True)
+    Payment = models.CharField('Payment', max_length=10, null=True, blank=True)
+    validity = models.CharField('Validity', max_length=10, null=True, blank=True)
 
     def __unicode__(self):
 
