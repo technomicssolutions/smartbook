@@ -485,11 +485,11 @@ form {
 }
 .formtext_sales {
 	float: left;
-    width: 206px;
+   	width:50%;
 }
 .forminput_sales {
 	float: left;
-
+	width:50%;
 }
 .search_sales{
 	width: 100%;
