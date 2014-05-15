@@ -266,6 +266,7 @@ class CreateQuotation(View):
                 inventory.save()
                 quotation_item_obj.net_amount = float(quotation_item['net_amount'])
                 quotation_item_obj.quantity_sold = int(quotation_item['qty_sold'])
+                quotation_item_obj.selling_price = float(quotation_item['unit_price'])
                 quotation_item_obj.save()
             res = {
                 'result': 'OK',
@@ -584,9 +585,12 @@ class CreateQuotationPdf(View):
             table.wrapOn(p, 200, 400)
             # table.drawOn(p,105,460)
             table.drawOn(p,555, x)
+            if q_item.selling_price:
+                selling_price = q_item.selling_price
+            else:
+                q_item.item.inventory_set.all()[0].selling_price
 
-
-            data1=[[q_item.item.inventory_set.all()[0].selling_price]]
+            data1=[[selling_price]]
             table = Table(data1, colWidths=[125], rowHeights=40, style = style)
             table.setStyle(TableStyle([
                                        # ('INNERGRID', (0,0), (0,0), 0.25, colors.black),
