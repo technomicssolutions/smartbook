@@ -31,6 +31,37 @@
 					</div>
 
 					<div class="formrow_sales">
+						<div class="formtext_sales	">
+							<label for="Delivery ">Delivery </label>
+						</div>
+
+						<div class="forminput_sales">
+							
+							<input type="text" name="delivery"  ng-model="quotation.delivery">
+						</div>
+					</div>
+
+					<div class="formrow_sales">
+						<div class="formtext_sales">
+							<label for="reference_number">Reference Number </label>
+						</div>
+						<div class="forminput_sales">
+							<input type="text" name="reference_number" id="reference_number" value="{{reference_number}}" readonly / >
+						</div>
+					</div>	
+
+					<div class="formrow_sales">
+						<div class="formtext_sales	">
+							<label for="Proof ">Proof </label>
+						</div>
+
+						<div class="forminput_sales">
+							
+							<input type="text" name="proof"  ng-model="quotation.proof">
+						</div>
+					</div>
+
+					<div class="formrow_sales">
 						<div class="formtext_sales">
 							<label for="customer">Customer Name</label>
 						</div>
@@ -45,18 +76,21 @@
 						</div>
 					</div>
 
-
-					<div class="formrow_sales">
-						<div class="formtext_sales">
-							<label for="reference_number">Reference Number </label>
-						</div>
-						<div class="forminput_sales">
-							<input type="text" name="reference_number" id="reference_number" value="{{reference_number}}" readonly / >
-						</div>
-					</div>	
 					<div class="formrow_sales">
 						<div class="formtext_sales	">
-							<label for="Date ">Attention </label>
+							<label for="Payment ">Payment </label>
+						</div>
+
+						<div class="forminput_sales">
+							
+							<input type="text" name="payment"  ng-model="quotation.payment">
+						</div>
+					</div>
+
+					
+					<div class="formrow_sales">
+						<div class="formtext_sales	">
+							<label for="Attention ">Attention </label>
 						</div>
 
 						<div class="forminput_sales">
@@ -66,8 +100,19 @@
 					</div>
 
 					<div class="formrow_sales">
+						<div class="formtext_sales	">
+							<label for="Validity ">Validity </label>
+						</div>
+
+						<div class="forminput_sales">
+							
+							<input type="text" name="validity"  ng-model="quotation.validity">
+						</div>
+					</div>
+
+					<div class="formrow_sales">
 						<div class="formtext_sales">
-							<label for="Date ">Subject </label>
+							<label for="Subject ">Subject </label>
 						</div>
 
 						<div class="forminput_sales">
@@ -75,6 +120,50 @@
 							<input type="text" name="subject"  ng-model="quotation.subject">
 						</div>
 					</div>
+
+					<!-- <div class="formrow_sales">
+						<div class="formtext_sales	">
+							<label for="Delivery ">Delivery </label>
+						</div>
+
+						<div class="forminput_sales">
+							
+							<input type="text" name="delivery"  ng-model="quotation.delivery">
+						</div>
+					</div> -->
+
+					<!-- <div class="formrow_sales">
+						<div class="formtext_sales	">
+							<label for="Proof ">Proof </label>
+						</div>
+
+						<div class="forminput_sales">
+							
+							<input type="text" name="proof"  ng-model="quotation.proof">
+						</div>
+					</div> -->
+
+					<!-- <div class="formrow_sales">
+						<div class="formtext_sales	">
+							<label for="Payment ">Payment </label>
+						</div>
+
+						<div class="forminput_sales">
+							
+							<input type="text" name="payment"  ng-model="quotation.payment">
+						</div>
+					</div>
+ -->
+					<!-- <div class="formrow_sales">
+						<div class="formtext_sales	">
+							<label for="Validity ">Validity </label>
+						</div>
+
+						<div class="forminput_sales">
+							
+							<input type="text" name="validity"  ng-model="quotation.validity">
+						</div>
+					</div> -->
 
 				</div>	
 		
