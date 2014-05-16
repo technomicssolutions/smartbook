@@ -830,7 +830,6 @@ class DeliveryNoteDetails(View):
                         })
                         i = i + 1
             else:  
-                
                 for delivery_note_item in delivery_note.deliverynoteitem_set.all():
                     item_list.append({
                         'sl_no': i,
@@ -855,7 +854,8 @@ class DeliveryNoteDetails(View):
                 'items': item_list,
                 'net_total': delivery_note.quotation.net_total if delivery_note.quotation else delivery_note.net_total,
                 'delivery_no': delivery_note.delivery_note_number,
-                'lpo_number': delivery_note.lpo_number if delivery_note.lpo_number else ''
+                'lpo_number': delivery_note.lpo_number if delivery_note.lpo_number else '',
+                'date': delivery_note.date.strftime('%d/%m/%Y'),
             })
         res = {
             'delivery_notes': delivery_note_list,
@@ -1621,6 +1621,108 @@ class EditDeliveryNote(View):
     def get(self, request, *args, **kwargs):
 
         return render(request, 'sales/edit_delivery_note.html', {})
+
+    def post(self, request, *args, **kwargs):
+
+        if request.is_ajax():
+            delivery_note_details = ast.literal_eval(request.POST['delivery_note'])
+            
+            q_stored_item_names = []
+            d_stored_item_names = []
+            stored_item_names = []
+            delivery_note, created = DeliveryNote.objects.get_or_create(delivery_note_number=delivery_note_details['delivery_note_no'])
+            if delivery_note.quotation:
+                quotation = delivery_note.quotation
+                for d_item in delivery_note.quotation.quotationitem_set.all():
+                    q_stored_item_names.append(d_item.item.name)
+                
+                for q_item in delivery_note.quotation.quotationitem_set.all():
+                    q_item_names = []
+                    for item_data in delivery_note_details['sales_items']:
+                        q_item_names.append(item_data['item_name'])
+
+                    # Removing the qutation item object that is not in inputed delivery note items list
+
+                    if q_item.item.name not in q_item_names:
+                        item = q_item.item 
+                        inventory, created = Inventory.objects.get_or_create(item=item)
+                        inventory.quantity = inventory.quantity + int(q_item.quantity_sold)
+                        inventory.save()
+                        q_item.delete()
+                    else:
+                        for item_data in delivery_note_details['sales_items']:
+                            item = Item.objects.get(code=item_data['item_code'])
+                            quotation_item = QuotationItem.objects.filter(item=item, quotation=quotation)
+                            if quotation_item.count() > 0:
+                                q_item = quotation_item[0]
+                                inventory, created = Inventory.objects.get_or_create(item=item)
+                                inventory.quantity = inventory.quantity + q_item.quantity_sold - int(item_data['qty_sold'])      
+
+                                inventory.save()
+                                q_item.net_amount = float(item_data['net_amount'])
+                                q_item.quantity_sold = int(item_data['qty_sold'])
+                                q_item.selling_price = float(item_data['unit_price'])
+                                q_item.save()
+            if delivery_note.deliverynoteitem_set.all().count() > 0:
+
+                for d_item in delivery_note.deliverynoteitem_set.all():
+                    d_stored_item_names.append(d_item.item.name)
+                
+                for d_item in delivery_note.deliverynoteitem_set.all():
+                    d_item_names = []
+                    for item_data in delivery_note_details['sales_items']:
+                        d_item_names.append(item_data['item_name'])
+
+                    # Removing the delivery note item object that is not in inputed delivery note items list
+
+                    if d_item.item.name not in d_item_names:
+                        item = d_item.item 
+                        inventory, created = Inventory.objects.get_or_create(item=item)
+                        inventory.quantity = inventory.quantity + int(d_item.quantity_sold)
+                        inventory.save()
+                        d_item.delete()
+                    else:
+                        for item_data in delivery_note_details['sales_items']:
+                            item = Item.objects.get(code=item_data['item_code'])
+                            delivery_note_item = DeliveryNoteItem.objects.filter(item=item, delivery_note=delivery_note)
+                            if delivery_note_item.count() > 0:
+                                d_item = delivery_note_item[0]
+                                inventory, created = Inventory.objects.get_or_create(item=item)
+                                inventory.quantity = inventory.quantity + d_item.quantity_sold - int(item_data['qty_sold'])      
+
+                                inventory.save()
+                                d_item.net_amount = float(item_data['net_amount'])
+                                d_item.quantity_sold = int(item_data['qty_sold'])
+                                d_item.selling_price = float(item_data['unit_price'])
+                                d_item.save()
+
+            stored_item_names = []
+            for item_data in delivery_note_details['sales_items']:
+                if item_data['item_name'] not in q_stored_item_names:
+                    if item_data['item_name'] not in d_stored_item_names:
+                        stored_item_names.append(item_data['item_name'])
+                        
+            for item_data in delivery_note_details['sales_items']:
+                if item_data['item_name'] in stored_item_names:
+                    item = Item.objects.get(code=item_data['item_code'])
+                    d_item, item_created = DeliveryNoteItem.objects.get_or_create(item=item, delivery_note=delivery_note)
+                    inventory, created = Inventory.objects.get_or_create(item=item)
+                    if item_created:
+                        inventory.quantity = inventory.quantity - int(item_data['qty_sold'])
+                    inventory.save()
+                    d_item.quantity_sold = item_data['qty_sold']
+                    d_item.net_amount = item_data['net_amount']
+                    d_item.selling_price = item_data['unit_price']
+                    d_item.save()
+
+
+            res = {
+                'result': 'ok',
+                'delivery_note_id': delivery_note.id
+            }
+            response = simplejson.dumps(res)
+
+            return HttpResponse(response, status=200, mimetype='application/json')
 
     
 

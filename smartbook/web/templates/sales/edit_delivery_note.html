@@ -1,6 +1,6 @@
 {% extends 'base.html' %}
 
-{% block body_id %}edit_delivery{% endblock %}
+{% block body_id %}edit_delivery_note{% endblock %}
 
 {% block title %}Edit Delivery{% endblock title %}
 {% block controller %}ng-controller="EditDeliveryController" ng-init="init('{{csrf_token}}')"{% endblock controller %}
@@ -20,55 +20,47 @@
 			<div class="form_contents_sales">
 				<div class="section_1_sales">
 					<div class="formrow_sales">
+						<div class="formtext_sales">
+							<label for="delivery_no">Delivery Note No </label>
+						</div>
+						<div class="forminput_sales">
+							<input type="text" name="delivery_note_no" ng-model="delivery_note_no" ng-change="get_delivery_note_details()" />
+							<p class="error_message"> [[dn_message]] </p>
+						</div>
+						<div class="item_list quotation_list" ng-show='selecting_delivery_note' ng-hide="delivery_note_selected">
+							<div ng-repeat="delivery_note in delivery_notes" ng-click="add_delivery_note(delivery_note)" class="item_list_row">
+								<span>[[delivery_note.delivery_no]]</span>
+							</div>
+							<div class="clear"></div>
+						</div>
+					</div>	
+
+					<div class="formrow_sales">
 						<div class="formtext_sales	">
 							<label for="Date ">Date </label>
 						</div>
 
 						<div class="forminput_sales">
 							
-							<input type="text" name="delivery_date"  id="delivery_date" value="{{current_date}}" readonly>
+							<input type="text" name="delivery_date"  id="delivery_date" ng-model="delivery_note.date" readonly>
 						</div>
 					</div>
-
-					<div class="formrow_sales">
-						<div class="formtext_sales">
-							<label for="delivery_no">Delivery Note No </label>
-						</div>
-						<div class="forminput_sales">
-							<input type="text" name="delivery_note_no" id="delivery_note_no" value="{{delivery_no}}" readonly />
-						</div>
-					</div>	
-
 
 					<div class="formrow_sales">
 						<div class="formtext_sales">
 							<label for="delivery_no">Customer Name</label>
 						</div>
 						<div class="forminput_sales">
-							<input type="text" name="customer" id="customer" value="{{customer}}" readonly />
+							<input type="text" name="customer" id="customer" ng-model="delivery_note.customer" readonly />
 						</div>
 					</div>	
-
-					<!-- <div class="formrow_sales">
-						<div class="formtext_sales">
-							<label for="customer">Customer Name</label>
-						</div>
-						<div class="forminput_sales">
-							<select name="customer" ng-model="delivery_note.customer" ng-change="add_customer()" >
-								<option value="select">Select</option>
-								<option ng-repeat="customer in customers" value="[[customer.customer_name]]" ng-selected="customer.customer_name == quotation.customer">[[customer.customer_name]]
-								</option>
-								<option value="other">Other</option>
-							</select>							
-						</div>
-					</div> -->
 
 					<div class="formrow_sales">
 						<div class="formtext_sales">
 							<label for="reference_number">Reference Number </label>
 						</div>
 						<div class="forminput_sales">
-							<input type="text" name="reference_number" id="reference_number" value="{{reference_number}}" readonly / >
+							<input type="text" name="reference_number" id="reference_number" ng-model="delivery_note.ref_no" readonly / >
 						</div>
 					</div>
 
@@ -77,7 +69,7 @@
 							<label for="lpo_no">LPO No </label>
 						</div>
 						<div class="forminput_sales">
-							<input type="text" name="lpo_no" id="lpo_no" value="{{lpo_no}}" readonly />
+							<input type="text" name="lpo_no" ng-model="delivery_note.lpo_no" readonly />
 						</div>
 					</div>	
 
@@ -155,7 +147,7 @@
 			<div  align="Center">
 				<div class="buttons">
 					<p class="error_message"> [[validation_error]] </p>
-					<input type="button" value="Submit" ng-click="create_delivery_note();">
+					<input type="button" value="Submit" ng-click="edit_delivery_note();">
 					<a href="{% url 'home' %}"><input type="button" value="Cancel"></a>
 				</div>
 			</div>			
