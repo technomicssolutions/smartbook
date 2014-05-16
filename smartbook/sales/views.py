@@ -1031,8 +1031,6 @@ class QuotationDeliverynoteSales(View):
         response = simplejson.dumps(res)
         status_code = 200
         return HttpResponse(response, status = status_code, mimetype="application/json")
-
-
 class CreateSalesInvoicePDF(View):
 
     def get(self, request, *args, **kwargs):
@@ -1069,7 +1067,7 @@ class CreateSalesInvoicePDF(View):
         #                ('FONTSIZE', (2,0), (2,0), 30),
         #                ]))     
         table.wrapOn(p, 200, 400)
-        table.drawOn(p,50, 980)
+        table.drawOn(p,50, 975)
 
         quotation = sales_invoice.quotation
 
@@ -1095,7 +1093,7 @@ class CreateSalesInvoicePDF(View):
 
             table = Table(data, colWidths=[450, 120, 70], rowHeights=40, style = style)      
             table.wrapOn(p, 200, 400)
-            table.drawOn(p,50, 860)
+            table.drawOn(p,50, 880)
 
         x=790
 
@@ -1134,7 +1132,6 @@ class CreateSalesInvoicePDF(View):
         p.showPage()
         p.save()
         return response
-
 
 class ReceiptVoucherCreation(View):
 
