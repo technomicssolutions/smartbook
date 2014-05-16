@@ -1652,3 +1652,14 @@ class EditQuotation(View):
             response = simplejson.dumps(res)
 
             return HttpResponse(response, status=200, mimetype='application/json')
+
+
+class EditDeliveryNote(View):
+
+    def get(self, request, *args, **kwargs):
+
+        return render(request, 'sales/edit_delivery_note.html', {})
+
+    
+
+
