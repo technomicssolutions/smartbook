@@ -25,7 +25,7 @@
 			New Staff
 		{% endif %}
 		{% if user_type == 'vendor' %} 
-			New Vendor
+			New Vendo
 		{% endif %}
 		{% if user_type == 'customer' %} 
 			New Customer
@@ -65,7 +65,7 @@
 				<div class="control">
 					<label>Designation</label>
 					{% if salesman %}
-						<input type="text" name="designation" ng-model="designation" value="salesman" readonly />
+						<input type="text" name="designation" ng-model="designation" value="Salesman" readonly />
 					{% else %}
 						<select name="designation" ng-model="designation" ng-change="add_designation()">
 							<option value="select">Select</option>

@@ -76,7 +76,7 @@ class UserList(View):
                 if len(users) > 0:
                     for usr in users:
                         ctx_vendors.append({
-                            'vendor_name': usr.user.first_name,
+                            'vendor_name': usr.user.first_name if usr.user.first_name else user.username,
                         })
                 res = {
                     'vendors': ctx_vendors,
@@ -107,7 +107,7 @@ class UserList(View):
                 return HttpResponse(response, status = status_code, mimetype="application/json")
         elif user_type == 'salesman': 
             
-            desig = Designation.objects.get(title = 'salesman')
+            desig, created = Designation.objects.get_or_create(title = 'Salesman')
         
             salesmen = Staff.objects.filter(designation = desig)
 
@@ -115,7 +115,7 @@ class UserList(View):
                 if len(salesmen)>0:
                     for salesman in salesmen:
                         ctx_salesman.append({
-                            'salesman_name' : salesman.user.first_name,
+                            'salesman_name' : salesman.user.first_name if salesman.user.first_name else salesman.user.username,
                         })
                 res = {
                     'salesmen' : ctx_salesman,
@@ -138,151 +138,121 @@ class RegisterSalesman(View):
 class RegisterUser(View):
     def get(self, request, *args, **kwargs):
         user_type = kwargs['user_type']
-        if user_type == 'vendor':
-            return render(request, 'register_user.html',{'user_type': user_type})
-        elif user_type == 'staff':
-            return render(request, 'register_user.html',{
-                'user_type': user_type
-            })
-        elif user_type == 'customer':
-            return render(request, 'register_user.html',{'user_type': user_type})
-
+        return render(request, 'register_user.html',{'user_type': user_type})
+        
 
     def post(self, request, *args, **kwargs):
-        
-        
+       
         context={}
         user_type = kwargs['user_type']
         message = ''
         template = 'register_user.html'
-        if user_type == 'staff':
-            if request.POST['name'] == '':
-                message = "Please enter name"
-            elif request.POST['username'] == '':
-                message = "Please enter username"
-            elif request.POST['password'] == '':
-                message = "Please enter password"
-            if message:
-                context = {
-                    'error_message': message,
-                    'user_type': user_type
-                }
-                context.update(request.POST)            
-                return render(request, template, context)
-            user, created = User.objects.get_or_create(username=request.POST['username'])
-            user.set_password(request.POST['password'])
-            user.save()
-        else:
-            if request.POST['name'] == '':
-                message = "Please enter name"
-            if message:
-                context = {
-                    'error_message': message,
-                    'user_type': user_type
-                }
-                context.update(request.POST)
-                return render(request, template, context)
-            user, created = User.objects.get_or_create(username=request.POST['name']+user_type, first_name = request.POST['name'])
-        if not created:            
-            if user_type == 'vendor':
-                message = 'Vendor with this name already exists'
-                if request.is_ajax():
-                    res = {
-                        'result': 'error',
-                        'message': 'Designation Already exists'
-                    }
-                    response = simplejson.dumps(res)
-                    return HttpResponse(response, status = 500, mimetype="application/json")
-            elif user_type == 'staff':
-                message = 'Staff with this name already exists'
-            elif user_type == 'customer':
-                message = 'Customer with this name already exists'
+        if request.POST['name'] == '':
+            message = "Please enter name"
+        elif request.POST['username'] == '':
+            message = "Please enter username"
+        elif request.POST['password'] == '':
+            message = "Please enter password"
+        if message:
             context = {
                 'error_message': message,
                 'user_type': user_type
             }
-            context.update(request.POST)
+            context.update(request.POST)            
             return render(request, template, context)
         else:
-            user.email = request.POST['email']
-            user.first_name = request.POST['name']
-            user.save()
-        userprofile = UserProfile()
-        userprofile.user_type=user_type
-        userprofile.user = user
-        userprofile.house_name =request.POST['house']
-        userprofile.street = request.POST['street']
-        userprofile.city = request.POST['city']
-        userprofile.district = request.POST['district']
-        userprofile.pin = request.POST['pin']
-        userprofile.mobile = request.POST['mobile']
-        userprofile.land_line = request.POST['phone']
-        userprofile.email_id = request.POST['email']
-        userprofile.save()
-
-        if user_type == 'vendor':
-            vendor = Vendor()  
-            vendor.contact_person= request.POST['contact_person']
-            user.is_active = False
-            user.save()
-            vendor.user = user
-            vendor.save()
-            if request.is_ajax():
-                res = {
-                    'result': 'ok',
-                    'vendor_name': user.first_name
-                }
-                response = simplejson.dumps(res)
-                return HttpResponse(response, status = 200, mimetype="application/json")
-            context = {
-                'message' : 'Vendor added correctly',
-                'user_type': user_type
-            }
-            return render(request, 'register_user.html',context)
-        elif user_type == 'staff':
-            userprofile.save()
-            try:
-                if request.POST['designation'] == 'salesman':
-                    designation, created = Designation.objects.get_or_create(title='salesman')
+            if user_type == 'staff':
+                if request.POST['designation'] == '':
+                    message = "Please select designation"
+                    context = {
+                        'error_message': message,
+                        'user_type': user_type,
+                        'salesman': 'salesman',
+                    }
+                    context.update(request.POST)            
+                    return render(request, template, context)
                 else:
-                    designation = Designation.objects.get(title=request.POST['designation'])
-            except Designation.DoesNotExist:
-                context = {
-                    'message' : 'Please choose designation',
-                    'user_type': user_type
-                }
-                context.update(request.POST)
-                return render(request, 'register_user.html',context)
-            staff = Staff()
-            staff.designation = designation
-            staff.user = user
-            staff.save()
-            context = {
-                'message' : 'Staff added correctly',
-                'user_type': user_type
-            }
+                    user, created = User.objects.get_or_create(username=request.POST['username'])
+                    if not created:
+                        message = "Staff with this names exists"
+                        context = {
+                            'error_message': message,
+                            'user_type': user_type,
+                            'salesman': 'salesman'
+                        }
+                        context.update(request.POST)            
+                        return render(request, template, context)
+                    else:                        
+                        user.set_password(request.POST['password'])
+                        user.save()
+                        designation, created = Designation.objects.get_or_create(title=request.POST['designation'])
+                        staff = Staff()
+                        staff.designation = designation
+                        staff.user = user
+                        staff.save()
+                        context = {
+                            'message' : 'Staff added correctly',
+                            'user_type': user_type,
+                            'salesman': 'salesman'
+                        }
+
+            elif user_type == 'vendor':
+                user, created = User.objects.get_or_create(username=request.POST['name']+user_type, first_name = request.POST['name'])
+                if not created:    
+                    message = 'Vendor with this name already exists'
+                    if request.is_ajax():
+                        res = {
+                            'result': 'error',
+                            'message': 'Designation Already exists'
+                        }
+                        response = simplejson.dumps(res)
+                        return HttpResponse(response, status = 500, mimetype="application/json")
+                    else:
+                        context = {
+                            'error_message': message,
+                            'user_type': user_type
+                        }
+                        context.update(request.POST)
+                        return render(request, template, context)
+                else:
+                    vendor = Vendor()  
+                    vendor.contact_person= request.POST['contact_person']
+                    user.is_active = False
+                    user.save()
+                    vendor.user = user
+                    vendor.save()
+                    if request.is_ajax():
+                        res = {
+                            'result': 'ok',
+                            'vendor_name': user.first_name
+                        }
+                        response = simplejson.dumps(res)
+                        return HttpResponse(response, status = 200, mimetype="application/json")
+                    context = {
+                        'messgae': "vendor added Successfully",
+                        'user_type': user_type
+                    }
+                    context.update(request.POST)
+            else:
+                user = User()
+                user.username = request.POST['email']
+                user.email = request.POST['email']
+                user.first_name = request.POST['name']
+                user.save()
+            userprofile = UserProfile()
+            userprofile.user_type=user_type
+            userprofile.user = user
+            userprofile.house_name =request.POST['house']
+            userprofile.street = request.POST['street']
+            userprofile.city = request.POST['city']
+            userprofile.district = request.POST['district']
+            userprofile.pin = request.POST['pin']
+            userprofile.mobile = request.POST['mobile']
+            userprofile.land_line = request.POST['phone']
+            userprofile.email_id = request.POST['email']
+            userprofile.save()
+
             return render(request, 'register_user.html',context)
-        # elif user_type == 'customer':
-
-        #     customer = Customer()
-        #     user.is_active = False
-        #     user.save()
-        #     customer.user = user
-        #     customer.save()
-            
-        #     if request.is_ajax():
-        #         res = {
-        #             'result': 'ok',
-        #             'customer_name': user.first_name
-        #         }
-        #         response = simplejson.dumps(res)
-        #         return HttpResponse(response, status = 200, mimetype="application/json")
-        #     context = {
-        #         'message' : 'Customer added correctly',
-        #         'user_type': user_type
-        #     }
-        #     return render(request, 'register_user.html',context)
-
             
         
 class EditUser(View):
@@ -563,18 +533,18 @@ class CreateCustomer(View):
                 }
                 context.update(request.POST)
                 return render(request, 'register_user.html',context)
-        customer, created = Customer.objects.get_or_create(customer_id = request.POST['email'], customer_name = request.POST['name'])
+        customer, created = Customer.objects.get_or_create(customer_name = request.POST['name'])
         if not created:
             if request.is_ajax():
                 res = {
                     'result': 'error',
-                    'message': 'Customer with this email id already exists',
+                    'message': 'Customer with this name already exists',
                 }
                 response = simplejson.dumps(res)
                 return HttpResponse(response, status = 200, mimetype="application/json")
             else:
                 context = {
-                    'error_message': 'Customer with this email id already exists',
+                    'error_message': 'Customer with this name already exists',
                     'user_type': 'customer',
                 }
                 context.update(request.POST)

@@ -43,7 +43,7 @@
                             <input name="email" type="text" ng-model="email_id" />
                         </div>
                         <div align="center">
-                            <p ng-show="error_flag" class="error_message">[[error_message]]</p>
+                            <p ng-show="error_flag" class="error_message">[[error_message]][[message]]</p>
                             <input name="submit" type="button" value="Add" ng-click="add_new_customer()">
                             <input name="cancel" type="button" value="Cancel" ng-click="close_popup()">
                             
