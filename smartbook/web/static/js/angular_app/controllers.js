@@ -3804,7 +3804,7 @@ function EditSalesInvoiceController($scope, $element, $location, $http){
 
 }
 
-function QuotationController($scope, $element, $http, $timeout, share, $location) {
+function EditQuotationController($scope, $element, $http, $timeout, share, $location) {
 
     $scope.items = [];
     $scope.selected_item = '';
@@ -3825,8 +3825,7 @@ function QuotationController($scope, $element, $http, $timeout, share, $location
     $scope.init = function(csrf_token, sales_invoice_number)
     {
         $scope.csrf_token = csrf_token;
-        $scope.popup = '';        
-        $scope.get_customers();            
+        $scope.popup = '';            
     }
 
     $scope.items = [];
