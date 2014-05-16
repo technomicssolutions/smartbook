@@ -5,11 +5,12 @@ function validateEmail(email) {
 customer_validation = function($scope) {
     $scope.error_message = "";
     $scope.error_flag = false;
+    console.log($scope.email_id);
     if($scope.customer_name == '') {
         $scope.error_message = "Please enter customer name";
         $scope.error_flag = true;
         return false;
-    } else if($scope.email_id != undefined) {
+    } else if($scope.email_id != undefined ) {
         if (!validateEmail($scope.email_id)){
             $scope.error_message = "Please enter a valid email id";
             $scope.error_flag = true;
@@ -2784,7 +2785,6 @@ function QuotationController($scope, $element, $http, $timeout, share, $location
             var height = $(document).height();
             $scope.popup.set_overlay_height(height);
             $scope.popup.show_content();
-            $scope.email_id = '';
         }
     }
 
