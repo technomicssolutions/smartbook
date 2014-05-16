@@ -3320,7 +3320,6 @@ function DirectDeliveryNoteController($scope, $element, $http, $timeout, share, 
             var height = $(document).height();
             $scope.popup.set_overlay_height(height);
             $scope.popup.show_content();
-            $scope.email_id = '';
         }
     }
 
