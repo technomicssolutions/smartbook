@@ -2,18 +2,26 @@ function validateEmail(email) {
     var re = /\S+@\S+\.\S+/;
     return re.test(email);
 }
-
-add_new_customer = function($http, $scope) {
+customer_validation = function($scope) {
+    $scope.error_message = "";
+    $scope.error_flag = false;
     if($scope.customer_name == '') {
         $scope.error_message = "Please enter customer name";
         $scope.error_flag = true;
+        return false;
     } else if($scope.email_id != undefined) {
         if (!validateEmail($scope.email_id)){
-
             $scope.error_message = "Please enter a valid email id";
             $scope.error_flag = true;
+            return false;
         }
-    } else {
+    }
+    return true;
+}
+
+add_new_customer = function($http, $scope) {
+    $scope.is_valid = customer_validation($scope);
+    if ($scope.is_valid) {
         params = { 
             'name': $scope.customer_name,
             'house': $scope.house_name,
