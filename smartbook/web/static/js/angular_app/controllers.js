@@ -3273,7 +3273,7 @@ function DirectDeliveryNoteController($scope, $element, $http, $timeout, share, 
 
     $scope.items = [];
     $scope.selected_item = '';
-    $scope.customer = '';
+    $scope.customer = 'select';
     $scope.selecting_item = false;
     $scope.item_selected = false;
     $scope.customer_name = '';
@@ -3307,7 +3307,7 @@ function DirectDeliveryNoteController($scope, $element, $http, $timeout, share, 
 
     $scope.add_customer = function() {
 
-        if($scope.delivery_note.customer == 'other') {
+        if($scope.customer == 'other') {
 
             $scope.popup = new DialogueModelWindow({
                 'dialogue_popup_width': '36%',
@@ -3424,7 +3424,7 @@ function DirectDeliveryNoteController($scope, $element, $http, $timeout, share, 
 
         $scope.delivery_note.date = $$('#delivery_date')[0].get('value');
         $scope.delivery_note.delivery_note_no = $$('#delivery_note_no')[0].get('value');
-        console.log($scope.delivery_note.delivery_note_no);
+        $scope.delivery_note.customer = $scope.customer; 
         if ($scope.delivery_note.date == '' || $scope.delivery_note.date == undefined) {
             $scope.validation_error = "Enter Delivery Date" ;
             return false;
