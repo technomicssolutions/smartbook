@@ -1126,10 +1126,10 @@ class CreateSalesInvoicePDF(View):
        
         data=[[total_amount_in_words, total_amount]]  
 
-        table = Table(data, colWidths=[500, 50], rowHeights=40, style = style)      
+        table = Table(data, colWidths=[700, 50], rowHeights=40, style = style)      
 
         table.wrapOn(p, 200, 100)
-        table.drawOn(p, 400, 10)
+        table.drawOn(p, 200, 10)
 
         p.showPage()
         p.save()

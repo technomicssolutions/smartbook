@@ -1611,7 +1611,7 @@ function SalesController($scope, $element, $http, $timeout, share, $location) {
     }
     $scope.get_latest_sales_details = function(item) {
         $scope.no_customer_error_flag = false;
-        var customer_name = $scope.sales.customer;
+        var customer_name = $scope.customer;
         var item_name = item.item_name;
         $scope.latest_sales = []
         if (customer_name != 'select'){
