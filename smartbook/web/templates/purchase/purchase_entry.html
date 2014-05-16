@@ -53,7 +53,7 @@
 							<label for="vendor_invoice_date">Vendor Invoice Date</label>
 						</div>
 						<div class="forminput">
-							<input type="text" name="vendor_invoice_date" ng-model="purchase.vendor_invoice_date" id="vendor_invoice_date">
+							<input type="text" name="vendor_invoice_date" ng-model="purchase.vendor_invoice_date" id="vendor_invoice_date" >
 						</div>
 					</div>
 					
@@ -233,8 +233,8 @@
 			<div  align="Center">
 				<div class="buttons">
 					<p class="error_message"> [[validation_error]] </p>
-					<input type="button" value="Submit" ng-click="save_purchase();">
-					<a href="{% url 'home' %}"><input type="button" value="Cancel"></a>
+					<input type="button" value="Submit" ng-click="save_purchase();" class="btn btn-info">
+					<a href="{% url 'home' %}"><input type="button" value="Cancel" class="btn btn-info"></a>
 				</div>
 			</div>			
 		</form>
