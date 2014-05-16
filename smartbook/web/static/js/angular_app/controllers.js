@@ -50,7 +50,11 @@ add_new_customer = function($http, $scope) {
 }       
 get_quotation_details = function($http, $scope, from){
 
-    var ref_no = $scope.quotation_no;
+    if (from == 'edit_quotation') {
+        var ref_no = $scope.ref_no;
+    } else {
+        var ref_no = $scope.quotation_no;
+    }
     $scope.quotations = [];
     var url = '';
     if (from == 'quotation' || from == 'edit_quotation') {
@@ -3931,9 +3935,7 @@ function EditQuotationController($scope, $element, $http, $timeout, share, $loca
                     'unit_cost':0,
                     'net_amount': quotation.items[i].net_amount,
                 }
-                // $scope.calculate_tax_amount_sale(selected_item);
-                // $scope.calculate_discount_amount_sale(selected_item);
-                // $scope.calculate_unit_cost_sale(selected_item);
+               
                 $scope.quotation.sales_items.push(selected_item);
                 
             }

@@ -1631,6 +1631,9 @@ class EditDeliveryNote(View):
             d_stored_item_names = []
             stored_item_names = []
             delivery_note, created = DeliveryNote.objects.get_or_create(delivery_note_number=delivery_note_details['delivery_note_no'])
+            delivery_note.net_total = delivery_note_details['net_total']
+            delivery_note.save()
+
             if delivery_note.quotation:
                 quotation = delivery_note.quotation
                 for d_item in delivery_note.quotation.quotationitem_set.all():
@@ -1663,6 +1666,7 @@ class EditDeliveryNote(View):
                                 q_item.quantity_sold = int(item_data['qty_sold'])
                                 q_item.selling_price = float(item_data['unit_price'])
                                 q_item.save()
+            
             if delivery_note.deliverynoteitem_set.all().count() > 0:
 
                 for d_item in delivery_note.deliverynoteitem_set.all():
@@ -1696,12 +1700,13 @@ class EditDeliveryNote(View):
                                 d_item.selling_price = float(item_data['unit_price'])
                                 d_item.save()
 
+            
             stored_item_names = []
             for item_data in delivery_note_details['sales_items']:
                 if item_data['item_name'] not in q_stored_item_names:
                     if item_data['item_name'] not in d_stored_item_names:
                         stored_item_names.append(item_data['item_name'])
-                        
+
             for item_data in delivery_note_details['sales_items']:
                 if item_data['item_name'] in stored_item_names:
                     item = Item.objects.get(code=item_data['item_code'])

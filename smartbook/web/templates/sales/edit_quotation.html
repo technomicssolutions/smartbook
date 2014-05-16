@@ -26,6 +26,7 @@
 						</div>
 						<div class="forminput_sales">
 							<input type="text" name="reference_number" id="reference_number" ng-model="ref_no" ng-change="get_quotation_details()"/>
+							<p class="error_message">[[message]]</p>
 						</div>
 						<div class="item_list quotation_list" ng-show='selecting_quotation' ng-hide="quotation_selected">
 							<div ng-repeat="quotation in quotations" ng-click="add_quotation(quotation)" class="item_list_row">
