@@ -363,7 +363,7 @@ class DeliveryNotePDF(View):
                 table.wrapOn(p, 200, 600)
                 table.drawOn(p, 10, y)
                 i = i + 1
-        else:
+        if delivery_note.deliverynoteitem_set.all().count() > 0:
             for delivery_item in delivery_note.deliverynoteitem_set.all():
                 y = y-40
 
@@ -829,7 +829,7 @@ class DeliveryNoteDetails(View):
                             'discount_given': q_item.discount,
                         })
                         i = i + 1
-            else:  
+            if delivery_note.deliverynoteitem_set.all().count() > 0:  
                 for delivery_note_item in delivery_note.deliverynoteitem_set.all():
                     item_list.append({
                         'sl_no': i,
@@ -1632,7 +1632,9 @@ class EditDeliveryNote(View):
             delivery_note.save()
 
             if delivery_note.quotation:
+                print "in if"
                 quotation = delivery_note.quotation
+                print quotation
                 for d_item in delivery_note.quotation.quotationitem_set.all():
                     q_stored_item_names.append(d_item.item.name)
                 
