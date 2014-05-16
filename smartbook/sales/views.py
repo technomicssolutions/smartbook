@@ -363,7 +363,7 @@ class DeliveryNotePDF(View):
                 table.wrapOn(p, 200, 600)
                 table.drawOn(p, 10, y)
                 i = i + 1
-        else:
+        if delivery_note.deliverynoteitem_set.all().count() > 0:
             for delivery_item in delivery_note.deliverynoteitem_set.all():
                 y = y-40
 
@@ -756,23 +756,45 @@ class QuotationDetails(View):
             item_list = []
             i = 0 
             i = i + 1
-            for q_item in quotation.quotationitem_set.all():
-                item_list.append({
-                    'sl_no': i,
-                    'item_name': q_item.item.name,
-                    'item_code': q_item.item.code,
-                    'barcode': q_item.item.barcode,
-                    'item_description': q_item.item.description,
-                    'qty_sold': q_item.quantity_sold,
-                    'tax': q_item.item.tax,
-                    'uom': q_item.item.uom.uom,
-                    'current_stock': q_item.item.inventory_set.all()[0].quantity if q_item.item.inventory_set.count() > 0  else 0 ,
-                    'selling_price': q_item.item.inventory_set.all()[0].selling_price if q_item.item.inventory_set.count() > 0 else 0 ,
-                    'discount_permit': q_item.item.inventory_set.all()[0].discount_permit_percentage if q_item.item.inventory_set.count() > 0 else 0,
-                    'net_amount': q_item.net_amount,
-                    'discount_given': q_item.discount,
-                })
-                i = i + 1
+            if quotation.deliverynote_set.all().count() > 0:
+                delivery_note = quotation.deliverynote_set.all()[0]
+
+                for q_item in delivery_note.deliverynoteitem_set.all():
+                    item_list.append({
+                        'sl_no': i,
+                        'item_name': q_item.item.name,
+                        'item_code': q_item.item.code,
+                        'barcode': q_item.item.barcode,
+                        'item_description': q_item.item.description,
+                        'qty_sold': q_item.quantity_sold,
+                        'tax': q_item.item.tax,
+                        'uom': q_item.item.uom.uom,
+                        'current_stock': q_item.item.inventory_set.all()[0].quantity if q_item.item.inventory_set.count() > 0  else 0 ,
+                        'selling_price': q_item.item.inventory_set.all()[0].selling_price if q_item.item.inventory_set.count() > 0 else 0 ,
+                        'discount_permit': q_item.item.inventory_set.all()[0].discount_permit_percentage if q_item.item.inventory_set.count() > 0 else 0,
+                        'net_amount': q_item.net_amount,
+                        'discount_given': q_item.discount,
+                    })
+                    i = i + 1 
+
+            if quotation.quotationitem_set.all().count() > 0:
+                for q_item in quotation.quotationitem_set.all():
+                    item_list.append({
+                        'sl_no': i,
+                        'item_name': q_item.item.name,
+                        'item_code': q_item.item.code,
+                        'barcode': q_item.item.barcode,
+                        'item_description': q_item.item.description,
+                        'qty_sold': q_item.quantity_sold,
+                        'tax': q_item.item.tax,
+                        'uom': q_item.item.uom.uom,
+                        'current_stock': q_item.item.inventory_set.all()[0].quantity if q_item.item.inventory_set.count() > 0  else 0 ,
+                        'selling_price': q_item.item.inventory_set.all()[0].selling_price if q_item.item.inventory_set.count() > 0 else 0 ,
+                        'discount_permit': q_item.item.inventory_set.all()[0].discount_permit_percentage if q_item.item.inventory_set.count() > 0 else 0,
+                        'net_amount': q_item.net_amount,
+                        'discount_given': q_item.discount,
+                    })
+                    i = i + 1
             quotation_list.append({
                 'date': quotation.date.strftime('%d/%m/%Y'),
                 'delivery': quotation.delivery,
@@ -829,7 +851,7 @@ class DeliveryNoteDetails(View):
                             'discount_given': q_item.discount,
                         })
                         i = i + 1
-            else:  
+            if delivery_note.deliverynoteitem_set.all().count() > 0:  
                 for delivery_note_item in delivery_note.deliverynoteitem_set.all():
                     item_list.append({
                         'sl_no': i,
@@ -1031,8 +1053,6 @@ class QuotationDeliverynoteSales(View):
         response = simplejson.dumps(res)
         status_code = 200
         return HttpResponse(response, status = status_code, mimetype="application/json")
-
-
 class CreateSalesInvoicePDF(View):
 
     def get(self, request, *args, **kwargs):
@@ -1069,7 +1089,7 @@ class CreateSalesInvoicePDF(View):
         #                ('FONTSIZE', (2,0), (2,0), 30),
         #                ]))     
         table.wrapOn(p, 200, 400)
-        table.drawOn(p,50, 980)
+        table.drawOn(p,50, 975)
 
         quotation = sales_invoice.quotation
 
@@ -1095,7 +1115,7 @@ class CreateSalesInvoicePDF(View):
 
             table = Table(data, colWidths=[450, 120, 70], rowHeights=40, style = style)      
             table.wrapOn(p, 200, 400)
-            table.drawOn(p,50, 860)
+            table.drawOn(p,50, 880)
 
         x=790
 
@@ -1126,15 +1146,14 @@ class CreateSalesInvoicePDF(View):
        
         data=[[total_amount_in_words, total_amount]]  
 
-        table = Table(data, colWidths=[500, 50], rowHeights=40, style = style)      
+        table = Table(data, colWidths=[700, 50], rowHeights=40, style = style)      
 
         table.wrapOn(p, 200, 100)
-        table.drawOn(p, 400, 10)
+        table.drawOn(p, 200, 10)
 
         p.showPage()
         p.save()
         return response
-
 
 class ReceiptVoucherCreation(View):
 
@@ -1635,7 +1654,9 @@ class EditDeliveryNote(View):
             delivery_note.save()
 
             if delivery_note.quotation:
+                print "in if"
                 quotation = delivery_note.quotation
+                print quotation
                 for d_item in delivery_note.quotation.quotationitem_set.all():
                     q_stored_item_names.append(d_item.item.name)
                 

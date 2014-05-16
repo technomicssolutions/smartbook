@@ -768,8 +768,11 @@ a {
 }
 .delivery_note {
 	width: 17%;
-	margin-left: 200px;
+	margin-left: 288px !important;
     margin-top: 30px;
+    position: absolute;
+    border: 1px solid #ADD8E6;
+    border-radius: 5px;
 }
 .quotation_list {
 	width: 17%;

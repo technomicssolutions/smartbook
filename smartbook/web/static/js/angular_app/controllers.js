@@ -2,18 +2,27 @@ function validateEmail(email) {
     var re = /\S+@\S+\.\S+/;
     return re.test(email);
 }
-
-add_new_customer = function($http, $scope) {
+customer_validation = function($scope) {
+    $scope.error_message = "";
+    $scope.error_flag = false;
+    console.log($scope.email_id);
     if($scope.customer_name == '') {
         $scope.error_message = "Please enter customer name";
         $scope.error_flag = true;
-    } else if($scope.email_id.length > 0 && $scope.email_id != undefined) {
+        return false;
+    } else if($scope.email_id != undefined ) {
         if (!validateEmail($scope.email_id)){
-
             $scope.error_message = "Please enter a valid email id";
             $scope.error_flag = true;
+            return false;
         }
-    } else {
+    }
+    return true;
+}
+
+add_new_customer = function($http, $scope) {
+    $scope.is_valid = customer_validation($scope);
+    if ($scope.is_valid) {
         params = { 
             'name': $scope.customer_name,
             'house': $scope.house_name,
@@ -39,8 +48,11 @@ add_new_customer = function($http, $scope) {
                 $scope.error_flag=true;
                 $scope.message = data.message;
             } else {
+                $scope.customer = data.customer_name;
                 $scope.popup.hide_popup();
                 $scope.get_customers();
+                $scope.customer = data.customer_name;
+                console.log($scope.customer);
             }
         }).error(function(data, success){
             
@@ -56,7 +68,7 @@ get_quotation_details = function($http, $scope, from){
     }
     $scope.quotations = [];
     var url = '';
-    if (from == 'quotation' || from == 'edit_quotation') {
+    if (from == 'quotation') {
         url = '/sales/quotation_details/?reference_no='+ref_no+'&sales_invoice=true';
     } else {
         url = '/sales/quotation_details/?reference_no='+ref_no;
@@ -1070,8 +1082,8 @@ function SalesQNDNController($scope, $element, $http, $timeout, share, $location
     $scope.remove_from_item_list = function(item) {
         var index = $scope.sales.sales_items.indexOf(item);
         $scope.sales.sales_items.splice(index, 1);
-        for (var i=0; i< $scope.invoice_details.sales_items.length; i++) {
-            item = $scope.invoice_details.sales_items[i]
+        for (var i=0; i< $scope.sales.sales_items.length; i++) {
+            item = $scope.sales.sales_items[i]
             if(item.qty_sold != '' && item.unit_price != ''){
                 item.net_amount = ((parseFloat(item.qty_sold)*parseFloat(item.unit_price))-parseFloat(item.disc_given)).toFixed(2);
                 $scope.calculate_net_discount_sale();
@@ -1278,7 +1290,7 @@ function SalesController($scope, $element, $http, $timeout, share, $location) {
 
     $scope.items = [];
     $scope.selected_item = '';
-    $scope.customer = '';
+    $scope.customer = 'select';
     $scope.customer_name = '';
     $scope.staff = '';
     $scope.selecting_item = false;
@@ -1331,6 +1343,7 @@ function SalesController($scope, $element, $http, $timeout, share, $location) {
         }
     }
     $scope.validate_sales = function() {
+        $scope.sales.customer = $scope.customer;
         if($scope.sales.sales_invoice_date == '') {
             $scope.validation_error = "Enter Sales invoice Date" ;
             return false;
@@ -1437,7 +1450,7 @@ function SalesController($scope, $element, $http, $timeout, share, $location) {
     }
     $scope.add_customer = function() {
 
-        if($scope.sales.customer == 'other') {
+        if($scope.customer == 'other') {
             $scope.popup = new DialogueModelWindow({
                 'dialogue_popup_width': '36%',
                 'message_padding': '0px',
@@ -1599,7 +1612,7 @@ function SalesController($scope, $element, $http, $timeout, share, $location) {
     }
     $scope.get_latest_sales_details = function(item) {
         $scope.no_customer_error_flag = false;
-        var customer_name = $scope.sales.customer;
+        var customer_name = $scope.customer;
         var item_name = item.item_name;
         $scope.latest_sales = []
         if (customer_name != 'select'){
@@ -2722,7 +2735,7 @@ function QuotationController($scope, $element, $http, $timeout, share, $location
 
     $scope.items = [];
     $scope.selected_item = '';
-    $scope.customer = '';
+    $scope.customer = 'select';
     $scope.selecting_item = false;
     $scope.item_selected = false;
     $scope.customer_name = '';
@@ -2759,7 +2772,7 @@ function QuotationController($scope, $element, $http, $timeout, share, $location
 
     $scope.add_customer = function() {
 
-        if($scope.quotation.customer == 'other') {
+        if($scope.customer == 'other') {
 
             $scope.popup = new DialogueModelWindow({
                 'dialogue_popup_width': '36%',
@@ -2772,7 +2785,6 @@ function QuotationController($scope, $element, $http, $timeout, share, $location
             var height = $(document).height();
             $scope.popup.set_overlay_height(height);
             $scope.popup.show_content();
-            $scope.email_id = '';
         }
     }
 
@@ -2877,7 +2889,7 @@ function QuotationController($scope, $element, $http, $timeout, share, $location
 
         $scope.quotation.date = $$('#quotation_date')[0].get('value');
         $scope.quotation.reference_no = $$('#reference_number')[0].get('value');
-
+        $scope.quotation.customer = $scope.customer;
         if ($scope.quotation.date == '' || $scope.quotation.date == undefined) {
             $scope.validation_error = "Enter quotation Date" ;
             return false;
@@ -3261,7 +3273,7 @@ function DirectDeliveryNoteController($scope, $element, $http, $timeout, share, 
 
     $scope.items = [];
     $scope.selected_item = '';
-    $scope.customer = '';
+    $scope.customer = 'select';
     $scope.selecting_item = false;
     $scope.item_selected = false;
     $scope.customer_name = '';
@@ -3295,7 +3307,7 @@ function DirectDeliveryNoteController($scope, $element, $http, $timeout, share, 
 
     $scope.add_customer = function() {
 
-        if($scope.delivery_note.customer == 'other') {
+        if($scope.customer == 'other') {
 
             $scope.popup = new DialogueModelWindow({
                 'dialogue_popup_width': '36%',
@@ -3308,7 +3320,6 @@ function DirectDeliveryNoteController($scope, $element, $http, $timeout, share, 
             var height = $(document).height();
             $scope.popup.set_overlay_height(height);
             $scope.popup.show_content();
-            $scope.email_id = '';
         }
     }
 
@@ -3412,7 +3423,7 @@ function DirectDeliveryNoteController($scope, $element, $http, $timeout, share, 
 
         $scope.delivery_note.date = $$('#delivery_date')[0].get('value');
         $scope.delivery_note.delivery_note_no = $$('#delivery_note_no')[0].get('value');
-        console.log($scope.delivery_note.delivery_note_no);
+        $scope.delivery_note.customer = $scope.customer; 
         if ($scope.delivery_note.date == '' || $scope.delivery_note.date == undefined) {
             $scope.validation_error = "Enter Delivery Date" ;
             return false;
