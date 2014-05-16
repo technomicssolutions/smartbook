@@ -642,10 +642,10 @@ class CreateQuotationPdf(View):
         p.setFont("Helvetica", 15)
 
         p.drawString(110, x-80, "Hope the above quoted prices will meet your satisfaction and for further information please do not hesitate to contact us.")
-        p.drawString(110, x-120, "Delivery     : " + quotation.delivery)
-        p.drawString(110, x-140, "Proof          : " + quotation.proof)
-        p.drawString(110, x-160, "Payment    : " + quotation.payment)
-        p.drawString(110, x-180, "Validity       : " + quotation.validity)
+        p.drawString(110, x-120, "Delivery     : " + str(quotation.delivery))
+        p.drawString(110, x-140, "Proof          : " + str(quotation.proof))
+        p.drawString(110, x-160, "Payment    : " + str(quotation.payment))
+        p.drawString(110, x-180, "Validity       : " + str(quotation.validity))
         
         # if x >= 270:
         p.drawString(110, 150, "For")
@@ -792,6 +792,13 @@ class QuotationDetails(View):
                 })
                 i = i + 1
             quotation_list.append({
+                'date': quotation.date.strftime('%d/%m/%Y'),
+                'delivery': quotation.delivery,
+                'proof': quotation.proof,
+                'payment': quotation.payment,
+                'attention': quotation.attention,
+                'subject': quotation.subject,
+                'validity': quotation.validity,
                 'ref_no': quotation.reference_id,
                 'customer': quotation.to.customer_name if quotation.to else '' ,
                 'items': item_list,
@@ -800,46 +807,8 @@ class QuotationDetails(View):
                 'lpo_number': quotation.deliverynote_set.all()[0].lpo_number if quotation.deliverynote_set.all().count() > 0 else '',
             })
 
-        whole_quotations_list = []
-        whole_quotations = Quotation.objects.filter(reference_id__istartswith=ref_number)
-
-        for quotation in whole_quotations:
-            item_list = []
-            i = 0 
-            i = i + 1
-            for q_item in quotation.quotationitem_set.all():
-                item_list.append({
-                    'sl_no': i,
-                    'item_name': q_item.item.name,
-                    'item_code': q_item.item.code,
-                    'barcode': q_item.item.barcode,
-                    'item_description': q_item.item.description,
-                    'qty_sold': q_item.quantity_sold,
-                    'tax': q_item.item.tax,
-                    'uom': q_item.item.uom.uom,
-                    'current_stock': q_item.item.inventory_set.all()[0].quantity if q_item.item.inventory_set.count() > 0  else 0 ,
-                    'selling_price': q_item.item.inventory_set.all()[0].selling_price if q_item.item.inventory_set.count() > 0 else 0 ,
-                    'discount_permit': q_item.item.inventory_set.all()[0].discount_permit_percentage if q_item.item.inventory_set.count() > 0 else 0,
-                    'net_amount': q_item.net_amount,
-                    'discount_given': q_item.discount,
-                })
-                i = i + 1
-            whole_quotations_list.append({
-                'ref_no': quotation.reference_id,
-                'customer': quotation.to.customer_name if quotation.to else '' ,
-                'items': item_list,
-                'net_total': quotation.net_total,
-                'delivery': quotation.delivery,
-                'proof': quotation.proof,
-                'payment': quotation.payment,
-                'validity': quotation.validity,
-            })
-
-
-
         res = {
             'quotations': quotation_list,
-            'whole_quotations': whole_quotations_list,
             'result': 'ok',
         }
         response = simplejson.dumps(res)
@@ -1593,15 +1562,8 @@ class EditQuotation(View):
         if request.is_ajax():
             quotation_data = ast.literal_eval(request.POST['quotation'])
             quotation, quotation_created = Quotation.objects.get_or_create(reference_id=quotation_data['reference_no'])
-            quotation.date = datetime.strptime(quotation_data['date'], '%d-%m-%Y')
-            quotation.attention = quotation_data['attention']
-            quotation.subject = quotation_data['subject']           
+                      
             quotation.net_total = quotation_data['total_amount']
-
-            quotation.delivery = quotation_data['delivery']
-            quotation.proof = quotation_data['proof']
-            quotation.payment = quotation_data['payment']
-            quotation.validity = quotation_data['validity']
             quotation.save()
             customer = Customer.objects.get(customer_name=quotation_data['customer'])
             quotation.to = customer
@@ -1629,7 +1591,7 @@ class EditQuotation(View):
                 else:
                     for item_data in quotation_data['sales_items']:
                         item = Item.objects.get(code=item_data['item_code'])
-                        q_item, item_created = QuotationItem.objects.get_or_create(item=item, qutation=quotation)
+                        q_item, item_created = QuotationItem.objects.get_or_create(item=item, quotation=quotation)
                         inventory, created = Inventory.objects.get_or_create(item=item)
                         if item_created:
 
@@ -1648,7 +1610,7 @@ class EditQuotation(View):
 
                 if item_data['item_name'] not in stored_item_names:
                     item = Item.objects.get(code=item_data['item_code'])
-                    q_item, item_created = QuotationItem.objects.get_or_create(item=item, qutation=quotation)
+                    q_item, item_created = QuotationItem.objects.get_or_create(item=item, quotation=quotation)
                     inventory, created = Inventory.objects.get_or_create(item=item)
                     if item_created:
 

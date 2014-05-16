@@ -53,7 +53,7 @@ get_quotation_details = function($http, $scope, from){
     var ref_no = $scope.quotation_no;
     $scope.quotations = [];
     var url = '';
-    if (from == 'quotation') {
+    if (from == 'quotation' || from == 'edit_quotation') {
         url = '/sales/quotation_details/?reference_no='+ref_no+'&sales_invoice=true';
     } else {
         url = '/sales/quotation_details/?reference_no='+ref_no;
@@ -64,11 +64,7 @@ get_quotation_details = function($http, $scope, from){
         if(data.quotations.length > 0){
             $scope.selecting_quotation = true;
             $scope.quotation_selected = false;
-            if (from == 'edit_quotation') {
-                $scope.quotations = data.whole_quotations;
-            } else {
-                $scope.quotations = data.quotations;
-            }
+            $scope.quotations = data.quotations;
         } else {
             $scope.message = "There is no quotations with this number";
         }
@@ -3820,7 +3816,10 @@ function EditQuotationController($scope, $element, $http, $timeout, share, $loca
         'attention': '',
         'subject': '',
         'total_amount': '',
-        
+        'proof': '',
+        'validity': '',
+        'delivery': '',
+        'payment': '',
     }
     $scope.init = function(csrf_token, sales_invoice_number)
     {
@@ -3895,6 +3894,52 @@ function EditQuotationController($scope, $element, $http, $timeout, share, $loca
     $scope.get_quotation_details = function(){
         get_quotation_details($http, $scope, 'edit_quotation');        
     }
+
+    $scope.add_quotation = function(quotation) {
+        $scope.selecting_quotation = false;
+        $scope.quotation_selected = true;
+        $scope.item_select_error = '';
+        $scope.quotation.sales_items = []
+        $scope.ref_no = quotation.ref_no; 
+        $scope.quotation.reference_no = $scope.ref_no;
+        $scope.quotation.customer = quotation.customer; 
+        $scope.quotation.net_total = quotation.net_total;
+        $scope.quotation.delivery = quotation.delivery;
+        $scope.quotation.validity = quotation.validity;
+        $scope.quotation.subject = quotation.subject;
+        $scope.quotation.payment = quotation.payment;
+        $scope.quotation.date = quotation.date;
+        $scope.quotation.proof = quotation.proof;
+        $scope.quotation.attention = quotation.attention;
+        if(quotation.items.length > 0){
+            for(var i=0; i< quotation.items.length; i++){
+                var selected_item = {
+                    'sl_no': quotation.items[i].sl_no,
+                    'item_code': quotation.items[i].item_code,
+                    'item_name': quotation.items[i].item_name,
+                    'barcode': quotation.items[i].barcode,
+                    'item_description': quotation.items[i].item_description,
+                    'qty_sold': quotation.items[i].qty_sold,
+                    'current_stock': quotation.items[i].current_stock,
+                    'uom': quotation.items[i].uom,
+                    'unit_price': quotation.items[i].selling_price,
+                    'discount_permit': quotation.items[i].discount_permit,
+                    'tax': quotation.items[i].tax,
+                    'tax_amount': 0,
+                    'discount_permit_amount':0,
+                    'disc_given': quotation.items[i].discount_given,
+                    'unit_cost':0,
+                    'net_amount': quotation.items[i].net_amount,
+                }
+                // $scope.calculate_tax_amount_sale(selected_item);
+                // $scope.calculate_discount_amount_sale(selected_item);
+                // $scope.calculate_unit_cost_sale(selected_item);
+                $scope.quotation.sales_items.push(selected_item);
+                
+            }
+        }
+        $scope.calculate_net_total_amount();
+    }
     
     $scope.calculate_net_amount_sale = function(item) {
         $scope.validation_error = "";
@@ -3955,6 +4000,20 @@ function EditQuotationController($scope, $element, $http, $timeout, share, $loca
     $scope.edit_quotation = function() {
         $scope.is_valid = $scope.quotation_validation();
         if($scope.is_valid) {
+
+            if ($scope.quotation.delivery == null) {
+                $scope.quotation.delivery = '';
+            }
+            if ($scope.quotation.proof == null) {
+                $scope.quotation.proof = '';
+            }
+            if ($scope.quotation.payment == null) {
+                $scope.quotation.payment = '';
+            }
+            if ($scope.quotation.validity == null) {
+                $scope.quotation.validity = '';
+            }
+
             params = { 
                 'quotation': angular.toJson($scope.quotation),
                 "csrfmiddlewaretoken" : $scope.csrf_token
