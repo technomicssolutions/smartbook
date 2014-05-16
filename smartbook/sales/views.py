@@ -744,14 +744,12 @@ class QuotationDetails(View):
         in_sales_invoice_creation = ''
         sales_invoice_creation = request.GET.get('sales_invoice', '')
 
-        ref_number = request.GET.get('reference_number', '')
-
+        ref_number = request.GET.get('reference_no', '')
         if sales_invoice_creation == 'true':
             quotations = Quotation.objects.filter(reference_id__istartswith=ref_number, is_sales_invoice_created=False)
         else:
             quotations = Quotation.objects.filter(reference_id__istartswith=ref_number, processed=False, is_sales_invoice_created=False)
         quotation_list = []
-
         for quotation in quotations:
             item_list = []
             i = 0 
@@ -796,7 +794,7 @@ class QuotationDetails(View):
                     })
                     i = i + 1
             quotation_list.append({
-                'date': quotation.date.strftime('%d/%m/%Y'),
+                'date': quotation.date.strftime('%d/%m/%Y') if quotation.date else '',
                 'delivery': quotation.delivery,
                 'proof': quotation.proof,
                 'payment': quotation.payment,
