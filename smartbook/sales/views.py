@@ -756,23 +756,45 @@ class QuotationDetails(View):
             item_list = []
             i = 0 
             i = i + 1
-            for q_item in quotation.quotationitem_set.all():
-                item_list.append({
-                    'sl_no': i,
-                    'item_name': q_item.item.name,
-                    'item_code': q_item.item.code,
-                    'barcode': q_item.item.barcode,
-                    'item_description': q_item.item.description,
-                    'qty_sold': q_item.quantity_sold,
-                    'tax': q_item.item.tax,
-                    'uom': q_item.item.uom.uom,
-                    'current_stock': q_item.item.inventory_set.all()[0].quantity if q_item.item.inventory_set.count() > 0  else 0 ,
-                    'selling_price': q_item.item.inventory_set.all()[0].selling_price if q_item.item.inventory_set.count() > 0 else 0 ,
-                    'discount_permit': q_item.item.inventory_set.all()[0].discount_permit_percentage if q_item.item.inventory_set.count() > 0 else 0,
-                    'net_amount': q_item.net_amount,
-                    'discount_given': q_item.discount,
-                })
-                i = i + 1
+            if quotation.deliverynote_set.all().count() > 0:
+                delivery_note = quotation.deliverynote_set.all()[0]
+
+                for q_item in delivery_note.deliverynoteitem_set.all():
+                    item_list.append({
+                        'sl_no': i,
+                        'item_name': q_item.item.name,
+                        'item_code': q_item.item.code,
+                        'barcode': q_item.item.barcode,
+                        'item_description': q_item.item.description,
+                        'qty_sold': q_item.quantity_sold,
+                        'tax': q_item.item.tax,
+                        'uom': q_item.item.uom.uom,
+                        'current_stock': q_item.item.inventory_set.all()[0].quantity if q_item.item.inventory_set.count() > 0  else 0 ,
+                        'selling_price': q_item.item.inventory_set.all()[0].selling_price if q_item.item.inventory_set.count() > 0 else 0 ,
+                        'discount_permit': q_item.item.inventory_set.all()[0].discount_permit_percentage if q_item.item.inventory_set.count() > 0 else 0,
+                        'net_amount': q_item.net_amount,
+                        'discount_given': q_item.discount,
+                    })
+                    i = i + 1 
+
+            if quotation.quotationitem_set.all().count() > 0:
+                for q_item in quotation.quotationitem_set.all():
+                    item_list.append({
+                        'sl_no': i,
+                        'item_name': q_item.item.name,
+                        'item_code': q_item.item.code,
+                        'barcode': q_item.item.barcode,
+                        'item_description': q_item.item.description,
+                        'qty_sold': q_item.quantity_sold,
+                        'tax': q_item.item.tax,
+                        'uom': q_item.item.uom.uom,
+                        'current_stock': q_item.item.inventory_set.all()[0].quantity if q_item.item.inventory_set.count() > 0  else 0 ,
+                        'selling_price': q_item.item.inventory_set.all()[0].selling_price if q_item.item.inventory_set.count() > 0 else 0 ,
+                        'discount_permit': q_item.item.inventory_set.all()[0].discount_permit_percentage if q_item.item.inventory_set.count() > 0 else 0,
+                        'net_amount': q_item.net_amount,
+                        'discount_given': q_item.discount,
+                    })
+                    i = i + 1
             quotation_list.append({
                 'date': quotation.date.strftime('%d/%m/%Y'),
                 'delivery': quotation.delivery,

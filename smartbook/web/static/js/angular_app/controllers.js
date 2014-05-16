@@ -68,7 +68,7 @@ get_quotation_details = function($http, $scope, from){
     }
     $scope.quotations = [];
     var url = '';
-    if (from == 'quotation' || from == 'edit_quotation') {
+    if (from == 'quotation') {
         url = '/sales/quotation_details/?reference_no='+ref_no+'&sales_invoice=true';
     } else {
         url = '/sales/quotation_details/?reference_no='+ref_no;
