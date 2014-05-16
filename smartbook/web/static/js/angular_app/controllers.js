@@ -4,7 +4,6 @@ function validateEmail(email) {
 }
 
 add_new_customer = function($http, $scope) {
-    console.log($scope.email_id.length); 
     if($scope.customer_name == '') {
         $scope.error_message = "Please enter customer name";
         $scope.error_flag = true;
