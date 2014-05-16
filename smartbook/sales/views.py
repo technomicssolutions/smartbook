@@ -7,6 +7,7 @@ from datetime import datetime
 from decimal import *
 from num2words import num2words
 import math
+import os
 
 from django.db import IntegrityError
 from django.db.models import Max
@@ -24,11 +25,14 @@ from inventory.models import Item, Inventory
 from web.models import Customer, Staff, OwnerCompany
 
 from reportlab.lib.units import cm
+from reportlab.lib.units import inch
+from reportlab.lib.units import mm
 from reportlab.pdfgen.canvas import Canvas
-from reportlab.platypus import Frame, Image, Table, TableStyle, Paragraph
+from reportlab.platypus import Frame, Image, Table, TableStyle, Paragraph, SimpleDocTemplate, Spacer
 from reportlab.lib import colors
 from reportlab.lib.pagesizes import letter, A4
 from reportlab.lib.styles import ParagraphStyle
+from reportlab.lib.enums import TA_RIGHT, TA_JUSTIFY
 
 try:
     from cStringIO import StringIO
@@ -389,13 +393,13 @@ class CreateQuotationPdf(View):
         style = [
             ('FONTSIZE', (0,0), (-1, -1), 16),
             ('FONTNAME',(0,0),(-1,-1),'Helvetica') 
-            # ('INNERGRID', (0,0), (0,1), 0.25, colors.black),
+            # ('INNERGRID', (0,0), (-1,1), 0.25, colors.black),
         ]
 
         style1 = [
             ('FONTSIZE', (0,0), (-1, -1), 18),
             ('FONTNAME',(0,0),(-1,-1),'Helvetica') 
-            # ('INNERGRID', (0,0), (0,1), 0.25, colors.black),
+            # ('INNERGRID', (0,0), (-1,1), 0.25, colors.black),
         ]
 
         try:
@@ -458,8 +462,7 @@ class CreateQuotationPdf(View):
         table.setStyle(TableStyle([                                  
                                    ('BOX', (0,0), (-1,-1), 0.25, colors.black),
                                    ('VALIGN',(0,-1),(-1,-1),'MIDDLE'),
-                                   ('ALIGN',(0,-1),(-1,-1),'CENTRE'),
-                                   # ('LINEBEFORE',(1,0), (0,-1),1,colors.black),                                  
+                                   ('ALIGN',(0,-1),(-1,-1),'CENTRE'),                               
                                    ]))
         table.wrapOn(p, 200, 400)
         table.drawOn(p,105,575)
@@ -470,8 +473,7 @@ class CreateQuotationPdf(View):
         table.setStyle(TableStyle([                                  
                                    ('BOX', (0,0), (-1,-1), 0.25, colors.black),
                                    ('VALIGN',(0,-1),(-1,-1),'MIDDLE'),
-                                   ('ALIGN',(0,-1),(-1,-1),'CENTRE'),
-                                   # ('LINEBEFORE',(1,0), (0,-1),1,colors.black),                                  
+                                   ('ALIGN',(0,-1),(-1,-1),'CENTRE'),                                                                    
                                    ]))
         table.wrapOn(p, 200, 400)
         table.drawOn(p,205,575)
@@ -482,8 +484,7 @@ class CreateQuotationPdf(View):
         table.setStyle(TableStyle([                                  
                                    ('BOX', (0,0), (-1,-1), 0.25, colors.black),
                                    ('VALIGN',(0,-1),(-1,-1),'MIDDLE'),
-                                   ('ALIGN',(0,-1),(-1,-1),'CENTRE'),
-                                   # ('LINEBEFORE',(1,0), (0,-1),1,colors.black),                                  
+                                   ('ALIGN',(0,-1),(-1,-1),'CENTRE'),                                
                                    ]))
         table.wrapOn(p, 200, 400)
         table.drawOn(p,555,575)
@@ -495,8 +496,7 @@ class CreateQuotationPdf(View):
         table.setStyle(TableStyle([                                  
                                    ('BOX', (0,0), (-1,-1), 0.25, colors.black),
                                    ('VALIGN',(0,-1),(-1,-1),'MIDDLE'),
-                                   ('ALIGN',(0,-1),(-1,-1),'CENTRE'),
-                                   # ('LINEBEFORE',(1,0), (0,-1),1,colors.black),                                  
+                                   ('ALIGN',(0,-1),(-1,-1),'CENTRE'),                                 
                                    ]))
         table.wrapOn(p, 200, 400)
         table.drawOn(p,655,575)
@@ -508,8 +508,7 @@ class CreateQuotationPdf(View):
         table.setStyle(TableStyle([                                  
                                    ('BOX', (0,0), (-1,-1), 0.25, colors.black),
                                    ('VALIGN',(0,-1),(-1,-1),'MIDDLE'),
-                                   ('ALIGN',(0,-1),(-1,-1),'CENTRE'),
-                                   # ('LINEBEFORE',(1,0), (0,-1),1,colors.black),                                  
+                                   ('ALIGN',(0,-1),(-1,-1),'CENTRE'),                                
                                    ]))
         table.wrapOn(p, 200, 400)
         table.drawOn(p,780,575)
@@ -542,14 +541,11 @@ class CreateQuotationPdf(View):
 
             data1=[[i]]
             table = Table(data1, colWidths=[100], rowHeights=40, style = style)
-            table.setStyle(TableStyle([
-                                       # ('INNERGRID', (0,0), (0,0), 0.25, colors.black),
+            table.setStyle(TableStyle([                                      
                                        # ('INNERGRID', (0,1), (-1,-1), 0.25, colors.black),
                                        ('BOX', (0,0), (-1,-1), 0.25, colors.black),
                                        ('VALIGN',(0,-1),(-1,-1),'MIDDLE'),
                                        ('ALIGN', (0,0), (-1,-1),'CENTRE'),
-                                       # ('SPACEBELOW', (0,0), (-1,-1), 10),
-                                       # ('BACKGROUND',(0,0),(1,0),colors.lightgrey)
                                        ]))
             # table.wrapOn(p, 300, 200)
             table.wrapOn(p, 200, 400)
@@ -560,13 +556,9 @@ class CreateQuotationPdf(View):
             data1=[[q_item.item.name]]
             table = Table(data1, colWidths=[350], rowHeights=40, style = style)
             table.setStyle(TableStyle([
-                                       # ('INNERGRID', (0,0), (0,0), 0.25, colors.black),
                                        # ('INNERGRID', (0,1), (-1,-1), 0.25, colors.black),
                                        ('BOX', (0,0), (-1,-1), 0.25, colors.black),
                                        ('VALIGN',(0,-1),(-1,-1),'MIDDLE'),
-                                       # ('ALIGN', (0,0), (-1,-1),'RIGHT'),
-                                       # ('SPACEBELOW', (0,0), (-1,-1), 10),
-                                       # ('BACKGROUND',(0,0),(1,0),colors.lightgrey)
                                        ]))
             # table.wrapOn(p, 300, 200)
             table.wrapOn(p, 200, 400)
@@ -577,13 +569,10 @@ class CreateQuotationPdf(View):
             data1=[[q_item.quantity_sold]]
             table = Table(data1, colWidths=[100], rowHeights=40, style = style)
             table.setStyle(TableStyle([
-                                       # ('INNERGRID', (0,0), (0,0), 0.25, colors.black),
                                        # ('INNERGRID', (0,1), (-1,-1), 0.25, colors.black),
                                        ('BOX', (0,0), (-1,-1), 0.25, colors.black),
                                        ('VALIGN',(0,-1),(-1,-1),'MIDDLE'),
                                        ('ALIGN', (0,0), (-1,-1),'CENTRE'),
-                                       # ('SPACEBELOW', (0,0), (-1,-1), 10),
-                                       # ('BACKGROUND',(0,0),(1,0),colors.lightgrey)
                                        ]))
             # table.wrapOn(p, 300, 200)
             table.wrapOn(p, 200, 400)
@@ -593,13 +582,10 @@ class CreateQuotationPdf(View):
             data1=[[q_item.selling_price]]
             table = Table(data1, colWidths=[125], rowHeights=40, style = style)
             table.setStyle(TableStyle([
-                                       # ('INNERGRID', (0,0), (0,0), 0.25, colors.black),
                                        # ('INNERGRID', (0,1), (-1,-1), 0.25, colors.black),
                                        ('BOX', (0,0), (-1,-1), 0.25, colors.black),
                                        ('VALIGN',(0,-1),(-1,-1),'MIDDLE'),
                                        ('ALIGN', (0,0), (-1,-1),'RIGHT'),
-                                       # ('SPACEBELOW', (0,0), (-1,-1), 10),
-                                       # ('BACKGROUND',(0,0),(1,0),colors.lightgrey)
                                        ]))
             # table.wrapOn(p, 300, 200)
             table.wrapOn(p, 200, 400)
@@ -610,13 +596,10 @@ class CreateQuotationPdf(View):
             data1=[[q_item.net_amount]]
             table = Table(data1, colWidths=[135], rowHeights=40, style = style)
             table.setStyle(TableStyle([
-                                       # ('INNERGRID', (0,0), (0,0), 0.25, colors.black),
                                        # ('INNERGRID', (0,1), (-1,-1), 0.25, colors.black),
                                        ('BOX', (0,0), (-1,-1), 0.25, colors.black),
                                        ('VALIGN',(0,-1),(-1,-1),'MIDDLE'),
                                        ('ALIGN', (0,0), (-1,-1),'RIGHT'),
-                                       # ('SPACEBELOW', (0,0), (-1,-1), 10),
-                                       # ('BACKGROUND',(0,0),(1,0),colors.lightgrey)
                                        ]))
             # table.wrapOn(p, 300, 200)
             table.wrapOn(p, 200, 400)
@@ -629,11 +612,9 @@ class CreateQuotationPdf(View):
 
         table = Table(data, colWidths=[650, 160], rowHeights=40, style = style)
         table.setStyle(TableStyle([
-                                   # ('INNERGRID', (0,0), (0,0), 0.25, colors.black),
                                    # ('INNERGRID', (0,1), (-1,-1), 0.25, colors.black),
                                    ('BOX', (0,0), (-1,-1), 0.25, colors.black),
                                    ('VALIGN',(0,-1),(-1,-1),'MIDDLE'),
-                                   # ('BACKGROUND',(0,0),(1,0),colors.lightgrey),
                                    ('ALIGN', (0,0), (-1,-1),'RIGHT'),
                                    ]))
         table.wrapOn(p, 200, 400)
@@ -672,6 +653,7 @@ class CreateQuotationPdf(View):
         p.showPage()
         p.save()
         return response
+
 
 class CreateDeliveryNote(View):
 
@@ -1632,3 +1614,14 @@ class EditQuotation(View):
             response = simplejson.dumps(res)
 
             return HttpResponse(response, status=200, mimetype='application/json')
+
+
+class EditDeliveryNote(View):
+
+    def get(self, request, *args, **kwargs):
+
+        return render(request, 'sales/edit_delivery_note.html', {})
+
+    
+
+
