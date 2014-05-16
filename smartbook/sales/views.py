@@ -747,7 +747,7 @@ class CreateDeliveryNote(View):
 
             res = {
                 'result': 'ok',
-                'delivery_note_id': 11
+                'delivery_note_id': delivery_note.id
             }
 
             response = simplejson.dumps(res)
@@ -769,6 +769,7 @@ class QuotationDetails(View):
         else:
             quotations = Quotation.objects.filter(reference_id__istartswith=ref_number, processed=False, is_sales_invoice_created=False)
         quotation_list = []
+
         for quotation in quotations:
             item_list = []
             i = 0 
@@ -798,8 +799,47 @@ class QuotationDetails(View):
                 'delivery_no': quotation.deliverynote_set.all()[0].delivery_note_number if quotation.deliverynote_set.all().count() > 0 else 0,
                 'lpo_number': quotation.deliverynote_set.all()[0].lpo_number if quotation.deliverynote_set.all().count() > 0 else '',
             })
+
+        whole_quotations_list = []
+        whole_quotations = Quotation.objects.filter(reference_id__istartswith=ref_number)
+
+        for quotation in whole_quotations:
+            item_list = []
+            i = 0 
+            i = i + 1
+            for q_item in quotation.quotationitem_set.all():
+                item_list.append({
+                    'sl_no': i,
+                    'item_name': q_item.item.name,
+                    'item_code': q_item.item.code,
+                    'barcode': q_item.item.barcode,
+                    'item_description': q_item.item.description,
+                    'qty_sold': q_item.quantity_sold,
+                    'tax': q_item.item.tax,
+                    'uom': q_item.item.uom.uom,
+                    'current_stock': q_item.item.inventory_set.all()[0].quantity if q_item.item.inventory_set.count() > 0  else 0 ,
+                    'selling_price': q_item.item.inventory_set.all()[0].selling_price if q_item.item.inventory_set.count() > 0 else 0 ,
+                    'discount_permit': q_item.item.inventory_set.all()[0].discount_permit_percentage if q_item.item.inventory_set.count() > 0 else 0,
+                    'net_amount': q_item.net_amount,
+                    'discount_given': q_item.discount,
+                })
+                i = i + 1
+            whole_quotations_list.append({
+                'ref_no': quotation.reference_id,
+                'customer': quotation.to.customer_name if quotation.to else '' ,
+                'items': item_list,
+                'net_total': quotation.net_total,
+                'delivery': quotation.delivery,
+                'proof': quotation.proof,
+                'payment': quotation.payment,
+                'validity': quotation.validity,
+            })
+
+
+
         res = {
             'quotations': quotation_list,
+            'whole_quotations': whole_quotations_list,
             'result': 'ok',
         }
         response = simplejson.dumps(res)
@@ -1541,3 +1581,92 @@ class EditSalesInvoice(View):
         }
         response = simplejson.dumps(res)
         return HttpResponse(response, status=200, mimetype='application/json')
+
+class EditQuotation(View):
+
+    def get(self, request, *args, **kwargs):
+
+        return render(request, 'sales/edit_quotation.html', {})
+
+    def post(self, request, *args, **kwargs):
+
+        if request.is_ajax():
+            quotation_data = ast.literal_eval(request.POST['quotation'])
+            quotation, quotation_created = Quotation.objects.get_or_create(reference_id=quotation_data['reference_no'])
+            quotation.date = datetime.strptime(quotation_data['date'], '%d-%m-%Y')
+            quotation.attention = quotation_data['attention']
+            quotation.subject = quotation_data['subject']           
+            quotation.net_total = quotation_data['total_amount']
+
+            quotation.delivery = quotation_data['delivery']
+            quotation.proof = quotation_data['proof']
+            quotation.payment = quotation_data['payment']
+            quotation.validity = quotation_data['validity']
+            quotation.save()
+            customer = Customer.objects.get(customer_name=quotation_data['customer'])
+            quotation.to = customer
+            quotation.save()
+
+            stored_item_names = []
+            for q_item in quotation.quotationitem_set.all():
+                stored_item_names.append(q_item.item.name)
+
+
+            # Editing and Removing the Existing details of the Quotation item
+            for q_item in quotation.quotationitem_set.all():
+                q_item_names = []
+                for item_data in quotation_data['sales_items']:
+                    q_item_names.append(item_data['item_name'])
+
+                # Removing the qutation item object that is not in inputed qutation items list
+
+                if q_item.item.name not in q_item_names:
+                    item = q_item.item 
+                    inventory, created = Inventory.objects.get_or_create(item=item)
+                    inventory.quantity = inventory.quantity + int(q_item.quantity_sold)
+                    inventory.save()
+                    q_item.delete()
+                else:
+                    for item_data in quotation_data['sales_items']:
+                        item = Item.objects.get(code=item_data['item_code'])
+                        q_item, item_created = QuotationItem.objects.get_or_create(item=item, qutation=quotation)
+                        inventory, created = Inventory.objects.get_or_create(item=item)
+                        if item_created:
+
+                            inventory.quantity = inventory.quantity - int(item_data['qty_sold'])
+                        else:
+                            inventory.quantity = inventory.quantity + q_item.quantity_sold - int(item_data['qty_sold'])      
+
+                        inventory.save()
+                        q_item.net_amount = float(item_data['net_amount'])
+                        q_item.quantity_sold = int(item_data['qty_sold'])
+                        q_item.selling_price = float(item_data['unit_price'])
+                        q_item.save()
+
+            # Create new sales item for the newly added item
+            for item_data in quotation_data['sales_items']:
+
+                if item_data['item_name'] not in stored_item_names:
+                    item = Item.objects.get(code=item_data['item_code'])
+                    q_item, item_created = QuotationItem.objects.get_or_create(item=item, qutation=quotation)
+                    inventory, created = Inventory.objects.get_or_create(item=item)
+                    if item_created:
+
+                        inventory.quantity = inventory.quantity - int(item_data['qty_sold'])
+                    else:
+                        inventory.quantity = inventory.quantity + q_item.quantity_sold - int(item_data['qty_sold'])      
+
+                    inventory.save()
+                    q_item.quantity_sold = item_data['qty_sold']
+                    q_item.net_amount = item_data['net_amount']
+                    q_item.selling_price = item_data['unit_price']
+                    q_item.save()
+        
+            res = {
+                'result': 'OK',
+                'quotation_id': quotation.id,
+            }
+
+            response = simplejson.dumps(res)
+
+            return HttpResponse(response, status=200, mimetype='application/json')
