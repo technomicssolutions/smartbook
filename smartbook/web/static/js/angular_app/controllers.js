@@ -47,8 +47,11 @@ add_new_customer = function($http, $scope) {
                 $scope.error_flag=true;
                 $scope.message = data.message;
             } else {
+                $scope.customer = data.customer_name;
                 $scope.popup.hide_popup();
                 $scope.get_customers();
+                $scope.customer = data.customer_name;
+                console.log($scope.customer);
             }
         }).error(function(data, success){
             
@@ -1286,7 +1289,7 @@ function SalesController($scope, $element, $http, $timeout, share, $location) {
 
     $scope.items = [];
     $scope.selected_item = '';
-    $scope.customer = '';
+    $scope.customer = 'select';
     $scope.customer_name = '';
     $scope.staff = '';
     $scope.selecting_item = false;
@@ -1339,6 +1342,7 @@ function SalesController($scope, $element, $http, $timeout, share, $location) {
         }
     }
     $scope.validate_sales = function() {
+        $scope.sales.customer = $scope.customer;
         if($scope.sales.sales_invoice_date == '') {
             $scope.validation_error = "Enter Sales invoice Date" ;
             return false;
@@ -1445,7 +1449,7 @@ function SalesController($scope, $element, $http, $timeout, share, $location) {
     }
     $scope.add_customer = function() {
 
-        if($scope.sales.customer == 'other') {
+        if($scope.customer == 'other') {
             $scope.popup = new DialogueModelWindow({
                 'dialogue_popup_width': '36%',
                 'message_padding': '0px',
@@ -2730,7 +2734,7 @@ function QuotationController($scope, $element, $http, $timeout, share, $location
 
     $scope.items = [];
     $scope.selected_item = '';
-    $scope.customer = '';
+    $scope.customer = 'select';
     $scope.selecting_item = false;
     $scope.item_selected = false;
     $scope.customer_name = '';
@@ -2767,7 +2771,7 @@ function QuotationController($scope, $element, $http, $timeout, share, $location
 
     $scope.add_customer = function() {
 
-        if($scope.quotation.customer == 'other') {
+        if($scope.customer == 'other') {
 
             $scope.popup = new DialogueModelWindow({
                 'dialogue_popup_width': '36%',
@@ -2885,7 +2889,7 @@ function QuotationController($scope, $element, $http, $timeout, share, $location
 
         $scope.quotation.date = $$('#quotation_date')[0].get('value');
         $scope.quotation.reference_no = $$('#reference_number')[0].get('value');
-
+        $scope.quotation.customer = $scope.customer;
         if ($scope.quotation.date == '' || $scope.quotation.date == undefined) {
             $scope.validation_error = "Enter quotation Date" ;
             return false;
