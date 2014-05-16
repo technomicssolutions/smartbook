@@ -23,4 +23,5 @@ urlpatterns = patterns('',
 	url(r'direct_delivery_note/$', DirectDeliveryNote.as_view(), name='direct_delivery_note'),
 	url(r'latest_sales_details/$', LatestSalesDetails.as_view(), name='latest_sales_details'),
 	url(r'edit_sales_invoice/$', EditSalesInvoice.as_view(), name='edit_sales_invoice'),
+	url(r'edit_quotation/$', EditQuotation.as_view(), name='edit_quotation'),
 )
