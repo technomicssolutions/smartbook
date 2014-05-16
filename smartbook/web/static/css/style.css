@@ -304,7 +304,8 @@ form {
 }
 .section_1 {
 	float: left;
-	width: 50%;
+	width: 48%;
+	padding-left: 2%;
 }
 .section_2 {
 	float: left;
@@ -337,7 +338,8 @@ form {
     width: 42%;
 }
 .buttons .btn {
-	margin-right: 10px;
+	margin-left: 2%;
+/*	width: 20%; */
 }
 .buttons a {
 	float: left;
@@ -414,7 +416,9 @@ form {
 }
 .formtext_purchase {
 	float: left;
-    width: 200px;
+
+    width: 248px;
+
 }
 .forminput_purchase {
 	float: left;
@@ -457,14 +461,14 @@ form {
 /*sales module */
 .sales_form_container {
 	margin: auto;
-    width: 90%;
+    width: 100%;
 }
 .form_contents_sales {
 	margin: 10px 5px;
 }
 .section_1_sales {
 	float: left;	
-	width: 100%;
+	width: 90%;
 }
 .section_2_sales {
 	float: left;	
@@ -481,10 +485,11 @@ form {
 }
 .formtext_sales {
 	float: left;
-    width: 200px;
+   	width:50%;
 }
 .forminput_sales {
 	float: left;
+	width:50%;
 }
 .search_sales{
 	width: 100%;
@@ -496,12 +501,16 @@ form {
 .search_sales .control {
 	background-color: #ADD8E6;
     float: left;
-    padding: 13px;
-    width: 31%;
+    padding: 1%;
+    width: 31.333%;
 }
 
 
 
+.section_100_sales{
+    float: left;
+    width: 100%;
+}
 
 /*reports*/
 
@@ -553,10 +562,10 @@ th {
 
 .item_list {
 	background-color: #FFFFFF;
-    border: 1px solid #ADD8E6;
-    position: absolute;
-    margin-top: -10px;
-    width: 89%;
+/*    border: 1px solid #ADD8E6; */
+    position: relative;
+    margin-top: 1px;
+    width: 98.7%;
     border-top-color: #FFFFFF;
 }
 
@@ -735,7 +744,7 @@ a {
 
 #create_delivery_note .item_list {
 	width: 17% !important;
-	margin-left: 200px;
+	 margin-left: 299px;
     margin-top: 29px;
 }
 
@@ -764,6 +773,10 @@ a {
 }
 
 #create_sales .purchase_item_list .item_list_row span {
+
+
+
+
 	width: 9.5%;
 }
 
@@ -778,6 +791,10 @@ a {
     width: 9.5%;
 }
 
+
+
+
 #edit_sales_invoice .purchase_item_list .item_list_row span {
     width: 9.5%;
 }
+

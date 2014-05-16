@@ -46,8 +46,8 @@ class QuotationItem(models.Model):
     quotation = models.ForeignKey(Quotation, null=True, blank=True)
     net_amount = models.DecimalField('Net Amount',max_digits=14, decimal_places=2, default=0)
     quantity_sold = models.IntegerField('Quantity Sold', default=0)
-    discount = models.DecimalField('Total Discount',max_digits=14, decimal_places=3, default=0)  
-    selling_price = models.DecimalField('Selling Price', max_digits=14, decimal_places=3, default=0)
+    discount = models.DecimalField('Total Discount',max_digits=14, decimal_places=2, default=0)  
+    selling_price = models.DecimalField('Selling Price', max_digits=14, decimal_places=2, default=0)
 
     def __unicode__(self):
 
@@ -87,7 +87,7 @@ class DeliveryNoteItem(models.Model):
     delivery_note = models.ForeignKey(DeliveryNote, null=True, blank=True)
     net_amount = models.DecimalField('Net Amount',max_digits=14, decimal_places=2, default=0)
     quantity_sold = models.IntegerField('Quantity Sold', default=0)
-    discount = models.DecimalField('Total Discount',max_digits=14, decimal_places=3, default=0)
+    discount = models.DecimalField('Total Discount',max_digits=14, decimal_places=2, default=0)
 
     def __unicode__(self):
 
@@ -106,12 +106,12 @@ class Sales(models.Model):
     customer = models.ForeignKey(Customer, null=True, blank=True)
     salesman = models.ForeignKey(Staff, null=True, blank=True)
     payment_mode = models.CharField('Payment Mode', null=True, blank=True, max_length=25)
-    card_number = models.IntegerField('Crad Number',null=True, blank=True)
+    card_number = models.IntegerField('Card Number',null=True, blank=True)
     bank_name = models.CharField('Bank Name',max_length=50,null=True, blank=True)
-    net_amount = models.DecimalField('Net Amount',max_digits=14, decimal_places=3, default=0)
-    round_off = models.DecimalField('Net Round Off',max_digits=14, decimal_places=3, default=0)
-    grant_total = models.DecimalField('Grand Total',max_digits=14, decimal_places=3, default=0)
-    discount = models.DecimalField('Total Discount',max_digits=14, decimal_places=3, default=0)
+    net_amount = models.DecimalField('Net Amount',max_digits=14, decimal_places=2, default=0)
+    round_off = models.DecimalField('Net Round Off',max_digits=14, decimal_places=2, default=0)
+    grant_total = models.DecimalField('Grand Total',max_digits=14, decimal_places=2, default=0)
+    discount = models.DecimalField('Total Discount',max_digits=14, decimal_places=2, default=0)
     quotation = models.ForeignKey(Quotation, null=True, blank=True)
     delivery_note = models.ForeignKey(DeliveryNote, null=True, blank=True)
     lpo_number = models.CharField('LPO Number', null=True, blank=True, max_length=30)
@@ -134,7 +134,7 @@ class SalesInvoice(models.Model):
     customer = models.ForeignKey(Customer, null=True, blank=True)
     date = models.DateField('Date', null=True, blank=True)
     invoice_no = models.CharField('Invoice Number',null=True, blank=True, max_length=20)
-    prefix =  models.CharField('Prefix', max_length=20, default='SI')
+    prefix =  models.CharField('Prefix', max_length=20, default='INV')
     is_processed = models.BooleanField('Processed', default=False)
 
 
@@ -152,8 +152,9 @@ class SalesItem(models.Model):
     item = models.ForeignKey(Item)
     sales = models.ForeignKey(Sales)
     quantity_sold = models.IntegerField('Quantity Sold', default=0)
-    discount_given = models.DecimalField('Discount Given',max_digits=14, decimal_places=3, default=0)  
-    selling_price = models.DecimalField('Selling Price', max_digits=14, decimal_places=3, default=0) 
+    discount_given = models.DecimalField('Discount Given',max_digits=14, decimal_places=2, default=0)  
+    selling_price = models.DecimalField('Selling Price', max_digits=14, decimal_places=2, default=0) 
+    net_amount = models.DecimalField('Sold Net Amount', max_digits=14, decimal_places=2, default=0)
     
     
     def __unicode__(self):
