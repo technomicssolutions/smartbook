@@ -149,10 +149,11 @@ class RegisterUser(View):
         template = 'register_user.html'
         if request.POST['name'] == '':
             message = "Please enter name"
-        elif request.POST['username'] == '':
-            message = "Please enter username"
-        elif request.POST['password'] == '':
-            message = "Please enter password"
+        if user_type == "staff":
+            if request.POST['username'] == '':
+                message = "Please enter username"
+            elif request.POST['password'] == '':
+                message = "Please enter password"
         if message:
             context = {
                 'error_message': message,
