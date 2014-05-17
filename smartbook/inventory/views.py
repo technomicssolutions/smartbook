@@ -114,7 +114,7 @@ class ItemList(View):
                 status_code = 200
                 return HttpResponse(response, status = status_code, mimetype = 'application/json')
             else:
-                items = Item.objects.all()
+                items = Item.objects.all().order_by('code')
                 ctx = {
                     'items': items
                 }
