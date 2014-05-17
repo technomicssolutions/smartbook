@@ -28,7 +28,7 @@ class ItemAdd(View):
                 if not created:
                     res = {
                         'result': 'error',
-                        'message': 'Item with this item code already existing'
+                        'message': 'Item already existing'
                     }
                     status_code = 500
                 else:
@@ -45,7 +45,7 @@ class ItemAdd(View):
             except IntegrityError:
                 res = {
                         'result': 'error',
-                        'message': 'Item with this item code already existing'
+                        'message': 'Item already existing'
                     }
                 status_code = 500
 
