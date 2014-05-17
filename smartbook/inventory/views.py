@@ -302,7 +302,7 @@ class EditItem(View):
                     'uom': item.uom.uom if item.uom else '',
                     'brand': item.brand.brand if item.brand else '',
                     'barcode': item.barcode if item.barcode else '',
-                    'tax': item.tax if item.tax else '',
+                    'tax': item.tax if item.tax else 0,
                 })
                 res = {
                     'result': 'error',
@@ -345,6 +345,7 @@ class EditItem(View):
             print "Exception == ", str(Ex)
             res = {
                 'result': 'error',
+                'message': 'Item with this name is already existing'
             }
             status = 500
         response = simplejson.dumps(res)
