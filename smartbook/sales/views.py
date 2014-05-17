@@ -372,7 +372,6 @@ class DeliveryNotePDF(View):
                 table.wrapOn(p, 200, 600)
                 table.drawOn(p, 10, y)
                 i = i + 1
-
         p.showPage()
         p.save()
         return response
@@ -518,7 +517,11 @@ class CreateQuotationPdf(View):
         i = 0 
         i = i + 1
 
-        for q_item in quotation.quotationitem_set.all():            
+        for q_item in quotation.quotationitem_set.all():   
+
+            if x <= 135:
+                p.showPage()
+                x = 915          
 
             x=x-40
 
@@ -619,25 +622,28 @@ class CreateQuotationPdf(View):
                                    ]))
         table.wrapOn(p, 200, 400)
         table.drawOn(p,105,x-40)
-
+        print "value of x == ", x
         p.setFont("Helvetica", 15)
-
-        p.drawString(110, x-80, "Hope the above quoted prices will meet your satisfaction and for further information please do not hesitate to contact us.")
-        p.drawString(110, x-120, "Delivery     : " + str(quotation.delivery))
-        p.drawString(110, x-140, "Proof          : " + str(quotation.proof))
-        p.drawString(110, x-160, "Payment    : " + str(quotation.payment))
-        p.drawString(110, x-180, "Validity       : " + str(quotation.validity))
+        if x < 270:
+            p.showPage()
+            x = 1000
+        p.drawString(110, x-100, "Hope the above quoted prices will meet your satisfaction and for further information please do not hesitate to contact us.")
+        p.drawString(110, x-140, "Delivery     : " + str(quotation.delivery))
+        p.drawString(110, x-160, "Proof          : " + str(quotation.proof))
+        p.drawString(110, x-180, "Payment    : " + str(quotation.payment))
+        p.drawString(110, x-200, "Validity       : " + str(quotation.validity))
+        p.drawString(110, x-220, "For")
+        p.drawString(110, x-240, "Sunlight Stationary")
+        p.drawString(110, x-260, "Authorized Signatory")
+        p.drawString(700, x-260, "Prepared By")
         
         # if x >= 270:
-        p.drawString(110, 150, "For")
-        p.drawString(110, 130, "Sunlight Stationary")
-        p.drawString(110, 70, "Authorized Signatory")
-        p.drawString(700, 70, "Prepared By")
+        # p.drawString(110, 150, "For")
+        # p.drawString(110, 130, "Sunlight Stationary")
+        # p.drawString(110, 70, "Authorized Signatory")
+        # p.drawString(700, 70, "Prepared By")
         # else:           
-        #     p.drawString(160, x-190, "For")
-        #     p.drawString(160, x-200, "Sunlight Stationary")
-        #     p.drawString(160, x-210, "Authorized Signatory")
-        #     p.drawString(700, x-210, "Prepared By")
+        #     
 
 
         # data=[['Tel: +971-2-6763571, Fax : +971-2-6763581,P.O.Box : 48296, Abu Dhabi, United Arab Emirates']]
