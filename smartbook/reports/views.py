@@ -1187,6 +1187,9 @@ class StockReports(View):
                 p.drawString(760, y, str(stock.discount_permit_percentage))
                 p.drawString(840, y, str(stock.quantity * stock.unit_price))
                 y = y - 30
+                if y <= 270:
+                    y = 850
+                    p.showPage()
 
         p.showPage()
         p.save()
