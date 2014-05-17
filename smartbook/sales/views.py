@@ -358,6 +358,10 @@ class DeliveryNotePDF(View):
                        
                 y = y-40
 
+                if y <= 270:
+                    y = 800
+                    p.showPage()
+
                 data1 = [[i, q_item.item.code, q_item.item.name, q_item.quantity_sold, q_item.item.uom.uom]]
                 table = Table(data1, colWidths=[80, 120, 400, 90, 100], rowHeights=40, style = style)
                 table.wrapOn(p, 200, 600)
@@ -366,6 +370,9 @@ class DeliveryNotePDF(View):
         if delivery_note.deliverynoteitem_set.all().count() > 0:
             for delivery_item in delivery_note.deliverynoteitem_set.all():
                 y = y-40
+                if y <= 270:
+                    y = 800
+                    p.showPage()
 
                 data1 = [[i, delivery_item.item.code, delivery_item.item.name, delivery_item.quantity_sold, delivery_item.item.uom.uom]]
                 table = Table(data1, colWidths=[80, 120, 400, 90, 100], rowHeights=40, style = style)

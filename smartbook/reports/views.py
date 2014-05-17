@@ -151,6 +151,9 @@ class SalesReports(View):
                             avg_cp = math.ceil(avg_cp*100)/100
 
                             y = y - 30
+                            if y <= 270:
+                                y = 850
+                                p.showPage()
                             p.drawString(50, y, dates.strftime('%d/%m/%y'))
                             p.drawString(150, y, str(invoice_no))
                             p.drawString(250, y, item_name)
@@ -162,6 +165,9 @@ class SalesReports(View):
                             p.drawString(900, y, str(profit))
                             
                 y = y - 30
+                if y <= 270:
+                    y = 850
+                    p.showPage()
                 p.drawString(50, y, 'Round Off : '+str(round_off))
                 p.drawString(150, y, '')
                 p.drawString(250, y, '')
@@ -266,6 +272,9 @@ class SalesReports(View):
                         
 
                         y = y - 30
+                        if y <= 270:
+                            y = 850
+                            p.showPage()
                         p.drawString(50, y, str(item_code))
                         p.drawString(150, y, item_name)
                         p.drawString(250, y, str(total_qty))
@@ -278,6 +287,9 @@ class SalesReports(View):
                 total_cp = math.ceil(total_cp*100)/100 
 
                 y = y - 30
+                if y <= 270:
+                    y = 850
+                    p.showPage()
                 p.drawString(50, y, '')
                 p.drawString(150, y, '')
                 p.drawString(250, y, '')
@@ -385,6 +397,9 @@ class SalesReports(View):
                             avg_cp = math.ceil(avg_cp*100)/100
 
                             y = y - 30
+                            if y <= 270:
+                                y = 850
+                                p.showPage()
                             p.drawString(50, y, dates.strftime('%d-%m-%Y'))
                             p.drawString(150, y, str(invoice_no))
                             p.drawString(250, y, item_name)
@@ -395,6 +410,9 @@ class SalesReports(View):
                             p.drawString(800, y, str(total)) 
                             p.drawString(900, y, str(profit))
                 y = y - 30
+                if y <= 270:
+                    y = 850
+                    p.showPage()
                 p.drawString(50, y, '')
                 p.drawString(150, y, '')
                 p.drawString(250, y, '')
@@ -503,6 +521,9 @@ class SalesReports(View):
 
                             avg_cp = math.ceil(avg_cp*100)/100
                             y = y - 30
+                            if y <= 270:
+                                y = 850
+                                p.showPage()
                             p.drawString(50, y, dates.strftime('%d-%m-%Y'))
                             p.drawString(150, y, str(invoice_no))
                             p.drawString(250, y, item_name)
@@ -513,6 +534,9 @@ class SalesReports(View):
                             p.drawString(800, y, str(total)) 
                             p.drawString(900, y, str(profit))
                 y = y - 30
+                if y <= 270:
+                    y = 850
+                    p.showPage()
                 p.drawString(50, y, '')
                 p.drawString(150, y, '')
                 p.drawString(250, y, '')
@@ -586,6 +610,9 @@ class PurchaseReports(View):
                 purchase_items = purchase.purchaseitem_set.all()
                 for purchase_item in purchase_items:                    
                     y = y - 30
+                    if y <= 270:
+                        y = 850
+                        p.showPage()
                     p.drawString(50, y, purchase_item.purchase.purchase_invoice_date.strftime('%d/%m/%y'))
                     p.drawString(150, y, str(purchase_item.purchase.purchase_invoice_number))
                     p.drawString(250, y, str(purchase_item.purchase.vendor_invoice_number))
@@ -596,6 +623,9 @@ class PurchaseReports(View):
                     p.drawString(750, y, str(purchase_item.net_amount))
                     total_amount = total_amount + purchase_item.net_amount
             y = y - 30
+            if y <= 270:
+                y = 850
+                p.showPage()
             p.drawString(650, y, 'Total:')
             p.drawString(750, y, str(total_amount))
             p.showPage()
@@ -626,12 +656,18 @@ class PurchaseReports(View):
             for purchase in purchases:
                             
                 y = y - 30
+                if y <= 270:
+                    y = 850
+                    p.showPage()
                 p.drawString(50, y, purchase.purchase_invoice_date.strftime('%d/%m/%y'))
                 p.drawString(150, y, str(purchase.purchase_invoice_number))
                 p.drawString(250, y, str(purchase.vendor_invoice_number))
                 p.drawString(350, y, str(purchase.vendor_amount))
                 total_amount = total_amount + purchase.vendor_amount
             y = y - 30
+            if y <= 270:
+                y = 850
+                p.showPage()
             p.drawString(250, y, 'Total:')
             p.drawString(350, y, str(total_amount))    
             p.showPage()
@@ -706,6 +742,9 @@ class SalesReturnReport(View):
                             grant_total = grant_total + total
 
                             y = y - 30
+                            if y <= 270:
+                                y = 850
+                                p.showPage()
 
                             p.drawString(50, y, dates.strftime('%d-%m-%Y'))
                             p.drawString(150, y, str(invoice_no))
@@ -717,6 +756,9 @@ class SalesReturnReport(View):
                             p.drawString(650, y, str(total))
             
             y= y - 30
+            if y <= 270:
+                y = 850
+                p.showPage()
             p.drawString(50, y, '')
             p.drawString(150, y, '')
             p.drawString(250, y, '')
@@ -779,7 +821,9 @@ class DailyReport(View):
             if sales.count()>0:
                 for sale in sales:
                     y = y - 30
-
+                    if y <= 270:
+                        y = 850
+                        p.showPage()
                     p.drawString(50, y, (sale.sales_invoice_date).strftime('%d-%m-%Y'))
                     p.drawString(150, y, 'By Sales '+str(sale.sales_invoice_number))
                     p.drawString(550, y, str(sale.grant_total))
@@ -793,6 +837,10 @@ class DailyReport(View):
             if expenses.count()>0:
                 for expense in expenses:   
                     y = y - 30
+
+                    if y <= 270:
+                        y = 850
+                        p.showPage()
                     
                     p.drawString(50, y, (expense.date).strftime('%d-%m-%Y'))
                     p.drawString(150, y, 'By Voucher '+str(expense.voucher_no)+','+expense.narration)
@@ -804,12 +852,18 @@ class DailyReport(View):
             difference = total_income - total_expense
 
             y = y-30
+            if y <= 270:
+                y = 850
+                p.showPage()
             p.drawString(50, y, '')
             p.drawString(150, y, 'TotalRoundOff-Sales')
             p.drawString(550, y, '')
             p.drawString(650, y, str(round_off))
 
             y = y-30
+            if y <= 270:
+                y = 850
+                p.showPage()
             p.drawString(50, y, '')
             p.drawString(150, y, 'TotalDiscount-Sales')
             p.drawString(550, y, '')
@@ -817,6 +871,9 @@ class DailyReport(View):
 
             
             y = y-30
+            if y <= 270:
+                y = 850
+                p.showPage()
             p.drawString(50, y, '')
             p.drawString(150, y, 'Total')
             p.drawString(550, y, str(total_income))
@@ -890,6 +947,9 @@ class PurchaseReturnReport(View):
                         for purchasereturn_item in purchasereturn_items:
 
                             y = y - 30
+                            if y <= 270:
+                                y = 850
+                                p.showPage()
                             p.drawString(50, y, purchasereturn_item.purchase_return.date.strftime('%d/%m/%Y'))
                             p.drawString(150, y, purchasereturn_item.purchase_return.purchase.vendor.user.first_name)
                             p.drawString(250, y, purchasereturn_item.item.name)
@@ -940,6 +1000,9 @@ class PurchaseReturnReport(View):
                         for purchasereturn_item in purchasereturn_items:
 
                             y = y - 30
+                            if y <= 270:
+                                y = 850
+                                p.showPage()
                             p.drawString(50, y, purchasereturn_item.purchase_return.date.strftime('%d/%m/%Y'))
                             p.drawString(150, y, purchasereturn_item.purchase_return.purchase.vendor.user.first_name)
                             p.drawString(250, y, purchasereturn_item.item.name)
@@ -1011,6 +1074,9 @@ class ExpenseReport(View):
                 for expense in expenses:
                     
                     y = y - 30
+                    if y <= 270:
+                        y = 850
+                        p.showPage()
 
                     p.drawString(200, y, expense.date.strftime('%d/%m/%Y'))
                     p.drawString(300, y, expense.expense_head.expense_head)
@@ -1091,6 +1157,9 @@ class VendorAccountsReport(View):
                     for purchase_account in purchase_accounts:
 
                         y = y - 30
+                        if y <= 270:
+                            y = 850
+                            p.showPage()
 
                         p.drawString(50, y, purchase_account.date.strftime('%d/%m/%Y') if purchase_account.date else '')
                         p.drawString(150, y, purchase_account.vendor.user.first_name)
@@ -1138,6 +1207,10 @@ class VendorAccountsReport(View):
                     for purchase_account in purchase_accounts:
 
                         y = y-30
+                        if y <= 270:
+                            y = 850
+                            p.showPage()
+
 
                         p.drawString(50, y, purchase_account.date.strftime('%d/%m/%Y') if purchase_account.date else '')
                         p.drawString(150, y, purchase_account.payment_mode)
