@@ -519,18 +519,18 @@ class CreateQuotationPdf(View):
         table.wrapOn(p, 200, 400)
         table.drawOn(p,780,575)
 
-        x=575
+        y = 575
 
         i = 0 
         i = i + 1
 
         for q_item in quotation.quotationitem_set.all():   
 
-            if x <= 135:
+            if y <= 135:
                 p.showPage()
-                x = 915          
+                y = 915          
 
-            x=x-40
+            y = y-40
 
             # data1=[[i, q_item.item.name, q_item.quantity_sold, q_item.item.inventory_set.all()[0].selling_price, q_item.net_amount]]
             # table = Table(data1, colWidths=[100, 350, 100, 125, 125], rowHeights=40, style = style)
@@ -560,7 +560,7 @@ class CreateQuotationPdf(View):
             # table.wrapOn(p, 300, 200)
             table.wrapOn(p, 200, 400)
             # table.drawOn(p,105,460)
-            table.drawOn(p,105, x)
+            table.drawOn(p,105, y)
 
 
             data1=[[q_item.item.name]]
@@ -573,7 +573,7 @@ class CreateQuotationPdf(View):
             # table.wrapOn(p, 300, 200)
             table.wrapOn(p, 200, 400)
             # table.drawOn(p,105,460)
-            table.drawOn(p,205, x)
+            table.drawOn(p,205, y)
 
 
             data1=[[q_item.quantity_sold]]
@@ -587,7 +587,7 @@ class CreateQuotationPdf(View):
             # table.wrapOn(p, 300, 200)
             table.wrapOn(p, 200, 400)
             # table.drawOn(p,105,460)
-            table.drawOn(p,555, x)
+            table.drawOn(p,555, y)
             
             data1=[[q_item.selling_price]]
             table = Table(data1, colWidths=[125], rowHeights=40, style = style)
@@ -600,7 +600,7 @@ class CreateQuotationPdf(View):
             # table.wrapOn(p, 300, 200)
             table.wrapOn(p, 200, 400)
             # table.drawOn(p,105,460)
-            table.drawOn(p,655, x)
+            table.drawOn(p,655, y)
 
 
             data1=[[q_item.net_amount]]
@@ -614,7 +614,7 @@ class CreateQuotationPdf(View):
             # table.wrapOn(p, 300, 200)
             table.wrapOn(p, 200, 400)
             # table.drawOn(p,105,460)
-            table.drawOn(p,780, x)
+            table.drawOn(p,780, y)
 
             i = i + 1
 
@@ -628,21 +628,20 @@ class CreateQuotationPdf(View):
                                    ('ALIGN', (0,0), (-1,-1),'RIGHT'),
                                    ]))
         table.wrapOn(p, 200, 400)
-        table.drawOn(p,105,x-40)
-        print "value of x == ", x
+        table.drawOn(p,105,y-40)
         p.setFont("Helvetica", 15)
-        if x < 270:
+        if y < 270:
             p.showPage()
-            x = 1000
-        p.drawString(110, x-100, "Hope the above quoted prices will meet your satisfaction and for further information please do not hesitate to contact us.")
-        p.drawString(110, x-140, "Delivery     : " + str(quotation.delivery))
-        p.drawString(110, x-160, "Proof          : " + str(quotation.proof))
-        p.drawString(110, x-180, "Payment    : " + str(quotation.payment))
-        p.drawString(110, x-200, "Validity       : " + str(quotation.validity))
-        p.drawString(110, x-220, "For")
-        p.drawString(110, x-240, "Sunlight Stationary")
-        p.drawString(110, x-260, "Authorized Signatory")
-        p.drawString(700, x-260, "Prepared By")
+            y = 1000
+        p.drawString(110, y-100, "Hope the above quoted prices will meet your satisfaction and for further information please do not hesitate to contact us.")
+        p.drawString(110, y-140, "Delivery     : " + str(quotation.delivery))
+        p.drawString(110, y-160, "Proof          : " + str(quotation.proof))
+        p.drawString(110, y-180, "Payment    : " + str(quotation.payment))
+        p.drawString(110, y-200, "Validity       : " + str(quotation.validity))
+        p.drawString(110, y-220, "For")
+        p.drawString(110, y-240, "Sunlight Stationary")
+        p.drawString(110, y-260, "Authorized Signatory")
+        p.drawString(700, y-260, "Prepared By")
         
         # if x >= 270:
         # p.drawString(110, 150, "For")
@@ -1128,7 +1127,7 @@ class CreateSalesInvoicePDF(View):
             table.wrapOn(p, 200, 400)
             table.drawOn(p,50, 880)
 
-        x=790
+        y = 790
 
         i = 0
         i = i + 1
@@ -1137,7 +1136,10 @@ class CreateSalesInvoicePDF(View):
         total_amount = 0
         for s_item in sales.salesitem_set.all():
                    
-            x=x-30
+            y = y-30
+            if y <= 270:
+                y = 790
+                p.showPage()
             
             item_price = s_item.selling_price
             total_amount = total_amount + (item_price*s_item.quantity_sold)
@@ -1145,9 +1147,12 @@ class CreateSalesInvoicePDF(View):
             data1=[[i, s_item.item.code, s_item.item.name, s_item.quantity_sold, s_item.item.uom.uom, s_item.selling_price.quantize(TWOPLACES), s_item.net_amount]]
             table = Table(data1, colWidths=[50, 100, 440, 80, 90, 100, 50], rowHeights=40, style=style)
             table.wrapOn(p, 200, 400)
-            table.drawOn(p,10,x)
+            table.drawOn(p,10,y)
             i = i + 1
-        x=600
+        y = 600
+        if y <= 270:
+            y = 800
+            p.showPage()
         total_amount = sales.net_amount
         try:
             total_amount = total_amount.quantize(TWOPLACES)
