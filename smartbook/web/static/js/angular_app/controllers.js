@@ -5,7 +5,6 @@ function validateEmail(email) {
 customer_validation = function($scope) {
     $scope.error_message = "";
     $scope.error_flag = false;
-    console.log($scope.email_id);
     if($scope.customer_name == '') {
         $scope.error_message = "Please enter customer name";
         $scope.error_flag = true;
@@ -52,7 +51,6 @@ add_new_customer = function($http, $scope) {
                 $scope.popup.hide_popup();
                 $scope.get_customers();
                 $scope.customer = data.customer_name;
-                console.log($scope.customer);
             }
         }).error(function(data, success){
             
@@ -75,7 +73,6 @@ get_quotation_details = function($http, $scope, from){
     }
     $http.get(url).success(function(data)
     {
-        console.log(data.quotations.length);
         if(data.quotations.length > 0){
             $scope.selecting_quotation = true;
             $scope.quotation_selected = false;
@@ -888,7 +885,6 @@ function SalesQNDNController($scope, $element, $http, $timeout, share, $location
         }
     }
     $scope.validate_sales = function() {
-        console.log($scope.sales.quotation_ref_no);
         if ($scope.sales.quotation_ref_no == '' && $scope.sales.delivery_no == ''){
             $scope.validation_error = "Enter Quotation Reference No or Delivery No" ;
             return false;
@@ -1143,7 +1139,6 @@ function SalesQNDNController($scope, $element, $http, $timeout, share, $location
     
     $scope.getItems = function(parameter){
 
-        console.log('parameter', parameter);
         if(parameter == 'item_code')
             var param = $scope.item_code;
         else if(parameter == 'item_name')
@@ -1323,8 +1318,7 @@ function SalesController($scope, $element, $http, $timeout, share, $location) {
         
         $scope.get_staff();
         $scope.get_customers();
-            
-        console.log("$scope.sales.sales_invoice_number ", $scope.sales.sales_invoice_number );
+         
     }
     $scope.payment_mode_change_sales = function(payment_mode) {
         if(payment_mode == 'cheque') {
@@ -1481,7 +1475,6 @@ function SalesController($scope, $element, $http, $timeout, share, $location) {
     
     $scope.getItems = function(parameter){
 
-        console.log('parameter', parameter);
         if(parameter == 'item_code')
             var param = $scope.item_code;
         else if(parameter == 'item_name')
@@ -2706,7 +2699,6 @@ function StockEditController($scope, $http, $element, $location, $timeout) {
             $scope.validation_error = "Please enter selling price";
             return false;
         } else if($scope.stock.discount_permit_amount == '' || $scope.stock.discount_permit_amount == undefined || $scope.stock.discount_permit_percent == '' || $scope.stock.discount_permit_percent == undefined) {
-            console.log($scope.stock.discount_permit_amount, $scope.stock.discount_permit_percent)
             $scope.validation_error = "Please enter discount";
             return false;
         } else if( $scope.stock.quantity != Number($scope.stock.quantity)){
@@ -2748,6 +2740,10 @@ function QuotationController($scope, $element, $http, $timeout, share, $location
         'attention': '',
         'subject': '',
         'total_amount': '',
+        'delivery': '',
+        'proof': '',
+        'payment': '',
+        'validity': '',
         
     }
     $scope.quotation.customer = 'select';
@@ -2882,7 +2878,6 @@ function QuotationController($scope, $element, $http, $timeout, share, $location
             total_amount = (parseFloat(total_amount) + parseFloat($scope.quotation.sales_items[i].net_amount)).toFixed(2);
         }
         $scope.quotation.total_amount = total_amount;
-        console.log($scope.quotation.total_amount);
     }
 
     $scope.quotation_validation = function(){
@@ -2954,7 +2949,6 @@ function QuotationController($scope, $element, $http, $timeout, share, $location
                     $scope.error_flag=true;
                     $scope.message = data.message;
                 } else {
-                    // console.log('created')
                     document.location.href = '/sales/create_quotation_pdf/'+data.quotation_id+'/';
 
                 }
@@ -3088,7 +3082,6 @@ function DeliveryNoteController($scope, $element, $http, $timeout, share, $locat
     $scope.create_delivery_note = function() {
         $scope.is_valid = $scope.delivery_note_validation();
         if($scope.is_valid) {
-            console.log($scope.quotation);
             params = { 
                 'quotation': angular.toJson($scope.quotation), 
                 'delivery_note': angular.toJson($scope.delivery_note),
@@ -3204,7 +3197,6 @@ function ReceiptVoucherController($scope, $element, $http, $timeout, share, $loc
                 $scope.invoice_selected = false;
                 $scope.invoices = data.invoice_details; 
             } else {
-                console.log('in else');
                 $scope.invoice_message = "There is no invoice with this number";
             }
             
@@ -3234,8 +3226,6 @@ function ReceiptVoucherController($scope, $element, $http, $timeout, share, $loc
                 'receiptvoucher': angular.toJson($scope.receiptvoucher),   
                 "csrfmiddlewaretoken" : $scope.csrf_token
             }
-            // console.log('test');
-
             $http({
                 method : 'post',
                 url : "/sales/create_receipt_voucher/",
@@ -3251,7 +3241,6 @@ function ReceiptVoucherController($scope, $element, $http, $timeout, share, $loc
                 } else {
                     $scope.error_flag=false;
                     $scope.message = '';
-                    // console.log('test');
                     document.location.href ='/sales/pdf_receipt_voucher/'+data.receiptvoucher_id+'/';
                 }
             }).error(function(data, status){
@@ -3416,7 +3405,6 @@ function DirectDeliveryNoteController($scope, $element, $http, $timeout, share, 
             total_amount = (parseFloat(total_amount) + parseFloat($scope.delivery_note.sales_items[i].net_amount)).toFixed(2);
         }
         $scope.delivery_note.net_total = total_amount;
-        console.log($scope.delivery_note.total_amount);
     }
 
     $scope.delivery_note_validation = function(){
@@ -3529,7 +3517,6 @@ function EditSalesInvoiceController($scope, $element, $location, $http){
                 $scope.invoice_selected = false;
                 $scope.invoices = data.sales_invoices; 
             } else {
-                console.log('in else');
                 $scope.invoice_message = "There is no invoice with this number";
             }
             
@@ -3546,7 +3533,6 @@ function EditSalesInvoiceController($scope, $element, $location, $http){
         $scope.invoice_details.delivery_note_no = invoice.delivery_note_no;
         $scope.invoice_details.customer = invoice.customer;
         $scope.invoice_details.date = invoice.date;
-        console.log(invoice.lpo_number, 'Hi');
         $scope.invoice_details.lpo_number = invoice.lpo_number;
         $scope.invoice_details.salesman = invoice.salesman;
         $scope.invoice_details.payment_mode = invoice.payment_mode;
@@ -3645,7 +3631,6 @@ function EditSalesInvoiceController($scope, $element, $location, $http){
         for(i=0; i<$scope.invoice_details.sales_items.length; i++){
             net_total = net_total + parseFloat($scope.invoice_details.sales_items[i].net_amount);
         }
-        console.log(net_total);
         $scope.invoice_details.net_total = net_total;
         $scope.calculate_grant_total_sale();
         
@@ -3736,7 +3721,6 @@ function EditSalesInvoiceController($scope, $element, $location, $http){
     }
     $scope.getItems = function(parameter){
 
-        console.log('parameter', parameter);
         if(parameter == 'item_code')
             var param = $scope.item_code;
         else if(parameter == 'item_name')
@@ -3972,7 +3956,6 @@ function EditQuotationController($scope, $element, $http, $timeout, share, $loca
             total_amount = (parseFloat(total_amount) + parseFloat($scope.quotation.sales_items[i].net_amount)).toFixed(2);
         }
         $scope.quotation.total_amount = total_amount;
-        console.log($scope.quotation.total_amount);
     }
 
     $scope.quotation_validation = function(){
@@ -4043,7 +4026,6 @@ function EditQuotationController($scope, $element, $http, $timeout, share, $loca
                     $scope.error_flag=true;
                     $scope.message = data.message;
                 } else {
-                    // console.log('created')
                     document.location.href = '/sales/create_quotation_pdf/'+data.quotation_id+'/';
 
                 }
@@ -4158,7 +4140,6 @@ function EditDeliveryController($scope, $element, $http, $timeout, share, $locat
             total_amount = (parseFloat(total_amount) + parseFloat($scope.delivery_note.sales_items[i].net_amount)).toFixed(2);
         }
         $scope.delivery_note.net_total = total_amount;
-        console.log($scope.delivery_note.total_amount);
     }
 
     $scope.get_delivery_note_details = function(){
