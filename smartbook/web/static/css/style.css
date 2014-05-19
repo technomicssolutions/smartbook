@@ -223,10 +223,12 @@ footer {
 
 .main-title {
 	font-size:19px;
-	padding:8px 0 8px 0;
+	/*padding:8px 0 8px 0;*/
     font-weight: bold;
 }
-
+.align{
+	width: 45% !important;
+}
 
 
 textarea{
@@ -465,6 +467,7 @@ form {
 }
 .form_contents_sales {
 	margin: 10px 5px;
+	padding-left: 1%;
 }
 .section_1_sales {
 	float: left;	
@@ -505,7 +508,9 @@ form {
     width: 31.333%;
 }
 
-
+#purchase .formrow_purchase {
+    width: 43%;
+}
 
 .section_100_sales{
     float: left;
@@ -521,7 +526,7 @@ form {
 }
 .reportinput {
 	float: left;
-	padding: 10px;
+	padding-left: 10px;
 }
 
 
@@ -763,19 +768,22 @@ a {
 }
 .delivery_note {
 	width: 17%;
-	margin-left: 200px;
+	margin-left: 288px !important;
     margin-top: 30px;
+    position: absolute;
+    border: 1px solid #ADD8E6;
+    border-radius: 5px;
 }
 .quotation_list {
 	width: 17%;
-	margin-left: 200px;
+	margin-left: 287px !important;
     margin-top: 30px;
+    position: absolute;
+    border: 1px solid #ADD8E6;
+    border-radius: 5px;
 }
 
 #create_sales .purchase_item_list .item_list_row span {
-
-
-
 
 	width: 9.5%;
 }
@@ -791,10 +799,14 @@ a {
     width: 9.5%;
 }
 
-
-
-
 #edit_sales_invoice .purchase_item_list .item_list_row span {
     width: 9.5%;
 }
 
+#edit_quotation .purchase_item_list .item_list_row span {
+    width: 10.5%;
+}
+
+#edit_delivery_note .purchase_item_list .item_list_row span {
+    width: 10.5%;
+}

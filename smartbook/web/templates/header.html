@@ -20,9 +20,9 @@
 						<li> <a href="{% url 'clear_backup' %}"> Backup Folder </a> </li>
 						<li> <a href="{% url 'users' user_type='vendor' %}"> Vendors </a> </li>
 						{% comment %}<li> <a href="{% url 'users' user_type='staff' %}"> Staff </a> </li> 
-						<li> <a href="{% url 'register_salesman' user_type='Salesman' %}"> Sales Men </a> </li>
 						{% endcomment %}
 						<li> <a href="{% url 'users' user_type='Salesman' %}"> Sales Men </a> </li> 
+
 						<li> <a href="{% url 'users' user_type='customer'  %}"> Customers </a> </li>
 						<li> <a href="{% url 'logout' %}"> Logout </a> </li>
 						<li> <a href="{% url 'reset_password' user_id=user.id %}"> Reset password </a> </li>
@@ -30,9 +30,9 @@
 				</li>
 				<li class="menu"> <a href=""> Inventory </a> 
 					<ul> 
-						<li> <a href="{% url 'add_item' %}"> New Item </a> </li>
 						<li> <a href="{% url 'stock' %}"> Stock </a> </li>
 						<li> <a href="{% url 'opening_stock' %}"> Opening Stock </a> </li>
+						<li> <a href="{% url 'item_list' %}"> Items </a> </li>
 					</ul>
 				</li>
 				<li class="menu"> <a href=""> Purchase </a> </a> 

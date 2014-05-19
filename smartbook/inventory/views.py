@@ -1,5 +1,6 @@
 import sys
 import simplejson
+import ast
 
 from django.db import IntegrityError
 
@@ -27,7 +28,7 @@ class ItemAdd(View):
                 if not created:
                     res = {
                         'result': 'error',
-                        'message': 'Item with this item code already existing'
+                        'message': 'Item already existing'
                     }
                     status_code = 500
                 else:
@@ -44,7 +45,7 @@ class ItemAdd(View):
             except IntegrityError:
                 res = {
                         'result': 'error',
-                        'message': 'Item with this item code already existing'
+                        'message': 'Item already existing'
                     }
                 status_code = 500
 
@@ -113,11 +114,11 @@ class ItemList(View):
                 status_code = 200
                 return HttpResponse(response, status = status_code, mimetype = 'application/json')
             else:
-                items = Item.objects.all()
+                items = Item.objects.all().order_by('code')
                 ctx = {
                     'items': items
                 }
-                return render(request, 'inventory/stock.html',ctx)
+                return render(request, 'inventory/items_list.html',ctx)
 
 class StockView(View):
     def get(self, request, *args, **kwargs):
@@ -283,5 +284,71 @@ class EditStockView(View):
         inventory.discount_permit_percentage = request.POST['discount_permit_percent']
         inventory.save()
         return HttpResponseRedirect(reverse('stock'))
+
+class EditItem(View):
+
+    def get(self, request, *args, **kwargs):
+        item_id = kwargs['item_id']
+        context = {
+            'item_id': item_id,
+        }
+        ctx_item_data = []
+        if request.is_ajax():
+            try:
+                item = Item.objects.get(id = item_id)
+                ctx_item_data.append({
+                    'name': item.name if item.name else '',
+                    'code': item.code if item.code else '',
+                    'uom': item.uom.uom if item.uom else '',
+                    'brand': item.brand.brand if item.brand else '',
+                    'barcode': item.barcode if item.barcode else '',
+                    'tax': item.tax if item.tax else 0,
+                })
+                res = {
+                    'result': 'error',
+                    'item': ctx_item_data,
+                }
+                status = 200
+            except Exception as ex:
+                print "Exception == ", str(ex)
+                ctx_item_data = []
+                res = {
+                    'result': 'error',
+                    'item': ctx_item_data,
+                }
+                status = 500
+            response = simplejson.dumps(res)
+            return HttpResponse(response, status=status, mimetype='application/json')
+
+        return render(request, 'inventory/edit_item.html', context)
+
+    def post(self, request, *args, **kwargs):
+
+        item_id = kwargs['item_id']
+
+        item = Item.objects.get(id = item_id)
+        item_data = ast.literal_eval(request.POST['item'])
+        try:
+            item.name = item_data['name']
+            uom = UnitOfMeasure.objects.get(uom=item_data['uom'])
+            brand = Brand.objects.get(brand=item_data['brand'])
+            item.uom = uom
+            item.brand = brand
+            item.barcode = item_data['barcode']
+            item.tax = item_data['tax']
+            item.save()
+            res = {
+                'result': 'ok',
+            }
+            status = 200
+        except Exception as Ex:
+            print "Exception == ", str(Ex)
+            res = {
+                'result': 'error',
+                'message': 'Item with this name is already existing'
+            }
+            status = 500
+        response = simplejson.dumps(res)
+        return HttpResponse(response, status=status, mimetype='application/json')
 
 

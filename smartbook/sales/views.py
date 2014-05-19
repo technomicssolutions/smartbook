@@ -358,21 +358,27 @@ class DeliveryNotePDF(View):
                        
                 y = y-40
 
+                if y <= 270:
+                    y = 800
+                    p.showPage()
+
                 data1 = [[i, q_item.item.code, q_item.item.name, q_item.quantity_sold, q_item.item.uom.uom]]
                 table = Table(data1, colWidths=[80, 120, 400, 90, 100], rowHeights=40, style = style)
                 table.wrapOn(p, 200, 600)
                 table.drawOn(p, 10, y)
                 i = i + 1
-        else:
+        if delivery_note.deliverynoteitem_set.all().count() > 0:
             for delivery_item in delivery_note.deliverynoteitem_set.all():
                 y = y-40
+                if y <= 270:
+                    y = 800
+                    p.showPage()
 
                 data1 = [[i, delivery_item.item.code, delivery_item.item.name, delivery_item.quantity_sold, delivery_item.item.uom.uom]]
                 table = Table(data1, colWidths=[80, 120, 400, 90, 100], rowHeights=40, style = style)
                 table.wrapOn(p, 200, 600)
                 table.drawOn(p, 10, y)
                 i = i + 1
-
         p.showPage()
         p.save()
         return response
@@ -513,14 +519,18 @@ class CreateQuotationPdf(View):
         table.wrapOn(p, 200, 400)
         table.drawOn(p,780,575)
 
-        x=575
+        y = 575
 
         i = 0 
         i = i + 1
 
-        for q_item in quotation.quotationitem_set.all():            
+        for q_item in quotation.quotationitem_set.all():   
 
-            x=x-40
+            if y <= 135:
+                p.showPage()
+                y = 915          
+
+            y = y-40
 
             # data1=[[i, q_item.item.name, q_item.quantity_sold, q_item.item.inventory_set.all()[0].selling_price, q_item.net_amount]]
             # table = Table(data1, colWidths=[100, 350, 100, 125, 125], rowHeights=40, style = style)
@@ -550,7 +560,7 @@ class CreateQuotationPdf(View):
             # table.wrapOn(p, 300, 200)
             table.wrapOn(p, 200, 400)
             # table.drawOn(p,105,460)
-            table.drawOn(p,105, x)
+            table.drawOn(p,105, y)
 
 
             data1=[[q_item.item.name]]
@@ -563,7 +573,7 @@ class CreateQuotationPdf(View):
             # table.wrapOn(p, 300, 200)
             table.wrapOn(p, 200, 400)
             # table.drawOn(p,105,460)
-            table.drawOn(p,205, x)
+            table.drawOn(p,205, y)
 
 
             data1=[[q_item.quantity_sold]]
@@ -577,7 +587,7 @@ class CreateQuotationPdf(View):
             # table.wrapOn(p, 300, 200)
             table.wrapOn(p, 200, 400)
             # table.drawOn(p,105,460)
-            table.drawOn(p,555, x)
+            table.drawOn(p,555, y)
             
             data1=[[q_item.selling_price]]
             table = Table(data1, colWidths=[125], rowHeights=40, style = style)
@@ -590,7 +600,7 @@ class CreateQuotationPdf(View):
             # table.wrapOn(p, 300, 200)
             table.wrapOn(p, 200, 400)
             # table.drawOn(p,105,460)
-            table.drawOn(p,655, x)
+            table.drawOn(p,655, y)
 
 
             data1=[[q_item.net_amount]]
@@ -604,7 +614,7 @@ class CreateQuotationPdf(View):
             # table.wrapOn(p, 300, 200)
             table.wrapOn(p, 200, 400)
             # table.drawOn(p,105,460)
-            table.drawOn(p,780, x)
+            table.drawOn(p,780, y)
 
             i = i + 1
 
@@ -618,26 +628,28 @@ class CreateQuotationPdf(View):
                                    ('ALIGN', (0,0), (-1,-1),'RIGHT'),
                                    ]))
         table.wrapOn(p, 200, 400)
-        table.drawOn(p,105,x-40)
-
+        table.drawOn(p,105,y-40)
         p.setFont("Helvetica", 15)
-
-        p.drawString(110, x-80, "Hope the above quoted prices will meet your satisfaction and for further information please do not hesitate to contact us.")
-        p.drawString(110, x-120, "Delivery     : " + quotation.delivery)
-        p.drawString(110, x-140, "Proof          : " + quotation.proof)
-        p.drawString(110, x-160, "Payment    : " + quotation.payment)
-        p.drawString(110, x-180, "Validity       : " + quotation.validity)
+        if y < 270:
+            p.showPage()
+            y = 1000
+        p.drawString(110, y-100, "Hope the above quoted prices will meet your satisfaction and for further information please do not hesitate to contact us.")
+        p.drawString(110, y-140, "Delivery     : " + str(quotation.delivery))
+        p.drawString(110, y-160, "Proof          : " + str(quotation.proof))
+        p.drawString(110, y-180, "Payment    : " + str(quotation.payment))
+        p.drawString(110, y-200, "Validity       : " + str(quotation.validity))
+        p.drawString(110, y-220, "For")
+        p.drawString(110, y-240, "Sunlight Stationary")
+        p.drawString(110, y-260, "Authorized Signatory")
+        p.drawString(700, y-260, "Prepared By")
         
         # if x >= 270:
-        p.drawString(110, 150, "For")
-        p.drawString(110, 130, "Sunlight Stationary")
-        p.drawString(110, 70, "Authorized Signatory")
-        p.drawString(700, 70, "Prepared By")
+        # p.drawString(110, 150, "For")
+        # p.drawString(110, 130, "Sunlight Stationary")
+        # p.drawString(110, 70, "Authorized Signatory")
+        # p.drawString(700, 70, "Prepared By")
         # else:           
-        #     p.drawString(160, x-190, "For")
-        #     p.drawString(160, x-200, "Sunlight Stationary")
-        #     p.drawString(160, x-210, "Authorized Signatory")
-        #     p.drawString(700, x-210, "Prepared By")
+        #     
 
 
         # data=[['Tel: +971-2-6763571, Fax : +971-2-6763581,P.O.Box : 48296, Abu Dhabi, United Arab Emirates']]
@@ -744,36 +756,63 @@ class QuotationDetails(View):
         in_sales_invoice_creation = ''
         sales_invoice_creation = request.GET.get('sales_invoice', '')
 
-        ref_number = request.GET.get('reference_number', '')
-
+        ref_number = request.GET.get('reference_no', '')
         if sales_invoice_creation == 'true':
             quotations = Quotation.objects.filter(reference_id__istartswith=ref_number, is_sales_invoice_created=False)
         else:
             quotations = Quotation.objects.filter(reference_id__istartswith=ref_number, processed=False, is_sales_invoice_created=False)
         quotation_list = []
-
         for quotation in quotations:
             item_list = []
             i = 0 
             i = i + 1
-            for q_item in quotation.quotationitem_set.all():
-                item_list.append({
-                    'sl_no': i,
-                    'item_name': q_item.item.name,
-                    'item_code': q_item.item.code,
-                    'barcode': q_item.item.barcode,
-                    'item_description': q_item.item.description,
-                    'qty_sold': q_item.quantity_sold,
-                    'tax': q_item.item.tax,
-                    'uom': q_item.item.uom.uom,
-                    'current_stock': q_item.item.inventory_set.all()[0].quantity if q_item.item.inventory_set.count() > 0  else 0 ,
-                    'selling_price': q_item.item.inventory_set.all()[0].selling_price if q_item.item.inventory_set.count() > 0 else 0 ,
-                    'discount_permit': q_item.item.inventory_set.all()[0].discount_permit_percentage if q_item.item.inventory_set.count() > 0 else 0,
-                    'net_amount': q_item.net_amount,
-                    'discount_given': q_item.discount,
-                })
-                i = i + 1
+            if quotation.deliverynote_set.all().count() > 0:
+                delivery_note = quotation.deliverynote_set.all()[0]
+
+                for q_item in delivery_note.deliverynoteitem_set.all():
+                    item_list.append({
+                        'sl_no': i,
+                        'item_name': q_item.item.name,
+                        'item_code': q_item.item.code,
+                        'barcode': q_item.item.barcode,
+                        'item_description': q_item.item.description,
+                        'qty_sold': q_item.quantity_sold,
+                        'tax': q_item.item.tax,
+                        'uom': q_item.item.uom.uom,
+                        'current_stock': q_item.item.inventory_set.all()[0].quantity if q_item.item.inventory_set.count() > 0  else 0 ,
+                        'selling_price': q_item.item.inventory_set.all()[0].selling_price if q_item.item.inventory_set.count() > 0 else 0 ,
+                        'discount_permit': q_item.item.inventory_set.all()[0].discount_permit_percentage if q_item.item.inventory_set.count() > 0 else 0,
+                        'net_amount': q_item.net_amount,
+                        'discount_given': q_item.discount,
+                    })
+                    i = i + 1 
+
+            if quotation.quotationitem_set.all().count() > 0:
+                for q_item in quotation.quotationitem_set.all():
+                    item_list.append({
+                        'sl_no': i,
+                        'item_name': q_item.item.name,
+                        'item_code': q_item.item.code,
+                        'barcode': q_item.item.barcode,
+                        'item_description': q_item.item.description,
+                        'qty_sold': q_item.quantity_sold,
+                        'tax': q_item.item.tax,
+                        'uom': q_item.item.uom.uom,
+                        'current_stock': q_item.item.inventory_set.all()[0].quantity if q_item.item.inventory_set.count() > 0  else 0 ,
+                        'selling_price': q_item.item.inventory_set.all()[0].selling_price if q_item.item.inventory_set.count() > 0 else 0 ,
+                        'discount_permit': q_item.item.inventory_set.all()[0].discount_permit_percentage if q_item.item.inventory_set.count() > 0 else 0,
+                        'net_amount': q_item.net_amount,
+                        'discount_given': q_item.discount,
+                    })
+                    i = i + 1
             quotation_list.append({
+                'date': quotation.date.strftime('%d/%m/%Y') if quotation.date else '',
+                'delivery': quotation.delivery,
+                'proof': quotation.proof,
+                'payment': quotation.payment,
+                'attention': quotation.attention,
+                'subject': quotation.subject,
+                'validity': quotation.validity,
                 'ref_no': quotation.reference_id,
                 'customer': quotation.to.customer_name if quotation.to else '' ,
                 'items': item_list,
@@ -782,46 +821,8 @@ class QuotationDetails(View):
                 'lpo_number': quotation.deliverynote_set.all()[0].lpo_number if quotation.deliverynote_set.all().count() > 0 else '',
             })
 
-        whole_quotations_list = []
-        whole_quotations = Quotation.objects.filter(reference_id__istartswith=ref_number)
-
-        for quotation in whole_quotations:
-            item_list = []
-            i = 0 
-            i = i + 1
-            for q_item in quotation.quotationitem_set.all():
-                item_list.append({
-                    'sl_no': i,
-                    'item_name': q_item.item.name,
-                    'item_code': q_item.item.code,
-                    'barcode': q_item.item.barcode,
-                    'item_description': q_item.item.description,
-                    'qty_sold': q_item.quantity_sold,
-                    'tax': q_item.item.tax,
-                    'uom': q_item.item.uom.uom,
-                    'current_stock': q_item.item.inventory_set.all()[0].quantity if q_item.item.inventory_set.count() > 0  else 0 ,
-                    'selling_price': q_item.item.inventory_set.all()[0].selling_price if q_item.item.inventory_set.count() > 0 else 0 ,
-                    'discount_permit': q_item.item.inventory_set.all()[0].discount_permit_percentage if q_item.item.inventory_set.count() > 0 else 0,
-                    'net_amount': q_item.net_amount,
-                    'discount_given': q_item.discount,
-                })
-                i = i + 1
-            whole_quotations_list.append({
-                'ref_no': quotation.reference_id,
-                'customer': quotation.to.customer_name if quotation.to else '' ,
-                'items': item_list,
-                'net_total': quotation.net_total,
-                'delivery': quotation.delivery,
-                'proof': quotation.proof,
-                'payment': quotation.payment,
-                'validity': quotation.validity,
-            })
-
-
-
         res = {
             'quotations': quotation_list,
-            'whole_quotations': whole_quotations_list,
             'result': 'ok',
         }
         response = simplejson.dumps(res)
@@ -860,8 +861,7 @@ class DeliveryNoteDetails(View):
                             'discount_given': q_item.discount,
                         })
                         i = i + 1
-            else:  
-                
+            if delivery_note.deliverynoteitem_set.all().count() > 0:  
                 for delivery_note_item in delivery_note.deliverynoteitem_set.all():
                     item_list.append({
                         'sl_no': i,
@@ -886,7 +886,8 @@ class DeliveryNoteDetails(View):
                 'items': item_list,
                 'net_total': delivery_note.quotation.net_total if delivery_note.quotation else delivery_note.net_total,
                 'delivery_no': delivery_note.delivery_note_number,
-                'lpo_number': delivery_note.lpo_number if delivery_note.lpo_number else ''
+                'lpo_number': delivery_note.lpo_number if delivery_note.lpo_number else '',
+                'date': delivery_note.date.strftime('%d/%m/%Y'),
             })
         res = {
             'delivery_notes': delivery_note_list,
@@ -1062,8 +1063,6 @@ class QuotationDeliverynoteSales(View):
         response = simplejson.dumps(res)
         status_code = 200
         return HttpResponse(response, status = status_code, mimetype="application/json")
-
-
 class CreateSalesInvoicePDF(View):
 
     def get(self, request, *args, **kwargs):
@@ -1100,7 +1099,7 @@ class CreateSalesInvoicePDF(View):
         #                ('FONTSIZE', (2,0), (2,0), 30),
         #                ]))     
         table.wrapOn(p, 200, 400)
-        table.drawOn(p,50, 980)
+        table.drawOn(p,50, 975)
 
         quotation = sales_invoice.quotation
 
@@ -1126,9 +1125,9 @@ class CreateSalesInvoicePDF(View):
 
             table = Table(data, colWidths=[450, 120, 70], rowHeights=40, style = style)      
             table.wrapOn(p, 200, 400)
-            table.drawOn(p,50, 860)
+            table.drawOn(p,50, 880)
 
-        x=790
+        y = 790
 
         i = 0
         i = i + 1
@@ -1137,7 +1136,10 @@ class CreateSalesInvoicePDF(View):
         total_amount = 0
         for s_item in sales.salesitem_set.all():
                    
-            x=x-30
+            y = y-30
+            if y <= 270:
+                y = 790
+                p.showPage()
             
             item_price = s_item.selling_price
             total_amount = total_amount + (item_price*s_item.quantity_sold)
@@ -1145,9 +1147,12 @@ class CreateSalesInvoicePDF(View):
             data1=[[i, s_item.item.code, s_item.item.name, s_item.quantity_sold, s_item.item.uom.uom, s_item.selling_price.quantize(TWOPLACES), s_item.net_amount]]
             table = Table(data1, colWidths=[50, 100, 440, 80, 90, 100, 50], rowHeights=40, style=style)
             table.wrapOn(p, 200, 400)
-            table.drawOn(p,10,x)
+            table.drawOn(p,10,y)
             i = i + 1
-        x=600
+        y = 600
+        if y <= 270:
+            y = 800
+            p.showPage()
         total_amount = sales.net_amount
         try:
             total_amount = total_amount.quantize(TWOPLACES)
@@ -1157,15 +1162,14 @@ class CreateSalesInvoicePDF(View):
        
         data=[[total_amount_in_words, total_amount]]  
 
-        table = Table(data, colWidths=[500, 50], rowHeights=40, style = style)      
+        table = Table(data, colWidths=[700, 50], rowHeights=40, style = style)      
 
         table.wrapOn(p, 200, 100)
-        table.drawOn(p, 400, 10)
+        table.drawOn(p, 200, 10)
 
         p.showPage()
         p.save()
         return response
-
 
 class ReceiptVoucherCreation(View):
 
@@ -1575,15 +1579,8 @@ class EditQuotation(View):
         if request.is_ajax():
             quotation_data = ast.literal_eval(request.POST['quotation'])
             quotation, quotation_created = Quotation.objects.get_or_create(reference_id=quotation_data['reference_no'])
-            quotation.date = datetime.strptime(quotation_data['date'], '%d-%m-%Y')
-            quotation.attention = quotation_data['attention']
-            quotation.subject = quotation_data['subject']           
+                      
             quotation.net_total = quotation_data['total_amount']
-
-            quotation.delivery = quotation_data['delivery']
-            quotation.proof = quotation_data['proof']
-            quotation.payment = quotation_data['payment']
-            quotation.validity = quotation_data['validity']
             quotation.save()
             customer = Customer.objects.get(customer_name=quotation_data['customer'])
             quotation.to = customer
@@ -1611,7 +1608,7 @@ class EditQuotation(View):
                 else:
                     for item_data in quotation_data['sales_items']:
                         item = Item.objects.get(code=item_data['item_code'])
-                        q_item, item_created = QuotationItem.objects.get_or_create(item=item, qutation=quotation)
+                        q_item, item_created = QuotationItem.objects.get_or_create(item=item, quotation=quotation)
                         inventory, created = Inventory.objects.get_or_create(item=item)
                         if item_created:
 
@@ -1630,7 +1627,7 @@ class EditQuotation(View):
 
                 if item_data['item_name'] not in stored_item_names:
                     item = Item.objects.get(code=item_data['item_code'])
-                    q_item, item_created = QuotationItem.objects.get_or_create(item=item, qutation=quotation)
+                    q_item, item_created = QuotationItem.objects.get_or_create(item=item, quotation=quotation)
                     inventory, created = Inventory.objects.get_or_create(item=item)
                     if item_created:
 
@@ -1659,6 +1656,115 @@ class EditDeliveryNote(View):
     def get(self, request, *args, **kwargs):
 
         return render(request, 'sales/edit_delivery_note.html', {})
+
+    def post(self, request, *args, **kwargs):
+
+        if request.is_ajax():
+            delivery_note_details = ast.literal_eval(request.POST['delivery_note'])
+            
+            q_stored_item_names = []
+            d_stored_item_names = []
+            stored_item_names = []
+            delivery_note, created = DeliveryNote.objects.get_or_create(delivery_note_number=delivery_note_details['delivery_note_no'])
+            delivery_note.net_total = delivery_note_details['net_total']
+            delivery_note.save()
+
+            if delivery_note.quotation:
+                print "in if"
+                quotation = delivery_note.quotation
+                print quotation
+                for d_item in delivery_note.quotation.quotationitem_set.all():
+                    q_stored_item_names.append(d_item.item.name)
+                
+                for q_item in delivery_note.quotation.quotationitem_set.all():
+                    q_item_names = []
+                    for item_data in delivery_note_details['sales_items']:
+                        q_item_names.append(item_data['item_name'])
+
+                    # Removing the qutation item object that is not in inputed delivery note items list
+
+                    if q_item.item.name not in q_item_names:
+                        item = q_item.item 
+                        inventory, created = Inventory.objects.get_or_create(item=item)
+                        inventory.quantity = inventory.quantity + int(q_item.quantity_sold)
+                        inventory.save()
+                        q_item.delete()
+                    else:
+                        for item_data in delivery_note_details['sales_items']:
+                            item = Item.objects.get(code=item_data['item_code'])
+                            quotation_item = QuotationItem.objects.filter(item=item, quotation=quotation)
+                            if quotation_item.count() > 0:
+                                q_item = quotation_item[0]
+                                inventory, created = Inventory.objects.get_or_create(item=item)
+                                inventory.quantity = inventory.quantity + q_item.quantity_sold - int(item_data['qty_sold'])      
+
+                                inventory.save()
+                                q_item.net_amount = float(item_data['net_amount'])
+                                q_item.quantity_sold = int(item_data['qty_sold'])
+                                q_item.selling_price = float(item_data['unit_price'])
+                                q_item.save()
+            
+            if delivery_note.deliverynoteitem_set.all().count() > 0:
+
+                for d_item in delivery_note.deliverynoteitem_set.all():
+                    d_stored_item_names.append(d_item.item.name)
+                
+                for d_item in delivery_note.deliverynoteitem_set.all():
+                    d_item_names = []
+                    for item_data in delivery_note_details['sales_items']:
+                        d_item_names.append(item_data['item_name'])
+
+                    # Removing the delivery note item object that is not in inputed delivery note items list
+
+                    if d_item.item.name not in d_item_names:
+                        item = d_item.item 
+                        inventory, created = Inventory.objects.get_or_create(item=item)
+                        inventory.quantity = inventory.quantity + int(d_item.quantity_sold)
+                        inventory.save()
+                        d_item.delete()
+                    else:
+                        for item_data in delivery_note_details['sales_items']:
+                            item = Item.objects.get(code=item_data['item_code'])
+                            delivery_note_item = DeliveryNoteItem.objects.filter(item=item, delivery_note=delivery_note)
+                            if delivery_note_item.count() > 0:
+                                d_item = delivery_note_item[0]
+                                inventory, created = Inventory.objects.get_or_create(item=item)
+                                inventory.quantity = inventory.quantity + d_item.quantity_sold - int(item_data['qty_sold'])      
+
+                                inventory.save()
+                                d_item.net_amount = float(item_data['net_amount'])
+                                d_item.quantity_sold = int(item_data['qty_sold'])
+                                d_item.selling_price = float(item_data['unit_price'])
+                                d_item.save()
+
+            
+            stored_item_names = []
+            for item_data in delivery_note_details['sales_items']:
+                if item_data['item_name'] not in q_stored_item_names:
+                    if item_data['item_name'] not in d_stored_item_names:
+                        stored_item_names.append(item_data['item_name'])
+
+            for item_data in delivery_note_details['sales_items']:
+                if item_data['item_name'] in stored_item_names:
+                    item = Item.objects.get(code=item_data['item_code'])
+                    d_item, item_created = DeliveryNoteItem.objects.get_or_create(item=item, delivery_note=delivery_note)
+                    inventory, created = Inventory.objects.get_or_create(item=item)
+                    if item_created:
+                        inventory.quantity = inventory.quantity - int(item_data['qty_sold'])
+                    inventory.save()
+                    d_item.quantity_sold = item_data['qty_sold']
+                    d_item.net_amount = item_data['net_amount']
+                    d_item.selling_price = item_data['unit_price']
+                    d_item.save()
+
+
+            res = {
+                'result': 'ok',
+                'delivery_note_id': delivery_note.id
+            }
+            response = simplejson.dumps(res)
+
+            return HttpResponse(response, status=200, mimetype='application/json')
 
     
 

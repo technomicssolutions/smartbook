@@ -55,6 +55,20 @@
 					<label>Password</label>
 					<input name="password" type="password" value="{{password.0}}" />
 				</div>
+
+				<div class="control">
+					<label>Designation</label>
+					{% if salesman %}
+						<input type="text" name="designation" ng-model="designation" value="Salesman" readonly />
+					{% else %}
+						<select name="designation" ng-model="designation" ng-change="add_designation()">
+							<option value="select">Select</option>
+							<option ng-repeat="designatn in designations" value="[[designatn.title]]" ng-selected="designatn.title == designation">[[designatn.title]]</option>
+							<option value="other">Other</option>
+						</select>
+					{% endif %}
+
+				</div>
 				
 			{% endif %}
 			

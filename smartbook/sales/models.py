@@ -26,10 +26,10 @@ class Quotation(models.Model):
     processed = models.BooleanField('Is Processed', default=False)
     net_total = models.DecimalField('Net Total',max_digits=14, decimal_places=2, default=0)
     is_sales_invoice_created = models.BooleanField('Is Sales Invoice Created', default=False)
-    delivery = models.CharField('Delivery', max_length=10, null=True, blank=True)
-    proof = models.CharField('Proof', max_length=10, null=True, blank=True)
-    payment = models.CharField('Payment', max_length=10, null=True, blank=True)
-    validity = models.CharField('Validity', max_length=10, null=True, blank=True)
+    delivery = models.CharField('Delivery', max_length=100, null=True, blank=True)
+    proof = models.CharField('Proof', max_length=100, null=True, blank=True)
+    payment = models.CharField('Payment', max_length=100, null=True, blank=True)
+    validity = models.CharField('Validity', max_length=100, null=True, blank=True)
 
     def __unicode__(self):
 
@@ -85,9 +85,9 @@ class DeliveryNoteItem(models.Model):
 
     item = models.ForeignKey(Item, null=True, blank=True)
     delivery_note = models.ForeignKey(DeliveryNote, null=True, blank=True)
-    net_amount = models.DecimalField('Net Amount',max_digits=14, decimal_places=2, default=0)
+    net_amount = models.DecimalField('Net Amount', max_digits=14, decimal_places=2, default=0)
     quantity_sold = models.IntegerField('Quantity Sold', default=0)
-    discount = models.DecimalField('Total Discount',max_digits=14, decimal_places=2, default=0)
+    discount = models.DecimalField('Total Discount', max_digits=14, decimal_places=2, default=0)
 
     def __unicode__(self):
 

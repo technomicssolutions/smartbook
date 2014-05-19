@@ -106,7 +106,8 @@ class UserList(View):
                 response = simplejson.dumps(res)
                 status_code = 200
                 return HttpResponse(response, status = status_code, mimetype="application/json")
-        elif user_type == 'salesman': 
+        elif user_type == 'salesman':    
+            desig, created = Designation.objects.get_or_create(title = 'Salesman')
         
             salesmen = UserProfile.objects.filter(user_type = 'Salesman')
 
@@ -146,19 +147,28 @@ class RegisterUser(View):
         user_type = kwargs['user_type']
         message = ''
         template = 'register_user.html'
+<<<<<<< HEAD
         email_validation = (re.match("^.+\\@(\\[?)[a-zA-Z0-9\\-\\.]+\\.([a-zA-Z]{2,3}|[0-9]{1,3})(\\]?)$", request.POST['email']) )
         if request.POST['name'] == '':
             message = "Please enter name"
         if user_type == "Salesman":
+=======
+        if request.POST['name'] == '':
+            message = "Please enter name"
+        if user_type == "staff":
+>>>>>>> e36edede12a9622a81827d1caafe00b6d609ce8b
             if request.POST['username'] == '':
                 message = "Please enter username"
             elif request.POST['password'] == '':
                 message = "Please enter password"
+<<<<<<< HEAD
             elif request.POST['email'] == '':
                 message = "Please enter email"
             elif email_validation == None:
                 message = "Please enter a valid email id"
 
+=======
+>>>>>>> e36edede12a9622a81827d1caafe00b6d609ce8b
         if message:
             context = {
                 'error_message': message,
@@ -167,6 +177,7 @@ class RegisterUser(View):
             context.update(request.POST)            
             return render(request, template, context)
         else:
+<<<<<<< HEAD
             if user_type == 'Salesman':
                 try:
                     user = User.objects.get(email = request.POST['email'])
@@ -222,6 +233,62 @@ class RegisterUser(View):
                         context.update(request.POST)
                         return render(request, template, context)
                 else:
+=======
+            if user_type == 'staff':
+                if request.POST['designation'] == '':
+                    message = "Please select designation"
+                    context = {
+                        'error_message': message,
+                        'user_type': user_type,
+                        'salesman': 'salesman',
+                    }
+                    context.update(request.POST)            
+                    return render(request, template, context)
+                else:
+                    user, created = User.objects.get_or_create(username=request.POST['username'])
+                    if not created:
+                        message = "Staff with this names exists"
+                        context = {
+                            'error_message': message,
+                            'user_type': user_type,
+                            'salesman': 'salesman'
+                        }
+                        context.update(request.POST)            
+                        return render(request, template, context)
+                    else:                        
+                        user.set_password(request.POST['password'])
+                        user.save()
+                        designation, created = Designation.objects.get_or_create(title=request.POST['designation'])
+                        staff = Staff()
+                        staff.designation = designation
+                        staff.user = user
+                        staff.save()
+                        context = {
+                            'message' : 'Staff added correctly',
+                            'user_type': user_type,
+                            'salesman': 'salesman'
+                        }
+
+            elif user_type == 'vendor':
+                user, created = User.objects.get_or_create(username=request.POST['name']+user_type, first_name = request.POST['name'])
+                if not created:    
+                    message = 'Vendor with this name already exists'
+                    if request.is_ajax():
+                        res = {
+                            'result': 'error',
+                            'message': 'Designation Already exists'
+                        }
+                        response = simplejson.dumps(res)
+                        return HttpResponse(response, status = 500, mimetype="application/json")
+                    else:
+                        context = {
+                            'error_message': message,
+                            'user_type': user_type
+                        }
+                        context.update(request.POST)
+                        return render(request, template, context)
+                else:
+>>>>>>> e36edede12a9622a81827d1caafe00b6d609ce8b
                     vendor = Vendor()  
                     vendor.contact_person= request.POST['contact_person']
                     user.is_active = False
@@ -240,7 +307,16 @@ class RegisterUser(View):
                         'user_type': user_type
                     }
                     context.update(request.POST)
+<<<<<<< HEAD
             
+=======
+            else:
+                user = User()
+                user.username = request.POST['email']
+                user.email = request.POST['email']
+                user.first_name = request.POST['name']
+                user.save()
+>>>>>>> e36edede12a9622a81827d1caafe00b6d609ce8b
             userprofile = UserProfile()
             userprofile.user_type=user_type
             userprofile.user = user

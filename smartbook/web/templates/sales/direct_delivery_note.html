@@ -44,9 +44,9 @@
 							<label for="customer">Customer Name</label>
 						</div>
 						<div class="forminput_sales">
-							<select name="customer" ng-model="delivery_note.customer" ng-change="add_customer()" >
+							<select name="customer" ng-model="customer" ng-change="add_customer()" >
 								<option value="select">Select</option>
-								<option ng-repeat="customer in customers" value="[[customer.customer_name]]" ng-selected="customer.customer_name == quotation.customer">[[customer.customer_name]]
+								<option ng-repeat="custmer in customers" value="[[custmer.customer_name]]" ng-selected="custmer.customer_name == customer">[[custmer.customer_name]]
 								</option>
 								<option value="other">Other</option>
 							</select>							
