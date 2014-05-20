@@ -5,20 +5,8 @@ from django.conf import settings
 USER_TYPE = (
     ('vendor', 'Vendor'),
     ('customer', 'Customer'),
-    ('staff','Staff')
+    ('Salesman','Salesman')
 )
-
-class Designation(models.Model):
-
-    title = models.CharField('Designation title', max_length=50, unique=True)
-    description = models.CharField('Description', max_length=100, null=True, blank=True)
-
-    def __unicode__(self):
-        return self.title
-
-    class Meta:
-        verbose_name = 'Designation'
-        verbose_name_plural = 'Designation'
 
 class UserProfile(models.Model):
     user = models.ForeignKey(User)
@@ -85,26 +73,6 @@ class Customer(models.Model):
 
         verbose_name = 'Customer'
         verbose_name_plural = 'Customer'
-
-
-        
-class Staff(models.Model):
-    user = models.ForeignKey(User)
-    designation = models.ForeignKey(Designation, null=True, blank=True)
-
-    def __unicode__(self):
-        return "staff - "+self.user.first_name
-
-    def save(self, *args, **kwargs):
-        profile = self.user.userprofile_set.all()
-        if len(profile) == 0:
-            profile = UserProfile.objects.create(user = self.user)
-        super(Staff, self).save(*args, **kwargs)
-
-    class Meta:
-
-        verbose_name = 'Staff'
-        verbose_name_plural = 'Staff'
 
 class TransportationCompany(models.Model):
 

@@ -17,7 +17,7 @@ from inventory.models import Item
 from inventory.models import UnitOfMeasure
 from inventory.models import Brand
 
-from web.models import (UserProfile, Vendor, Customer, Staff, TransportationCompany)
+from web.models import (UserProfile, Vendor, Customer, TransportationCompany)
 from purchase.models import Purchase, PurchaseItem, VendorAccount, PurchaseReturn, PurchaseReturnItem
 from inventory.models import Inventory
 from expenses.models import Expense, ExpenseHead

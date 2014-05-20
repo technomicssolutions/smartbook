@@ -1277,7 +1277,7 @@ function SalesController($scope, $element, $http, $timeout, share, $location) {
 
 
     $scope.get_staff = function() {
-        $http.get('/salesman/list/').success(function(data)
+        $http.get('/Salesman/list/').success(function(data)
         {           
 
             $scope.staffs = data.salesmen;
@@ -1303,43 +1303,6 @@ function SalesController($scope, $element, $http, $timeout, share, $location) {
             $scope.popup.set_overlay_height(height);
             $scope.popup.show_content();
         }
-    }
-
-    $scope.add_new_staff = function() {
-        params = { 
-            'name':$scope.staff_name,
-            'contact_person': $scope.contact_person,
-            'house': $scope.house_name,
-            'street': $scope.street,
-            'city': $scope.city,
-            'district':$scope.district,
-            'pin': $scope.pin,
-            'mobile': $scope.mobile,
-            'phone': $scope.land_line,
-            'email': $scope.email_id,
-            "csrfmiddlewaretoken" : $scope.csrf_token
-        }
-        $http({
-            method : 'post',
-            url : "/register/staff/",
-            data : $.param(params),
-            headers : {
-                'Content-Type' : 'application/x-www-form-urlencoded'
-            }
-        }).success(function(data, status) {
-            
-            if (data.result == 'error'){
-                $scope.error_flag=true;
-                $scope.message = data.message;
-            } else {
-                $scope.popup.hide_popup();
-                $scope.get_staff();
-                $scope.sales.staff = $scope.staff_name;
-                $scope.sales.staff = data.staff_name;
-            }
-        }).error(function(data, success){
-            
-        });
     }
 
     $scope.get_customers = function() {
@@ -1497,10 +1460,8 @@ function SalesController($scope, $element, $http, $timeout, share, $location) {
             net_discount = net_discount + parseFloat($scope.sales.sales_items[i].disc_given);
 
         }
-        $scope.sales.net_discount = net_discount;
-        
+        $scope.sales.net_discount = net_discount;        
     }
-
 
     $scope.calculate_grant_total_sale = function(){
         $scope.sales.grant_total = $scope.sales.net_total   - $scope.sales.roundoff;
@@ -1508,7 +1469,6 @@ function SalesController($scope, $element, $http, $timeout, share, $location) {
     $scope.calculate_balance_sale = function () {
         $scope.sales.balance = $scope.sales.grant_total - $scope.sales.paid;
     }
-
     $scope.remove_from_item_list = function(item) {
         var index = $scope.sales.sales_items.indexOf(item);
         $scope.sales.sales_items.splice(index, 1);
@@ -1566,10 +1526,8 @@ function SalesController($scope, $element, $http, $timeout, share, $location) {
             }).error(function(data, success){
                 
             });
-        }   
-        
+        }          
     }
-
 }
 
 function DailyReportController($scope, $element, $http, $timeout, $location){ 

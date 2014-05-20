@@ -22,7 +22,7 @@ from django.conf import settings
 
 from sales.models import Sales, SalesItem, SalesReturn, SalesReturnItem, Quotation, QuotationItem, DeliveryNote, SalesInvoice, ReceiptVoucher, DeliveryNoteItem
 from inventory.models import Item, Inventory
-from web.models import Customer, Staff, OwnerCompany
+from web.models import Customer, OwnerCompany
 
 from reportlab.lib.units import cm
 from reportlab.lib.units import inch
@@ -74,7 +74,7 @@ class SalesEntry(View):
         sales.sales_invoice_date = datetime.strptime(sales_dict['sales_invoice_date'], '%d/%m/%Y')
         customer = Customer.objects.get(customer_name=sales_dict['customer'])
         
-        salesman = Staff.objects.get(user__first_name=sales_dict['staff']) 
+        # salesman = Staff.objects.get(user__first_name=sales_dict['staff']) 
         
         sales.discount = sales_dict['net_discount']
         sales.round_off = sales_dict['roundoff']
@@ -1006,7 +1006,7 @@ class QuotationDeliverynoteSales(View):
 
         sales.save()
 
-        salesman = Staff.objects.get(user__first_name=sales_dict['staff']) 
+        # salesman = Staff.objects.get(user__first_name=sales_dict['staff']) 
         
         sales.discount = sales_dict['net_discount']
         sales.round_off = sales_dict['roundoff']
