@@ -89,7 +89,7 @@
 						<div class="forminput">
 							<select name="vendor" ng-model="purchase.vendor_name" ng-change="add_vendor()">
 								<option value="select">Select</option>
-								<option ng-repeat="vendor in vendors" value="[[vendor.vendor_name]]" ng-selected="vendor.vendor_name == purchase.vendor">[[vendor.vendor_name]]</option>
+								<option ng-repeat="vendor in vendors" value="[[vendor.vendor_name]]" ng-selected="vendor.vendor_name == purchase.vendor_name">[[vendor.vendor_name]]</option>
 								<option value="other">Other</option>
 							</select>
 						</div>
