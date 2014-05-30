@@ -94,8 +94,8 @@ class PurchaseDetail(View):
 class PurchaseEntry(View):
 
     def get(self, request, *args, **kwargs):
-    	brand = Brand.objects.all()
-    	vendor = Vendor.objects.all()
+        brand = Brand.objects.all()
+        vendor = Vendor.objects.all()
         transport = TransportationCompany.objects.all()
         if Purchase.objects.exists():
             invoice_number = int(Purchase.objects.aggregate(Max('purchase_invoice_number'))['purchase_invoice_number__max']) + 1
@@ -104,8 +104,8 @@ class PurchaseEntry(View):
         if not invoice_number:
             invoice_number = 1
         return render(request, 'purchase/purchase_entry.html',{
-        	'invoice_number': invoice_number,
-    	})
+            'invoice_number': invoice_number,
+        })
 
     def post(self, request, *args, **kwargs):
         
@@ -116,16 +116,31 @@ class PurchaseEntry(View):
         purchase.vendor_do_number = purchase_dict['vendor_do_number']
         purchase.vendor_invoice_date = datetime.strptime(purchase_dict['vendor_invoice_date'], '%d/%m/%Y')
         purchase.purchase_invoice_date = datetime.strptime(purchase_dict['purchase_invoice_date'], '%d/%m/%Y')
-        brand = Brand.objects.get(brand=purchase_dict['brand'])
-        purchase.brand = brand
-        vendor = Vendor.objects.get(user__first_name=purchase_dict['vendor_name'])       
-        transport = TransportationCompany.objects.get(company_name=purchase_dict['transport'])
+        
+        purchase.payment_mode = purchase_dict['payment_mode']
+        if purchase_dict['bank_name']:
+            purchase.bank_name = purchase_dict['bank_name']
+        if purchase_dict['cheque_no']:
+            purchase.cheque_no = purchase_dict['cheque_no']
+        if purchase_dict['cheque_date']:
+            purchase.cheque_date = datetime.strptime(purchase_dict['cheque_date'], '%d/%m/%Y')
+        vendor = Vendor.objects.get(user__first_name=purchase_dict['vendor_name']) 
+        if purchase_dict['transport'] != 'other' or purchase_dict['transport'] != 'select' or purchase_dict['transport'] != '': 
+            try:     
+                transport = TransportationCompany.objects.get(company_name=purchase_dict['transport'])
+                purchase.transportation_company = transport
+            except:
+                pass
         purchase.vendor = vendor
-        purchase.transportation_company = transport
+        
         if purchase_dict['discount']:
             purchase.discount = purchase_dict['discount']
         else:
             purchase.discount = 0
+        if purchase_dict['discount_percentage']:
+            purchase.discount_percentage = purchase_dict['discount_percentage']
+        else:
+            purchase.discount_percentage = 0
         purchase.net_total = purchase_dict['net_total']
         purchase.purchase_expense = purchase_dict['purchase_expense']
         purchase.grant_total = purchase_dict['grant_total']
@@ -146,23 +161,25 @@ class PurchaseEntry(View):
         purchase.save()
 
         
-
-        # Save purchase_expense in Expense
-        if Expense.objects.exists():
-            voucher_no = int(Expense.objects.aggregate(Max('voucher_no'))['voucher_no__max']) + 1
-        else:
-            voucher_no = 1
-        if not voucher_no:
-            voucher_no = 1
-        expense = Expense()
-        expense.created_by = request.user
-        expense.expense_head, created = ExpenseHead.objects.get_or_create(expense_head = 'purchase')
-        expense.date = dt.datetime.now().date().strftime('%Y-%m-%d')
-        expense.voucher_no = voucher_no
-        expense.amount = purchase_dict['purchase_expense']
-        expense.payment_mode = 'cash'
-        expense.narration = 'By purchase'
-        expense.save()        
+        if float(purchase_dict['purchase_expense']) > 0:
+            # Save purchase_expense in Expense
+            try: 
+                expense = Expense.objects.get(purchase=purchase)
+            except:
+                if Expense.objects.exists():
+                    voucher_no = int(Expense.objects.aggregate(Max('voucher_no'))['voucher_no__max']) + 1
+                else:
+                    voucher_no = 1
+                if not voucher_no:
+                    voucher_no = 1
+                expense = Expense.objects.create(purchase=purchase, created_by = request.user, voucher_no = voucher_no)
+            expense.created_by = request.user
+            expense.expense_head, created = ExpenseHead.objects.get_or_create(expense_head = 'purchase')
+            expense.date = dt.datetime.now().date().strftime('%Y-%m-%d')
+            expense.amount = purchase_dict['purchase_expense']
+            expense.payment_mode = 'cash'
+            expense.narration = 'By purchase'
+            expense.save()        
 
         purchase_items = purchase_dict['purchase_items']
         deleted_items = purchase_dict['deleted_items']
@@ -189,9 +206,8 @@ class PurchaseEntry(View):
                     inventory.quantity = inventory.quantity - p_item.quantity_purchased + int(purchase_item['qty_purchased'])
             inventory.selling_price = purchase_item['selling_price']
             inventory.unit_price = purchase_item['unit_price']
-            inventory.discount_permit_percentage = purchase_item['permit_disc_percent']
-            inventory.discount_permit_amount = purchase_item['permit_disc_amt']
-            inventory.vendor = vendor
+            # item.discount_permit_percentage = purchase_item['permit_disc_percent']
+            # item.discount_permit_amount = purchase_item['permit_disc_amt']
             inventory.save()  
                     
             p_item, item_created = PurchaseItem.objects.get_or_create(item=item, purchase=purchase)
@@ -215,7 +231,6 @@ class PurchaseEntry(View):
         response = simplejson.dumps(res)
         status_code = 200
         return HttpResponse(response, status = status_code, mimetype="application/json")
-
 
 class PurchaseEdit(View):
     def get(self, request, *args, **kwargs):

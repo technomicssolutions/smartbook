@@ -68,20 +68,6 @@
 						</div>
 					</div>
 
-
-					<div class="formrow_purchase">
-						<div class="formtext_purchase">
-							<label for="brand">Brand</label>
-						</div>
-						<div class="forminput">
-							<select name="brand" ng-model="purchase.brand" ng-change="add_brand()">
-								<option value="select">Select</option>
-								<option ng-repeat="brand in brands" value="[[brand.brand_name]]" ng-selected="brand.brand_name == purchase.brand">[[brand.brand_name]]</option>
-								<option value="other">Other</option>
-							</select>
-						</div>
-					</div>
-
 					<div class="formrow_purchase">
 						<div class="formtext_purchase">
 							<label for="vendor">Vendor</label>
@@ -106,7 +92,46 @@
 								<option value="other">Other</option>
 							</select>
 						</div>
-					</div>						
+					</div>
+					<div class="formrow_purchase">
+						<div class="formtext_purchase">
+							<label for="payment_mode">Payment Mode</label>
+						</div>
+						
+						<div class="forminput" id="radio_input">
+							<input type="radio" name="payment_mode" ng-model="purchase.payment_mode" value="cash" ng-change="payment_mode_change_purchase('cash')"><label>Cash</label>
+							<input type="radio" name="payment_mode" ng-model="purchase.payment_mode" value="cheque" ng-change="payment_mode_change_purchase('cheque')"><label>Cheque</label>
+						</div>
+					</div>
+					<div class="formrow_purchase">
+						<div class="formtext_purchase">
+							<label for="bank_name">Bank name</label>
+						</div>
+						
+						<div class="forminput" id="radio_input">
+							<input type="text" name="bank_name" ng-model="purchase.bank_name" ng-readonly="payment_cheque"/>
+						</div>
+					</div>
+					<div class="formrow_purchase">
+						<div class="formtext_purchase">
+							<label for="cheque_no">Cheque No</label>
+						</div>
+						
+						<div class="forminput" id="radio_input">
+							<input type="text" name="cheque_no" ng-model="purchase.cheque_no" ng-readonly="payment_cheque"/>
+						</div>
+						</div>
+					</div>
+					<div class="formrow_purchase">
+						<div class="formtext_purchase">
+							<label for="cheque_date">Cheque Date</label>
+						</div>
+						
+						<div class="forminput" id="radio_input">
+							<input type="text" name="cheque_date" id="cheque_date" ng-model="purchase.cheque_date" ng-readonly="payment_cheque"/>
+						</div>
+					</div>
+
 				</div>	
 		
 				<div class="section_3_purchase">
@@ -147,7 +172,7 @@
    						<div class="item_list_row header">
 							<span class="small_column"> Item Code </span>
 							<span> Item name </span>
-							<span> Barcode </span>
+							<!-- <span> Barcode </span> -->
 							<span> Current Stock </span>
 							<span> Unit Price </span>
 							<span> Qty purchased </span>
@@ -159,14 +184,14 @@
 							<span class="small_column"> Expense/ <br /> Unit </span>		
 							<span> Cost Price </span>
 							<span> Selling Price</span>												
-							<span> Permit Discount (Amt) </span>
-							<span> Permit Discount (%) </span>
+							<!-- <span> Permit Discount (Amt) </span>
+							<span> Permit Discount (%) </span> -->
 							<span> Net Amount </span>
 						</div>
 						<div ng-repeat="item in purchase.purchase_items" class="item_list_row">
 							<span class="small_column">[[item.item_code]] </span>
 							<span>[[item.item_name]] </span>
-							<span>[[item.barcode]] </span>
+							<!-- <span>[[item.barcode]] </span> -->
 							<span>[[item.current_stock]] </span>
 							<span> <input type="text" ng-model="item.unit_price" ng-change="calculate_cost_price(item)" /> </span>			
 							<span> <input type="text" ng-model="item.qty_purchased" ng-change="calculate_net_amount(item)" /> </span> 
@@ -179,8 +204,8 @@
 							<span> [[item.cost_price]] </span>
 							<span> <input type="text" ng-model="item.selling_price" ng-change="calculate_discount_amt(item)"/> </span>
 									
-							<span> <input type="text" ng-model="item.permit_disc_amt" ng-change="calculate_discount_percent(item)" /> </span>
-							<span> <input type="text" ng-model="item.permit_disc_percent" ng-change="calculate_discount_amt(item)"/> </span>
+							<!-- <span> <input type="text" ng-model="item.permit_disc_amt" ng-change="calculate_discount_percent(item)" /> </span>
+							<span> <input type="text" ng-model="item.permit_disc_percent" ng-change="calculate_discount_amt(item)"/> </span> -->
 							<span> [[item.net_amount]] </span>
 						</div>
 						<div class="clear"></div>
@@ -200,7 +225,7 @@
 							<label for="purchase_expense">Purchase Expense</label>
 						</div>
 						<div class="forminput">
-							<input type="text" name="purchase_expense" ng-model="purchase.purchase_expense" readonly />
+							<input type="text" name="purchase_expense" ng-model="purchase.purchase_expense"  />
 						</div>
 					</div>
 					<div class="formrow_purchase">
@@ -217,7 +242,15 @@
 							<label for="discount">Discount</label>
 						</div>
 						<div class="forminput">
-							<input type="text" name="discount" ng-model="purchase.discount" ng-change="calculate_grant_total()" />
+							<input type="text" name="discount" ng-model="purchase.discount" ng-change="calculate_discount_percentage()" />
+						</div>
+					</div>
+					<div class="formrow_purchase">
+						<div class="formtext_purchase">
+							<label for="discount">Discount Percentage</label>
+						</div>
+						<div class="forminput">
+							<input type="text" name="discount_percentage" ng-model="purchase.discount_percentage" ng-change="calculate_discount_amount()"/>
 						</div>
 					</div>
 					<div class="formrow_purchase">
@@ -242,43 +275,3 @@
 	</div>
 
 {% endblock content %}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
