@@ -20,7 +20,7 @@ from django.core.urlresolvers import reverse
 from django.contrib.auth.models import User
 from django.conf import settings
 
-from sales.models import Sales, SalesItem, SalesReturn, SalesReturnItem, Quotation, QuotationItem, DeliveryNote, SalesInvoice, ReceiptVoucher, DeliveryNoteItem
+from sales.models import Sales, SalesItem, SalesReturn, SalesReturnItem, Quotation, QuotationItem, DeliveryNote, ReceiptVoucher, DeliveryNoteItem
 from inventory.models import Item, Inventory
 from web.models import Customer, OwnerCompany
 
