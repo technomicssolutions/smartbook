@@ -50,14 +50,14 @@ class SalesEntry(View):
         
         current_date = dt.datetime.now().date()
 
-        inv_number = SalesInvoice.objects.aggregate(Max('id'))['id__max']
+        inv_number = Sales.objects.aggregate(Max('id'))['id__max']
 
         if not inv_number:
             inv_number = 1
             prefix = 'INV'
         else:
             inv_number = inv_number + 1
-            prefix = SalesInvoice.objects.latest('id').prefix
+            prefix = Sales.objects.latest('id').prefix
         
         invoice_number = prefix + str(inv_number)
         return render(request, 'sales/sales_entry.html',{

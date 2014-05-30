@@ -49,7 +49,7 @@ add_new_customer = function($http, $scope) {
             } else {
                 $scope.customer = data.customer_name;
                 $scope.popup.hide_popup();
-                $scope.get_customers();
+                get_customers($scope, $http);
                 $scope.customer = data.customer_name;
             }
         }).error(function(data, success){
@@ -91,6 +91,18 @@ get_vendors = function($scope, $http) {
     $http.get('/vendor/list/').success(function(data)
     {
         $scope.vendors = data.vendors;
+    }).error(function(data, status)
+    {
+        console.log(data || "Request failed");
+    });
+}
+
+get_customers = function($scope, $http) {
+    $http.get('/customer/list/').success(function(data)
+    {   
+        
+        $scope.customers = data.customers;
+
     }).error(function(data, status)
     {
         console.log(data || "Request failed");
@@ -587,36 +599,36 @@ function PurchaseController($scope, $element, $http, $timeout, share, $location)
         $scope.calculate_vendor_amount();
         $scope.calculate_net_total();
     }
-    $scope.calculate_discount_amt = function(item) {
-        if(item.selling_price == '' || item.selling_price != Number(item.selling_price)) {
-            item.selling_price = 0;
-        }
-        if(item.permit_disc_percent == '' || item.permit_disc_percent != Number(item.permit_disc_percent)){
-            item.permit_disc_percent = 0;
-        }
-        if(item.permit_disc_percent == '' || item.permit_disc_percent != Number(item.permit_disc_percent)){
-            item.permit_disc_percent = 0;
-        }
-        if((item.permit_disc_percent != '' || item.permit_disc_percent != 0) && (item.selling_price != '' || item.selling_price != 0)) {
-            item.permit_disc_amt = ((parseFloat(item.selling_price)*parseFloat(item.permit_disc_percent))/100).toFixed(2);
-        }
-    }
+    // $scope.calculate_discount_amt = function(item) {
+    //     if(item.selling_price == '' || item.selling_price != Number(item.selling_price)) {
+    //         item.selling_price = 0;
+    //     }
+    //     if(item.permit_disc_percent == '' || item.permit_disc_percent != Number(item.permit_disc_percent)){
+    //         item.permit_disc_percent = 0;
+    //     }
+    //     if(item.permit_disc_percent == '' || item.permit_disc_percent != Number(item.permit_disc_percent)){
+    //         item.permit_disc_percent = 0;
+    //     }
+    //     if((item.permit_disc_percent != '' || item.permit_disc_percent != 0) && (item.selling_price != '' || item.selling_price != 0)) {
+    //         item.permit_disc_amt = ((parseFloat(item.selling_price)*parseFloat(item.permit_disc_percent))/100).toFixed(2);
+    //     }
+    // }
 
-    $scope.calculate_discount_percent = function(item) {
-        if(item.selling_price == '' || item.selling_price != Number(item.selling_price)) {
-            item.selling_price = 0;
-        }
-        if(item.permit_disc_percent == '' || item.permit_disc_percent != Number(item.permit_disc_percent)){
-            item.permit_disc_percent = 0;
-        }
-        if(item.permit_disc_percent == '' || item.permit_disc_percent != Number(item.permit_disc_percent)){
-            item.permit_disc_percent = 0;
-        }
-        if((item.permit_disc_amt != '' || item.permit_disc_amt != '') && (item.selling_price != '' || item.selling_price != 0)) {
-            item.permit_disc_percent = ((parseFloat(item.permit_disc_amt)/parseFloat(item.selling_price))*100).toFixed(2);
-        }
-        console.log( item.permit_disc_percent);
-    }
+    // $scope.calculate_discount_percent = function(item) {
+    //     if(item.selling_price == '' || item.selling_price != Number(item.selling_price)) {
+    //         item.selling_price = 0;
+    //     }
+    //     if(item.permit_disc_percent == '' || item.permit_disc_percent != Number(item.permit_disc_percent)){
+    //         item.permit_disc_percent = 0;
+    //     }
+    //     if(item.permit_disc_percent == '' || item.permit_disc_percent != Number(item.permit_disc_percent)){
+    //         item.permit_disc_percent = 0;
+    //     }
+    //     if((item.permit_disc_amt != '' || item.permit_disc_amt != '') && (item.selling_price != '' || item.selling_price != 0)) {
+    //         item.permit_disc_percent = ((parseFloat(item.permit_disc_amt)/parseFloat(item.selling_price))*100).toFixed(2);
+    //     }
+    //     console.log( item.permit_disc_percent);
+    // }
 
     $scope.calculate_vendor_amount = function() {
         var vendor_amount = 0;
@@ -1151,24 +1163,7 @@ function SalesQNDNController($scope, $element, $http, $timeout, share, $location
         }
         $scope.calculate_net_total_sale();
     }
-    // $scope.calculate_tax_amount_sale = function(item) {
-    //     if(item.tax != '' && item.unit_price != ''){
-    //         item.tax_amount = (parseFloat(item.unit_price)*parseFloat(item.tax))/100;
-    //     }
-    // }
-    // $scope.calculate_discount_amount_sale = function(item) {
-    //     if(item.discount_permit != '' && item.unit_price != ''){
-    //         item.discount_permit_amount = (parseFloat(item.unit_price)*parseFloat(item.discount_permit))/100;
-            
-    //     }
-    // }
-    // $scope.calculate_unit_cost_sale = function(item) {
-    //     if(item.unit_price != ''){
-    //         item.unit_cost = (parseFloat(item.unit_price)+parseFloat(item.tax_amount)-parseFloat(item.disc_given)).toFixed(2);
-            
-    //     }
-    // }
-
+  
     $scope.calculate_net_total_sale = function(){
         var net_total = 0;
         for(i=0; i<$scope.sales.sales_items.length; i++){
@@ -1335,15 +1330,7 @@ function SalesController($scope, $element, $http, $timeout, share, $location) {
     }
 
     $scope.get_customers = function() {
-        $http.get('/customer/list/').success(function(data)
-        {   
-            
-            $scope.customers = data.customers;
-
-        }).error(function(data, status)
-        {
-            console.log(data || "Request failed");
-        });
+       get_customers($scope, $http);
     }
     $scope.add_customer = function() {
 
@@ -1941,7 +1928,7 @@ function SalesReportController($scope, $element, $http, $timeout, $location){
         });
         
         
-        $scope.get_customers();
+        get_customers($scope, $http);
         $scope.get_salesman();
         $scope.get_items();
     }
@@ -1978,16 +1965,6 @@ function SalesReportController($scope, $element, $http, $timeout, $location){
             $scope.report_salesman_wise = true;
                        
         }        
-    }
-    $scope.get_customers = function() {
-        $http.get('/customer/list/').success(function(data)
-        {
-            $scope.customers = data.customers;
-            $scope.customer_name = 'select';
-        }).error(function(data, status)
-        {
-            console.log(data || "Request failed");
-        });
     }
     $scope.get_salesman = function() {
         $http.get('/salesman/list/').success(function(data)
@@ -2638,21 +2615,8 @@ function QuotationController($scope, $element, $http, $timeout, share, $location
     {
         $scope.csrf_token = csrf_token;
         $scope.popup = '';        
-        $scope.get_customers();            
+        get_customers($scope, $http);            
     }
-
-    $scope.get_customers = function() {
-        $http.get('/customer/list/').success(function(data)
-        {   
-
-            $scope.customers = data.customers;
-
-        }).error(function(data, status)
-        {
-            console.log(data || "Request failed");
-        });
-    }
-
     $scope.add_customer = function() {
 
         if($scope.customer == 'other') {
@@ -3167,18 +3131,7 @@ function DirectDeliveryNoteController($scope, $element, $http, $timeout, share, 
     {
         $scope.csrf_token = csrf_token;
         $scope.popup = '';        
-        $scope.get_customers();            
-    }
-
-    $scope.get_customers = function() {
-        $http.get('/customer/list/').success(function(data)
-        {   
-            $scope.customers = data.customers;
-
-        }).error(function(data, status)
-        {
-            console.log(data || "Request failed");
-        });
+        get_customers($scope, $http);            
     }
 
     $scope.add_customer = function() {

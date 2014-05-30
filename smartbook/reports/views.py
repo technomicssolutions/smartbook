@@ -1235,30 +1235,32 @@ class StockReports(View):
         p.drawString(400, 900, 'Stock Report')
 
         y = 850
-        p.drawString(80, y, 'Item Code')
-        p.drawString(160, y, 'Item Name')
-        p.drawString(280, y, 'Barcode')
-        p.drawString(360, y, 'Brand Name')    
+        p.drawString(40, y, 'Item Code')
+        p.drawString(110, y, 'Item Name')
+        p.drawString(330, y, 'Barcode')
+        p.drawString(380, y, 'Brand Name')    
         p.drawString(480, y, 'Stock')
         p.drawString(540, y, 'UOM')
         p.drawString(600, y, 'Unit Price')
-        p.drawString(680, y, 'Tax')
-        p.drawString(760, y, 'Discount')
-        p.drawString(840, y, 'Stock By value')
+        # p.drawString(680, y, 'Tax')
+        # p.drawString(760, y, 'Discount')
+        # p.drawString(840, y, 'Stock By value')
+        p.drawString(680, y, 'Stock By value')
         
         y = y - 50 
         if len(stocks) > 0:
             for stock in stocks:
-                p.drawString(80, y, stock.item.code)
-                p.drawString(160, y, stock.item.name)
-                p.drawString(280, y, stock.item.barcode)
-                p.drawString(360, y, stock.item.brand.brand)                
+                p.drawString(40, y, stock.item.code)
+                p.drawString(110, y, stock.item.name)
+                p.drawString(330, y, str(stock.item.barcode))
+                p.drawString(380, y, str(stock.item.brand.brand) if stock.item.brand else '')                
                 p.drawString(480, y, str(stock.quantity))
-                p.drawString(540, y, stock.item.uom.uom)
+                p.drawString(540, y, str(stock.item.uom.uom) if stock.item.uom else '')
                 p.drawString(600, y, str(stock.unit_price))
-                p.drawString(680, y, str(stock.item.tax))
-                p.drawString(760, y, str(stock.discount_permit_percentage))
-                p.drawString(840, y, str(stock.quantity * stock.unit_price))
+                # p.drawString(680, y, str(stock.tax))
+                # p.drawString(760, y, str(stock.discount_permit_percentage))
+                # p.drawString(840, y, str(stock.quantity * stock.unit_price))
+                p.drawString(680, y, str(stock.quantity * stock.unit_price))
                 y = y - 30
                 if y <= 270:
                     y = 850
@@ -1267,6 +1269,8 @@ class StockReports(View):
         p.showPage()
         p.save()
         return response
+
+
 
 
 
