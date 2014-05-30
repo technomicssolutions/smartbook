@@ -825,3 +825,7 @@ a {
 #opening_stock_entry .item_list .item_list_row span {
     width: 80%;
 }
+
+#edit_expense .delivery_note {
+	margin-left: 94px !important;
+}

@@ -332,6 +332,7 @@ class PurchaseReturnView(View):
         
         vendor_account = VendorAccount.objects.get(vendor=purchase.vendor)
         vendor_account.total_amount = vendor_account.total_amount - int(post_dict['net_return_total'])
+        vendor_account.balance = vendor_account.total_amount - vendor_account.paid_amount
         vendor_account.save()
 
         return_items = post_dict['purchase_items']
