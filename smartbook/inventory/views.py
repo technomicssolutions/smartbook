@@ -22,9 +22,8 @@ class ItemAdd(View):
 
         if request.is_ajax():
             try:
-                uom = UnitOfMeasure.objects.get(uom = request.POST['uom'])
-                brand = Brand.objects.get(brand = request.POST['brand'])
-                item, created = Item.objects.get_or_create(code=request.POST['code'], brand=brand, uom=uom, name=request.POST['name'])
+                
+                item, created = Item.objects.get_or_create(code=request.POST['code'], name=request.POST['name'])
                 if not created:
                     res = {
                         'result': 'error',
@@ -33,16 +32,27 @@ class ItemAdd(View):
                     status_code = 500
                 else:
                     item.name=request.POST['name']
-                    item.description=request.POST['description']
-                    item.barcode=request.POST['barcode']
-                    item.tax=request.POST['tax']
+                    
+                    
+                    try:
+                        if request.POST['barcode']:
+                            item.barcode = request.POST['barcode']
+                        
+                        uom = UnitOfMeasure.objects.get(uom = request.POST['uom'])
+                        brand = Brand.objects.get(brand = request.POST['brand'])
+                        item.brand=brand
+                        item.uom=uom 
+                    except Exception as ex:
+                        print str(ex), "Exception ===="
+                        
                     item.save()
                     res = {
                         'result': 'ok',
                     }  
                     status_code = 200 
                 
-            except IntegrityError:
+            except Exception as ex:
+                print str(ex), "Exception ===="
                 res = {
                         'result': 'error',
                         'message': 'Item already existing'
@@ -93,13 +103,14 @@ class ItemList(View):
                             'item_code': item.code,
                             'item_name': item.name,
                             'barcode': item.barcode,
-                            'brand': item.brand.brand,
+                            'brand': item.brand.brand if item.brand else '',
                             'description': item.description,
-                            'tax': item.tax,
-                            'uom': item.uom.uom,
+                            # 'tax': item.tax,
+                            'uom': item.uom.uom if item.uom else '',
                             'current_stock': item.inventory_set.all()[0].quantity if item.inventory_set.count() > 0  else 0 ,
                             'selling_price': item.inventory_set.all()[0].selling_price if item.inventory_set.count() > 0 else 0 ,
-                            'discount_permit': item.inventory_set.all()[0].discount_permit_percentage if item.inventory_set.count() > 0 else 0,
+                            # 'discount_permit': item.inventory_set.all()[0].discount_permit_percentage if item.inventory_set.count() > 0 else 0,
+                            'name': item.code + '-' + item.name,
                         })
                         i = i + 1
 
@@ -228,14 +239,14 @@ class AddOpeningStock(View):
 
     def post(self, request, *args, **kwargs):
 
-        item = Item.objects.get(code=request.POST['item'])
+        item = Item.objects.get(code=request.POST['item_code'])
         opening_stock = OpeningStock()
         opening_stock.item = item
         opening_stock.quantity = request.POST['quantity']
         opening_stock.unit_price = request.POST['unit_price']
         opening_stock.selling_price = request.POST['selling_price']
-        opening_stock.discount_permit_percentage = request.POST['discount_permit_percent']
-        opening_stock.discount_permit_amount = request.POST['discount_permit_amount']
+        # opening_stock.discount_permit_percentage = request.POST['discount_permit_percent']
+        # opening_stock.discount_permit_amount = request.POST['discount_permit_amount']
         opening_stock.save()
 
         inventory, created = Inventory.objects.get_or_create(item=item)
@@ -245,8 +256,8 @@ class AddOpeningStock(View):
             inventory.quantity = inventory.quantity + int(request.POST['quantity'])
         inventory.unit_price = request.POST['unit_price']
         inventory.selling_price = request.POST['selling_price']
-        inventory.discount_permit_amount = request.POST['discount_permit_amount']
-        inventory.discount_permit_percentage = request.POST['discount_permit_percent']
+        # inventory.discount_permit_amount = request.POST['discount_permit_amount']
+        # inventory.discount_permit_percentage = request.POST['discount_permit_percent']
         inventory.save()
 
         items = Item.objects.all()
@@ -264,8 +275,8 @@ class EditStockView(View):
                     'quantity': stock.quantity,
                     'unit_price': stock.unit_price,
                     'selling_price': stock.selling_price,
-                    'discount_permit_amount': stock.discount_permit_amount,
-                    'discount_permit_percent': stock.discount_permit_percentage
+                    # 'discount_permit_amount': stock.discount_permit_amount,
+                    # 'discount_permit_percent': stock.discount_permit_percentage
                  },
             }
             response = simplejson.dumps(res)    
@@ -280,8 +291,8 @@ class EditStockView(View):
         inventory.quantity = request.POST['quantity']
         inventory.unit_price = request.POST['unit_price']
         inventory.selling_price = request.POST['selling_price']
-        inventory.discount_permit_amount = request.POST['discount_permit_amount']
-        inventory.discount_permit_percentage = request.POST['discount_permit_percent']
+        # inventory.discount_permit_amount = request.POST['discount_permit_amount']
+        # inventory.discount_permit_percentage = request.POST['discount_permit_percent']
         inventory.save()
         return HttpResponseRedirect(reverse('stock'))
 
@@ -302,10 +313,10 @@ class EditItem(View):
                     'uom': item.uom.uom if item.uom else '',
                     'brand': item.brand.brand if item.brand else '',
                     'barcode': item.barcode if item.barcode else '',
-                    'tax': item.tax if item.tax else 0,
+                    # 'tax': item.tax if item.tax else 0,
                 })
                 res = {
-                    'result': 'error',
+                    'result': 'ok',
                     'item': ctx_item_data,
                 }
                 status = 200
@@ -330,12 +341,14 @@ class EditItem(View):
         item_data = ast.literal_eval(request.POST['item'])
         try:
             item.name = item_data['name']
-            uom = UnitOfMeasure.objects.get(uom=item_data['uom'])
-            brand = Brand.objects.get(brand=item_data['brand'])
-            item.uom = uom
-            item.brand = brand
+            if item_data['uom'] != '' or item_data['uom'] != 'select' or item_data['uom'] != 'other':
+                uom, created = UnitOfMeasure.objects.get_or_create(uom=item_data['uom'])
+                item.uom = uom
+            if item_data['brand'] != '' or item_data['brand'] != 'select' or item_data['brand'] != 'other':
+                brand, created = Brand.objects.get_or_create(brand=item_data['brand'])
+                item.brand = brand
             item.barcode = item_data['barcode']
-            item.tax = item_data['tax']
+            # item.tax = item_data['tax']
             item.save()
             res = {
                 'result': 'ok',

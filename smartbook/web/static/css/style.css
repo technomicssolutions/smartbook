@@ -810,3 +810,18 @@ a {
 #edit_delivery_note .purchase_item_list .item_list_row span {
     width: 10.5%;
 }
+
+
+#opening_stock_entry .quotation_list {
+    border: 1px solid #ADD8E6;
+    border-radius: 5px;
+    margin-left: 203px !important;
+    margin-top: 20px;
+    position: absolute;
+    width: 18.5%;
+}
+
+
+#opening_stock_entry .item_list .item_list_row span {
+    width: 80%;
+}

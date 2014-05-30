@@ -6,8 +6,8 @@ from django.conf import settings
 from web.views import *
 
 urlpatterns = patterns('',
-	url(r'^$', login_required(Home.as_view()), name='home'),
-	url(r'login/$', login_required(Login.as_view()), name='login'),
+	url(r'^$', Home.as_view(), name='home'),
+	url(r'login/$', Login.as_view(), name='login'),
 	url(r'logout/$', login_required(Logout.as_view()), name='logout'),
 	url(r'^register/(?P<user_type>\w+)/$', login_required(RegisterUser.as_view()), name='register_user'),
 	url(r'^register/salesman/(?P<user_type>\w+)/$', login_required(RegisterSalesman.as_view()), name='register_salesman'),

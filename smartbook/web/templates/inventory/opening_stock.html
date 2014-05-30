@@ -24,12 +24,16 @@
 		{% csrf_token %}
 		<div ng-show="error_flag" class="message"><p>[[message]]</p></div>
 		<div class="control">
-			<label > Item</label>  
-			<select name="item">
-				{% for item in items %}
-					<option value="{{item.code}}">{{item.code}} - {{item.name}} - {{item.barcode}}</option>
-				{% endfor %}
-			</select>
+			<label for="customer">Item</label>
+			<input type='text' id="item_name" ng-model="item_name" ng-change="load_items()"/>
+			<input type='hidden' name="item_code" id="item_code"/>
+			
+			<div class="item_list quotation_list" ng-show='selecting_item' ng-hide="item_selected">
+				<div ng-repeat="item in items" ng-click="add_item(item)" class="item_list_row">
+					<span>[[item.name]]</span>
+				</div>
+				<div class="clear"></div>
+			</div>
 		</div>
 		<div class="control">
 			<label> Quantity</label>
@@ -43,14 +47,14 @@
 			<label> Selling Price</label>  
 			<input type="text" name="selling_price" ng-model="selling_price" />
 		</div>
-		<div class="control">
+		<!-- <div class="control">
 			<label> Discount Permitted (amt)</label>  
 			<input type="text" name="discount_permit_amount" ng-model="discount_permit_amount" />
 		</div>
 		<div class="control">
 			<label> Discount Permitted (%)</label>  
 			<input type="text" name="discount_permit_percent" ng-model="discount_permit_percent" />
-		</div>
+		</div> -->
 		<div  align="Center">
 			<div class="buttons">
 				<p class="error_message"> [[validation_error]] </p>

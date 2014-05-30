@@ -28,9 +28,9 @@ class Item(models.Model):
 	name = models.CharField('Name', max_length=50, unique=False)
 	description = models.TextField('Description', max_length=50,null=True, blank=True)
 	uom = models.ForeignKey(UnitOfMeasure, null=True, blank=True)
-	# brand = models.ForeignKey(Brand, null=True, blank=True)
+	brand = models.ForeignKey(Brand, null=True, blank=True)
 	barcode = models.CharField('Barcode', max_length=50,null=True, blank=True)
-	tax = models.DecimalField('Tax',max_digits=14, decimal_places=2, default=0)
+	# tax = models.DecimalField('Tax',max_digits=14, decimal_places=2, default=0)
 	
 	def __unicode__(self):
 		return self.code

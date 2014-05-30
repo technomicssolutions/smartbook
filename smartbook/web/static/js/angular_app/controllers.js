@@ -2471,23 +2471,7 @@ function AddItemController($scope, $http, $element, $location, $timeout) {
             $scope.error_flag=true;
             $scope.message = 'Item name cannot be null';
             return false;
-        } else if($scope.uom_value == '' || $scope.uom_value == undefined || $scope.uom_value == 'select' || $scope.uom_value == 'other') {
-            $scope.error_flag=true;
-            $scope.message = 'Please choose Uom';
-            return false;
-        } else if($scope.brand_value == '' || $scope.brand_value == undefined || $scope.brand_value == 'select' || $scope.brand_value == 'other') {
-            $scope.error_flag=true;
-            $scope.message = 'Please choose Brand';
-            return false;
-        }else if($scope.bar_code == '' || $scope.bar_code == undefined) {
-            $scope.error_flag=true;
-            $scope.message = 'Barcode cannot be null';
-            return false;
-        } else if($scope.tax == '' || $scope.tax == undefined) {
-            $scope.error_flag=true;
-            $scope.message = 'Tax cannot be null';
-            return false;
-        }
+        } 
         return true;
     }
     $scope.save_item = function() {
@@ -2500,7 +2484,7 @@ function AddItemController($scope, $http, $element, $location, $timeout) {
                 'code': $scope.item_code,
                 'brand': $scope.brand_value,
                 'barcode': $scope.bar_code,
-                'tax': $scope.tax,
+                // 'tax': $scope.tax,
                 'description': $scope.item_description,
                 'uom': $scope.uom_value,
                 "csrfmiddlewaretoken" : $scope.csrf_token
@@ -2549,9 +2533,6 @@ function OpeningStockController($scope, $http, $element, $location, $timeout) {
         } else if($scope.selling_price == '' || $scope.selling_price == undefined) {
             $scope.validation_error = "Please enter selling price";
             return false;
-        } else if($scope.discount_permit_amount == '' || $scope.discount_permit_amount == undefined || $scope.discount_permit_percent == '' || $scope.discount_permit_percent == undefined) {
-            $scope.validation_error = "Please enter discount";
-            return false;
         } else if( $scope.quantity != Number($scope.quantity)){
             $scope.validation_error = "Please enter digits as quantity ";
             return false;
@@ -2561,16 +2542,40 @@ function OpeningStockController($scope, $http, $element, $location, $timeout) {
         } else if( $scope.selling_price != Number($scope.selling_price)){
             $scope.validation_error = "Please enter digits as selling price ";
             return false;
-        }else if( $scope.discount_permit_amount != '' && $scope.discount_permit_amount != Number($scope.discount_permit_amount)){
-            $scope.validation_error = "Please enter digits as discount amount ";
-            return false;
-        }else if( $scope.discount_permit_percent != '' && $scope.discount_permit_percent != Number($scope.discount_permit_percent)){
-            $scope.validation_error = "Please enter digits as discount percent ";
-            return false;
         } else {
             document.getElementById("opening_stock_form").submit();
             return true;
         }
+    }
+    $scope.load_items = function() {
+        $scope.message = '';
+        
+        var item_name = $scope.item_name;
+        $scope.items = []
+        $http.get('/inventory/items/?item_name='+item_name).success(function(data)
+        {
+            if(data.items.length > 0){
+                $scope.selecting_item = true;
+                $scope.item_selected = false;
+                $scope.items = data.items; 
+                $scope.message = '';
+                $scope.error_flag = false;
+            } else {
+                $scope.selecting_item = false;
+                $scope.message = "No item";
+                $scope.error_flag = true;
+            }
+            
+        }).error(function(data, status)
+        {
+            console.log(data || "Request failed");
+        });
+    }
+    $scope.add_item = function(item) {
+        $scope.item_selected = true;
+        $scope.item_name = item.item_code +'-'+item.item_name;
+        item_code = $("#item_code");
+        document.getElementById("item_code").value = item.item_code;
     }
 }
 
@@ -2596,9 +2601,6 @@ function StockEditController($scope, $http, $element, $location, $timeout) {
         } else if($scope.stock.selling_price == '' || $scope.stock.selling_price == undefined) {
             $scope.validation_error = "Please enter selling price";
             return false;
-        } else if($scope.stock.discount_permit_amount == '' || $scope.stock.discount_permit_amount == undefined || $scope.stock.discount_permit_percent == '' || $scope.stock.discount_permit_percent == undefined) {
-            $scope.validation_error = "Please enter discount";
-            return false;
         } else if( $scope.stock.quantity != Number($scope.stock.quantity)){
             $scope.validation_error = "Please enter digits as quantity ";
             return false;
@@ -2607,12 +2609,6 @@ function StockEditController($scope, $http, $element, $location, $timeout) {
             return false;
         } else if( $scope.stock.selling_price != Number($scope.stock.selling_price)){
             $scope.validation_error = "Please enter digits as selling price ";
-            return false;
-        }else if( $scope.stock.discount_permit_amount != '' && $scope.stock.discount_permit_amount != Number($scope.stock.discount_permit_amount)){
-            $scope.validation_error = "Please enter digits as discount amount ";
-            return false;
-        }else if( $scope.stock.discount_permit_percent != '' && $scope.stock.discount_permit_percent != Number($scope.stock.discount_permit_percent)){
-            $scope.validation_error = "Please enter digits as discount percent ";
             return false;
         } else {
             document.getElementById("edit_stock_form").submit();
@@ -4174,7 +4170,7 @@ function EditItemController($scope, $http, $element, $location, $timeout) {
         'uom': '',
         'brand': '',
         'barcode': '',
-        'tax': '',
+        // 'tax': '',
     }
 
     $scope.init = function(csrf_token, item_id){
@@ -4325,24 +4321,22 @@ function EditItemController($scope, $http, $element, $location, $timeout) {
             $scope.error_flag=true;
             $scope.message = 'Item name cannot be null';
             return false;
-        } else if($scope.uom_value == '' || $scope.uom_value == undefined || $scope.uom_value == 'select' || $scope.uom_value == 'other') {
+        } else if($scope.uom_value == 'other') {
             $scope.error_flag=true;
             $scope.message = 'Please choose Uom';
             return false;
-        } else if($scope.brand_value == '' || $scope.brand_value == undefined || $scope.brand_value == 'select' || $scope.brand_value == 'other') {
+        } else if($scope.brand_value == 'other') {
             $scope.error_flag=true;
             $scope.message = 'Please choose Brand';
             return false;
-        }else if($scope.item.barcode == '' || $scope.item.barcode == undefined) {
-            $scope.error_flag=true;
-            $scope.message = 'Barcode cannot be null';
-            return false;
-        } else if($scope.item.tax == '' || $scope.item.tax == undefined || $scope.item.tax == null) {
-            $scope.error_flag=true;
-            $scope.message = 'Tax cannot be null';
-            return false;
-        }
+        } 
         return true;
+        // else if($scope.item.barcode == '' || $scope.item.barcode == undefined) {
+        //     $scope.error_flag=true;
+        //     $scope.message = 'Barcode cannot be null';
+        //     return false;
+        // } 
+        
     }
     $scope.edit_item = function() {
         $scope.is_valid = $scope.form_validation();
