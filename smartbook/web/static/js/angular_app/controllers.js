@@ -306,10 +306,10 @@ function PurchaseController($scope, $element, $http, $timeout, share, $location)
 
     $scope.validate_add_vendor = function() {
         $scope.validation_error = '';
-        console.log('vendor_name = 'vendor_name);
-        console.log('contact_person = 'contact_person);
-        console.log('mobile = 'mobile);
-        console.log('email_id = 'email_id);
+        console.log('vendor_name = ',vendor_name);
+        console.log('contact_person = ',contact_person);
+        console.log('mobile = ',mobile);
+        console.log('email_id = ',email_id);
 
         if($scope.vendor_name == '' || $scope.vendor_name == undefined) {
             $scope.validation_error = "Please Enter the Vendor Name" ;

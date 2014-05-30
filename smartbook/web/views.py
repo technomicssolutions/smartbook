@@ -143,10 +143,10 @@ class RegisterUser(View):
         message = ''
         template = 'register_user.html'
         email_validation = (re.match("^.+\\@(\\[?)[a-zA-Z0-9\\-\\.]+\\.([a-zA-Z]{2,3}|[0-9]{1,3})(\\]?)$", request.POST['email']) )
-        if request.POST['name'] == '':
-            message = "Please enter name"
         if user_type == "Salesman":
-            if request.POST['username'] == '':
+            if request.POST['name'] == '':
+                message = "Please enter Name"
+            elif request.POST['username'] == '':
                 message = "Please enter username"
             elif request.POST['password'] == '':
                 message = "Please enter password"
@@ -164,6 +164,13 @@ class RegisterUser(View):
             elif request.POST['email'] != '':
                 if email_validation == None:                    
                     message = "Please enter a valid Email Id"
+            if request.POST['mobile'] != '':
+                if len(request.POST['mobile']) > 15:
+                    message = 'Please enter a valid mobile no.'
+            if request.POST['phone'] != '':
+                if len(request.POST['phone']) > 15:
+                    message = 'Please enter a valid phone no.'
+
         if message:
             context = {
                 'error_message': message,
@@ -186,8 +193,8 @@ class RegisterUser(View):
                     
                 except Exception as ex:
                     print "in Exception == ", str(ex)
-                    user, created = User.objects.get_or_create(username = request.POST['username'])
-                    if not created:
+                    user, salesman_created = User.objects.get_or_create(username = request.POST['username'])
+                    if not salesman_created:
                         message = "Salesman with this name already exists"
                         context = {
                             'error_message': message,
@@ -209,8 +216,8 @@ class RegisterUser(View):
                     user.save()
 
             elif user_type == 'vendor':
-                user, created = User.objects.get_or_create(username=request.POST['name']+user_type, first_name = request.POST['name'])
-                if not created:    
+                user, vendor_created = User.objects.get_or_create(username=request.POST['name']+user_type, first_name = request.POST['name'])
+                if not vendor_created:    
                     message = 'Vendor with this name already exists'
                     if request.is_ajax():
                         res = {
@@ -227,6 +234,17 @@ class RegisterUser(View):
                         context.update(request.POST)
                         return render(request, template, context)
                 else:
+                    userprofile , created = UserProfile.objects.get_or_create(user=user)
+                    userprofile.user_type = user_type
+                    userprofile.house_name =request.POST['house']
+                    userprofile.street = request.POST['street']
+                    userprofile.city = request.POST['city']
+                    userprofile.district = request.POST['district']
+                    userprofile.pin = request.POST['pin']
+                    userprofile.mobile = request.POST['mobile']
+                    userprofile.land_line = request.POST['phone']
+                    userprofile.email_id = request.POST['email']
+                    userprofile.save()
                     vendor = Vendor()  
                     vendor.contact_person= request.POST['contact_person']
                     user.is_active = False
@@ -257,7 +275,22 @@ class RegisterUser(View):
             userprofile.email_id = request.POST['email']
             userprofile.save()
 
-            return render(request, 'register_user.html', context)
+            if user_type == 'Salesman' and salesman_created:
+
+                users = UserProfile.objects.filter(user_type='Salesman')
+                return render(request, 'user_list.html',{
+                    'users': users,
+                    'user_type': user_type
+                })
+            elif user_type == 'vendor' and vendor_created:
+
+                users = Vendor.objects.all()
+                return render(request, 'user_list.html',{
+                    'users': users,
+                    'user_type': user_type
+                })
+
+            return render(request, 'register_user.html',context)
             
         
 class EditUser(View):
@@ -282,6 +315,7 @@ class EditUser(View):
 
         user_type = kwargs['user_type']
         post_dict = request.POST
+        email_validation = (re.match("^.+\\@(\\[?)[a-zA-Z0-9\\-\\.]+\\.([a-zA-Z]{2,3}|[0-9]{1,3})(\\]?)$", request.POST['email']) )
         if user_type == 'customer':
             customer = Customer.objects.get(id = kwargs['user_id'])
             if request.POST['name'] == '':
@@ -300,6 +334,15 @@ class EditUser(View):
                 }
                 context.update(request.POST)
                 return render(request, 'edit_user.html',context)
+            if email_validation == None:
+                message = "Please enter a valid email id"
+                context = {
+                    'message': message,
+                    'user_type': user_type,
+                    'profile': customer
+                }
+                context.update(request.POST)
+                return render(request, 'edit_user.html',context)   
             customer.customer_name = request.POST['name']
             customer.house_name =request.POST['house']
             customer.street = request.POST['street']
@@ -319,7 +362,28 @@ class EditUser(View):
         else:          
             user = User.objects.get(id= kwargs['user_id'])
             userprofile, created = UserProfile.objects.get_or_create(user = user)
-            email_validation = (re.match("^.+\\@(\\[?)[a-zA-Z0-9\\-\\.]+\\.([a-zA-Z]{2,3}|[0-9]{1,3})(\\]?)$", request.POST['email']) )
+            
+            if request.POST['mobile'] != '':
+                if len(request.POST['mobile']) > 15:
+                    message = 'Please enter a valid mobile no.'
+                    context = {
+                        'message': message,
+                        'user_type': user_type,
+                        'profile': userprofile
+                    }
+                    context.update(request.POST)
+                    return render(request, 'edit_user.html',context)  
+            if request.POST['phone'] != '':
+                if len(request.POST['phone']) > 15:
+                    message = 'Please enter a valid phone'
+                    context = {
+                        'message': message,
+                        'user_type': user_type,
+                        'profile': userprofile
+                    }
+                    context.update(request.POST)
+                    return render(request, 'edit_user.html',context)   
+
             if user_type == "Salesman":
                 if email_validation == None:
                     message = "Please enter a valid email id"
@@ -331,7 +395,7 @@ class EditUser(View):
                     context.update(request.POST)
                     return render(request, 'edit_user.html',context)   
 
-            elif request.POST['email'] != '':
+            if request.POST['email'] != '':
                 if email_validation == None:                    
                     message = "Please enter a valid Email Id"  
                     context = {
@@ -341,7 +405,7 @@ class EditUser(View):
                     }
                     context.update(request.POST)
                     return render(request, 'edit_user.html',context)     
-
+                
             user.first_name = post_dict['name']            
             user.email = post_dict['email']
             user.save()
@@ -357,6 +421,7 @@ class EditUser(View):
             userprofile.land_line = request.POST['phone']
             userprofile.email_id = request.POST['email']
             userprofile.save()
+            print user_type
             if user_type == 'vendor':
                 user.username= post_dict['name']+user_type
                 user.save()
@@ -382,29 +447,6 @@ class EditUser(View):
                     'profile': userprofile
                 }
                 return render(request, 'edit_user.html',context)
-
-class AddDesignation(View):
-
-    def post(self, request, *args, **kwargs):
-        if len(request.POST['new_designation']) > 0 and not request.POST['new_designation'].isspace():
-            designation, created = Designation.objects.get_or_create(title=request.POST['new_designation']) 
-            if not created:
-                res = {
-                    'result': 'error',
-                    'message': 'Designation Already exists'
-                }
-            else:
-                res = {
-                    'result': 'ok',
-                    'designation': designation.title
-                }
-        else:
-            res = {
-                 'result': 'error',
-                 'message': 'Designation Cannot be null'
-            }
-        response = simplejson.dumps(res)
-        return HttpResponse(response, status=200, mimetype='application/json')
 
 class DeleteUser(View):
 
@@ -521,7 +563,8 @@ class CreateCustomer(View):
 
     def post(self, request, *args, **kwargs):
 
-        if not request.is_ajax:
+        if not request.is_ajax():
+            email_validation = (re.match("^.+\\@(\\[?)[a-zA-Z0-9\\-\\.]+\\.([a-zA-Z]{2,3}|[0-9]{1,3})(\\]?)$", request.POST['email']) )
             if request.POST['name'] == '':
                 context = {
                     'error_message': 'Please enter the name',
@@ -536,6 +579,32 @@ class CreateCustomer(View):
                 }
                 context.update(request.POST)
                 return render(request, 'register_user.html',context)
+
+            elif email_validation == None:
+                message = "Please enter a valid email id"
+                context = {
+                    'error_message': 'Please enter a valid email id',
+                    'user_type': 'customer',
+                }
+                context.update(request.POST)
+                return render(request, 'register_user.html',context)
+
+            elif request.POST['mobile'] != '':
+                if len(request.POST['mobile']) > 15:
+                    context = {
+                        'error_message': 'Please enter a valid mobile no',
+                        'user_type': 'customer',
+                    }
+                    context.update(request.POST)
+                    return render(request, 'register_user.html',context)
+            elif request.POST['phone'] != '':
+                if len(request.POST['phone']) > 15:
+                    context = {
+                        'error_message': 'Please enter a valid phone no.',
+                        'user_type': 'customer',
+                    }
+                    context.update(request.POST)
+                    return render(request, 'register_user.html',context)
         customer, created = Customer.objects.get_or_create(customer_name = request.POST['name'])
         if not created:
             if request.is_ajax():
