@@ -2,6 +2,8 @@ from django.db import models
 from django.contrib.auth.models import User
 from django.conf import settings
 
+from purchase.models import Purchase
+
 class ExpenseHead(models.Model):
 	expense_head = models.CharField('Expense Head', max_length=15, unique=True)
 
@@ -15,7 +17,7 @@ class ExpenseHead(models.Model):
 
 class  Expense(models.Model):
 	created_by = models.ForeignKey(User)
-
+	salesman = models.ForeignKey(User, null=True, blank=True, related_name='Salesman')
 	expense_head = models.ForeignKey(ExpenseHead, null=True, blank=True)
 	voucher_no = models.IntegerField('Voucher No', unique=True)
 	date = models.DateField('Date', null=True, blank=True)
@@ -27,6 +29,7 @@ class  Expense(models.Model):
 	cheque_date = models.DateField('Cheque Date', null=True, blank=True)
 	bank_name = models.CharField('Bank Name', max_length=15, null=True, blank=True)
 	branch = models.CharField('Branch', max_length=10, null=True, blank=True)
+	purchase = models.ForeignKey(Purchase, null=True, blank=True)
 
 	class Meta:
 		verbose_name = 'Expense'
