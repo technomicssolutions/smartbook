@@ -630,6 +630,7 @@ class CreateCustomer(View):
             customer.pin = request.POST['pin']
             customer.mobile_number = request.POST['mobile']
             customer.land_line = request.POST['phone']
+            customer.customer_id = request.POST['email']
             customer.save()
             if request.is_ajax():
                 res = {
@@ -638,9 +639,8 @@ class CreateCustomer(View):
                 }
                 response = simplejson.dumps(res)
                 return HttpResponse(response, status = 200, mimetype="application/json")
-
-        context = {
-            'message' : 'Customer added correctly',
-            'user_type': 'customer'
-        }
-        return render(request, 'register_user.html',context)
+            users = Customer.objects.all()
+            return render(request, 'user_list.html',{
+                'users': users,
+                'user_type': 'customer'
+            })
