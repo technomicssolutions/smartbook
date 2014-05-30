@@ -1586,7 +1586,13 @@ function VendorAccountController($scope, $element, $http, $timeout, $location){
             'total_amount': 0,
             'balance_amount': 0,
             'amount_paid': 0,
-        }
+            'amount': 0,
+            'cheque_no': '',
+            'cheque_date': '',
+            'bank_name': '',
+            'branch_name': '',
+            'narration': '',
+     }
         $scope.date_picker = new Picker.Date($$('#vendor_account_date'), {
             timePicker: false,
             positionOffset: {x: 5, y: 0},
@@ -1627,28 +1633,29 @@ function VendorAccountController($scope, $element, $http, $timeout, $location){
         });
     }
     $scope.validate_vendor_account = function(){
-        if($scope.vendor_account.vendor == '') {
+        console.log($scope.vendor_account.vendor);
+        if($scope.vendor_account.vendor == '' || $scope.vendor_account.vendor == undefined ) {
             $scope.validation_error = "Please select Vendor";
-            return false;
-        } else if($scope.vendor_account.amount == ''){
-            $scope.validation_error = "Please enter amount";            
             return false;
         } else if($$('#vendor_account_date')[0].get('value') == '') {
             $scope.validation_error = "Please select date";
             return false;
-        }
+        } else if($scope.vendor_account.amount == '' || $scope.vendor_account.amount == 0 || $scope.vendor_account.amount != Number($scope.vendor_account.amount)){
+            $scope.validation_error = "Please enter amount";            
+            return false;
+        } 
         if(!$scope.vendor_account.narration){
-            $scope.vendor_account.narration = "null";
+            $scope.vendor_account.narration = "";
         }
         if($scope.vendor_account.payment_mode == 'cash') {
             if(!$scope.vendor_account.branch_name)
-                $scope.vendor_account.branch_name = "null";
+                $scope.vendor_account.branch_name = "";
             if(!$scope.vendor_account.bank_name)
-                $scope.vendor_account.bank_name = "null";
+                $scope.vendor_account.bank_name = "";
             if(!$scope.vendor_account.cheque_no)
-                $scope.vendor_account.cheque_no = "null";
+                $scope.vendor_account.cheque_no = "";
             if(!$scope.vendor_account.cheque_date)
-                $scope.vendor_account.cheque_date = "null";
+                $scope.vendor_account.cheque_date = "";
         } else {
             if(!$scope.vendor_account.branch_name){
                 $scope.validation_error = "Please enter branch name";
@@ -1673,20 +1680,6 @@ function VendorAccountController($scope, $element, $http, $timeout, $location){
         $scope.vendor_account.vendor = '';
         
     }
-    // $scope.calculate_vendor_account_amounts = function(){
-    //     if($scope.actual_total_amount != 0 && $scope.actual_balance_amount != 0) {
-    //         var total_amount = $scope.actual_total_amount;
-    //         var balance_amount = $scope.actual_balance_amount;
-    //         var amount_paid = $scope.actual_amount_paid;
-    //         var amount = $scope.vendor_account.amount
-    //         $scope.vendor_account.amount_paid = parseInt(amount) + parseInt(amount_paid);
-    //         if(parseInt(balance_amount) > parseInt(amount) ) {
-    //             $scope.vendor_account.balance_amount = parseInt(balance_amount) - parseInt(amount);
-    //         } else {
-    //             $scope.vendor_account.balance_amount = 0
-    //         } 
-    //     }        
-    // }
     $scope.save_vendor_account = function(){
         $scope.vendor_account.vendor_account_date = $$('#vendor_account_date')[0].get('value');
         
