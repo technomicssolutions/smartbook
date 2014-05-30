@@ -341,10 +341,10 @@ class EditItem(View):
         item_data = ast.literal_eval(request.POST['item'])
         try:
             item.name = item_data['name']
-            if item_data['uom'] != '' or item_data['uom'] != 'select' or item_data['uom'] != 'other':
+            if item_data['uom'] != '' and item_data['uom'] != 'select' and item_data['uom'] != 'other':
                 uom, created = UnitOfMeasure.objects.get_or_create(uom=item_data['uom'])
                 item.uom = uom
-            if item_data['brand'] != '' or item_data['brand'] != 'select' or item_data['brand'] != 'other':
+            if item_data['brand'] != '' and item_data['brand'] != 'select' and item_data['brand'] != 'other':
                 brand, created = Brand.objects.get_or_create(brand=item_data['brand'])
                 item.brand = brand
             item.barcode = item_data['barcode']
